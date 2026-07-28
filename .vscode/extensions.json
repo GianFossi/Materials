@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "Ionide.Ionide-fsharp",
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "ms-vscode.makefile-tools",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "GitHub.Copilot",
+    "ms-vscode.PowerShell",
+    "PKief.material-icon-theme",
+    "catppuccin.catppuccin-vsc",
+    "ms-vscode.makefile-tools",
+    "Gruntfuggly.todo-tree"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "RoslynExtensionsOptions": {
+    "EnableAnalyzersSupport": true,
+    "LocationPaths": []
+  },
+  "FormattingOptions": {
+    "OrganizeImports": true,
+    "EnableEditorConfigSupport": true
+  },
+  "MsBuild": {
+    "UseLegacyPowerShell": false,
+    "LoadProjectsOnDemand": false
+  },
+  "Sdk": {
+    "IncludePrereleases": false,
+    "Version": "8.0.0"
+  },
+  "DotNetCliOptions": {
+    "LocationPaths": []
+  }
+}

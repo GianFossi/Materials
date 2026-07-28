@@ -1,0 +1,80 @@
+{
+  "editor.defaultFormatter": "Ionide.Ionide-fsharp",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.rulers": [80, 120],
+  "editor.wordWrap": "on",
+  "editor.fontSize": 13,
+  "editor.fontFamily": "Cascadia Code, Consolas, monospace",
+  "editor.fontLigatures": true,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.trimAutoWhitespace": true,
+  
+  "[fsharp]": {
+    "editor.defaultFormatter": "Ionide.Ionide-fsharp",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.formatOnSave": true
+  },
+  
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": false
+  },
+
+  "dotnet.defaultSolution": "MaterialLibrary.sln",
+  "dotnet.server.useOmnisharp": false,
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.analyzeOpenDocumentsOnly": false,
+  
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.watcherExclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/.vs": true,
+    "**/.vscode": true,
+    "**/node_modules": true
+  },
+  
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true
+  },
+  
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.fontSize": 12,
+  
+  "explorer.excludeGitIgnore": true,
+  "explorer.decorations.badges": true,
+  "explorer.decorations.colors": true,
+  
+  "git.ignoreLimitWarning": true,
+  
+  "extensions.recommendations": [],
+  
+  "workbench.editor.tabSizing": "shrink",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.colorTheme": "Catppuccin Mocha",
+  
+  "telemetry.telemetryLevel": "off",
+  
+  "fsharp.enableTreeView": true,
+  "fsharp.showExplorerOnStartup": true,
+  "fsharp.suggestGitignore": true
+}

@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>MaterialLibrary</AssemblyName>
+    <RootNamespace>MaterialLibrary</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <Nullable>enable</Nullable>
+    <Version>2.0.0</Version>
+    <PackageVersion>2.0.0</PackageVersion>
+    <Title>Material Library - ASME Section II Part D - v2.0.0 (Creep Models)</Title>
+    <Description>Type-safe F# library for ASME Section II Part D material properties with unified stress-strain tables, creep modeling, external-pressure tables, and stress-rupture analysis</Description>
+    <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>
+    <PackageTags>ASME;Material-Properties;Creep;FSharp;Engineering;Section-II-Part-D</PackageTags>
+    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Domain\BasicAndPhysicalTypes.fs" />
+    <Compile Include="Domain\StressStrainTypes.fs" />
+    <Compile Include="Domain\CreepTypes.fs" />
+    <Compile Include="Domain\MechanicalProperties.fs" />
+    <Compile Include="Domain\CodeCase2964.fs" />
+    <Compile Include="Domain\CyclicStressStrainTypes.fs" />
+    <Compile Include="Domain\FatigueTypes.fs" />
+    <Compile Include="Domain\StressRuptureTypes.fs" />
+    <Compile Include="Tables\PropertyTable.Core.fs" />
+    <Compile Include="Tables\AllowableStressTable.fs" />
+    <Compile Include="Tables\StressStrainTable.fs" />
+    <Compile Include="Tables\CreepTable.fs" />
+    <Compile Include="Tables\StressRuptureTable.fs" />
+    <Compile Include="Tables\FatigueTable.fs" />
+    <Compile Include="Tables\CyclicStrainTable.fs" />
+    <Compile Include="Tables\ExternalPressureTable.fs" />
+    <Compile Include="Serialization\PropertyTableSerialization.fs" />
+    <Compile Include="Domain\MaterialTypes.fs" />
+    <Compile Include="Serialization\MaterialSerialization.fs" />
+    <Compile Include="Interpolations.fs" />
+    <Compile Include="Configuration.fs" />
+    <Compile Include="Database.Lookup\MaterialSearchCriteria.fs" />
+    <Compile Include="Database.Lookup\MaterialFiltering.fs" />
+    <Compile Include="Database.Lookup\AsmeMaterialFamilyClassification.fs" />
+    <Compile Include="Database.Lookup\AsmeMaterialRepository.fs" />
+    <Compile Include="Models\StressStrainModels.fs" />
+    <Compile Include="Models\ExternalPressureTableModels.fs" />
+    <Compile Include="Models\CreepTableModels.fs" />
+    <Compile Include="Models\CreepSpecialModels.fs" />
+    <Compile Include="Models\CyclicStrainModels.fs" />
+    <Compile Include="builders\DensityTableBuilder.fs" />
+    <Compile Include="builders\StressStrainTableBuilder.fs" />
+    <Compile Include="builders\CreepTableBuilder.fs" />
+    <Compile Include="builders\ExternalPressureTableBuilder.fs" />
+    <Compile Include="builders\CyclicStrainTableBuilder.fs" />
+    <Compile Include="Domain\MaterialDatabases.fs" />
+    <Compile Include="Library.fs" />
+    <Compile Include="Database.Lookup\RequestedMaterialLibrary.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README-NUGET.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="10.1.301" />
+    <PackageReference Include="Ganfoss.ROP" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.4" />
+  </ItemGroup>
+
+</Project>

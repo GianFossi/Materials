@@ -1,0 +1,824 @@
+module MaterialLibrary.Tests
+
+open Xunit
+open System.IO
+open System.Text.RegularExpressions
+open MaterialLibrary
+open MaterialLibrary.Domain
+open MaterialLibrary.Domain.Database.Lookup
+open MaterialLibrary.Interpolation
+
+let private createTestMaterial () =
+    let basicProps = BasicProperties.create 21.0 55.0 240.0 420.0
+
+    let thermalExpansionTable =
+        [ { Temperature = 20.0
+            ExpansionCoefficient = 1.20e-5 }
+          { Temperature = 400.0
+            ExpansionCoefficient = 1.55e-5 } ]
+
+    let elasticTable =
+        [ ElasticModulusTablePoint.create 20.0 210000.0 None
+          ElasticModulusTablePoint.create 400.0 170000.0 (Some 0.29) ]
+
+    let densityTable =
+        [ { Temperature = 20.0
+            Density = 7850.0 }
+          { Temperature = 400.0
+            Density = 7700.0 } ]
+
+    let physicalTable =
+        PhysicalPropertiesTable.create None thermalExpansionTable elasticTable None densityTable None
+
+    Material.create "SA-516-70" "Carbon Steel Plate" "ASME SA-516" "70" basicProps physicalTable
+
+let private expectOk result =
+    match result with
+    | Ok value -> value
+    | Error error -> failwithf "Expected Ok, got %A" error
+
+[<Fact>]
+let ``material filtering combines criteria and rejects ambiguous unique matches`` () =
+    let plate =
+        createTestMaterial ()
+        |> Material.setIdentity "Plate" "Carbon steel" "SA-516" "70" "" "K02700"
+
+    let tube =
+        { plate with Id = "SA-213-TP304" }
+        |> Material.setIdentity "Smls. tube" "18Cr-8Ni" "SA-213" "TP304" "" "S30400"
+
+    let criteria = MaterialSearchCriteria.identity "Plate" "SA-5116" "70" None
+    let matches = MaterialFiltering.findMany criteria [ tube; plate ]
+
+    Assert.Single(matches) |> ignore
+    Assert.Equal(plate.Id, matches.Head.Id)
+
+    let duplicate = { plate with Id = "duplicate" }
+    Assert.True(MaterialFiltering.findUnique criteria [ plate; duplicate ] |> Result.isError)
+
+[<Fact>]
+let ``ASME family classification covers supported steel families`` () =
+    let classify specification grade condition composition uns =
+        AsmeMaterialFamilyClassification.classify specification grade condition composition uns
+
+    Assert.Equal(Some QT, classify "SA-517" "A" "" "Carbon steel" "K11856")
+    Assert.Equal(Some QT, classify "SA-508" "3" "Quenched and tempered" "Ni-Cr-Mo" "K12042")
+    Assert.Equal(Some LTCS, classify "SA-333" "6" "" "Carbon steel" "K03006")
+    Assert.Equal(Some LAS1_00, classify "SA-193" "B7" "" "1Cr-1/5Mo" "G41400")
+    Assert.Equal(Some LAS1_25, classify "SA-387" "11" "" "1¼Cr-½Mo-Si" "K11789")
+    Assert.Equal(Some LAS2_25, classify "SA-387" "22" "" "2¼Cr-1Mo" "K21590")
+    Assert.Equal(Some LAS5_00, classify "SA-387" "5" "" "5Cr-½Mo" "S50200")
+    Assert.Equal(Some LAS9_00, classify "SA-387" "91" "" "9Cr-1Mo-V" "K90901")
+    Assert.Equal(Some SSA, classify "SA-213" "TP304" "" "18Cr-8Ni" "S30400")
+    Assert.Equal(Some SSF, classify "SA-240" "430" "" "17Cr" "S43000")
+    Assert.Equal(Some SSM, classify "SA-240" "410" "" "12Cr" "S41000")
+    Assert.Equal(Some SSD, classify "SA-240" "S32205" "" "22Cr-5Ni-3Mo" "S32205")
+    Assert.Equal(Some SSDPlus, classify "SA-240" "S32750" "" "25Cr-7Ni-4Mo" "S32750")
+    Assert.Equal(None, classify "SB-564" "N06625" "" "Ni-Cr-Mo" "N06625")
+
+[<Fact>]
+let ``material filtering can select an ASME family`` () =
+    let carbon = { createTestMaterial () with Family = Some CS }
+    let stainless = { carbon with Id = "stainless"; Family = Some SSA }
+    let criteria = { MaterialSearchCriteria.empty with Family = Some SSA }
+
+    let matchResult = Assert.Single(MaterialFiltering.findMany criteria [ carbon; stainless ])
+    Assert.Equal<Material>(stainless, matchResult)
+
+[<Fact>]
+let ``requested database library loads six materials and classifies allowable stress sources`` () =
+    let databasePath =
+        Configuration.createDefault ()
+        |> Configuration.getAsmeDatabasePath
+
+    let materials = RequestedMaterialLibrary.loadMaterials databasePath |> expectOk
+
+    Assert.Equal(6, materials.Length)
+    Assert.Contains(materials, fun material -> material.Specification = "SA-516" && material.Grade = "70")
+    Assert.Contains(
+        materials,
+        fun material ->
+            material.Specification = "SA-387"
+            && material.Grade = "11"
+            && material.Class_Condition_Tempering = "2"
+    )
+    Assert.Contains(materials, fun material -> material.Specification = "SA-213" && material.Grade = "T11")
+    Assert.Contains(materials, fun material -> material.Specification = "SA-193" && material.Grade = "B7")
+    Assert.Contains(materials, fun material -> material.Specification = "SA-516" && material.Family = Some CS)
+    Assert.Contains(materials, fun material -> material.Specification = "SA-387" && material.Family = Some LAS1_25)
+    Assert.Contains(materials, fun material -> material.Specification = "SA-213" && material.Grade = "TP304" && material.Family = Some SSA)
+    Assert.Contains(materials, fun material -> material.Specification = "SA-213" && material.Grade = "T11" && material.Family = Some LAS1_25)
+    Assert.Contains(materials, fun material -> material.Specification = "SA-193" && material.Family = Some LAS1_00)
+
+    let tp304Standard =
+        materials
+        |> List.find (fun material ->
+            material.Specification = "SA-213"
+            && material.Grade = "TP304"
+            && material.AllowableStressLevel = StandardAllowableStress)
+
+    let tp304High =
+        materials
+        |> List.find (fun material ->
+            material.Specification = "SA-213"
+            && material.Grade = "TP304"
+            && material.AllowableStressLevel = HighAllowableStress)
+
+    let standard =
+        tp304Standard.StrengthProperties.AllowableStressDatasets
+        |> List.find (fun dataset ->
+            dataset.Source = Division1AllowableStress
+            && dataset.Case = StandardStrengthAllowableStress)
+
+    let high =
+        tp304High.StrengthProperties.AllowableStressDatasets
+        |> List.find (fun dataset ->
+            dataset.Source = Division1HighAllowableStress
+            && dataset.Case = HighStrengthAllowableStress)
+
+    let standardAt200 = PropertyTable.lookup1D 200.0 standard.Table |> expectOk
+    let highAt200 = PropertyTable.lookup1D 200.0 high.Table |> expectOk
+
+    Assert.True(standardAt200.Value < highAt200.Value)
+    Assert.Contains({ Table = Table1A; Code = "G5" }, standard.AsmeNoteReferences)
+    Assert.Contains({ Table = Table1A; Code = "G5" }, high.AsmeNoteReferences)
+    Assert.Equal(None, standard.Notes)
+    Assert.Equal(None, high.Notes)
+    Assert.DoesNotContain(
+        tp304Standard.StrengthProperties.AllowableStressDatasets,
+        fun dataset -> dataset.Source = Division1HighAllowableStress
+    )
+    Assert.DoesNotContain(
+        tp304High.StrengthProperties.AllowableStressDatasets,
+        fun dataset -> dataset.Source = Division1AllowableStress
+    )
+    Assert.Contains(AsmeSectionI, tp304Standard.ApplicableAsmeCodes)
+    Assert.Contains(AsmeSectionVIII1, tp304Standard.ApplicableAsmeCodes)
+    Assert.Contains(AsmeSectionVIII2, tp304Standard.ApplicableAsmeCodes)
+
+    let division2Standard =
+        tp304Standard.StrengthProperties.AllowableStressDatasets
+        |> List.filter (fun dataset -> dataset.Source = Division2AllowableStress)
+
+    let division2High =
+        tp304High.StrengthProperties.AllowableStressDatasets
+        |> List.filter (fun dataset -> dataset.Source = Division2AllowableStress)
+
+    Assert.NotEmpty(division2Standard)
+    Assert.Equal<AllowableStressDataset list>(division2Standard, division2High)
+    Assert.All(division2High, fun dataset -> Assert.Equal(StandardStrengthAllowableStress, dataset.Case))
+
+    let b7 =
+        materials
+        |> List.find (fun material -> material.Specification = "SA-193" && material.Grade = "B7")
+
+    Assert.Equal(3, b7.StrengthProperties.AllowableStressDatasets.Length)
+    Assert.All(
+        b7.StrengthProperties.AllowableStressDatasets,
+        fun dataset -> Assert.Equal(BoltingAllowableStress, dataset.Source)
+    )
+
+    let roundTrip =
+        tp304High
+        |> MaterialSerialization.toJsonString
+        |> MaterialSerialization.fromJsonStringComplete
+        |> expectOk
+
+    Assert.Equal(HighAllowableStress, roundTrip.AllowableStressLevel)
+    Assert.True(
+        List.forall2
+            (=)
+            tp304High.StrengthProperties.AllowableStressDatasets
+            roundTrip.StrengthProperties.AllowableStressDatasets
+    )
+
+[<Fact>]
+let ``specific heat interpolation returns expected linear result`` () =
+    let table =
+        [ { Temperature = 20.0
+            SpecificHeat = 477.0 }
+          { Temperature = 100.0
+            SpecificHeat = 500.0 }
+          { Temperature = 200.0
+            SpecificHeat = 520.0 } ]
+
+    match SpecificHeatInterpolation.interpolate Linear 150.0 table with
+    | Ok cp -> Assert.Equal(510.0, float cp, 6)
+    | Error err -> failwithf "Interpolation failed: %A" err
+
+[<Fact>]
+let ``material builder preserves identity and properties`` () =
+    let material =
+        createTestMaterial ()
+        |> Material.setIdentity "Plate" "C-Mn steel" "ASME SA-516" "70" "Normalized" "UNS K12345"
+
+    Assert.Equal("Plate", material.ProductForm)
+    Assert.Equal("UNS K12345", material.AlloyIdentification_UNS)
+    Assert.Contains("ASME SA-516", material.Name)
+    Assert.Contains("70", material.Name)
+
+[<Fact>]
+let ``Kachanov integration returns one value per time boundary`` () =
+    let timeSteps = 10
+    let damage = KachanovOmega.omegaEvolution 1.0e-8 2.0 1.0 100.0 timeSteps 1000.0 |> expectOk
+
+    let strain =
+        KachanovOmega.creepStrainWithDamage 1.0e-10 3.0 1.0 1.0e-8 2.0 1.0 100.0 timeSteps 1000.0
+        |> expectOk
+
+    Assert.Equal(timeSteps + 1, damage.Length)
+    Assert.Equal(timeSteps + 1, strain.Length)
+    Assert.True(KachanovOmega.omegaEvolution 1.0 1.0 1.0 1.0 0 1.0 |> Result.isError)
+
+    Assert.True(
+        KachanovOmega.creepStrainWithDamage 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0 1.0
+        |> Result.isError
+    )
+
+[<Fact>]
+let ``Kachanov damage starts undamaged and grows monotonically`` () =
+    let damage = KachanovOmega.omegaEvolution 1.0e-9 2.0 1.0 100.0 100 1000.0 |> expectOk
+
+    Assert.Equal(0.0, damage.Head)
+    Assert.True(damage |> List.pairwise |> List.forall (fun (left, right) -> right >= left))
+    Assert.True(damage |> List.forall (fun value -> value >= 0.0 && value <= 1.0))
+
+[<Fact>]
+let ``Norton creep rate is the time derivative of creep strain`` () =
+    let a, n, m, stress, time = 2.5e-8, 4.0, 0.35, 80.0, 1200.0
+    let expected = a * m * stress ** n * time ** (m - 1.0)
+
+    Assert.Equal(expected, NortonPowerLaw.creepRate a n m stress time |> expectOk, 12)
+    Assert.True(NortonPowerLaw.creepRate a n m stress 0.0 |> Result.isError)
+    Assert.True(GarofaloModel.creepStrain 1.0 1.0 1.0 1.0 System.Double.MaxValue 1.0 |> Result.isError)
+
+[<Fact>]
+let ``builder rejects malformed creep point input`` () =
+    match CreepTableBuilder.create 500.0 100.0 "Malformed" [] with
+    | Error _ -> ()
+    | Ok _ -> Assert.Fail("Expected malformed creep points to return an error")
+
+[<Fact>]
+let ``library handles null values at public boundaries`` () =
+    let library = MaterialLibrary(Unchecked.defaultof<Material list>)
+
+    Assert.Equal(0, library.Count)
+    Assert.Empty(library.SearchByName null)
+
+[<Fact>]
+let ``material JSON round trip preserves advanced properties`` () =
+    let material = createTestMaterial ()
+
+    let tensile =
+        { Temperature = 400.0
+          YieldStrength = 180.0
+          TensileStrength = 390.0
+          ElongationPercent = 20.0
+          ReductionOfAreaPercent = 45.0 }
+
+    let compression =
+        { Temperature = 400.0
+          CompressiveStrength = 410.0
+          CompressiveYield = 190.0 }
+
+    let externalPressureTable =
+        ExternalPressureTableBuilder.createFromDatabase
+            400.0
+            (Some 100000.0)
+            "Database external-pressure table"
+            [ { FactorA = 1.0e-4
+                CompressiveStress = 100.0
+                TangentModulus = 1.0e6 }
+              { FactorA = 1.0e-3
+                CompressiveStress = 150.0
+                TangentModulus = 1.5e5 } ]
+        |> expectOk
+
+    let strengthProperties =
+        { material.StrengthProperties with
+            AllowableStresses =
+                [ { Temperature = 400.0
+                    Section_I_ServiceLevel_A = Some 120.0
+                    Section_I_ServiceLevel_B = None
+                    Section_I_ServiceLevel_C = None
+                    Section_I_ServiceLevel_D = None
+                    Section_II_Weld = Some 100.0 } ]
+            TensileProperties = [ tensile ]
+            CompressionProperties = Some [ compression ]
+            ExternalPressureTables = [ externalPressureTable ]
+            NortonModels = [ { Temperature = 400.0; A = 1.0e-8; N = 4.0; M = 0.3 } ]
+            GarofaloModels =
+                [ { Temperature = 400.0
+                    A = 2.0e-9
+                    N = 3.0
+                    M = 0.4
+                    Alpha = 0.01
+                    Q = 200000.0 } ]
+            KachanovOmegaModels =
+                [ { Temperature = 400.0
+                    A1 = 1.0e-10
+                    N1 = 3.0
+                    M1 = 1.0
+                    A2 = 1.0e-9
+                    N2 = 2.0
+                    M2 = 1.0
+                    Description = "Damage model" } ]
+            CreepReferenceStress = [ tensile ]
+            AverageRuptureStress = [ tensile ]
+            MinimumRuptureStress = [ tensile ]
+            LarsonMillerCurves =
+                [ { Material = material.Id
+                    Description = "LMP"
+                    Points = [ { LarsonMillerParameter = 20000.0; Stress = 150.0 } ] } ] }
+
+    let expected =
+        { material with
+            StrengthProperties = strengthProperties
+            SpecialProperties =
+                { AppendixIIIConstants =
+                    [ { Temperature = 400.0
+                        A0 = 1.0
+                        A1 = 2.0
+                        A2 = 3.0
+                        A3 = 4.0
+                        A4 = 5.0
+                        B0 = 6.0
+                        B1 = 7.0
+                        B2 = 8.0
+                        B3 = 9.0
+                        B4 = 10.0
+                        Notes = Some "Source" } ]
+                  AppendixIIIFactorRule =
+                    Some
+                        { MaterialFamily = FerrousSteel
+                          TemperatureLimitF = 1000.0
+                          M2Coefficient = 0.6
+                          EpsPrimeP = 0.2
+                          Notes = None } } }
+
+    let json = MaterialSerialization.toJsonString expected
+
+    match MaterialSerialization.fromJsonStringComplete json with
+    | Error error -> Assert.Fail(sprintf "Round trip failed: %A" error)
+    | Ok actual ->
+        Assert.Equal(expected.PhysicalProperties, actual.PhysicalProperties)
+        Assert.Equal(expected.StrengthProperties, actual.StrengthProperties)
+        Assert.Equal(expected.SpecialProperties, actual.SpecialProperties)
+
+[<Fact>]
+let ``stress strain replacement key includes time dependence and duration`` () =
+    let points =
+        [ { Strain = 0.1; Stress = 100.0 }
+          { Strain = 0.2; Stress = 150.0 } ]
+
+    let independent =
+        StressStrainTableBuilder.createTimeIndependent 500.0 Engineering Engineering "Independent" points None None
+        |> expectOk
+
+    let dependent =
+        StressStrainTableBuilder.createIsochronous
+            500.0
+            100000.0
+            Engineering
+            Engineering
+            "Dependent"
+            points
+            None
+            None
+        |> expectOk
+
+    let material =
+        createTestMaterial ()
+        |> StressStrainTableBuilder.addOrReplace independent
+        |> expectOk
+        |> StressStrainTableBuilder.addOrReplace dependent
+        |> expectOk
+
+    Assert.Equal(2, material.StrengthProperties.StressStrainTables.Length)
+    Assert.All(
+        material.StrengthProperties.StressStrainTables,
+        fun table -> Assert.Equal(StressStrainDatabase, table.Source)
+    )
+
+[<Fact>]
+let ``time-independent and isochronous stress-strain lookups share one table collection`` () =
+    let independent =
+        StressStrainTableBuilder.createTimeIndependent
+            500.0
+            Engineering
+            Engineering
+            "Independent"
+            [ { Strain = 0.1; Stress = 100.0 }; { Strain = 0.2; Stress = 150.0 } ]
+            None
+            None
+        |> expectOk
+
+    let isochronous =
+        StressStrainTableBuilder.createIsochronous
+            500.0
+            100000.0
+            Engineering
+            Engineering
+            "Isochronous"
+            [ { Strain = 0.1; Stress = 80.0 }; { Strain = 0.2; Stress = 120.0 } ]
+            None
+            None
+        |> expectOk
+
+    let material =
+        createTestMaterial ()
+        |> StressStrainTableBuilder.addOrReplace independent
+        |> expectOk
+        |> StressStrainTableBuilder.addOrReplace isochronous
+        |> expectOk
+
+    let library = MaterialLibrary.create [ material ] |> expectOk
+
+    Assert.Equal(100.0, library.GetStressFromStrain(material.Id, 500.0, 0.1) |> expectOk, 12)
+    Assert.Equal(
+        80.0,
+        library.GetStressFromStrainAtDuration(material.Id, 500.0, 100000.0, 0.1)
+        |> expectOk,
+        12
+    )
+
+[<Fact>]
+let ``stress-strain serialization preserves isochronous duration and provenance`` () =
+    let table =
+        StressStrainTableBuilder.createIsochronous
+            550.0
+            200000.0
+            Engineering
+            Engineering
+            "Generated isochronous table"
+            [ { Strain = 0.1; Stress = 70.0 }; { Strain = 0.2; Stress = 100.0 } ]
+            None
+            None
+        |> expectOk
+
+    let table =
+        { table with Source = GeneratedAsmeVIII2Annex3D }
+        |> StressStrainTable.validate
+        |> expectOk
+
+    let json = SpecializedTableSerialization.stressStrainTableToJsonString table
+    let actual = SpecializedTableSerialization.stressStrainTableFromJsonString json |> expectOk
+
+    Assert.Equal(Some 200000.0, actual.ReferenceDurationHours)
+    Assert.Equal(GeneratedAsmeVIII2Annex3D, actual.Source)
+
+[<Fact>]
+let ``creep replacement key uses exact structured applied stress`` () =
+    let points =
+        [ { Time = 1.0; Strain = 0.01 }
+          { Time = 10.0; Strain = 0.05 } ]
+
+    let create stress =
+        CreepTableBuilder.create 500.0 stress "Creep" points |> expectOk
+
+    let material =
+        createTestMaterial ()
+        |> CreepTableBuilder.addOrReplace (create 100.40)
+        |> expectOk
+        |> CreepTableBuilder.addOrReplace (create 100.49)
+        |> expectOk
+
+    Assert.Equal(2, material.StrengthProperties.CreepTables.Length)
+
+[<Fact>]
+let ``cyclic table serialization preserves amplitude and hysteresis data`` () =
+    let table =
+        CyclicStrainTableBuilder.create
+            400.0
+            700.0
+            0.12
+            "Carbon steel"
+            "Cyclic dataset"
+            [ { StressAmplitude = 100.0; StrainAmplitude = 0.001 }
+              { StressAmplitude = 200.0; StrainAmplitude = 0.003 } ]
+            [ { StressRange = 200.0; StrainRange = 0.002 }
+              { StressRange = 400.0; StrainRange = 0.006 } ]
+        |> expectOk
+
+    let json = SpecializedTableSerialization.cyclicStrainTableToJsonString table
+    let actual = SpecializedTableSerialization.cyclicStrainTableFromJsonString json |> expectOk
+
+    Assert.Equal(2, actual.Table.Columns.Head.Entries.Length)
+    Assert.Equal(2, actual.HysteresisRangeTable.Columns.Head.Entries.Length)
+    Assert.Equal(2, actual.HysteresisLoops.Length)
+    Assert.Contains(actual.HysteresisLoops.Head.Points, fun point -> point.Branch = Loading)
+    Assert.Contains(actual.HysteresisLoops.Head.Points, fun point -> point.Branch = Unloading)
+    Assert.Equal(700.0, actual.Kcss, 12)
+    Assert.Equal(0.12, actual.Ncss, 12)
+    Assert.Equal("Carbon steel", actual.MaterialDescription)
+
+[<Fact>]
+let ``property table lookups reject malformed public records`` () =
+    let malformed =
+        { Name = "Malformed"
+          XAxisName = "Temperature"
+          XAxisUnit = "degC"
+          YAxisName = "Stress"
+          ValueUnit = "MPa"
+          DimensionType = NoDimension
+          DimensionUnit = ""
+          XBoundaryPolicy = ReturnError
+          Columns = [] }
+
+    let duplicateEntries =
+        { malformed with
+            Columns =
+                [ { SizeRange = { Lower = None; Upper = None; Label = None }
+                    Entries = [ { X = 100.0; Value = 10.0 }; { X = 100.0; Value = 20.0 } ] } ] }
+
+    Assert.True(PropertyTable.lookup1D 100.0 malformed |> Result.isError)
+    Assert.True(PropertyTable.lookup1D 100.0 duplicateEntries |> Result.isError)
+    Assert.True(PropertyTable.lookup1D System.Double.NaN duplicateEntries |> Result.isError)
+
+[<Fact>]
+let ``duplicate material IDs use last value consistently`` () =
+    let first = { createTestMaterial () with Name = "First" }
+    let second = { first with Name = "Replacement" }
+    let library = MaterialLibrary([ first; second ])
+
+    Assert.Equal(1, library.Count)
+    Assert.Single(library.ListAllMaterials()) |> ignore
+    Assert.Equal(Some second, library.GetMaterialById first.Id)
+
+[<Fact>]
+let ``checked library construction rejects duplicate IDs and supports replacement`` () =
+    let first = createTestMaterial ()
+    let replacement = { first with Name = "Replacement" }
+
+    Assert.True(MaterialLibrary.create [ first; replacement ] |> Result.isError)
+
+    let library = MaterialLibrary.create [ first ] |> expectOk
+    let updated = MaterialLibrary.addMaterial replacement library |> expectOk
+
+    Assert.Equal(1, updated.Count)
+    Assert.Equal(Some replacement, updated.GetMaterialById first.Id)
+
+[<Fact>]
+let ``configuration validation rejects unsafe numerical defaults`` () =
+    let valid = Configuration.createDefault ()
+    let invalid = { valid with Creep = { valid.Creep with KachanovTimeSteps = 0 } }
+
+    Assert.True(Configuration.validate valid |> Result.isOk)
+    Assert.True(Configuration.validate invalid |> Result.isError)
+
+[<Fact>]
+let ``material JSON strictly enforces current schema`` () =
+    let material =
+        { createTestMaterial () with
+            Family = Some LAS2_25
+            AsmeNoteReferences =
+                [ { Table = TableSy; Code = "Y1" }
+                  { Table = TableSu; Code = "U2" } ]
+            Notes = Some "User-defined material note" }
+
+    let json = material |> MaterialSerialization.toJsonString
+    let replaceVersion version =
+        Regex("\"schemaVersion\"\\s*:\\s*13").Replace(json, $"\"schemaVersion\": {version}", 1)
+
+    Assert.Contains("\"schemaVersion\"", json)
+    Assert.Contains("\"family\":\"LAS2.25\"", json)
+    let roundTrip = MaterialSerialization.fromJsonStringComplete json |> expectOk
+    Assert.Equal(Some LAS2_25, roundTrip.Family)
+    Assert.Equal<AsmeNoteReference list>(material.AsmeNoteReferences, roundTrip.AsmeNoteReferences)
+    Assert.Equal(material.Notes, roundTrip.Notes)
+    Assert.True(replaceVersion 0 |> MaterialSerialization.fromJsonStringComplete |> Result.isError)
+    Assert.True(replaceVersion 99 |> MaterialSerialization.fromJsonStringComplete |> Result.isError)
+
+[<Fact>]
+let ``adaptive Kachanov integration reports accepted grid`` () =
+    let history =
+        KachanovOmega.omegaEvolutionConverged 1.0e-6 1.0 0.0 10.0 4 100.0 1.0e-12 3
+        |> expectOk
+
+    Assert.Equal(12.5, history.TimeStep, 12)
+    Assert.Equal(9, history.Values.Length)
+    Assert.Equal(None, history.RuptureTime)
+
+[<Fact>]
+let ``database and Code Case create the same external pressure table type`` () =
+    let databaseTable =
+        ExternalPressureTableBuilder.createFromDatabase
+            400.0
+            None
+            "Database table"
+            [ { FactorA = 1.0e-4
+                CompressiveStress = 80.0
+                TangentModulus = 8.0e5 }
+              { FactorA = 1.0e-3
+                CompressiveStress = 120.0
+                TangentModulus = 1.2e5 } ]
+        |> expectOk
+
+    let timeIndependentTable =
+        StressStrainTableBuilder.createTimeIndependent
+            400.0
+            Engineering
+            Engineering
+            "Time-independent stress-strain table"
+            [ { Strain = 0.0; Stress = 10.0 }
+              { Strain = 0.1; Stress = 100.0 }
+              { Strain = 0.3; Stress = 150.0 } ]
+            None
+            None
+        |> expectOk
+
+    let generatedTable =
+        ExternalPressureTableBuilder.createCodeCase2964FromStressStrainTable
+            "Code Case 2964 time-independent table"
+            timeIndependentTable
+        |> expectOk
+
+    let tables: ExternalPressureTable list = [ databaseTable; generatedTable ]
+
+    Assert.Equal(2, tables.Length)
+    Assert.Equal(MaterialDatabase, databaseTable.Source)
+    Assert.Equal(CodeCase2964, generatedTable.Source)
+    Assert.Equal(None, generatedTable.ReferenceDurationHours)
+
+[<Fact>]
+let ``external-pressure tables distinguish time-independent and isochronous data by duration`` () =
+    let points stress =
+        [ { FactorA = 1.0e-4
+            CompressiveStress = stress
+            TangentModulus = 1.0e6 }
+          { FactorA = 1.0e-3
+            CompressiveStress = stress * 1.5
+            TangentModulus = 1.5e5 } ]
+
+    let timeIndependent =
+        ExternalPressureTableBuilder.createFromDatabase
+            500.0
+            None
+            "Time-independent external-pressure table"
+            (points 100.0)
+        |> expectOk
+
+    let isochronous =
+        ExternalPressureTableBuilder.createFromDatabase
+            500.0
+            (Some 100000.0)
+            "Isochronous external-pressure table"
+            (points 80.0)
+        |> expectOk
+
+    let material =
+        createTestMaterial ()
+        |> ExternalPressureTableBuilder.addOrReplaceExternalPressureTable timeIndependent
+        |> expectOk
+        |> ExternalPressureTableBuilder.addOrReplaceExternalPressureTable isochronous
+        |> expectOk
+
+    let library = MaterialLibrary.create [ material ] |> expectOk
+
+    let independentValue =
+        library.GetExternalPressureAllowableCompressiveStress(material.Id, 500.0, None, 1.0e-4, Linear)
+        |> expectOk
+
+    let isochronousValue =
+        library.GetExternalPressureAllowableCompressiveStress(
+            material.Id,
+            500.0,
+            Some 100000.0,
+            1.0e-4,
+            Linear
+        )
+        |> expectOk
+
+    Assert.Equal(2, material.StrengthProperties.ExternalPressureTables.Length)
+    Assert.True(ExternalPressureTable.isTimeIndependent timeIndependent)
+    Assert.False(ExternalPressureTable.isIsochronous timeIndependent)
+    Assert.True(ExternalPressureTable.isIsochronous isochronous)
+    Assert.Equal(100.0, independentValue.Value, 12)
+    Assert.Equal(80.0, isochronousValue.Value, 12)
+
+[<Fact>]
+let ``API 579 Annex 10B5 guard prevents unimplemented calculations`` () =
+    match Api579Annex10B5.ensureImplemented () with
+    | Error(MaterialError.InvalidOperation message) ->
+        Assert.Contains("not implemented", message)
+        Assert.Contains("Do not use", message)
+    | result -> Assert.Fail($"Expected an explicit not-implemented warning, got {result}")
+
+[<Fact>]
+let ``creep generation requires explicit model and preserves applicability warning`` () =
+    let norton =
+        CreepTableBuilder.generateWithNorton
+            500.0
+            100.0
+            "Norton selected by user"
+            [ 0.0; 10.0; 100.0 ]
+            1.0e-10
+            3.0
+            1.0
+        |> expectOk
+
+    let kachanov =
+        CreepTableBuilder.generateWithKachanovOmega
+            500.0
+            100.0
+            "Kachanov selected by user"
+            10
+            100.0
+            1.0e-10
+            3.0
+            1.0
+            1.0e-12
+            2.0
+            1.0
+        |> expectOk
+
+    Assert.Equal(GeneratedNortonPowerLaw, norton.Source)
+    Assert.Contains("does not model a complete", norton.ApplicabilityWarning)
+    Assert.Equal(GeneratedKachanovOmega, kachanov.Source)
+    Assert.Contains("neglects primary creep", kachanov.ApplicabilityWarning)
+
+    let stored =
+        createTestMaterial ()
+        |> CreepTableBuilder.addOrReplaceTable norton
+        |> expectOk
+        |> CreepTableBuilder.addOrReplaceTable kachanov
+        |> expectOk
+
+    Assert.Single(stored.StrengthProperties.CreepTables) |> ignore
+    Assert.Equal(GeneratedKachanovOmega, stored.StrengthProperties.CreepTables.Head.Source)
+
+[<Fact>]
+let ``numerical generators reject unsafe allocation and invalid ranges`` () =
+    Assert.True(
+        KachanovOmega.omegaEvolution 1.0e-9 2.0 1.0 100.0 1_000_001 1000.0
+        |> Result.isError
+    )
+
+    Assert.Empty(TemperatureGrid.toList (CustomRange(0.0, 1.0e12, 1.0e-9)))
+    Assert.Empty(TemperatureGrid.toList (CustomRange(System.Double.NaN, 100.0, 1.0)))
+
+[<Fact>]
+let ``Garofalo activation-energy form applies temperature correction`` () =
+    let A, n, m, alpha, stress, time = 1.0e-8, 2.0, 1.0, 0.01, 100.0, 10.0
+    let q, temperature = 100000.0, 500.0
+    let calibrated = GarofaloModel.creepStrain A n m alpha stress time |> expectOk
+
+    let corrected =
+        GarofaloModel.creepStrainWithActivationEnergy A n m alpha q temperature stress time
+        |> expectOk
+
+    let expected = calibrated * exp (-q / (8.31446261815324 * (temperature + 273.15)))
+    Assert.Equal(expected, corrected, 15)
+    Assert.True(
+        GarofaloModel.creepStrainWithActivationEnergy A n m alpha q -273.15 stress time
+        |> Result.isError
+    )
+
+[<Fact>]
+let ``specialized table validators reject invalid domain values`` () =
+    let invalidExternalBase =
+        PropertyTable.create1D
+            "Invalid external pressure"
+            "Factor A"
+            ""
+            "Allowable Compressive Stress"
+            "MPa"
+            ReturnError
+            [ { X = 0.0; Value = 100.0 }; { X = 0.1; Value = 200.0 } ]
+        |> expectOk
+
+    let invalidExternal =
+        ExternalPressureTable.create invalidExternalBase 500.0 None MaterialDatabase None
+
+    Assert.True(ExternalPressureTable.validate invalidExternal |> Result.isError)
+
+    let creepBase =
+        PropertyTable.create1D
+            "Creep"
+            "Time"
+            "h"
+            "Strain"
+            "%"
+            ReturnError
+            [ { X = 0.0; Value = 0.0 }; { X = 1.0; Value = 0.1 } ]
+        |> expectOk
+
+    let missingStress =
+        CreepTable.createWithAppliedStress creepBase 500.0 None CreepDatabase None
+
+    Assert.True(CreepTable.validate missingStress |> Result.isError)
+
+[<Fact>]
+let ``configuration save validates before touching destination`` () =
+    let path = Path.Combine(Path.GetTempPath(), $"material-library-{System.Guid.NewGuid():N}.xml")
+    let valid = Configuration.createDefault ()
+    let invalid = { valid with Creep = { valid.Creep with KachanovTimeSteps = 0 } }
+
+    try
+        Assert.True(Configuration.save path invalid |> Result.isError)
+        Assert.False(File.Exists(path))
+        Assert.True(Configuration.save path valid |> Result.isOk)
+        Assert.True(Configuration.load path |> Result.isOk)
+    finally
+        if File.Exists(path) then
+            File.Delete(path)

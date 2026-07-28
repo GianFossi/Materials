@@ -1,0 +1,34 @@
+# .NET build output
+**/bin/
+**/obj/
+/artifacts/
+/publish/
+
+# Test and coverage output
+**/TestResults/
+**/coverage/
+**/coverage.*
+*.trx
+
+# Temporary isolated build/test output
+**/.build/
+**/.*-build/
+**/.*-test/
+/.fake
+/tmp/
+
+# IDE and user-specific files
+/.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local agent/tool state
+/.agents/
+/.claude/
+
+# Generated packages and logs
+*.nupkg
+*.snupkg
+*.log
