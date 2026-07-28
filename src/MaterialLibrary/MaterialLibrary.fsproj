@@ -8,9 +8,9 @@
     <LangVersion>latest</LangVersion>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <Nullable>enable</Nullable>
-    <Version>2.0.0</Version>
-    <PackageVersion>2.0.0</PackageVersion>
-    <Title>Material Library - ASME Section II Part D - v2.0.0 (Creep Models)</Title>
+    <Version>1.0.0</Version>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Title>Material Library - ASME Section II Part D - v1.0.0 (Creep Models)</Title>
     <Description>Type-safe F# library for ASME Section II Part D material properties with unified stress-strain tables, creep modeling, external-pressure tables, and stress-rupture analysis</Description>
     <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>
     <PackageTags>ASME;Material-Properties;Creep;FSharp;Engineering;Section-II-Part-D</PackageTags>

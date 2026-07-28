@@ -20,7 +20,7 @@ type PropertyLookup<'T> =
     }
 
 /// <summary>
-/// Primary API for the ASME Section II Part D Material Library, package version 2.
+/// Primary API for the ASME Section II Part D Material Library, package version 1.
 /// </summary>
 /// <remarks>
 /// <para>

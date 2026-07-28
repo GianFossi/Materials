@@ -10,6 +10,12 @@ IT: Libreria F# type-safe per proprieta dei materiali e analisi creep su .NET 8.
 
 This repository is a DLL/NuGet package project (no installer).
 
+Current release:
+
+- NuGet/package version: `1.0.0`
+- Assembly/file version: `1.0.0.0`
+- Library API and README examples are aligned with the current `src/MaterialLibrary` layout
+
 ## Features | Funzionalita
 
 - EN: Material domain model with fixed (a priori) standard units
@@ -50,7 +56,13 @@ This repository is a DLL/NuGet package project (no installer).
 
 ## Requirements | Requisiti
 
-- .NET SDK 8.0+
+- .NET SDK 8.0+ (`net8.0`)
+- F# language version: `latest`
+- Package dependencies:
+  - `FSharp.Core` 10.1.301
+  - `Ganfoss.ROP` 1.0.2
+  - `Microsoft.Data.Sqlite` 9.0.0
+  - `System.Text.Json` 9.0.4
 
 ## Standard Units (Fixed A Priori)
 
@@ -247,17 +259,17 @@ dotnet pack .\src\MaterialLibrary\MaterialLibrary.fsproj -c Release -o .\publish
 
 Generated package:
 
-- `publish/nuget/MaterialLibrary.2.0.0.nupkg`
+- `publish/nuget/MaterialLibrary.1.0.0.nupkg`
 
 Publish to NuGet:
 
 ```bash
-dotnet nuget push .\publish\nuget\MaterialLibrary.2.0.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
+dotnet nuget push .\publish\nuget\MaterialLibrary.1.0.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
 ```
 
 ## API Example | Esempio API (F#)
 
-Real example aligned with current code in `Library.fs`, `Domain.fs`, and `Interpolation.fs`:
+Real example aligned with the current code in `src/MaterialLibrary/Library.fs`, `src/MaterialLibrary/Domain/`, and `src/MaterialLibrary/Interpolations.fs`:
 
 ```fsharp
 open MaterialLibrary.Domain
@@ -332,6 +344,7 @@ already calibrated at the assessment temperature.
 ## Notes | Note
 
 - Target framework: `net8.0`
+- F# language version: `latest`
 - Output: DLL + NuGet package
 - EN: Treat NuGet warnings as release blockers when publishing
 - IT: Considera i warning NuGet come blocco rilascio prima della pubblicazione
