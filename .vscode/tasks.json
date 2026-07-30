@@ -3,15 +3,15 @@
   "tasks": [
     {
       "label": "build",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "build",
-        "${workspaceFolder}/src/MaterialLibrary/MaterialLibrary.fsproj",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "build: MaterialLibrary",
+        "build: MaterialLibrary.Crud",
+        "build: MaterialLibrary.Excel",
+        "build: MaterialLibrary.Examples",
+        "build: MaterialLibrary.Tests"
       ],
-      "problemMatcher": "$msCompile",
+      "problemMatcher": [],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -24,7 +24,104 @@
       }
     },
     {
+      "label": "build: MaterialLibrary",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/MaterialLibrary/MaterialLibrary.fsproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build: MaterialLibrary.Crud",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build: MaterialLibrary.Excel",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build: MaterialLibrary.Examples",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/tests/MaterialLibrary.Examples/MaterialLibrary.Examples.fsproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build: MaterialLibrary.Tests",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/tests/MaterialLibrary.Tests/MaterialLibrary.Tests.fsproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
       "label": "build-release",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "build-release: MaterialLibrary",
+        "build-release: MaterialLibrary.Crud",
+        "build-release: MaterialLibrary.Excel",
+        "build-release: MaterialLibrary.Examples",
+        "build-release: MaterialLibrary.Tests"
+      ],
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build-release: MaterialLibrary",
       "command": "dotnet",
       "type": "process",
       "args": [
@@ -36,7 +133,78 @@
         "/consoleloggerparameters:NoSummary"
       ],
       "problemMatcher": "$msCompile",
-      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build-release: MaterialLibrary.Crud",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj",
+        "-c",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build-release: MaterialLibrary.Excel",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj",
+        "-c",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build-release: MaterialLibrary.Examples",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/tests/MaterialLibrary.Examples/MaterialLibrary.Examples.fsproj",
+        "-c",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build-release: MaterialLibrary.Tests",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/tests/MaterialLibrary.Tests/MaterialLibrary.Tests.fsproj",
+        "-c",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
       "presentation": {
         "reveal": "silent",
         "panel": "shared"
@@ -152,6 +320,75 @@
         "${workspaceFolder}/publish/nuget"
       ],
       "group": "build",
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "publish",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "pack-with-symbols",
+        "publish: MaterialLibrary dll",
+        "publish: Crud application",
+        "publish: Excel add-in"
+      ],
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "publish: MaterialLibrary dll",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/src/MaterialLibrary/MaterialLibrary.fsproj",
+        "-c",
+        "Release",
+        "-o",
+        "${workspaceFolder}/publish/library"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "publish: Crud application",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj",
+        "-c",
+        "Release",
+        "-o",
+        "${workspaceFolder}/publish/crud"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "publish: Excel add-in",
+      "command": "powershell",
+      "type": "process",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "dotnet build '${workspaceFolder}/src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj' -c Release /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; New-Item -ItemType Directory -Force -Path '${workspaceFolder}/publish/excel' | Out-Null; Copy-Item -Force '${workspaceFolder}/src/MaterialLibrary.Excel/bin/Release/net8.0-windows/publish/*packed.xll' '${workspaceFolder}/publish/excel/'"
+      ],
       "problemMatcher": "$msCompile",
       "presentation": {
         "reveal": "always",
