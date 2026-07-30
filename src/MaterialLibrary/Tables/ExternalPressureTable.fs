@@ -10,12 +10,20 @@ type ExternalPressureTableSource =
     | CodeCase2964
 
 /// <summary>
-/// External-pressure material table: X = Factor A (dimensionless),
-/// Y = allowable compressive stress (MPa).
+/// External-pressure material table: X = Factor A (dimensionless), Y = Factor B (MPa), at a
+/// reference temperature.
 /// </summary>
+/// <remarks>
+/// Factor A and Factor B are the ASME Section II Part D external-pressure chart quantities: Factor A
+/// (from the geometry charts, a function of L/Do and Do/t) selects Factor B from this
+/// material-specific chart; Factor B is dimensioned as a stress (MPa) and is used directly in the
+/// UG-28 allowable-external-pressure formulas. This table stores that Factor-B value in
+/// <c>ExternalPressureTablePoint.CompressiveStress</c> — the field name reflects what Factor B
+/// physically represents (an allowable compressive stress), not a separate, further-derived quantity.
+/// </remarks>
 type ExternalPressureTable =
     {
-        /// The underlying property table (X=Factor A, Y=allowable compressive stress MPa).
+        /// The underlying property table (X=Factor A, Y=Factor B / allowable compressive stress MPa).
         Table: PropertyTable
         /// Reference temperature or assessment condition (degC).
         ReferenceTemperature: float

@@ -25,7 +25,7 @@ type StrengthProperties =
         StressStrainTables: StressStrainTable list
         /// Cyclic stress-strain curves (K_css, n_css) at one or more temperatures.
         CyclicStrainTables: CyclicStrainTable list
-        /// External-pressure material tables (X=Factor A, Y=allowable compressive stress MPa).
+        /// External-pressure material tables (X=Factor A, Y=Factor B / allowable compressive stress MPa).
         ExternalPressureTables: ExternalPressureTable list
         /// Creep models: Norton Power Law coefficients at one or more temperatures.
         NortonModels: NortonPowerLawCoefficients list
@@ -35,17 +35,23 @@ type StrengthProperties =
         KachanovOmegaModels: KachanovOmegaModel list
         /// Creep curves (X=time h, Y=strain %) at one or more conditions.
         CreepTables: CreepTable list
-        /// Creep reference stress (SC = average stress for 0.01%/1000h creep rate) vs temperature.
-        CreepReferenceStress: TensileProperties list // Reuse structure for T → Sc mapping
+        /// Average stress (MPa) vs temperature to reach a reference creep-rate criterion (e.g. SC = average
+        /// stress for 0.01%/1000h creep rate); one table per reference rate.
+        AverageCreepStrainRateStress: CreepStrainRateTable list
+        /// Minimum stress (MPa) vs temperature to reach a reference creep-rate criterion; one table per
+        /// reference rate.
+        MinimumCreepStrainRateStress: CreepStrainRateTable list
         /// Stress-rupture curves (X=time to rupture h, Y=stress MPa) at constant T.
         StressRuptureCurves: StressRuptureTable list
-        /// Average rupture stress (SRavg) vs temperature (default 100,000 h).
-        AverageRuptureStress: TensileProperties list // Reuse structure for T → SRavg mapping
-        /// Minimum rupture stress (SRmin) vs temperature (default 100,000 h).
-        MinimumRuptureStress: TensileProperties list // Reuse structure for T → SRmin mapping
+        /// Average rupture stress (SRavg, MPa) vs temperature at a reference duration; one table per
+        /// reference duration (e.g. 100,000 h).
+        AverageCreepRuptureStress: CreepStressRuptureTable list
+        /// Minimum rupture stress (SRmin, MPa) vs temperature at a reference duration; one table per
+        /// reference duration (e.g. 100,000 h).
+        MinimumCreepRuptureStress: CreepStressRuptureTable list
         /// Larson–Miller master curves for time-temperature parameter correlation.
         LarsonMillerCurves: LarsonMillerCurve list
-        /// Fatigue S-N curves (X=cycles, Y=stress range MPa) at one or more temperatures.
+        /// Fatigue S-N curves (X=cycles, Y=stress amplitude Sa MPa) at one or more temperatures.
         FatigueCurves: FatigueTable list
     }
 
@@ -288,10 +294,11 @@ module Material =
               GarofaloModels = []
               KachanovOmegaModels = []
               CreepTables = []
-              CreepReferenceStress = []
+              AverageCreepStrainRateStress = []
+              MinimumCreepStrainRateStress = []
               StressRuptureCurves = []
-              AverageRuptureStress = []
-              MinimumRuptureStress = []
+              AverageCreepRuptureStress = []
+              MinimumCreepRuptureStress = []
               LarsonMillerCurves = []
               FatigueCurves = [] }
           SpecialProperties =
@@ -587,7 +594,7 @@ module Material =
             LastModified = System.DateTime.UtcNow }
 
     /// <summary>Returns a new material with the stress-rupture curve list replaced.</summary>
-    /// <param name="curves">List of <see cref="StressRuptureCurve"/> records (one per temperature).</param>
+    /// <param name="curves">List of <see cref="StressRuptureTable"/> records (one per temperature).</param>
     /// <param name="mat">The source material to update.</param>
     /// <returns>Updated <see cref="Material"/> with refreshed <c>LastModified</c>.</returns>
     let addStressRuptureCurves curves mat =
@@ -598,7 +605,7 @@ module Material =
             LastModified = System.DateTime.UtcNow }
 
     /// <summary>Returns a new material with the fatigue curve list replaced.</summary>
-    /// <param name="curves">List of <see cref="FatigueCurve"/> records (one per environment/temperature).</param>
+    /// <param name="curves">List of <see cref="FatigueTable"/> records (one per environment/temperature).</param>
     /// <param name="mat">The source material to update.</param>
     /// <returns>Updated <see cref="Material"/> with refreshed <c>LastModified</c>.</returns>
     let addFatigueCurves curves mat =

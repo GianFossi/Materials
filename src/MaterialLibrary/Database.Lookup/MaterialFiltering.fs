@@ -10,6 +10,10 @@ module MaterialFiltering =
         else
             value.Trim().Replace("ASME ", "", StringComparison.OrdinalIgnoreCase).ToUpperInvariant()
 
+    // "SA-5116" is a known typo carried by one entry in RequestedMaterialLibrary's
+    // requested-material list (see MaterialSearchCriteria.identity "Plate" "SA-5116" "70" None).
+    // Normalizing it here means both the criterion and any correctly-spelled "SA-516" material
+    // in the database compare equal, so the historical typo does not have to be fixed everywhere.
     let private normalizeSpecification value =
         match normalize value with
         | "SA-5116" -> "SA-516"

@@ -25,7 +25,6 @@
     <Compile Include="Domain\MechanicalProperties.fs" />
     <Compile Include="Domain\CodeCase2964.fs" />
     <Compile Include="Domain\CyclicStressStrainTypes.fs" />
-    <Compile Include="Domain\FatigueTypes.fs" />
     <Compile Include="Domain\StressRuptureTypes.fs" />
     <Compile Include="Tables\PropertyTable.Core.fs" />
     <Compile Include="Tables\AllowableStressTable.fs" />
@@ -35,6 +34,8 @@
     <Compile Include="Tables\FatigueTable.fs" />
     <Compile Include="Tables\CyclicStrainTable.fs" />
     <Compile Include="Tables\ExternalPressureTable.fs" />
+    <Compile Include="Tables\CreepStressRuptureTable.fs" />
+    <Compile Include="Tables\CreepStrainRateTable.fs" />
     <Compile Include="Serialization\PropertyTableSerialization.fs" />
     <Compile Include="Domain\MaterialTypes.fs" />
     <Compile Include="Serialization\MaterialSerialization.fs" />
@@ -54,6 +55,8 @@
     <Compile Include="builders\CreepTableBuilder.fs" />
     <Compile Include="builders\ExternalPressureTableBuilder.fs" />
     <Compile Include="builders\CyclicStrainTableBuilder.fs" />
+    <Compile Include="builders\CreepStressRuptureTableBuilder.fs" />
+    <Compile Include="builders\CreepStrainRateTableBuilder.fs" />
     <Compile Include="Domain\MaterialDatabases.fs" />
     <Compile Include="Library.fs" />
     <Compile Include="Database.Lookup\RequestedMaterialLibrary.fs" />

@@ -270,3 +270,139 @@ module Configuration =
 
     let getEnDatabasePath (config: LibraryConfiguration) : string =
         Path.Combine(config.Io.MaterialDatabaseFolder, config.Io.EnMaterialDatabaseFile)
+
+    // ── Default path resolution ────────────────────────────────────────────
+
+    /// <summary>File name of the configuration file this module looks for next to a running assembly.</summary>
+    [<Literal>]
+    let DefaultConfigFileName = "MaterialLibrary.config.xml"
+
+    /// <summary>Resolves the configuration file path under <paramref name="baseDirectory"/> (defaults to <see cref="AppContext.BaseDirectory"/>).</summary>
+    let resolveConfigPath (baseDirectory: string option) : string =
+        Path.Combine(defaultArg baseDirectory AppContext.BaseDirectory, DefaultConfigFileName)
+
+    /// <summary>
+    /// Resolves a database path from the configuration file under <paramref name="baseDirectory"/> when
+    /// present and valid, otherwise <paramref name="fallbackFileName"/> next to it. Never touches disk
+    /// beyond reading the configuration file, and never fails: any error while resolving falls back to
+    /// <paramref name="fallbackFileName"/>.
+    /// </summary>
+    let private resolveDatabasePath
+        (baseDirectory: string option)
+        (getPath: LibraryConfiguration -> string)
+        (fallbackFileName: string)
+        : string =
+        let baseDir = defaultArg baseDirectory AppContext.BaseDirectory
+        let configPath = resolveConfigPath (Some baseDir)
+
+        if File.Exists configPath then
+            match load configPath with
+            | Ok cfg -> getPath cfg
+            | Error _ -> Path.Combine(baseDir, fallbackFileName)
+        else
+            Path.Combine(baseDir, fallbackFileName)
+
+    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>ASME_Material_DB.sqlite</c>).</summary>
+    let resolveAsmeDatabasePath (baseDirectory: string option) : string =
+        resolveDatabasePath baseDirectory getAsmeDatabasePath "ASME_Material_DB.sqlite"
+
+    /// <summary>Resolves the default EN database path (configuration file if present, else a sibling <c>en_materials.db</c>).</summary>
+    let resolveEnDatabasePath (baseDirectory: string option) : string =
+        resolveDatabasePath baseDirectory getEnDatabasePath "en_materials.db"
+
+    // ── File accessibility ──────────────────────────────────────────────────
+
+    /// <summary>Checks that <paramref name="path"/> exists and can actually be opened for reading (existence alone does not guarantee OS-level read permission).</summary>
+    let checkFileAccessible (path: string) : Result<unit, string> =
+        if String.IsNullOrWhiteSpace path then
+            Error "Path cannot be empty"
+        elif not (File.Exists path) then
+            Error $"File not found: {path}"
+        else
+            try
+                use _stream = File.OpenRead path
+                Ok()
+            with ex ->
+                Error $"File exists but could not be opened: {path} ({ex.Message})"
+
+    // ── Read/write individual configuration sections ────────────────────────
+    // Immutable-update helpers mirroring the Material module's set*/add* convention:
+    // each returns a new LibraryConfiguration with LastModified-equivalent freshness
+    // left to the caller (this record has no timestamp field), ready to pass to `save`.
+
+    /// <summary>Returns a copy of <paramref name="config"/> with <c>General</c> replaced.</summary>
+    let setGeneralOptions (options: GeneralOptions) (config: LibraryConfiguration) : LibraryConfiguration =
+        { config with General = options }
+
+    /// <summary>Returns a copy of <paramref name="config"/> with <c>Interpolation</c> replaced.</summary>
+    let setInterpolationOptions (options: InterpolationOptions) (config: LibraryConfiguration) : LibraryConfiguration =
+        { config with Interpolation = options }
+
+    /// <summary>Returns a copy of <paramref name="config"/> with <c>Creep</c> replaced.</summary>
+    let setCreepDefaults (defaults: CreepDefaults) (config: LibraryConfiguration) : LibraryConfiguration =
+        { config with Creep = defaults }
+
+    /// <summary>Returns a copy of <paramref name="config"/> with <c>Io</c> replaced.</summary>
+    let setIoOptions (options: IoOptions) (config: LibraryConfiguration) : LibraryConfiguration =
+        { config with Io = options }
+
+    /// <summary>
+    /// Returns a copy of <paramref name="config"/> with one named interpolation section replaced.
+    /// </summary>
+    /// <param name="sectionName">One of (case-insensitive): SpecificHeat, StressStrain, CreepTable, StressRupture, Fatigue.</param>
+    let setInterpolationSection
+        (sectionName: string)
+        (section: InterpolationSectionOptions)
+        (config: LibraryConfiguration)
+        : Result<LibraryConfiguration, string> =
+        match sectionName.Trim().ToLowerInvariant() with
+        | "specificheat" ->
+            Ok
+                { config with
+                    Interpolation = { config.Interpolation with SpecificHeat = section } }
+        | "stressstrain" ->
+            Ok
+                { config with
+                    Interpolation = { config.Interpolation with StressStrain = section } }
+        | "creeptable" ->
+            Ok
+                { config with
+                    Interpolation = { config.Interpolation with CreepTable = section } }
+        | "stressrupture" ->
+            Ok
+                { config with
+                    Interpolation = { config.Interpolation with StressRupture = section } }
+        | "fatigue" ->
+            Ok
+                { config with
+                    Interpolation = { config.Interpolation with Fatigue = section } }
+        | other -> Error $"Unknown interpolation section: {other}"
+
+    /// <summary>Returns a copy of <paramref name="config"/> with the database folder replaced.</summary>
+    let setDatabaseFolder (folder: string) (config: LibraryConfiguration) : LibraryConfiguration =
+        { config with
+            Io = { config.Io with MaterialDatabaseFolder = folder } }
+
+    /// <summary>Returns a copy of <paramref name="config"/> with the ASME database file name replaced.</summary>
+    let setAsmeDatabaseFileName (fileName: string) (config: LibraryConfiguration) : LibraryConfiguration =
+        { config with
+            Io = { config.Io with AsmeMaterialDatabaseFile = fileName } }
+
+    /// <summary>Returns a copy of <paramref name="config"/> with the EN database file name replaced.</summary>
+    let setEnDatabaseFileName (fileName: string) (config: LibraryConfiguration) : LibraryConfiguration =
+        { config with
+            Io = { config.Io with EnMaterialDatabaseFile = fileName } }
+
+    /// <summary>
+    /// Loads the configuration at <paramref name="path"/> (creating a default one if it does not yet
+    /// exist), applies <paramref name="update"/>, validates the result, and saves it back to
+    /// <paramref name="path"/>.
+    /// </summary>
+    /// <returns>The updated, validated, and saved configuration, or an error from load/validate/save.</returns>
+    let updateAndSave
+        (path: string)
+        (update: LibraryConfiguration -> LibraryConfiguration)
+        : Result<LibraryConfiguration, string> =
+        loadOrCreateDefault path
+        |> Result.map update
+        |> Result.bind (fun updated -> save path updated |> Result.map (fun () -> updated))

@@ -65,21 +65,7 @@ module private AsmeFamilyParameters =
                CreepTimeExponent = 0.28 |}
 
     let get (family: AsmeRepresentativeFamily) =
-        let configPath =
-            Path.Combine(AppContext.BaseDirectory, "MaterialLibrary.config.xml")
-
-        let configOption =
-            if File.Exists configPath then
-                match Configuration.load configPath with
-                | Ok loaded -> Some loaded
-                | Error _ -> None
-            else
-                None
-
-        let dbPath =
-            match configOption with
-            | Some cfg -> Configuration.getAsmeDatabasePath cfg
-            | None -> Path.Combine(AppContext.BaseDirectory, "ASME_Material_DB.sqlite")
+        let dbPath = Configuration.resolveAsmeDatabasePath None
 
         if File.Exists dbPath then
             try
@@ -598,8 +584,8 @@ module AsmeCyclicParameters =
 
     // ── 9Cr-1Mo ──────────────────────────────────────────────────────────────
 
-    /// <summary>9Cr-1Mo at 20 °C.  K_css = 975 MPa, n_css = 0.177.</summary>
-    let nineCrOneMo_20C () = makeInput 975.0 0.117 // n_css corrected to 0.117 (table value)
+    /// <summary>9Cr-1Mo at 20 °C.  K_css = 975 MPa, n_css = 0.117.</summary>
+    let nineCrOneMo_20C () = makeInput 975.0 0.117
     /// <summary>9Cr-1Mo at 500 °C.  K_css = 693 MPa, n_css = 0.132.</summary>
     let nineCrOneMo_500C () = makeInput 693.0 0.132
     /// <summary>9Cr-1Mo at 550 °C.  K_css = 609 MPa, n_css = 0.142.</summary>

@@ -69,71 +69,6 @@ module CyclicStrainTableBuilder =
             else
                 Ok sorted
 
-    let private interpolateRange (points: HysteresisRangePoint list) (stressRange: float) =
-        if stressRange = 0.0 then
-            0.0
-        else
-            let augmented = { StressRange = 0.0; StrainRange = 0.0 } :: points
-            let below = augmented |> List.tryFindBack (fun point -> point.StressRange <= stressRange)
-            let above = augmented |> List.tryFind (fun point -> point.StressRange >= stressRange)
-
-            match below, above with
-            | Some lower, Some upper when lower.StressRange = upper.StressRange -> lower.StrainRange
-            | Some lower, Some upper ->
-                lower.StrainRange
-                + (upper.StrainRange - lower.StrainRange)
-                  * (stressRange - lower.StressRange)
-                  / (upper.StressRange - lower.StressRange)
-            | _ -> nan
-
-    let private buildHysteresisLoops
-        (cyclicPoints: CyclicStressStrainPoint list)
-        (rangePoints: HysteresisRangePoint list)
-        : Result<HysteresisLoop list, MaterialError> =
-        let maxRange = rangePoints |> List.last |> fun point -> point.StressRange
-
-        cyclicPoints
-        |> List.map (fun cyclicPoint ->
-            let fullStressRange = 2.0 * cyclicPoint.StressAmplitude
-
-            if fullStressRange > maxRange then
-                Error(
-                    MaterialError.InvalidOperation
-                        "Hysteresis range data must cover twice every cyclic stress amplitude"
-                )
-            else
-                let stressIncrements =
-                    0.0
-                    :: (rangePoints
-                        |> List.map (fun point -> point.StressRange)
-                        |> List.filter (fun stressRange -> stressRange > 0.0 && stressRange < fullStressRange))
-                    @ [ fullStressRange ]
-
-                let loading =
-                    stressIncrements
-                    |> List.map (fun increment ->
-                        ({ Strain = -cyclicPoint.StrainAmplitude + interpolateRange rangePoints increment
-                           Stress = -cyclicPoint.StressAmplitude + increment
-                           Branch = Loading }: HysteresisLoopPoint))
-
-                let unloading =
-                    stressIncrements
-                    |> List.map (fun increment ->
-                        ({ Strain = cyclicPoint.StrainAmplitude - interpolateRange rangePoints increment
-                           Stress = cyclicPoint.StressAmplitude - increment
-                           Branch = Unloading }: HysteresisLoopPoint))
-
-                Ok
-                    ({ StressAmplitude = cyclicPoint.StressAmplitude
-                       StrainAmplitude = cyclicPoint.StrainAmplitude
-                       Points = loading @ unloading }: HysteresisLoop))
-        |> List.fold
-            (fun state item ->
-                state
-                |> Result.bind (fun loops -> item |> Result.map (fun loop -> loop :: loops)))
-            (Ok [])
-        |> Result.map List.rev
-
     // ── construction helpers ─────────────────────────────────────────────────
 
     /// <summary>
@@ -145,7 +80,7 @@ module CyclicStrainTableBuilder =
     /// <param name="materialDescription">Material/grade description matching Table 3-D.2M.</param>
     /// <param name="description">Human-readable description.</param>
     /// <param name="cyclicPoints">Cyclic strain amplitude points (σ_a, ε_ta).</param>
-    /// <param name="hysteresisPoints">Hysteresis loop points (σ_r, ε_tr).</param>
+    /// <param name="hysteresisPoints">Hysteresis range points (σ_r, ε_tr).</param>
     /// <returns>Validated <see cref="CyclicStrainTable"/> or a validation error.</returns>
     let create
         (temperature: float)
@@ -172,8 +107,6 @@ module CyclicStrainTableBuilder =
             | Error err, _ -> Error err
             | _, Error err -> Error err
             | Ok sortedCyclic, Ok sortedHysteresis ->
-                let loops = buildHysteresisLoops sortedCyclic sortedHysteresis
-
                 PropertyTable.create1D
                     description
                     "Stress Amplitude"
@@ -197,18 +130,8 @@ module CyclicStrainTableBuilder =
                          |> List.map (fun point ->
                              { X = point.StressRange
                                Value = point.StrainRange }))
-                    |> Result.bind (fun hysteresisTable ->
-                        loops
-                        |> Result.map (fun hysteresisLoops ->
-                            CyclicStrainTable.create
-                                cyclicTable
-                                hysteresisTable
-                                hysteresisLoops
-                                temperature
-                                kcss
-                                ncss
-                                materialDescription
-                                description))
+                    |> Result.map (fun hysteresisTable ->
+                        CyclicStrainTable.create cyclicTable hysteresisTable temperature kcss ncss materialDescription description)
                     |> Result.bind CyclicStrainTable.validate)
 
     /// <summary>

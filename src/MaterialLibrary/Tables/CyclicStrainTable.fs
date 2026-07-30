@@ -2,15 +2,14 @@ namespace MaterialLibrary.Domain
 
 open System
 
-/// Cyclic stress-strain data containing both amplitude and hysteresis tables.
+/// Cyclic stress-strain data: amplitude table (Sa vs strain amplitude) and hysteresis-range table
+/// (stress range vs strain range), both monotonic PropertyTable functions of their X axis.
 type CyclicStrainTable =
     {
         /// X = stress amplitude (MPa), Y = strain amplitude (dimensionless).
         Table: PropertyTable
         /// X = stress range (MPa), Y = strain range (dimensionless).
         HysteresisRangeTable: PropertyTable
-        /// Explicit closed hysteresis loops with branch-identified point lists.
-        HysteresisLoops: HysteresisLoop list
         /// Reference temperature (degC).
         ReferenceTemperature: float
         /// Cyclic strength coefficient (MPa).
@@ -27,19 +26,9 @@ module CyclicStrainTable =
     let private isFinite value =
         not (Double.IsNaN value || Double.IsInfinity value)
 
-    let create
-        table
-        hysteresisRangeTable
-        hysteresisLoops
-        referenceTemperature
-        kcss
-        ncss
-        materialDescription
-        description
-        =
+    let create table hysteresisRangeTable referenceTemperature kcss ncss materialDescription description =
         { Table = table
           HysteresisRangeTable = hysteresisRangeTable
-          HysteresisLoops = hysteresisLoops
           ReferenceTemperature = referenceTemperature
           Kcss = kcss
           Ncss = ncss
@@ -62,21 +51,9 @@ module CyclicStrainTable =
         else
             PropertyTable.validate table.Table
             |> Result.bind (fun _ -> PropertyTable.validate table.HysteresisRangeTable)
-            |> Result.bind (fun _ ->
-                if List.isEmpty table.HysteresisLoops then
-                    Error(MaterialError.InvalidOperation "At least one hysteresis loop is required")
-                elif
-                    table.HysteresisLoops
-                    |> List.exists (fun loop ->
-                        List.length loop.Points < 4
-                        || loop.Points |> List.exists (fun point -> not (isFinite point.Strain && isFinite point.Stress)))
-                then
-                    Error(MaterialError.InvalidOperation "Hysteresis loops contain insufficient or non-finite points")
-                else
-                    Ok table)
+            |> Result.map (fun _ -> table)
 
     let table (t: CyclicStrainTable) = t.Table
     let hysteresisRangeTable (t: CyclicStrainTable) = t.HysteresisRangeTable
-    let hysteresisLoops (t: CyclicStrainTable) = t.HysteresisLoops
     let referenceTemperature (t: CyclicStrainTable) = t.ReferenceTemperature
     let unwrap (t: CyclicStrainTable) = t.Table

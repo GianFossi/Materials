@@ -76,12 +76,14 @@ type StrengthPropertiesJson =
       GarofaloModels: GarofaloCoefficients list option
       [<JsonPropertyName("kachanovOmegaModels")>]
       KachanovOmegaModels: KachanovOmegaModel list option
-      [<JsonPropertyName("creepReferenceStress")>]
-      CreepReferenceStress: TensileProperties list option
-      [<JsonPropertyName("averageRuptureStress")>]
-      AverageRuptureStress: TensileProperties list option
-      [<JsonPropertyName("minimumRuptureStress")>]
-      MinimumRuptureStress: TensileProperties list option
+      [<JsonPropertyName("averageCreepStrainRateStress")>]
+      AverageCreepStrainRateStress: CreepStrainRateTableJson list
+      [<JsonPropertyName("minimumCreepStrainRateStress")>]
+      MinimumCreepStrainRateStress: CreepStrainRateTableJson list
+      [<JsonPropertyName("averageCreepRuptureStress")>]
+      AverageCreepRuptureStress: CreepStressRuptureTableJson list
+      [<JsonPropertyName("minimumCreepRuptureStress")>]
+      MinimumCreepRuptureStress: CreepStressRuptureTableJson list
       [<JsonPropertyName("larsonMillerCurves")>]
       LarsonMillerCurves: LarsonMillerCurve list option }
 
@@ -181,7 +183,7 @@ type MaterialJson =
 module MaterialSerialization =
 
     [<Literal>]
-    let CurrentSchemaVersion = 13
+    let CurrentSchemaVersion = 14
 
     let private validateSchemaVersion version =
         match version with
@@ -378,9 +380,18 @@ module MaterialSerialization =
           NortonModels = Some sp.NortonModels
           GarofaloModels = Some sp.GarofaloModels
           KachanovOmegaModels = Some sp.KachanovOmegaModels
-          CreepReferenceStress = Some sp.CreepReferenceStress
-          AverageRuptureStress = Some sp.AverageRuptureStress
-          MinimumRuptureStress = Some sp.MinimumRuptureStress
+          AverageCreepStrainRateStress =
+            sp.AverageCreepStrainRateStress
+            |> List.map SpecializedTableSerialization.creepStrainRateTableToJson
+          MinimumCreepStrainRateStress =
+            sp.MinimumCreepStrainRateStress
+            |> List.map SpecializedTableSerialization.creepStrainRateTableToJson
+          AverageCreepRuptureStress =
+            sp.AverageCreepRuptureStress
+            |> List.map SpecializedTableSerialization.creepStressRuptureTableToJson
+          MinimumCreepRuptureStress =
+            sp.MinimumCreepRuptureStress
+            |> List.map SpecializedTableSerialization.creepStressRuptureTableToJson
           LarsonMillerCurves = Some sp.LarsonMillerCurves }
 
     let private strengthPropertiesFromJson (json: StrengthPropertiesJson) : Result<StrengthProperties, MaterialError> =
@@ -413,6 +424,26 @@ module MaterialSerialization =
             let! fatigueCurves =
                 json.FatigueCurves
                 |> List.map SpecializedTableSerialization.fatigueTableFromJson
+                |> sequenceResultList
+
+            let! averageCreepStrainRateStress =
+                json.AverageCreepStrainRateStress
+                |> List.map SpecializedTableSerialization.creepStrainRateTableFromJson
+                |> sequenceResultList
+
+            let! minimumCreepStrainRateStress =
+                json.MinimumCreepStrainRateStress
+                |> List.map SpecializedTableSerialization.creepStrainRateTableFromJson
+                |> sequenceResultList
+
+            let! averageCreepRuptureStress =
+                json.AverageCreepRuptureStress
+                |> List.map SpecializedTableSerialization.creepStressRuptureTableFromJson
+                |> sequenceResultList
+
+            let! minimumCreepRuptureStress =
+                json.MinimumCreepRuptureStress
+                |> List.map SpecializedTableSerialization.creepStressRuptureTableFromJson
                 |> sequenceResultList
 
             let! compressionProperties =
@@ -477,10 +508,11 @@ module MaterialSerialization =
                   GarofaloModels = defaultArg json.GarofaloModels []
                   KachanovOmegaModels = defaultArg json.KachanovOmegaModels []
                   CreepTables = creepCurves
-                  CreepReferenceStress = defaultArg json.CreepReferenceStress []
+                  AverageCreepStrainRateStress = averageCreepStrainRateStress
+                  MinimumCreepStrainRateStress = minimumCreepStrainRateStress
                   StressRuptureCurves = stressRuptureCurves
-                  AverageRuptureStress = defaultArg json.AverageRuptureStress []
-                  MinimumRuptureStress = defaultArg json.MinimumRuptureStress []
+                  AverageCreepRuptureStress = averageCreepRuptureStress
+                  MinimumCreepRuptureStress = minimumCreepRuptureStress
                   LarsonMillerCurves = defaultArg json.LarsonMillerCurves []
                   FatigueCurves = fatigueCurves }
         }
@@ -633,12 +665,12 @@ module MaterialSerialization =
 
     /// <summary>Serializes a <see cref="Material"/> to a JSON string.</summary>
     let toJsonString (material: Material) : string =
-        material |> toJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(material |> toJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="Material"/>.</summary>
     let fromJsonString (json: string) (physicalProperties: PhysicalProperties) : Result<Material, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<MaterialJson>(json)
+            let parsed = JsonSerializer.Deserialize<MaterialJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -650,7 +682,7 @@ module MaterialSerialization =
     /// <summary>Deserializes complete material JSON using its embedded physical properties.</summary>
     let fromJsonStringComplete (json: string) : Result<Material, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<MaterialJson>(json)
+            let parsed = JsonSerializer.Deserialize<MaterialJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -776,12 +808,12 @@ module MaterialLibrarySerialization =
 
     /// <summary>Serializes a material list to a JSON string.</summary>
     let toJsonString (version: string) (description: string option) (materials: Material list) : string =
-        toJson version description materials |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(toJson version description materials, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a material list.</summary>
     let fromJsonString (json: string) (physicalProperties: PhysicalProperties) : Result<Material list, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<MaterialLibraryJson>(json)
+            let parsed = JsonSerializer.Deserialize<MaterialLibraryJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -793,7 +825,7 @@ module MaterialLibrarySerialization =
     /// <summary>Deserializes a complete material-library JSON string without external fallback data.</summary>
     let fromJsonStringComplete (json: string) : Result<Material list, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<MaterialLibraryJson>(json)
+            let parsed = JsonSerializer.Deserialize<MaterialLibraryJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")

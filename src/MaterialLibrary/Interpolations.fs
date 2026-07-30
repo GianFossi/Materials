@@ -305,25 +305,25 @@ module CreepInterpolation =
 /// They are a key design input for ASME Section II Part D allowable stress determination.
 /// </remarks>
 module StressRuptureInterpolation =
-    /// <summary>Evaluates the rupture stress at a target time to rupture by interpolating a stress-rupture curve.</summary>
+    /// <summary>Evaluates the rupture stress at a target time to rupture by interpolating a stress-rupture table.</summary>
     /// <param name="mode">Interpolation algorithm to use (see <see cref="InterpolationMode"/>).</param>
-    /// <param name="targetTime">Query time to rupture (hours). Must lie within the curve's time range.</param>
-    /// <param name="curve">A <see cref="StressRuptureCurve"/> containing the tabulated (t_r, σ_r) data points.</param>
+    /// <param name="targetTime">Query time to rupture (hours). Must lie within the table's time range.</param>
+    /// <param name="table">A <see cref="StressRuptureTable"/> containing the tabulated (t_r, σ_r) data points.</param>
     /// <returns>
     /// <c>Ok σ_r</c> — interpolated rupture stress (MPa). <br/>
-    /// <c>Error InsufficientData</c> — the curve contains no points or the bracket is missing. <br/>
-    /// <c>Error (OutOfRange (t_min, t_max))</c> — <paramref name="targetTime"/> is outside the curve range.
+    /// <c>Error InsufficientData</c> — the table contains no points or the bracket is missing. <br/>
+    /// <c>Error (OutOfRange (t_min, t_max))</c> — <paramref name="targetTime"/> is outside the table range.
     /// </returns>
     let stressFromTimeToRupture
         (mode: InterpolationMode)
         (targetTime: float)
-        (curve: StressRuptureCurve)
+        (table: StressRuptureTable)
         : Result<float, InterpolationError> =
 
-        if List.isEmpty curve.Points then
-            Error InterpolationError.InsufficientData
-        else
-            interpolate1D mode (curve.Points |> List.map (fun p -> p.TimeToRupture, p.StressAtRupture)) targetTime
+        match table.Table.Columns with
+        | [ column ] when not (List.isEmpty column.Entries) ->
+            interpolate1D mode (column.Entries |> List.map (fun entry -> entry.X, entry.Value)) targetTime
+        | _ -> Error InterpolationError.InsufficientData
 
 // ========== FATIGUE INTERPOLATION ==========
 
@@ -339,7 +339,7 @@ type FatigueInterpolationMode =
     | FatigueLogCycle
     | FatigueLogLog
 
-/// <summary>Interpolation functions for fatigue S-N curves and fatigue tables.</summary>
+/// <summary>Interpolation functions for fatigue S-N tables.</summary>
 module FatigueInterpolation =
 
     let private isFinite (value: float) : bool =
@@ -361,9 +361,6 @@ module FatigueInterpolation =
 
     let private log10Safe (label: string) (value: float) : Result<float, InterpolationError> =
         validatePositive label value |> Result.map log10
-
-    let private buildStressPairs (curve: FatigueCurve) : (float * float) list =
-        curve.Points |> List.map (fun p -> p.Cycles, p.StressRange)
 
     let private buildTablePairs (table: FatigueTable) : Result<(float * float) list, InterpolationError> =
         if table.Table.DimensionType <> NoDimension then
@@ -422,56 +419,20 @@ module FatigueInterpolation =
 
         loop [] points
 
-    let private mapLogCycleStress (curve: FatigueCurve) : Result<(float * float) list, InterpolationError> =
-        curve.Points
-        |> List.map (fun p -> p.Cycles, p.StressRange)
-        |> mapPoints (log10Safe "Fatigue curve cycles") (validateFinite "Fatigue curve stress range")
-
-    let private mapLogLogStress (curve: FatigueCurve) : Result<(float * float) list, InterpolationError> =
-        curve.Points
-        |> List.map (fun p -> p.Cycles, p.StressRange)
-        |> mapPoints (log10Safe "Fatigue curve cycles") (log10Safe "Fatigue curve stress range")
-
     let private mapLogCycleTable (table: FatigueTable) : Result<(float * float) list, InterpolationError> =
         buildTablePairs table
         |> Result.bind (fun pairs ->
-            mapPoints (log10Safe "FatigueTable cycles") (validateFinite "FatigueTable stress range") pairs)
+            mapPoints (log10Safe "FatigueTable cycles") (validateFinite "FatigueTable stress amplitude") pairs)
 
     let private mapLogLogTable (table: FatigueTable) : Result<(float * float) list, InterpolationError> =
         buildTablePairs table
         |> Result.bind (fun pairs ->
-            mapPoints (log10Safe "FatigueTable cycles") (log10Safe "FatigueTable stress range") pairs)
+            mapPoints (log10Safe "FatigueTable cycles") (log10Safe "FatigueTable stress amplitude") pairs)
 
     /// <summary>
-    /// Evaluates fatigue stress range at a given cycle count from a fatigue curve.
+    /// Evaluates fatigue stress amplitude Sa at a given cycle count from a fatigue table.
     /// </summary>
-    let stressRangeFromCycles
-        (mode: FatigueInterpolationMode)
-        (targetCycles: float)
-        (curve: FatigueCurve)
-        : Result<float, InterpolationError> =
-
-        match mode with
-        | FatigueLinear ->
-            buildStressPairs curve
-            |> fun mapped -> interpolateSorted None mapped targetCycles
-        | FatigueLogCycle ->
-            match log10Safe "Fatigue query cycles" targetCycles, mapLogCycleStress curve with
-            | Ok tc, Ok mapped -> interpolateSorted None mapped tc
-            | Error err, _ -> Error err
-            | _, Error err -> Error err
-        | FatigueLogLog ->
-            match log10Safe "Fatigue query cycles" targetCycles, mapLogLogStress curve with
-            | Ok tc, Ok mapped ->
-                interpolateSorted None mapped tc
-                |> Result.map (fun stressLog -> Math.Pow(10.0, stressLog))
-            | Error err, _ -> Error err
-            | _, Error err -> Error err
-
-    /// <summary>
-    /// Evaluates fatigue stress range at a given cycle count from a fatigue table.
-    /// </summary>
-    let stressRangeFromCyclesOnTable
+    let stressAmplitudeFromCycles
         (mode: FatigueInterpolationMode)
         (targetCycles: float)
         (table: FatigueTable)
@@ -499,40 +460,11 @@ module FatigueInterpolation =
             | _, Error err -> Error err
 
     /// <summary>
-    /// Evaluates the cycle count associated with a target fatigue stress range from a fatigue curve.
+    /// Evaluates the cycle count associated with a target fatigue stress amplitude Sa from a fatigue table.
     /// </summary>
-    let cyclesFromStressRange
+    let cyclesFromStressAmplitude
         (mode: FatigueInterpolationMode)
-        (targetStressRange: float)
-        (curve: FatigueCurve)
-        : Result<float, InterpolationError> =
-
-        match mode with
-        | FatigueLinear ->
-            buildStressPairs curve
-            |> List.map (fun (cycles, stress) -> stress, cycles)
-            |> fun mapped -> interpolateSorted None mapped targetStressRange
-        | FatigueLogCycle ->
-            match validateFinite "Fatigue query stress range" targetStressRange, mapLogCycleStress curve with
-            | Ok ts, Ok mapped ->
-                interpolateSorted None (mapped |> List.map (fun (lc, stress) -> stress, lc)) ts
-                |> Result.map (fun v -> Math.Pow(10.0, v))
-            | Error err, _ -> Error err
-            | _, Error err -> Error err
-        | FatigueLogLog ->
-            match log10Safe "Fatigue query stress range" targetStressRange, mapLogLogStress curve with
-            | Ok tsLog, Ok mapped ->
-                interpolateSorted None (mapped |> List.map (fun (lc, ls) -> ls, lc)) tsLog
-                |> Result.map (fun cyclesLog -> Math.Pow(10.0, cyclesLog))
-            | Error err, _ -> Error err
-            | _, Error err -> Error err
-
-    /// <summary>
-    /// Evaluates the cycle count associated with a target fatigue stress range from a fatigue table.
-    /// </summary>
-    let cyclesFromStressRangeOnTable
-        (mode: FatigueInterpolationMode)
-        (targetStressRange: float)
+        (targetStressAmplitude: float)
         (table: FatigueTable)
         : Result<float, InterpolationError> =
 
@@ -542,18 +474,18 @@ module FatigueInterpolation =
         | FatigueLinear ->
             buildTablePairs table
             |> Result.bind (fun pairs ->
-                validateFinite "Fatigue query stress range" targetStressRange
+                validateFinite "Fatigue query stress amplitude" targetStressAmplitude
                 |> Result.bind (fun ts ->
                     interpolateSorted policy (pairs |> List.map (fun (cycles, stress) -> stress, cycles)) ts))
         | FatigueLogCycle ->
-            match validateFinite "Fatigue query stress range" targetStressRange, mapLogCycleTable table with
+            match validateFinite "Fatigue query stress amplitude" targetStressAmplitude, mapLogCycleTable table with
             | Ok ts, Ok mapped ->
                 interpolateSorted policy (mapped |> List.map (fun (lc, stress) -> stress, lc)) ts
                 |> Result.map (fun v -> Math.Pow(10.0, v))
             | Error err, _ -> Error err
             | _, Error err -> Error err
         | FatigueLogLog ->
-            match log10Safe "Fatigue query stress range" targetStressRange, mapLogLogTable table with
+            match log10Safe "Fatigue query stress amplitude" targetStressAmplitude, mapLogLogTable table with
             | Ok tsLog, Ok mapped ->
                 interpolateSorted policy (mapped |> List.map (fun (lc, ls) -> ls, lc)) tsLog
                 |> Result.map (fun cyclesLog -> Math.Pow(10.0, cyclesLog))

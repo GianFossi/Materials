@@ -258,3 +258,72 @@ module AsmeMaterialRepository =
     let findUnique databasePath criteria =
         findMany databasePath criteria
         |> Result.bind (MaterialFiltering.findUnique criteria)
+
+    /// <summary>
+    /// Checks that the ASME database at <paramref name="databasePath"/> exists and can actually be
+    /// opened read-only as a SQLite database, without loading any material rows.
+    /// </summary>
+    /// <remarks>
+    /// File.Exists alone does not guarantee the file is readable or a valid SQLite database (locked
+    /// file, corrupted header, wrong file type); this opens a real read-only connection and runs a
+    /// trivial query against <c>sqlite_master</c> to confirm it.
+    /// </remarks>
+    let checkAccessible (databasePath: string) : Result<unit, MaterialError> =
+        if String.IsNullOrWhiteSpace databasePath || not (File.Exists databasePath) then
+            Error(MaterialError.NotFound $"ASME material database not found: {databasePath}")
+        else
+            try
+                use connection = new SqliteConnection($"Data Source={databasePath};Mode=ReadOnly")
+                connection.Open()
+                use command = connection.CreateCommand()
+                command.CommandText <- "SELECT COUNT(*) FROM sqlite_master"
+                command.ExecuteScalar() |> ignore
+                Ok()
+            with ex ->
+                Error(MaterialError.InvalidOperation $"ASME database at '{databasePath}' could not be opened: {ex.Message}")
+
+    /// <summary>
+    /// Resolves several search criteria against one open connection and one load of the Materials
+    /// table, in the order the criteria are supplied.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="findMany"/> (and therefore <see cref="findUnique"/>) opens a fresh connection and
+    /// re-reads the whole Materials table for every call, which is wasteful when resolving a fixed
+    /// batch of known materials (e.g. <c>RequestedMaterialLibrary</c>). This function loads the
+    /// candidate rows once and reuses them for every criterion.
+    /// </remarks>
+    /// <param name="databasePath">Path to the ASME material SQLite database.</param>
+    /// <param name="criteriaList">Search criteria to resolve, one material expected per entry.</param>
+    /// <returns>Materials in the same order as <paramref name="criteriaList"/>, or the first error encountered.</returns>
+    let findUniqueMany databasePath (criteriaList: MaterialSearchCriteria list) : Result<Material list, MaterialError> =
+        if String.IsNullOrWhiteSpace databasePath || not (File.Exists databasePath) then
+            Error(MaterialError.NotFound $"ASME material database not found: {databasePath}")
+        else
+            try
+                use connection = new SqliteConnection($"Data Source={databasePath};Mode=ReadOnly")
+                connection.Open()
+
+                let candidates = loadCandidates connection
+
+                let resolveOne criteria =
+                    candidates
+                    |> MaterialFiltering.findMany criteria
+                    |> List.map (hydrate connection)
+                    |> List.fold
+                        (fun state item ->
+                            state
+                            |> Result.bind (fun materials -> item |> Result.map (fun material -> material :: materials)))
+                        (Ok [])
+                    |> Result.map List.rev
+                    |> Result.bind (MaterialFiltering.findUnique criteria)
+
+                criteriaList
+                |> List.map resolveOne
+                |> List.fold
+                    (fun state item ->
+                        state
+                        |> Result.bind (fun materials -> item |> Result.map (fun material -> material :: materials)))
+                    (Ok [])
+                |> Result.map List.rev
+            with ex ->
+                Error(MaterialError.InvalidOperation $"ASME database lookup failed: {ex.Message}")

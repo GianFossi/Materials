@@ -17,11 +17,15 @@ type TensileProperties =
     }
 
 /// <summary>A point used to create an external-pressure material table.</summary>
+/// <remarks>
+/// <c>CompressiveStress</c> is the ASME external-pressure chart's Factor B: a material-chart value,
+/// dimensioned as a stress (MPa), read at a given Factor A and used directly in the UG-28 formulas.
+/// </remarks>
 type ExternalPressureTablePoint =
     {
         /// External pressure chart factor A (dimensionless).
         FactorA: float
-        /// Allowable compressive stress Sc (MPa).
+        /// Factor B / allowable compressive stress Sc (MPa).
         CompressiveStress: float
         /// Tangent modulus Et (MPa) used to compute A = Sc / Et.
         TangentModulus: float

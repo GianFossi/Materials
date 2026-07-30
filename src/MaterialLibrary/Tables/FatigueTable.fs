@@ -1,12 +1,12 @@
 namespace MaterialLibrary.Domain
 
 /// <summary>
-/// Fatigue table: X = cycles (dimensionless), Y = stress range (MPa).
+/// Fatigue table: X = cycles (dimensionless), Y = stress amplitude Sa (MPa).
 /// Metadata: ReferenceTemperature (degC), optional ReferenceDurationHours.
 /// </summary>
 type FatigueTable =
     {
-        /// The underlying property table (X=cycles, Y=stress range MPa).
+        /// The underlying property table (X=cycles, Y=stress amplitude Sa MPa).
         Table: PropertyTable
         /// Reference temperature or assessment condition (degC).
         ReferenceTemperature: float

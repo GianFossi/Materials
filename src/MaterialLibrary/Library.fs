@@ -535,17 +535,23 @@ type MaterialLibrary(inputMaterials: Material list) =
         | None -> Error(MaterialError.NotFound materialId)
         | Some material -> Ok material.StrengthProperties.StressRuptureCurves
 
-    /// <summary>Evaluates the rupture stress at a given time to rupture using the first available stress-rupture curve.</summary>
+    /// <summary>Evaluates the rupture stress at a given time to rupture on the stress-rupture curve matching the given temperature.</summary>
     /// <param name="materialId">The material ID string.</param>
+    /// <param name="temperature">Curve temperature (°C), matched exactly against stored stress-rupture curves.</param>
     /// <param name="timeToRupture">Query time to rupture (hours). Must be within the curve’s time range.</param>
     /// <returns><c>Ok σ_r</c> (MPa), or an appropriate <see cref="MaterialError"/>.</returns>
-    member this.GetStressFromStressRupture(materialId: string, timeToRupture: float) : Result<float, MaterialError> =
+    member this.GetStressFromStressRupture
+        (materialId: string, temperature: float, timeToRupture: float)
+        : Result<float, MaterialError> =
         match this.GetMaterialById materialId with
         | None -> Error(MaterialError.NotFound materialId)
         | Some material ->
-            match material.StrengthProperties.StressRuptureCurves with
-            | [] -> Error(MaterialError.InvalidOperation "No stress-rupture curves available")
-            | table :: _ ->
+            match
+                material.StrengthProperties.StressRuptureCurves
+                |> List.tryFind (fun table -> table.ReferenceTemperature = temperature)
+            with
+            | None -> Error(MaterialError.InvalidOperation $"No stress-rupture curve at {temperature}degC")
+            | Some table ->
                 let unwrappedTable = StressRuptureTable.unwrap table
 
                 match PropertyTable.lookup1D timeToRupture unwrappedTable with
@@ -690,3 +696,32 @@ module MaterialLibrary =
             |> List.filter (fun existing -> existing.Id <> material.Id)
             |> fun materials -> MaterialLibrary(material :: materials)
             |> Ok
+
+    /// <summary>Serializes every material in <paramref name="lib"/> to a JSON library file (see <see cref="MaterialLibrarySerialization"/>).</summary>
+    /// <param name="filePath">Destination file path.</param>
+    /// <param name="version">Free-text library version recorded in the file.</param>
+    /// <param name="description">Optional free-text description recorded in the file.</param>
+    /// <param name="lib">The library to save.</param>
+    /// <returns><c>Ok ()</c>, or a serialization/file-write error.</returns>
+    let saveToFile
+        (filePath: string)
+        (version: string)
+        (description: string option)
+        (lib: MaterialLibrary)
+        : Result<unit, MaterialError> =
+        MaterialLibrarySerialization.saveToFile filePath version description (lib.ListAllMaterials())
+
+    /// <summary>Loads a <see cref="MaterialLibrary"/> from a JSON library file, using <paramref name="physicalProperties"/> as a legacy fallback for materials that omit their own.</summary>
+    /// <param name="filePath">Source JSON file path.</param>
+    /// <param name="physicalProperties">Fallback physical properties for materials serialized before that field was added.</param>
+    /// <returns>A validated <see cref="MaterialLibrary"/>, or a deserialization/validation error.</returns>
+    let loadFromFile (filePath: string) (physicalProperties: PhysicalProperties) : Result<MaterialLibrary, MaterialError> =
+        MaterialLibrarySerialization.loadFromFile filePath physicalProperties
+        |> Result.bind create
+
+    /// <summary>Loads a complete <see cref="MaterialLibrary"/> from a JSON library file whose materials all embed their own physical properties.</summary>
+    /// <param name="filePath">Source JSON file path.</param>
+    /// <returns>A validated <see cref="MaterialLibrary"/>, or a deserialization/validation error.</returns>
+    let loadFromFileComplete (filePath: string) : Result<MaterialLibrary, MaterialError> =
+        MaterialLibrarySerialization.loadFromFileComplete filePath
+        |> Result.bind create

@@ -9,6 +9,20 @@ open ROP
 // JSON DOMAIN TYPES — represent PropertyTable and specialized table metadata
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// <summary>
+/// Shared <see cref="JsonSerializerOptions"/> for all Material/PropertyTable JSON (de)serialization.
+/// </summary>
+/// <remarks>
+/// The <c>JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)</c> attributes on the JSON
+/// DTOs below only take effect through a source-generated <c>JsonSerializerContext</c>, which this
+/// library does not define. Every call to <c>JsonSerializer.Serialize</c>/<c>Deserialize</c> must
+/// therefore pass this options instance explicitly, or case-insensitive matching silently does not
+/// happen and differently-cased input JSON deserializes with missing properties defaulted to zero
+/// instead of a reported error.
+/// </remarks>
+module internal JsonOptions =
+    let value = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
+
 
 
 /// <summary>JSON representation of <see cref="BoundInclusion"/>.</summary>
@@ -137,31 +151,11 @@ type FatigueTableJson =
 
 /// <summary>JSON representation of <see cref="CyclicStrainTable"/> including embedded metadata.</summary>
 [<JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)>]
-type HysteresisLoopPointJson =
-    { [<JsonPropertyName("strain")>]
-      Strain: float
-      [<JsonPropertyName("stress")>]
-      Stress: float
-      [<JsonPropertyName("branch")>]
-      Branch: int }
-
-[<JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)>]
-type HysteresisLoopJson =
-    { [<JsonPropertyName("stressAmplitude")>]
-      StressAmplitude: float
-      [<JsonPropertyName("strainAmplitude")>]
-      StrainAmplitude: float
-      [<JsonPropertyName("points")>]
-      Points: HysteresisLoopPointJson list }
-
-[<JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)>]
 type CyclicStrainTableJson =
     { [<JsonPropertyName("table")>]
       Table: PropertyTableJson
       [<JsonPropertyName("hysteresisRangeTable")>]
       HysteresisRangeTable: PropertyTableJson
-      [<JsonPropertyName("hysteresisLoops")>]
-      HysteresisLoops: HysteresisLoopJson list
       [<JsonPropertyName("referenceTemperature")>]
       ReferenceTemperature: float
       [<JsonPropertyName("kcss")>]
@@ -172,6 +166,22 @@ type CyclicStrainTableJson =
       MaterialDescription: string
       [<JsonPropertyName("description")>]
       Description: string }
+
+/// <summary>JSON representation of <see cref="CreepStressRuptureTable"/> including embedded metadata.</summary>
+[<JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)>]
+type CreepStressRuptureTableJson =
+    { [<JsonPropertyName("table")>]
+      Table: PropertyTableJson
+      [<JsonPropertyName("referenceDurationHours")>]
+      ReferenceDurationHours: float }
+
+/// <summary>JSON representation of <see cref="CreepStrainRateTable"/> including embedded metadata.</summary>
+[<JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)>]
+type CreepStrainRateTableJson =
+    { [<JsonPropertyName("table")>]
+      Table: PropertyTableJson
+      [<JsonPropertyName("referenceCreepRatePercentPer1000Hours")>]
+      ReferenceCreepRatePercentPer1000Hours: float }
 
 /// <summary>JSON representation of <see cref="ExternalPressureTable"/> including embedded metadata.</summary>
 [<JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)>]
@@ -341,12 +351,12 @@ module PropertyTableSerialization =
 
     /// <summary>Serializes a <see cref="PropertyTable"/> to a JSON string.</summary>
     let toJsonString (table: PropertyTable) : string =
-        table |> toJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(table |> toJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="PropertyTable"/>.</summary>
     let fromJsonString (json: string) : Result<PropertyTable, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<PropertyTableJson>(json)
+            let parsed = JsonSerializer.Deserialize<PropertyTableJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -377,15 +387,6 @@ module PropertyTableSerialization =
 
 /// <summary>Serialization for specialized table types with full metadata preservation.</summary>
 module SpecializedTableSerialization =
-
-    let private sequenceResults items =
-        items
-        |> List.fold
-            (fun state item ->
-                state
-                |> Result.bind (fun values -> item |> Result.map (fun value -> value :: values)))
-            (Ok [])
-        |> Result.map List.rev
 
     // ── StressStrainTable ────────────────────────────────────────────────────
 
@@ -431,12 +432,12 @@ module SpecializedTableSerialization =
 
     /// <summary>Serializes a <see cref="StressStrainTable"/> to a JSON string.</summary>
     let stressStrainTableToJsonString (t: StressStrainTable) : string =
-        t |> stressStrainTableToJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(t |> stressStrainTableToJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="StressStrainTable"/>.</summary>
     let stressStrainTableFromJsonString (json: string) : Result<StressStrainTable, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<StressStrainTableJson>(json)
+            let parsed = JsonSerializer.Deserialize<StressStrainTableJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -484,12 +485,12 @@ module SpecializedTableSerialization =
 
     /// <summary>Serializes a <see cref="CreepTable"/> to a JSON string.</summary>
     let creepTableToJsonString (t: CreepTable) : string =
-        t |> creepTableToJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(t |> creepTableToJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="CreepTable"/>.</summary>
     let creepTableFromJsonString (json: string) : Result<CreepTable, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<CreepTableJson>(json)
+            let parsed = JsonSerializer.Deserialize<CreepTableJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -514,12 +515,12 @@ module SpecializedTableSerialization =
 
     /// <summary>Serializes a <see cref="StressRuptureTable"/> to a JSON string.</summary>
     let stressRuptureTableToJsonString (t: StressRuptureTable) : string =
-        t |> stressRuptureTableToJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(t |> stressRuptureTableToJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="StressRuptureTable"/>.</summary>
     let stressRuptureTableFromJsonString (json: string) : Result<StressRuptureTable, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<StressRuptureTableJson>(json)
+            let parsed = JsonSerializer.Deserialize<StressRuptureTableJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -545,12 +546,12 @@ module SpecializedTableSerialization =
 
     /// <summary>Serializes a <see cref="FatigueTable"/> to a JSON string.</summary>
     let fatigueTableToJsonString (t: FatigueTable) : string =
-        t |> fatigueTableToJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(t |> fatigueTableToJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="FatigueTable"/>.</summary>
     let fatigueTableFromJsonString (json: string) : Result<FatigueTable, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<FatigueTableJson>(json)
+            let parsed = JsonSerializer.Deserialize<FatigueTableJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -565,20 +566,6 @@ module SpecializedTableSerialization =
     let cyclicStrainTableToJson (t: CyclicStrainTable) : CyclicStrainTableJson =
         { Table = PropertyTableSerialization.toJson t.Table
           HysteresisRangeTable = PropertyTableSerialization.toJson t.HysteresisRangeTable
-          HysteresisLoops =
-            t.HysteresisLoops
-            |> List.map (fun loop ->
-                { StressAmplitude = loop.StressAmplitude
-                  StrainAmplitude = loop.StrainAmplitude
-                  Points =
-                    loop.Points
-                    |> List.map (fun point ->
-                        { Strain = point.Strain
-                          Stress = point.Stress
-                          Branch =
-                            match point.Branch with
-                            | Loading -> 0
-                            | Unloading -> 1 }) })
           ReferenceTemperature = t.ReferenceTemperature
           Kcss = t.Kcss
           Ncss = t.Ncss
@@ -591,36 +578,10 @@ module SpecializedTableSerialization =
             let! baseTable = PropertyTableSerialization.fromJson json.Table
             let! hysteresisRangeTable = PropertyTableSerialization.fromJson json.HysteresisRangeTable
 
-            let! hysteresisLoops =
-                json.HysteresisLoops
-                |> List.map (fun loop ->
-                    loop.Points
-                    |> List.map (fun point ->
-                        match point.Branch with
-                        | 0 ->
-                            Ok
-                                ({ Strain = point.Strain
-                                   Stress = point.Stress
-                                   Branch = Loading }: HysteresisLoopPoint)
-                        | 1 ->
-                            Ok
-                                ({ Strain = point.Strain
-                                   Stress = point.Stress
-                                   Branch = Unloading }: HysteresisLoopPoint)
-                        | value ->
-                            Error(MaterialError.InvalidOperation $"Unknown hysteresis branch: {value}"))
-                    |> sequenceResults
-                    |> Result.map (fun points ->
-                        ({ StressAmplitude = loop.StressAmplitude
-                           StrainAmplitude = loop.StrainAmplitude
-                           Points = points }: HysteresisLoop)))
-                |> sequenceResults
-
             return!
                 CyclicStrainTable.create
                     baseTable
                     hysteresisRangeTable
-                    hysteresisLoops
                     json.ReferenceTemperature
                     json.Kcss
                     json.Ncss
@@ -631,12 +592,12 @@ module SpecializedTableSerialization =
 
     /// <summary>Serializes a <see cref="CyclicStrainTable"/> to a JSON string.</summary>
     let cyclicStrainTableToJsonString (t: CyclicStrainTable) : string =
-        t |> cyclicStrainTableToJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(t |> cyclicStrainTableToJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="CyclicStrainTable"/>.</summary>
     let cyclicStrainTableFromJsonString (json: string) : Result<CyclicStrainTable, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<CyclicStrainTableJson>(json)
+            let parsed = JsonSerializer.Deserialize<CyclicStrainTableJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -680,12 +641,12 @@ module SpecializedTableSerialization =
 
     /// <summary>Serializes a <see cref="ExternalPressureTable"/> to a JSON string.</summary>
     let externalPressureTableToJsonString (t: ExternalPressureTable) : string =
-        t |> externalPressureTableToJson |> JsonSerializer.Serialize
+        JsonSerializer.Serialize(t |> externalPressureTableToJson, JsonOptions.value)
 
     /// <summary>Deserializes a JSON string to a <see cref="ExternalPressureTable"/>.</summary>
     let externalPressureTableFromJsonString (json: string) : Result<ExternalPressureTable, MaterialError> =
         try
-            let parsed = JsonSerializer.Deserialize<ExternalPressureTableJson>(json)
+            let parsed = JsonSerializer.Deserialize<ExternalPressureTableJson>(json, JsonOptions.value)
 
             if obj.ReferenceEquals(box parsed, null) then
                 Error(MaterialError.InvalidOperation "Deserialized JSON was null")
@@ -693,3 +654,41 @@ module SpecializedTableSerialization =
                 externalPressureTableFromJson parsed
         with ex ->
             Error(MaterialError.InvalidOperation(sprintf "JSON deserialization failed: %s" ex.Message))
+
+    // ── CreepStressRuptureTable ──────────────────────────────────────────────
+
+    /// <summary>Converts a <see cref="CreepStressRuptureTable"/> to its JSON representation.</summary>
+    let creepStressRuptureTableToJson (t: CreepStressRuptureTable) : CreepStressRuptureTableJson =
+        { Table = PropertyTableSerialization.toJson t.Table
+          ReferenceDurationHours = t.ReferenceDurationHours }
+
+    /// <summary>Converts JSON representation back to a <see cref="CreepStressRuptureTable"/>.</summary>
+    let creepStressRuptureTableFromJson
+        (json: CreepStressRuptureTableJson)
+        : Result<CreepStressRuptureTable, MaterialError> =
+        result {
+            let! baseTable = PropertyTableSerialization.fromJson json.Table
+
+            return!
+                CreepStressRuptureTable.create baseTable json.ReferenceDurationHours
+                |> CreepStressRuptureTable.validate
+        }
+
+    // ── CreepStrainRateTable ─────────────────────────────────────────────────
+
+    /// <summary>Converts a <see cref="CreepStrainRateTable"/> to its JSON representation.</summary>
+    let creepStrainRateTableToJson (t: CreepStrainRateTable) : CreepStrainRateTableJson =
+        { Table = PropertyTableSerialization.toJson t.Table
+          ReferenceCreepRatePercentPer1000Hours = t.ReferenceCreepRatePercentPer1000Hours }
+
+    /// <summary>Converts JSON representation back to a <see cref="CreepStrainRateTable"/>.</summary>
+    let creepStrainRateTableFromJson
+        (json: CreepStrainRateTableJson)
+        : Result<CreepStrainRateTable, MaterialError> =
+        result {
+            let! baseTable = PropertyTableSerialization.fromJson json.Table
+
+            return!
+                CreepStrainRateTable.create baseTable json.ReferenceCreepRatePercentPer1000Hours
+                |> CreepStrainRateTable.validate
+        }

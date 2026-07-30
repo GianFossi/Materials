@@ -4,6 +4,9 @@ open MaterialLibrary.Domain
 
 module RequestedMaterialLibrary =
     let private requestedCriteria =
+        // "SA-5116" is a known typo for "SA-516"; MaterialFiltering.normalizeSpecification
+        // corrects it on both sides of the comparison so this criterion still matches the
+        // correctly-spelled material in the database.
         [ MaterialSearchCriteria.identity "Plate" "SA-5116" "70" None
           MaterialSearchCriteria.identity "Plate" "SA-387" "11" (Some "2")
           MaterialSearchCriteria.identity "Smls. tube" "SA-213" "TP304" None
@@ -11,14 +14,10 @@ module RequestedMaterialLibrary =
           MaterialSearchCriteria.identity "Bolting" "SA-193" "B7" None ]
 
     /// Loads the five requested ASME materials and all matching allowable-stress datasets.
+    /// Uses findUniqueMany so the Materials table is read once and shared across all five
+    /// lookups instead of being rescanned per material.
     let loadMaterials databasePath =
-        requestedCriteria
-        |> List.map (AsmeMaterialRepository.findUnique databasePath)
-        |> List.fold
-            (fun state item ->
-                state
-                |> Result.bind (fun materials -> item |> Result.map (fun material -> material :: materials)))
-            (Ok [])
+        AsmeMaterialRepository.findUniqueMany databasePath requestedCriteria
         |> Result.map (fun materials ->
             let selectDatasets
                 (level: MaterialAllowableStressLevel)

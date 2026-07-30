@@ -323,9 +323,18 @@ let ``material JSON round trip preserves advanced properties`` () =
                     N2 = 2.0
                     M2 = 1.0
                     Description = "Damage model" } ]
-            CreepReferenceStress = [ tensile ]
-            AverageRuptureStress = [ tensile ]
-            MinimumRuptureStress = [ tensile ]
+            AverageCreepStrainRateStress =
+                [ CreepStrainRateTableBuilder.create 0.01 "Average SC" [ 400.0, 120.0; 450.0, 100.0 ]
+                  |> expectOk ]
+            MinimumCreepStrainRateStress =
+                [ CreepStrainRateTableBuilder.create 0.01 "Minimum SC" [ 400.0, 100.0; 450.0, 80.0 ]
+                  |> expectOk ]
+            AverageCreepRuptureStress =
+                [ CreepStressRuptureTableBuilder.create 100000.0 "Average SRavg" [ 400.0, 140.0; 450.0, 110.0 ]
+                  |> expectOk ]
+            MinimumCreepRuptureStress =
+                [ CreepStressRuptureTableBuilder.create 100000.0 "Minimum SRmin" [ 400.0, 110.0; 450.0, 90.0 ]
+                  |> expectOk ]
             LarsonMillerCurves =
                 [ { Material = material.Id
                     Description = "LMP"
@@ -486,7 +495,7 @@ let ``creep replacement key uses exact structured applied stress`` () =
     Assert.Equal(2, material.StrengthProperties.CreepTables.Length)
 
 [<Fact>]
-let ``cyclic table serialization preserves amplitude and hysteresis data`` () =
+let ``cyclic table serialization preserves amplitude and hysteresis range data`` () =
     let table =
         CyclicStrainTableBuilder.create
             400.0
@@ -505,9 +514,6 @@ let ``cyclic table serialization preserves amplitude and hysteresis data`` () =
 
     Assert.Equal(2, actual.Table.Columns.Head.Entries.Length)
     Assert.Equal(2, actual.HysteresisRangeTable.Columns.Head.Entries.Length)
-    Assert.Equal(2, actual.HysteresisLoops.Length)
-    Assert.Contains(actual.HysteresisLoops.Head.Points, fun point -> point.Branch = Loading)
-    Assert.Contains(actual.HysteresisLoops.Head.Points, fun point -> point.Branch = Unloading)
     Assert.Equal(700.0, actual.Kcss, 12)
     Assert.Equal(0.12, actual.Ncss, 12)
     Assert.Equal("Carbon steel", actual.MaterialDescription)
@@ -578,7 +584,7 @@ let ``material JSON strictly enforces current schema`` () =
 
     let json = material |> MaterialSerialization.toJsonString
     let replaceVersion version =
-        Regex("\"schemaVersion\"\\s*:\\s*13").Replace(json, $"\"schemaVersion\": {version}", 1)
+        Regex("\"schemaVersion\"\\s*:\\s*14").Replace(json, $"\"schemaVersion\": {version}", 1)
 
     Assert.Contains("\"schemaVersion\"", json)
     Assert.Contains("\"family\":\"LAS2.25\"", json)

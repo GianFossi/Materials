@@ -14,7 +14,12 @@ type CyclicStressStrainPoint =
     }
 
 /// <summary>
-/// A point on the stress-range versus strain-range relation used to construct hysteresis loops.
+/// A point on the stress-range versus strain-range relation, used by
+/// <see cref="CyclicStrainTable.HysteresisRangeTable"/>. This relation is a genuine monotonic
+/// function of stress range (unlike a hysteresis loop plotted as stress vs. strain, which is
+/// bi-valued and therefore not representable as a single ascending-X <see cref="PropertyTable"/>);
+/// this project deliberately stores only this monotonic range-vs-range table, not raw loop
+/// coordinates.
 /// </summary>
 type HysteresisRangePoint =
     {
@@ -22,30 +27,5 @@ type HysteresisRangePoint =
         StressRange: float
         /// Strain range ε_tr (dimensionless).
         StrainRange: float
-    }
-
-/// Identifies the direction of travel around a hysteresis loop.
-type HysteresisBranch =
-    | Loading
-    | Unloading
-
-/// One ordered stress-strain coordinate on a hysteresis loop.
-type HysteresisLoopPoint =
-    {
-        /// Signed strain coordinate (dimensionless).
-        Strain: float
-        /// Signed stress coordinate (MPa).
-        Stress: float
-        /// Loading or unloading branch containing this point.
-        Branch: HysteresisBranch
-    }
-
-/// One closed, fully reversed hysteresis loop identified by its amplitudes.
-type HysteresisLoop =
-    {
-        StressAmplitude: float
-        StrainAmplitude: float
-        /// Ordered loading branch followed by ordered unloading branch.
-        Points: HysteresisLoopPoint list
     }
 
