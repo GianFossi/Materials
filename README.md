@@ -12,8 +12,8 @@ This repository is a DLL/NuGet package project (no installer).
 
 Current release:
 
-- NuGet/package version: `1.0.0`
-- Assembly/file version: `1.0.0.0`
+- NuGet/package version: `1.0.1`
+- Assembly/file version: `1.0.1.0`
 - Library API and README examples are aligned with the current `src/MaterialLibrary` layout
 
 ## Features | Funzionalita
@@ -262,12 +262,12 @@ dotnet pack .\src\MaterialLibrary\MaterialLibrary.fsproj -c Release -o .\publish
 
 Generated package:
 
-- `publish/nuget/MaterialLibrary.1.0.0.nupkg`
+- `publish/nuget/MaterialLibrary.1.0.1.nupkg`
 
 Publish to NuGet:
 
 ```bash
-dotnet nuget push .\publish\nuget\MaterialLibrary.1.0.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
+dotnet nuget push .\publish\nuget\MaterialLibrary.1.0.1.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
 ```
 
 ## API Example | Esempio API (F#)

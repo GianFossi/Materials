@@ -527,3 +527,15 @@ User-directed follow-up to the curve-vs-table discussion: adopt `PropertyTable`-
 - Follow-up: `Domain/FatigueTypes.fs`'s equivalent legacy-type issue was already resolved in the prior entry. No further known "curve as raw point list" holdouts remain in `StrengthProperties`; `LarsonMillerCurve` is the one intentional exception left (not requested for conversion in this pass) since it is a genuinely simple, single-parameter (P → stress) relation without a size/duration dimension.
 
 Verification: `dotnet build src/MaterialLibrary/MaterialLibrary.fsproj` (0 warnings, 0 errors), `dotnet test tests/MaterialLibrary.Tests` (31/31 passed after updating the two affected tests), `dotnet build tests/MaterialLibrary.Examples` (0 warnings, 0 errors), `dotnet build src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj` in Debug and Release (0 warnings, 0 errors, packed `.xll` produced both times).
+
+## 2026-07-30 - Bumped version to 1.0.1 everywhere
+
+- Date: 2026-07-30
+- Area: Version metadata
+- Change: Bumped every version string in the repository from `1.0.0` to `1.0.1`: `Version`/`PackageVersion`/`Title` in `src/MaterialLibrary/MaterialLibrary.fsproj`, `Version` in `src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj`, the matching mentions in `README.md` (current-release bullets, packed `.nupkg` filename, package title), and `Configuration.createDefault`'s `ConfigurationVersion` default.
+- Why: User-requested version update, reflecting the breaking `StrengthProperties`/JSON-schema (v13->v14) and Excel add-in changes made since the `1.0.0` release; user confirmed the version should read `1.0.1` everywhere, including `ConfigurationVersion` (a separate, independent config-file schema version, not the package version, but still requested to move in lockstep).
+- Impact: Metadata only; no logic changes. `ConfigurationVersion` only affects newly created default configuration files (via `Configuration.createDefault`/`loadOrCreateDefault`) — existing saved `MaterialLibrary.config.xml` files keep whatever `ConfigurationVersion` they already have (it is free-text and only checked for non-blank, not validated against a specific value).
+- Files: src/MaterialLibrary/MaterialLibrary.fsproj, src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj, src/MaterialLibrary/Configuration.fs, README.md, AI_HISTORY.md
+- Follow-up: None.
+
+Verification: `dotnet build src/MaterialLibrary/MaterialLibrary.fsproj` (0 warnings, 0 errors), `dotnet test tests/MaterialLibrary.Tests` (31/31 passed), `dotnet build src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj` (0 warnings, 0 errors, packed `.xll` produced).

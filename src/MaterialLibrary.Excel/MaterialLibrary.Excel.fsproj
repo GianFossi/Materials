@@ -8,7 +8,7 @@
     <LangVersion>latest</LangVersion>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <Nullable>enable</Nullable>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Title>Material Library - Excel Add-In</Title>
     <Description>Excel-DNA add-in exposing MaterialLibrary material search, complete property tables, and temperature/size-interpolated property lookups as Excel worksheet functions.</Description>
     <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>

@@ -145,7 +145,7 @@ module Configuration =
           ExtrapolateFlat = false }
 
     let createDefault () : LibraryConfiguration =
-        { ConfigurationVersion = "1.0.0"
+        { ConfigurationVersion = "1.0.1"
           General =
             { EnableDiagnostics = false
               StrictValidation = true
