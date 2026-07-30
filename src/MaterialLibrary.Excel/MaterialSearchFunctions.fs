@@ -41,13 +41,14 @@ module MaterialSearchFunctions =
     [<ExcelFunction(Category = "MaterialLibrary", Description = "Reports which material sources are currently loaded and how many materials each contributes.")>]
     let MatLibraryStatus () : string = LibraryCache.status ()
 
-    [<ExcelFunction(Category = "MaterialLibrary", Description = "Searches loaded materials by (partial, case-insensitive) specification/grade/product form/UNS/class-condition-tempering and/or exact family code. Every argument is optional; blank matches all. Spills one row per match.")>]
+    [<ExcelFunction(Category = "MaterialLibrary", Description = "Searches loaded materials by specification, grade, class/condition/tempering, UNS, nominal composition, product form, and/or exact family code. Every argument is optional; blank matches all. Spills one row per match.")>]
     let MatSearch
         ([<ExcelArgument(Description = "Specification substring, e.g. \"SA-516\".")>] specification: obj)
         ([<ExcelArgument(Description = "Grade substring, e.g. \"70\".")>] grade: obj)
-        ([<ExcelArgument(Description = "Product form substring, e.g. \"Plate\".")>] productForm: obj)
         ([<ExcelArgument(Description = "Class/Condition/Tempering substring.")>] classConditionTemper: obj)
         ([<ExcelArgument(Description = "UNS alloy designation substring.")>] uns: obj)
+        ([<ExcelArgument(Description = "Nominal composition substring, e.g. \"Carbon steel\".")>] nominalComposition: obj)
+        ([<ExcelArgument(Description = "Product form substring, e.g. \"Plate\".")>] productForm: obj)
         ([<ExcelArgument(Description = "Exact ASME family code, e.g. \"LAS2.25\", \"SSA\", \"CS\".")>] family: obj)
         : obj[,] =
         let contains value =
@@ -57,9 +58,10 @@ module MaterialSearchFunctions =
             { MaterialSearchCriteria.empty with
                 Specification = Args.optionalTextOption specification |> contains
                 Grade = Args.optionalTextOption grade |> contains
-                ProductForm = Args.optionalTextOption productForm |> contains
                 ClassConditionTemper = Args.optionalTextOption classConditionTemper |> contains
                 Uns = Args.optionalTextOption uns |> contains
+                NominalComposition = Args.optionalTextOption nominalComposition |> contains
+                ProductForm = Args.optionalTextOption productForm |> contains
                 Family = parseFamily (Args.optionalTextOption family) }
 
         let matches =
@@ -73,17 +75,28 @@ module MaterialSearchFunctions =
                 matches
                 |> List.map (fun material ->
                     [ box material.Id
-                      box material.Name
                       box material.Specification
                       box material.Grade
-                      box (material.Family |> Option.map AsmeMaterialFamily.code |> Option.defaultValue "")
-                      box material.ProductForm ])
+                      box material.Class_Condition_Tempering
+                      box material.AlloyIdentification_UNS
+                      box material.NominalComposition
+                      box material.ProductForm
+                      box (material.Family |> Option.map AsmeMaterialFamily.code |> Option.defaultValue "") ])
 
-            ExcelHelpers.gridOfRows [ "Id"; "Name"; "Specification"; "Grade"; "Family"; "ProductForm" ] rows
+            ExcelHelpers.gridOfRows
+                [ "Id"
+                  "Specification"
+                  "Grade"
+                  "ClassConditionTempering"
+                  "UNS"
+                  "NominalComposition"
+                  "ProductForm"
+                  "Family" ]
+                rows
 
     [<ExcelFunction(Category = "MaterialLibrary", Description = "Returns a formatted multi-line summary of a material's identity and available data inventory.")>]
     let MatDescribe
-        ([<ExcelArgument(Description = "Material ID, e.g. \"ASME-123\" or an ID returned by MatSearch.")>] materialId: string)
+        ([<ExcelArgument(Description = "Material ID, e.g. \"123\" or an ID returned by MatSearch.")>] materialId: string)
         : obj =
         LibraryCache.current().DescribeMaterial materialId
         |> ExcelHelpers.ofStringResult

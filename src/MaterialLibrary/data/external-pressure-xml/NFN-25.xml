@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExternalPressureTableImport name="NFN-25" figure="NFN-25" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" pdfPage="1368" printedPage="1318" units="A=dimensionless; B=MPa; Temperature=degC" status="raw-tokenized-review-required">
+  <ReferenceData>NFN-25</ReferenceData>
+  <Notes>Extracted from ASME BPVC II-D Metric 2025 external-pressure tabular values. RawTokens preserve PDF text; validate continuation exponents before SQLite import.</Notes>
+  <RawText>Temp., °C
+A
+B, MPa
+38
+0.100 -04
+0.103 +01
+0.100 -03
+0.103 +02
+0.500
+0.517
+0.750
+0.775
+0.100 -02
+0.984
+0.124
+0.106 +03
+0.145
+0.109
+0.174
+0.112
+0.192
+0.113
+0.295
+0.117
+0.465
+0.121
+0.677
+0.124
+0.927
+0.126
+0.188 -01
+0.131
+0.500
+0.137
+0.100 +00
+0.138
+Temp., °C
+A
+B, MPa
+205
+0.100 -04
+0.983 +00
+0.100 -03
+0.983 +01
+0.500
+0.491 +02
+0.750
+0.736
+0.990
+0.929
+0.125 -02
+0.101 +03
+0.145
+0.104
+0.173
+0.107
+0.192
+0.108
+0.288
+0.112
+0.493
+0.117
+0.663
+0.119
+0.972
+0.122
+0.194 -01
+0.127
+0.500
+0.132
+0.100 +00
+0.132</RawText>
+  <RawTokens>
+    <Token index="1">°C</Token>
+    <Token index="2">38</Token>
+    <Token index="3">0.100</Token>
+    <Token index="4">-04</Token>
+    <Token index="5">0.103</Token>
+    <Token index="6">+01</Token>
+    <Token index="7">0.100</Token>
+    <Token index="8">-03</Token>
+    <Token index="9">0.103</Token>
+    <Token index="10">+02</Token>
+    <Token index="11">0.500</Token>
+    <Token index="12">0.517</Token>
+    <Token index="13">0.750</Token>
+    <Token index="14">0.775</Token>
+    <Token index="15">0.100</Token>
+    <Token index="16">-02</Token>
+    <Token index="17">0.984</Token>
+    <Token index="18">0.124</Token>
+    <Token index="19">0.106</Token>
+    <Token index="20">+03</Token>
+    <Token index="21">0.145</Token>
+    <Token index="22">0.109</Token>
+    <Token index="23">0.174</Token>
+    <Token index="24">0.112</Token>
+    <Token index="25">0.192</Token>
+    <Token index="26">0.113</Token>
+    <Token index="27">0.295</Token>
+    <Token index="28">0.117</Token>
+    <Token index="29">0.465</Token>
+    <Token index="30">0.121</Token>
+    <Token index="31">0.677</Token>
+    <Token index="32">0.124</Token>
+    <Token index="33">0.927</Token>
+    <Token index="34">0.126</Token>
+    <Token index="35">0.188</Token>
+    <Token index="36">-01</Token>
+    <Token index="37">0.131</Token>
+    <Token index="38">0.500</Token>
+    <Token index="39">0.137</Token>
+    <Token index="40">0.100</Token>
+    <Token index="41">+00</Token>
+    <Token index="42">0.138</Token>
+    <Token index="43">°C</Token>
+    <Token index="44">205</Token>
+    <Token index="45">0.100</Token>
+    <Token index="46">-04</Token>
+    <Token index="47">0.983</Token>
+    <Token index="48">+00</Token>
+    <Token index="49">0.100</Token>
+    <Token index="50">-03</Token>
+    <Token index="51">0.983</Token>
+    <Token index="52">+01</Token>
+    <Token index="53">0.500</Token>
+    <Token index="54">0.491</Token>
+    <Token index="55">+02</Token>
+    <Token index="56">0.750</Token>
+    <Token index="57">0.736</Token>
+    <Token index="58">0.990</Token>
+    <Token index="59">0.929</Token>
+    <Token index="60">0.125</Token>
+    <Token index="61">-02</Token>
+    <Token index="62">0.101</Token>
+    <Token index="63">+03</Token>
+    <Token index="64">0.145</Token>
+    <Token index="65">0.104</Token>
+    <Token index="66">0.173</Token>
+    <Token index="67">0.107</Token>
+    <Token index="68">0.192</Token>
+    <Token index="69">0.108</Token>
+    <Token index="70">0.288</Token>
+    <Token index="71">0.112</Token>
+    <Token index="72">0.493</Token>
+    <Token index="73">0.117</Token>
+    <Token index="74">0.663</Token>
+    <Token index="75">0.119</Token>
+    <Token index="76">0.972</Token>
+    <Token index="77">0.122</Token>
+    <Token index="78">0.194</Token>
+    <Token index="79">-01</Token>
+    <Token index="80">0.127</Token>
+    <Token index="81">0.500</Token>
+    <Token index="82">0.132</Token>
+    <Token index="83">0.100</Token>
+    <Token index="84">+00</Token>
+    <Token index="85">0.132</Token>
+  </RawTokens>
+</ExternalPressureTableImport>

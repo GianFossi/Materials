@@ -54,7 +54,7 @@ module AsmeMaterialRepository =
                 None
 
         Material.create
-            $"ASME-{databaseId}"
+            $"{databaseId}"
             $"{specification} {grade}"
             specification
             grade
@@ -201,8 +201,73 @@ module AsmeMaterialRepository =
                 (Ok [])
             |> Result.map List.rev
 
+    let private strengthTableReference tableName =
+        match tableName with
+        | "YieldStrengthTable" -> TableSy
+        | "UltimateStrengthTable" -> TableSu
+        | _ -> TableSy
+
+    let private loadStrengthTable (connection: SqliteConnection) materialId tableName =
+        use command = connection.CreateCommand()
+        command.CommandText <- $"SELECT * FROM {tableName} WHERE MaterialID = $materialId ORDER BY ID"
+        command.Parameters.AddWithValue("$materialId", materialId) |> ignore
+        use reader = command.ExecuteReader()
+        let rows = ResizeArray<Map<int, float> * AsmeNoteReference list * int64>()
+
+        while reader.Read() do
+            let values =
+                temperatures
+                |> List.choose (fun temperature ->
+                    optionalNumber reader $"T_{temperature}"
+                    |> Option.map (fun value -> temperature, value))
+                |> Map.ofList
+
+            if not values.IsEmpty then
+                let noteReferences =
+                    optionalText reader "Notes"
+                    |> AsmeNoteReference.parse (strengthTableReference tableName)
+
+                rows.Add(values, noteReferences, reader.GetInt64(reader.GetOrdinal "ID"))
+
+        rows
+        |> Seq.toList
+        |> List.sortBy (fun (values, _, rowId) -> values |> Map.toList |> List.sumBy snd, rowId)
+        |> List.tryHead
+
+    let private loadTensileProperties (connection: SqliteConnection) materialId elongation =
+        match
+            loadStrengthTable connection materialId "YieldStrengthTable",
+            loadStrengthTable connection materialId "UltimateStrengthTable"
+        with
+        | Some(yieldValues, yieldNotes, _), Some(ultimateValues, ultimateNotes, _) ->
+            let tensileProperties =
+                temperatures
+                |> List.choose (fun temperature ->
+                    match Map.tryFind temperature yieldValues, Map.tryFind temperature ultimateValues with
+                    | Some yieldStrength, Some tensileStrength ->
+                        Some
+                            { Temperature = float temperature
+                              YieldStrength = yieldStrength
+                              TensileStrength = tensileStrength
+                              ElongationPercent = elongation
+                              ReductionOfAreaPercent = 0.0 }
+                    | _ -> None)
+
+            tensileProperties, List.distinct (yieldNotes @ ultimateNotes)
+        | _ -> [], []
+
+    let private allowableDatasetSortKey (dataset: AllowableStressDataset) =
+        let lower = dataset.SizeMinimum |> Option.defaultValue Double.NegativeInfinity
+        let upper = dataset.SizeMaximum |> Option.defaultValue Double.PositiveInfinity
+        dataset.Source, lower, upper, dataset.DatabaseRowId
+
     let private hydrate (connection: SqliteConnection) (material: Material) =
-        let databaseId = Int64.Parse(material.Id.Substring("ASME-".Length))
+        let databaseId = Int64.Parse(material.Id)
+        let tensileProperties, tensileNotes =
+            loadTensileProperties
+                connection
+                databaseId
+                material.BasicProperties.ElongationPercent
 
         let sources =
             [ Division1AllowableStress
@@ -230,10 +295,12 @@ module AsmeMaterialRepository =
                 |> List.distinct
 
             { material with
+                AsmeNoteReferences = List.distinct (material.AsmeNoteReferences @ tensileNotes)
                 ApplicableAsmeCodes = applicableCodes
                 StrengthProperties =
                     { material.StrengthProperties with
-                        AllowableStressDatasets = datasets |> List.sortBy (fun dataset -> dataset.DatabaseRowId) } })
+                        TensileProperties = tensileProperties
+                        AllowableStressDatasets = datasets |> List.sortBy allowableDatasetSortKey } })
 
     let findMany databasePath criteria =
         if String.IsNullOrWhiteSpace databasePath || not (File.Exists databasePath) then

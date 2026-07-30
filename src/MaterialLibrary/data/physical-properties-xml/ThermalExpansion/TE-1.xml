@@ -1,0 +1,4893 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PhysicalPropertyTableImport name="TE-1" sourceTable="TE-1" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1205" sourcePageEnd="1211" status="raw-tokenized-review-required">
+  <ReferenceData>TE-1</ReferenceData>
+  <Notes>Thermal expansion values for ferrous materials; source columns A, B, and C retained as raw PDF tokens. Page 1205 introduction retained for requested boundary context. Validate wrapped rows, repeated headers, and table continuation before SQLite import.</Notes>
+  <SourceColumns>A=instantaneous thermal expansion factor; B=average thermal expansion factor; C=linear thermal expansion; Temperature=degC. Confirm ASME notation before import.</SourceColumns>
+  <RawText>--- SourcePage 1205 ---
+SUBPART 2
+PHYSICAL PROPERTIES TABLES
+INTRODUCTION
+Section II, Part D, Subpart 2 provides, to the extent pos-
+sible, physical properties for most of the alloys used in
+Code construction. Included in this Subpart are tables of
+thermal expansion (instantaneous, mean, and linear),
+thermal conductivity and thermal diffusivity, and modu-
+lus of elasticity. These values are all listed as a function
+of temperature from 20°C to as high as 1 000°C. Subpart
+2 also contains tables of density and Poisson’s ratio for
+ferrous and nonferrous alloys.
+All of the properties provided in Subpart 2 are consid-
+ered typical. They are neither average nor minimum.
+Thermal–physical properties such as thermal expansion,
+thermal conductivity, and thermal diffusivity are affected
+more by alloy content than by crystal structure or heat
+treatment. Due to the permitted range for elements com-
+prising alloys (specification ranges of chemical composi-
+tions), the thermal–physical properties described in
+Tables TE-1 through TE-5 and Table TCD should be con-
+sidered to have an associated uncertainty of ±10%.
+Moduli of elasticity and Poisson’s ratio are also typical
+values, but the values of modulus of elasticity, shown as a
+function of temperature in Tables TM-1 through TM-5,
+tend to be closer to average values since their tempera-
+ture dependency is factored against an “average” room‐
+temperature value.
+The physical properties listed in this Subpart are for in-
+formation only, unless invoked by a Boiler &amp; Pressure
+Vessel Code (Sections I, III, IV, VIII, X, XI, and XII). When
+a user of the Code has data supporting the use of values
+different from those in this Subpart, such other values
+may be used in lieu of the values in this Subpart.
+Values for temperatures between those tabulated may
+be obtained by linear interpolation.
+For those alloys for which physical properties are not
+yet addressed in Subpart 2, the user of the Code may
+use other authoritative sources for the needed informa-
+tion. In those instances, or when alternative values are
+used, the user is encouraged to submit the values and
+supporting data to the attention of the ASME Boiler and
+Pressure Vessel Committee II on Materials for its consid-
+eration in improving and revising the values in Subpart 2.
+Information should be directed to:
+Secretary
+ASME Boiler and Pressure Vessel Committee II on
+Materials
+Two Park Avenue
+New York, NY 10016‐5990
+1155
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1206 ---
+ð25Þ
+Table TE-1
+Thermal Expansion for Ferrous Materials
+Temperature, °C
+Coefficients for Carbon and Low Alloy
+Steels (Group 1) [Note (1)]
+Coefficients for Other Alloy Steels
+(Group 2) [Note (2)]
+Coefficients for 5Cr–1Mo and
+29Cr–7Ni–2Mo–N Steels
+A
+B
+C
+A
+B
+C
+A
+B
+C
+20
+11.5
+11.5
+0
+12.6
+12.6
+0
+11.5
+11.5
+0
+50
+12.0
+11.8
+0.35
+13.0
+12.8
+0.38
+12.0
+11.8
+0.35
+75
+12.3
+11.9
+0.65
+13.3
+13.0
+0.72
+12.3
+12.0
+0.66
+100
+12.7
+12.1
+0.97
+13.5
+13.1
+1.0
+12.6
+12.1
+0.97
+125
+12.9
+12.3
+1.3
+13.8
+13.2
+1.4
+12.8
+12.3
+1.3
+150
+13.2
+12.4
+1.6
+14.0
+13.4
+1.7
+12.9
+12.4
+1.6
+175
+13.5
+12.6
+2.0
+14.2
+13.5
+2.1
+13.0
+12.5
+1.9
+200
+13.8
+12.7
+2.3
+14.4
+13.6
+2.4
+13.2
+12.6
+2.3
+225
+14.0
+12.9
+2.6
+14.6
+13.7
+2.8
+13.3
+12.6
+2.6
+250
+14.3
+13.0
+3.0
+14.8
+13.8
+3.2
+13.4
+12.7
+2.9
+275
+14.6
+13.2
+3.4
+15.0
+13.9
+3.6
+13.5
+12.8
+3.3
+300
+14.9
+13.3
+3.7
+15.1
+14.0
+3.9
+13.6
+12.8
+3.6
+325
+15.1
+13.4
+4.1
+15.3
+14.1
+4.3
+13.7
+12.9
+3.9
+350
+15.4
+13.6
+4.5
+15.4
+14.2
+4.7
+13.8
+13.0
+4.3
+375
+15.7
+13.7
+4.9
+15.5
+14.3
+5.1
+14.0
+13.0
+4.6
+400
+15.9
+13.8
+5.3
+15.7
+14.4
+5.5
+14.1
+13.1
+5.0
+425
+16.1
+14.0
+5.7
+15.8
+14.5
+5.9
+14.2
+13.2
+5.3
+450
+16.4
+14.1
+6.1
+15.9
+14.6
+6.3
+14.4
+13.2
+5.7
+475
+16.5
+14.2
+6.5
+16.0
+14.6
+6.7
+14.5
+13.3
+6.1
+500
+16.7
+14.4
+6.9
+16.1
+14.7
+7.1
+14.6
+13.4
+6.4
+525
+16.8
+14.5
+7.3
+16.2
+14.8
+7.5
+14.7
+13.4
+6.8
+550
+16.9
+14.6
+7.7
+16.2
+14.8
+7.9
+14.8
+13.5
+7.2
+575
+17.0
+14.7
+8.2
+16.3
+14.9
+8.3
+14.9
+13.6
+7.5
+600
+17.0
+14.8
+8.6
+16.4
+15.0
+8.7
+15.0
+13.6
+7.9
+625
+17.1
+14.9
+9.0
+16.4
+15.0
+9.1
+15.1
+13.7
+8.3
+650
+17.1
+15.0
+9.4
+16.4
+15.1
+9.5
+15.2
+13.7
+8.7
+675
+17.1
+15.1
+9.9
+16.4
+15.1
+9.9
+15.3
+13.8
+9.0
+700
+17.1
+15.1
+10.3
+16.4
+15.2
+10.3
+15.4
+13.9
+9.4
+725
+17.1
+15.2
+10.7
+16.3
+15.2
+10.7
+15.6
+13.9
+9.8
+750
+17.2
+15.3
+11.1
+16.3
+15.3
+11.1
+15.9
+14.0
+10.2
+775
+17.4
+15.3
+11.6
+16.2
+15.3
+11.1
+16.3
+14.0
+10.6
+800
+17.7
+15.4
+12.0
+16.0
+15.3
+11.5
+16.8
+14.1
+11.0
+825
+18.1
+15.5
+12.5
+15.8
+15.3
+11.9
+17.4
+14.2
+11.4
+1156
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1207 ---
+Table TE-1
+Thermal Expansion for Ferrous Materials (Cont'd)
+Temperature, °C
+Coefficients for 9Cr–1Mo Steels (In-
+cluding Grades 9, 91, 911, and 92)
+Coefficients for 5Ni–1/4Mo Steels
+Coefficients for 7% Nickel Steel
+A
+B
+C
+A
+B
+C
+A
+B
+C
+20
+10.5
+10.5
+0
+11.2
+11.2
+0
+10.6
+10.6
+0
+50
+10.8
+10.6
+0.32
+11.6
+11.4
+0.34
+11.1
+10.8
+0.32
+75
+11.0
+10.7
+0.59
+12.0
+11.6
+0.64
+11.6
+11.1
+0.61
+100
+11.2
+10.9
+0.87
+12.3
+11.8
+0.94
+11.9
+11.3
+0.90
+125
+11.4
+11.0
+1.2
+12.5
+11.9
+1.3
+12.2
+11.5
+1.3
+150
+11.6
+11.1
+1.4
+12.7
+12.0
+1.6
+12.5
+11.6
+1.6
+175
+11.8
+11.2
+1.7
+13.0
+12.2
+1.9
+12.7
+11.8
+1.9
+200
+12.0
+11.3
+2.0
+13.2
+12.3
+2.2
+12.9
+11.9
+2.2
+225
+12.2
+11.4
+2.3
+13.4
+12.4
+2.5
+13.1
+12.1
+2.5
+250
+12.4
+11.5
+2.6
+13.6
+12.5
+2.9
+13.2
+12.2
+2.8
+275
+12.5
+11.6
+3.0
+13.8
+12.7
+3.2
+13.4
+12.3
+3.1
+300
+12.7
+11.7
+3.3
+14.0
+12.8
+3.6
+13.5
+12.4
+3.5
+325
+12.8
+11.8
+3.6
+14.3
+12.9
+3.9
+13.7
+12.5
+3.8
+350
+13.0
+11.9
+3.9
+14.5
+13.0
+4.3
+13.9
+12.6
+4.2
+375
+13.1
+11.9
+4.2
+14.6
+13.1
+4.7
+14.0
+12.7
+4.5
+400
+13.3
+12.0
+4.6
+14.8
+13.2
+5.0
+14.2
+12.8
+4.9
+425
+13.4
+12.1
+4.9
+15.0
+13.3
+5.4
+14.4
+12.9
+5.2
+450
+13.6
+12.2
+5.2
+15.1
+13.4
+5.8
+14.5
+13.0
+5.6
+475
+13.7
+12.3
+5.6
+15.3
+13.5
+6.1
+14.5
+13.0
+5.9
+500
+13.8
+12.3
+5.9
+15.4
+13.6
+6.5
+14.4
+13.1
+6.3
+525
+14.0
+12.4
+6.3
+15.6
+13.7
+6.9
+...
+...
+...
+550
+14.2
+12.5
+6.6
+15.8
+13.8
+7.3
+...
+...
+...
+575
+14.4
+12.6
+7.0
+16.0
+13.9
+7.7
+...
+...
+...
+600
+14.6
+12.7
+7.3
+16.4
+14.0
+8.1
+...
+...
+...
+625
+14.9
+12.7
+7.7
+16.9
+14.1
+8.5
+...
+...
+...
+650
+15.2
+12.8
+8.1
+17.5
+14.2
+9.0
+...
+...
+...
+675
+15.5
+12.9
+8.5
+...
+...
+...
+...
+...
+...
+700
+16.0
+13.0
+8.9
+...
+...
+...
+...
+...
+...
+725
+16.5
+13.1
+9.3
+...
+...
+...
+...
+...
+...
+750
+17.1
+13.3
+9.7
+...
+...
+...
+...
+...
+...
+775
+17.9
+13.4
+10.1
+...
+...
+...
+...
+...
+...
+800
+18.8
+13.6
+10.6
+...
+...
+...
+...
+...
+...
+825
+19.9
+13.8
+11.1
+...
+...
+...
+...
+...
+...
+1157
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1208 ---
+Table TE-1
+Thermal Expansion for Ferrous Materials (Cont'd)
+Temperature, °C
+Coefficients for 8Ni and 9Ni Steels
+Coefficients for 12Cr, 12Cr–1Al, 13Cr,
+and 13Cr–4Ni Steels
+Coefficients for 15Cr and 17Cr Steels
+A
+B
+C
+A
+B
+C
+A
+B
+C
+20
+9.9
+9.9
+0
+10.6
+10.6
+0
+9.6
+9.6
+0
+50
+10.5
+10.2
+0.31
+11.1
+10.9
+0.33
+9.9
+9.7
+0.29
+75
+11.1
+10.5
+0.58
+11.3
+11.0
+0.61
+10.1
+9.9
+0.54
+100
+11.5
+10.7
+0.86
+11.5
+11.1
+0.89
+10.3
+10.0
+0.80
+125
+11.9
+11.0
+1.2
+11.7
+11.3
+1.2
+10.5
+10.1
+1.1
+150
+12.2
+11.2
+1.5
+11.8
+11.4
+1.5
+10.7
+10.2
+1.3
+175
+12.4
+11.4
+1.8
+11.9
+11.4
+1.8
+10.9
+10.3
+1.6
+200
+12.6
+11.5
+2.1
+12.0
+11.5
+2.1
+11.1
+10.4
+1.9
+225
+12.7
+11.7
+2.4
+12.1
+11.6
+2.4
+11.2
+10.5
+2.2
+250
+12.8
+11.8
+2.7
+12.1
+11.6
+2.7
+11.4
+10.6
+2.4
+275
+12.9
+11.9
+3.0
+12.2
+11.7
+3.0
+11.5
+10.7
+2.7
+300
+12.9
+12.0
+3.4
+12.3
+11.7
+3.3
+11.7
+10.8
+3.0
+325
+13.1
+12.0
+3.7
+12.4
+11.8
+3.6
+11.8
+10.8
+3.3
+350
+13.2
+12.1
+4.0
+12.5
+11.8
+3.9
+11.9
+10.9
+3.6
+375
+13.4
+12.2
+4.3
+12.6
+11.9
+4.2
+12.0
+11.0
+3.9
+400
+13.6
+12.3
+4.7
+12.7
+11.9
+4.5
+12.0
+11.0
+4.2
+425
+13.7
+12.4
+5.0
+12.8
+12.0
+4.9
+12.1
+11.1
+4.5
+450
+13.8
+12.5
+5.4
+12.9
+12.0
+5.2
+12.2
+11.2
+4.8
+475
+13.7
+12.5
+5.7
+13.0
+12.1
+5.5
+12.2
+11.2
+5.1
+500
+13.4
+12.6
+6.0
+13.1
+12.1
+5.8
+12.2
+11.3
+5.4
+525
+12.7
+12.6
+6.4
+13.2
+12.2
+6.2
+12.3
+11.3
+5.7
+550
+11.6
+12.6
+6.7
+13.3
+12.2
+6.5
+12.3
+11.4
+6.0
+575
+...
+...
+...
+13.3
+12.3
+6.8
+12.4
+11.4
+6.3
+600
+...
+...
+...
+13.3
+12.3
+7.2
+12.5
+11.5
+6.6
+625
+...
+...
+...
+13.4
+12.4
+7.5
+12.5
+11.5
+7.0
+650
+...
+...
+...
+13.4
+12.4
+7.8
+12.7
+11.5
+7.3
+675
+...
+...
+...
+13.4
+12.5
+8.2
+12.8
+11.6
+7.6
+700
+...
+...
+...
+13.4
+12.5
+8.5
+13.0
+11.6
+7.9
+725
+...
+...
+...
+13.4
+12.5
+8.8
+13.3
+11.7
+8.2
+750
+...
+...
+...
+13.4
+12.5
+9.2
+13.6
+11.7
+8.6
+775
+...
+...
+...
+13.5
+12.6
+9.5
+14.0
+11.8
+8.9
+800
+...
+...
+...
+13.6
+12.6
+9.8
+14.5
+11.9
+9.3
+825
+...
+...
+...
+13.8
+12.6
+10.2
+15.2
+12.0
+9.6
+1158
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1209 ---
+Table TE-1
+Thermal Expansion for Ferrous Materials (Cont'd)
+Temperature, °C
+Coefficients for 27Cr Steels
+Coefficients for Austenitic Stainless
+Steels (Group 3) [Note (3)]
+Coefficients for Other Austenitic
+Stainless Steels (Group 4) [Note (4)]
+A
+B
+C
+A
+B
+C
+A
+B
+C
+20
+9.0
+9.0
+0
+15.3
+15.3
+0
+14.7
+14.7
+0
+50
+9.3
+9.2
+0.28
+16.0
+15.6
+0.47
+15.2
+15.0
+0.45
+75
+9.4
+9.2
+0.51
+16.5
+15.9
+0.87
+15.6
+15.2
+0.84
+100
+9.5
+9.3
+0.74
+17.0
+16.2
+1.3
+16.0
+15.4
+1.2
+125
+9.6
+9.4
+0.99
+17.4
+16.4
+1.7
+16.3
+15.6
+1.6
+150
+9.7
+9.4
+1.2
+17.8
+16.6
+2.2
+16.5
+15.7
+2.0
+175
+9.8
+9.5
+1.5
+18.1
+16.8
+2.6
+16.8
+15.9
+2.5
+200
+9.9
+9.5
+1.7
+18.4
+17.0
+3.1
+16.9
+16.0
+2.9
+225
+10.0
+9.6
+2.0
+18.6
+17.2
+3.5
+17.1
+16.1
+3.3
+250
+10.1
+9.6
+2.2
+18.8
+17.4
+4.0
+17.3
+16.3
+3.7
+275
+10.2
+9.7
+2.5
+18.9
+17.5
+4.5
+17.4
+16.4
+4.2
+300
+10.3
+9.7
+2.7
+19.1
+17.7
+4.9
+17.6
+16.5
+4.6
+325
+10.5
+9.8
+3.0
+19.2
+17.8
+5.4
+17.7
+16.6
+5.0
+350
+10.6
+9.9
+3.3
+19.3
+17.9
+5.9
+17.8
+16.6
+5.5
+375
+10.8
+9.9
+3.5
+19.4
+18.0
+6.4
+18.0
+16.7
+5.9
+400
+10.9
+10.0
+3.8
+19.5
+18.1
+6.9
+18.1
+16.8
+6.4
+425
+11.1
+10.0
+4.1
+19.6
+18.2
+7.4
+18.3
+16.9
+6.8
+450
+11.2
+10.1
+4.3
+19.8
+18.3
+7.9
+18.4
+17.0
+7.3
+475
+11.3
+10.2
+4.6
+20.0
+18.4
+8.3
+18.6
+17.1
+7.8
+500
+11.4
+10.2
+4.9
+20.2
+18.4
+8.9
+18.8
+17.2
+8.2
+525
+11.5
+10.3
+5.2
+20.4
+18.5
+9.4
+19.0
+17.2
+8.7
+550
+11.6
+10.4
+5.5
+20.6
+18.6
+9.9
+19.2
+17.3
+9.2
+575
+11.6
+10.4
+5.8
+20.9
+18.7
+10.4
+19.4
+17.4
+9.7
+600
+11.7
+10.5
+6.1
+21.1
+18.8
+10.9
+19.6
+17.5
+10.2
+625
+11.7
+10.5
+6.4
+21.4
+18.9
+11.4
+19.8
+17.6
+10.6
+650
+11.8
+10.6
+6.7
+21.6
+19.0
+12.0
+20.0
+17.7
+11.1
+675
+11.9
+10.6
+7.0
+21.7
+19.1
+12.5
+20.3
+17.8
+11.7
+700
+12.0
+10.7
+7.2
+21.7
+19.2
+13.1
+20.5
+17.9
+12.2
+725
+12.2
+10.7
+7.6
+21.5
+19.3
+13.6
+20.7
+18.0
+12.7
+750
+12.4
+10.8
+7.9
+21.2
+19.4
+14.1
+20.9
+18.1
+13.2
+775
+12.9
+10.8
+8.2
+20.6
+19.4
+14.7
+21.2
+18.2
+13.7
+800
+13.4
+10.9
+8.5
+19.7
+19.4
+15.2
+21.4
+18.3
+14.3
+825
+14.2
+11.0
+8.8
+18.4
+19.4
+15.6
+21.6
+18.4
+14.8
+1159
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1210 ---
+Table TE-1
+Thermal Expansion for Ferrous Materials (Cont'd)
+Temperature, °C
+Coefficients for Ductile Cast Iron
+Coefficients for Precipitation
+Hardened 17Cr–4Ni–4Cu Stainless
+Steels, Condition 1075
+Coefficients for Precipitation
+Hardened 17Cr–4Ni–4Cu Stainless
+Steels, Condition 1150
+A
+B
+C
+A
+B
+C
+A
+B
+C
+20
+10.3
+10.3
+0
+11.1
+11.1
+0
+11.5
+11.5
+0
+50
+10.7
+10.5
+0.32
+11.3
+11.2
+0.34
+11.8
+11.6
+0.35
+75
+11.1
+10.7
+0.59
+11.4
+11.3
+0.62
+12.0
+11.8
+0.65
+100
+11.6
+10.9
+0.87
+11.6
+11.4
+0.91
+12.3
+11.9
+0.95
+125
+12.1
+11.1
+1.2
+11.7
+11.4
+1.2
+12.5
+12.0
+1.3
+150
+12.5
+11.3
+1.5
+11.8
+11.5
+1.5
+12.7
+12.1
+1.6
+175
+13.0
+11.6
+1.8
+12.0
+11.6
+1.8
+12.9
+12.2
+1.9
+200
+13.3
+11.8
+2.1
+12.1
+11.6
+2.1
+13.1
+12.3
+2.2
+225
+13.6
+12.0
+2.5
+12.2
+11.7
+2.4
+13.2
+12.4
+2.6
+250
+13.9
+12.2
+2.8
+12.3
+11.8
+2.7
+13.4
+12.5
+2.9
+275
+14.1
+12.4
+3.1
+12.5
+11.8
+3.0
+13.5
+12.6
+3.2
+300
+14.2
+12.5
+3.5
+12.6
+11.9
+3.3
+13.5
+12.7
+3.6
+325
+14.2
+12.6
+3.9
+12.7
+11.9
+3.6
+13.6
+12.8
+3.9
+350
+14.3
+12.8
+4.2
+12.8
+12.0
+4.0
+13.6
+12.8
+4.2
+375
+14.3
+12.9
+4.6
+12.9
+12.1
+4.3
+13.6
+12.9
+4.6
+400
+14.4
+13.0
+4.9
+13.0
+12.1
+4.6
+13.6
+12.9
+4.9
+425
+14.5
+13.1
+5.3
+13.0
+12.2
+4.9
+13.7
+13.0
+5.3
+450
+14.6
+13.2
+5.7
+13.1
+12.2
+5.3
+13.8
+13.0
+5.6
+475
+14.9
+13.2
+6.0
+13.1
+12.3
+5.6
+13.9
+13.1
+5.9
+500
+15.1
+13.3
+6.4
+...
+...
+...
+14.3
+13.1
+6.3
+525
+15.5
+13.4
+6.8
+...
+...
+...
+14.8
+13.2
+6.7
+550
+16.0
+13.5
+7.2
+...
+...
+...
+15.6
+13.3
+7.0
+575
+...
+...
+...
+...
+...
+...
+...
+...
+...
+600
+...
+...
+...
+...
+...
+...
+...
+...
+...
+625
+...
+...
+...
+...
+...
+...
+...
+...
+...
+650
+...
+...
+...
+...
+...
+...
+...
+...
+...
+675
+...
+...
+...
+...
+...
+...
+...
+...
+...
+700
+...
+...
+...
+...
+...
+...
+...
+...
+...
+725
+...
+...
+...
+...
+...
+...
+...
+...
+...
+750
+...
+...
+...
+...
+...
+...
+...
+...
+...
+775
+...
+...
+...
+...
+...
+...
+...
+...
+...
+800
+...
+...
+...
+...
+...
+...
+...
+...
+...
+825
+...
+...
+...
+...
+...
+...
+...
+...
+...
+GENERAL NOTE: Coefficient A is the instantaneous coefficient of thermal expansion × 10−6 (mm/mm/°C). Coefficient B is the mean coeffi-
+cient of thermal expansion × 10−6 (mm/mm/°C) in going from 20°C to indicated temperature. Coefficient C is the linear thermal expansion
+(mm/m) in going from 20°C to indicated temperature.
+NOTES:
+(1) Group 1 alloys (by nominal composition):
+Carbon steel
+C–Mn–Cb
+C–Mn–Si–Cb
+C–Mn–Si–V
+C–Mn–Ti
+C–Si–Ti
+C–1/4Mo
+C–1/2Mo
+1/2Cr–1/5Mo
+1/2Cr–1/5Mo–V
+1/2Cr–1/4Mo–Si
+1/2Cr–1/2Mo
+3/4Cr–1/2Ni–Cu
+3/4Cr–3/4Ni–Cu–Al
+1Cr–1/5Mo
+1Cr–1/5Mo–Si
+1Cr–1/2Mo
+1Cr–1/2Mo–V
+11/4Cr–1/2Mo
+11/4Cr–1/2Mo–Si
+13/4Cr–1/2Mo–Cu
+13/4Cr–1/2Mo–Ti
+2Cr–1/2Mo
+21/4Cr–1Mo
+3Cr–1Mo
+3Cr–1Mo–1/4V–Cb–Ca
+3Cr–1Mo–1/4V–Ti–B
+Mn–1/4Mo
+Mn–1/2Mo
+Mn–1/2Mo–1/4Ni
+Mn–1/2Mo–1/2Ni
+Mn–1/2Mo–3/4Ni
+Mn–V
+1/2Ni–1/2Cr–1/4Mo
+1/2Ni–1/2Cr–1/4Mo–V
+1/2Ni–1/2Mo–V
+3/4Ni–1/2Cr–1/2Mo–V
+3/4Ni–1/2Cu–Mo
+3/4Ni–1/2Mo–1/3Cr–V
+3/4Ni–1/2Mo–Cr–V
+3/4Ni–1Mo–3/4Cr
+1Ni–1/2Cr–1/2Mo
+11/4Ni–1Cr–1/2Mo
+13/4Ni–3/4Cr–1/4Mo
+2Ni–3/4Cr–1/4Mo
+2Ni–3/4Cr–1/3Mo
+2Ni–11/2Cr–1/4Mo–V
+21/2Ni
+23/4Ni–11/2Cr–1/2Mo–V
+31/2Ni
+31/2Ni–11/2Cr–1/2Mo–1/2Mn
+31/2Ni–13/4Cr–1/2Mo–V
+4Ni–11/2Cr–1/2Mo–V
+1160
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1211 ---
+NOTES (CONT'D):
+(2) Group 2 alloys (by nominal composition):
+18Cr–5Ni–3Mo–N
+22Cr–2Ni–Mo–N
+22Cr–5Ni–3Mo–N
+23Cr–4Ni–Mo–Cu
+25Cr–7Ni–4Mo–N
+25Cr–6Ni–Mo–N
+27Cr–7.5Ni–4.5Mo–Co–N
+(3) Group 3 alloys (by nominal composition):
+16Cr–12Ni–2Mo
+16Cr–12Ni–2Mo–N
+16Cr–12Ni–2Mo–Ti
+18Cr–8Ni
+18Cr–8Ni–N
+18Cr–10Ni–Cb
+18Cr–10Ni–Ti
+18Cr–11Ni
+18Cr–13Ni–3Mo
+18Cr–15Ni–4Si
+18Cr–18Ni–2Si
+19Cr–9Ni–Mo–W
+21Cr–11Ni–N
+(4) Group 4 alloys (by nominal composition):
+14Cr–16Ni–6Si–Cu–Mo
+25Ni–15Cr–2Ti
+29Ni–20Cr–3Cu–2Mo
+18Cr–20Ni–5.5Si
+20Cr–18Ni–6Mo
+22Cr–13Ni–5Mn
+23Cr–12Ni
+24Cr–22Ni–6Mo–2W–Cu–N
+25Cr–12Ni
+25Cr–20Ni
+25Cr–20Ni–2Mo
+31Ni–31Fe–29Cr–Mo
+44Fe–25Ni–21Cr–Mo
+47Fe–25Ni–23Cr–5.5Mo–N
+Table TE-2
+Thermal Expansion for Aluminum Alloys
+Temperature, °C
+Coefficients for Aluminum Alloys
+A
+B
+C
+20
+21.7
+21.7
+0
+50
+23.3
+22.6
+0.68
+75
+23.9
+23.1
+1.3
+100
+24.3
+23.4
+1.9
+125
+24.7
+23.7
+2.5
+150
+25.2
+23.9
+3.1
+175
+25.7
+24.2
+3.7
+200
+26.4
+24.4
+4.4
+225
+27.0
+24.7
+5.1
+250
+27.5
+25.0
+5.7
+275
+27.7
+25.2
+6.4
+300
+27.6
+25.5
+7.1
+325
+27.1
+25.6
+7.8
+GENERAL NOTES:
+(a) Aluminum alloys represented by these thermal expansion coeffi-
+cients include:
+A03560
+A24430
+A91060
+A91100
+A92014
+A92024
+A93003
+A93004
+A95052
+A95083
+A95086
+A95154
+A95254
+A95454
+A95456
+A95652
+A96061
+A96063
+(b) Coefficient A is the instantaneous coefficient of thermal expan-
+sion × 10−6 (mm/mm/°C). Coefficient B is the mean coefficient
+of thermal expansion × 10−6 (mm/mm/°C) in going from 20°C
+to indicated temperature. Coefficient C is the linear thermal ex-
+pansion (mm/m) in going from 20°C to indicated temperature.
+1161
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</RawText>
+  <RawTokens>
+    <Page sourcePage="1205">
+      <Token index="0">ASME</Token>
+      <Token index="1">BPVC.II.D.M-2025</Token>
+      <Token index="2">SUBPART</Token>
+      <Token index="3">2</Token>
+      <Token index="4">PHYSICAL</Token>
+      <Token index="5">PROPERTIES</Token>
+      <Token index="6">TABLES</Token>
+      <Token index="7">INTRODUCTION</Token>
+      <Token index="8">The</Token>
+      <Token index="9">physical</Token>
+      <Token index="10">properties</Token>
+      <Token index="11">listed</Token>
+      <Token index="12">in</Token>
+      <Token index="13">this</Token>
+      <Token index="14">Subpart</Token>
+      <Token index="15">are</Token>
+      <Token index="16">for</Token>
+      <Token index="17">in-</Token>
+      <Token index="18">Section</Token>
+      <Token index="19">II,</Token>
+      <Token index="20">Part</Token>
+      <Token index="21">D,</Token>
+      <Token index="22">Subpart</Token>
+      <Token index="23">2</Token>
+      <Token index="24">provides,</Token>
+      <Token index="25">to</Token>
+      <Token index="26">the</Token>
+      <Token index="27">extent</Token>
+      <Token index="28">pos-</Token>
+      <Token index="29">formation</Token>
+      <Token index="30">only,</Token>
+      <Token index="31">unless</Token>
+      <Token index="32">invoked</Token>
+      <Token index="33">by</Token>
+      <Token index="34">a</Token>
+      <Token index="35">Boiler</Token>
+      <Token index="36">&amp;</Token>
+      <Token index="37">Pressure</Token>
+      <Token index="38">sible,</Token>
+      <Token index="39">physical</Token>
+      <Token index="40">properties</Token>
+      <Token index="41">for</Token>
+      <Token index="42">most</Token>
+      <Token index="43">of</Token>
+      <Token index="44">the</Token>
+      <Token index="45">alloys</Token>
+      <Token index="46">used</Token>
+      <Token index="47">in</Token>
+      <Token index="48">Vessel</Token>
+      <Token index="49">Code</Token>
+      <Token index="50">(Sections</Token>
+      <Token index="51">I,</Token>
+      <Token index="52">III,</Token>
+      <Token index="53">IV,</Token>
+      <Token index="54">VIII,</Token>
+      <Token index="55">X,</Token>
+      <Token index="56">XI,</Token>
+      <Token index="57">and</Token>
+      <Token index="58">XII).</Token>
+      <Token index="59">When</Token>
+      <Token index="60">Code</Token>
+      <Token index="61">construction.</Token>
+      <Token index="62">Included</Token>
+      <Token index="63">in</Token>
+      <Token index="64">this</Token>
+      <Token index="65">Subpart</Token>
+      <Token index="66">are</Token>
+      <Token index="67">tables</Token>
+      <Token index="68">of</Token>
+      <Token index="69">a</Token>
+      <Token index="70">user</Token>
+      <Token index="71">of</Token>
+      <Token index="72">the</Token>
+      <Token index="73">Code</Token>
+      <Token index="74">has</Token>
+      <Token index="75">data</Token>
+      <Token index="76">supporting</Token>
+      <Token index="77">the</Token>
+      <Token index="78">use</Token>
+      <Token index="79">of</Token>
+      <Token index="80">values</Token>
+      <Token index="81">thermal</Token>
+      <Token index="82">expansion</Token>
+      <Token index="83">(instantaneous,</Token>
+      <Token index="84">mean,</Token>
+      <Token index="85">and</Token>
+      <Token index="86">linear),</Token>
+      <Token index="87">different</Token>
+      <Token index="88">from</Token>
+      <Token index="89">those</Token>
+      <Token index="90">in</Token>
+      <Token index="91">this</Token>
+      <Token index="92">Subpart,</Token>
+      <Token index="93">such</Token>
+      <Token index="94">other</Token>
+      <Token index="95">values</Token>
+      <Token index="96">thermal</Token>
+      <Token index="97">conductivity</Token>
+      <Token index="98">and</Token>
+      <Token index="99">thermal</Token>
+      <Token index="100">diffusivity,</Token>
+      <Token index="101">and</Token>
+      <Token index="102">modu-</Token>
+      <Token index="103">may</Token>
+      <Token index="104">be</Token>
+      <Token index="105">used</Token>
+      <Token index="106">in</Token>
+      <Token index="107">lieu</Token>
+      <Token index="108">of</Token>
+      <Token index="109">the</Token>
+      <Token index="110">values</Token>
+      <Token index="111">in</Token>
+      <Token index="112">this</Token>
+      <Token index="113">Subpart.</Token>
+      <Token index="114">lus</Token>
+      <Token index="115">of</Token>
+      <Token index="116">elasticity.</Token>
+      <Token index="117">These</Token>
+      <Token index="118">values</Token>
+      <Token index="119">are</Token>
+      <Token index="120">all</Token>
+      <Token index="121">listed</Token>
+      <Token index="122">as</Token>
+      <Token index="123">a</Token>
+      <Token index="124">function</Token>
+      <Token index="125">of</Token>
+      <Token index="126">temperature</Token>
+      <Token index="127">from</Token>
+      <Token index="128">20°C</Token>
+      <Token index="129">to</Token>
+      <Token index="130">as</Token>
+      <Token index="131">high</Token>
+      <Token index="132">as</Token>
+      <Token index="133">1</Token>
+      <Token index="134">000°C.</Token>
+      <Token index="135">Subpart</Token>
+      <Token index="136">Values</Token>
+      <Token index="137">for</Token>
+      <Token index="138">temperatures</Token>
+      <Token index="139">between</Token>
+      <Token index="140">those</Token>
+      <Token index="141">tabulated</Token>
+      <Token index="142">may</Token>
+      <Token index="143">Poisson’s</Token>
+      <Token index="144">be</Token>
+      <Token index="145">obtained</Token>
+      <Token index="146">by</Token>
+      <Token index="147">linear</Token>
+      <Token index="148">interpolation.</Token>
+      <Token index="149">2</Token>
+      <Token index="150">also</Token>
+      <Token index="151">contains</Token>
+      <Token index="152">tables</Token>
+      <Token index="153">of</Token>
+      <Token index="154">density</Token>
+      <Token index="155">and</Token>
+      <Token index="156">ratio</Token>
+      <Token index="157">for</Token>
+      <Token index="158">For</Token>
+      <Token index="159">those</Token>
+      <Token index="160">alloys</Token>
+      <Token index="161">for</Token>
+      <Token index="162">which</Token>
+      <Token index="163">physical</Token>
+      <Token index="164">properties</Token>
+      <Token index="165">are</Token>
+      <Token index="166">not</Token>
+      <Token index="167">ferrous</Token>
+      <Token index="168">and</Token>
+      <Token index="169">nonferrous</Token>
+      <Token index="170">alloys.</Token>
+      <Token index="171">yet</Token>
+      <Token index="172">addressed</Token>
+      <Token index="173">in</Token>
+      <Token index="174">Subpart</Token>
+      <Token index="175">2,</Token>
+      <Token index="176">the</Token>
+      <Token index="177">user</Token>
+      <Token index="178">of</Token>
+      <Token index="179">the</Token>
+      <Token index="180">Code</Token>
+      <Token index="181">may</Token>
+      <Token index="182">All</Token>
+      <Token index="183">of</Token>
+      <Token index="184">the</Token>
+      <Token index="185">properties</Token>
+      <Token index="186">provided</Token>
+      <Token index="187">in</Token>
+      <Token index="188">Subpart</Token>
+      <Token index="189">2</Token>
+      <Token index="190">are</Token>
+      <Token index="191">consid-</Token>
+      <Token index="192">use</Token>
+      <Token index="193">other</Token>
+      <Token index="194">authoritative</Token>
+      <Token index="195">sources</Token>
+      <Token index="196">for</Token>
+      <Token index="197">the</Token>
+      <Token index="198">needed</Token>
+      <Token index="199">informa-</Token>
+      <Token index="200">ered</Token>
+      <Token index="201">typical.</Token>
+      <Token index="202">They</Token>
+      <Token index="203">are</Token>
+      <Token index="204">neither</Token>
+      <Token index="205">average</Token>
+      <Token index="206">nor</Token>
+      <Token index="207">minimum.</Token>
+      <Token index="208">Thermal–physical</Token>
+      <Token index="209">tion.</Token>
+      <Token index="210">In</Token>
+      <Token index="211">those</Token>
+      <Token index="212">instances,</Token>
+      <Token index="213">or</Token>
+      <Token index="214">when</Token>
+      <Token index="215">alternative</Token>
+      <Token index="216">values</Token>
+      <Token index="217">are</Token>
+      <Token index="218">properties</Token>
+      <Token index="219">such</Token>
+      <Token index="220">as</Token>
+      <Token index="221">thermal</Token>
+      <Token index="222">expansion,</Token>
+      <Token index="223">used,</Token>
+      <Token index="224">the</Token>
+      <Token index="225">user</Token>
+      <Token index="226">is</Token>
+      <Token index="227">encouraged</Token>
+      <Token index="228">to</Token>
+      <Token index="229">submit</Token>
+      <Token index="230">the</Token>
+      <Token index="231">values</Token>
+      <Token index="232">and</Token>
+      <Token index="233">thermal</Token>
+      <Token index="234">conductivity,</Token>
+      <Token index="235">and</Token>
+      <Token index="236">thermal</Token>
+      <Token index="237">diffusivity</Token>
+      <Token index="238">are</Token>
+      <Token index="239">affected</Token>
+      <Token index="240">supporting</Token>
+      <Token index="241">data</Token>
+      <Token index="242">to</Token>
+      <Token index="243">the</Token>
+      <Token index="244">attention</Token>
+      <Token index="245">of</Token>
+      <Token index="246">the</Token>
+      <Token index="247">ASME</Token>
+      <Token index="248">Boiler</Token>
+      <Token index="249">and</Token>
+      <Token index="250">more</Token>
+      <Token index="251">by</Token>
+      <Token index="252">alloy</Token>
+      <Token index="253">content</Token>
+      <Token index="254">than</Token>
+      <Token index="255">by</Token>
+      <Token index="256">crystal</Token>
+      <Token index="257">structure</Token>
+      <Token index="258">or</Token>
+      <Token index="259">heat</Token>
+      <Token index="260">Pressure</Token>
+      <Token index="261">Vessel</Token>
+      <Token index="262">Committee</Token>
+      <Token index="263">II</Token>
+      <Token index="264">on</Token>
+      <Token index="265">Materials</Token>
+      <Token index="266">for</Token>
+      <Token index="267">its</Token>
+      <Token index="268">consid-</Token>
+      <Token index="269">treatment.</Token>
+      <Token index="270">Due</Token>
+      <Token index="271">to</Token>
+      <Token index="272">the</Token>
+      <Token index="273">permitted</Token>
+      <Token index="274">range</Token>
+      <Token index="275">for</Token>
+      <Token index="276">elements</Token>
+      <Token index="277">com-</Token>
+      <Token index="278">eration</Token>
+      <Token index="279">in</Token>
+      <Token index="280">improving</Token>
+      <Token index="281">and</Token>
+      <Token index="282">revising</Token>
+      <Token index="283">the</Token>
+      <Token index="284">values</Token>
+      <Token index="285">in</Token>
+      <Token index="286">Subpart</Token>
+      <Token index="287">2.</Token>
+      <Token index="288">prising</Token>
+      <Token index="289">alloys</Token>
+      <Token index="290">(specification</Token>
+      <Token index="291">ranges</Token>
+      <Token index="292">of</Token>
+      <Token index="293">chemical</Token>
+      <Token index="294">composi-</Token>
+      <Token index="295">thermal–physical</Token>
+      <Token index="296">Information</Token>
+      <Token index="297">should</Token>
+      <Token index="298">be</Token>
+      <Token index="299">directed</Token>
+      <Token index="300">to:</Token>
+      <Token index="301">tions),</Token>
+      <Token index="302">the</Token>
+      <Token index="303">properties</Token>
+      <Token index="304">described</Token>
+      <Token index="305">in</Token>
+      <Token index="306">Secretary</Token>
+      <Token index="307">Tables</Token>
+      <Token index="308">TE-1</Token>
+      <Token index="309">through</Token>
+      <Token index="310">TE-5</Token>
+      <Token index="311">and</Token>
+      <Token index="312">Table</Token>
+      <Token index="313">TCD</Token>
+      <Token index="314">should</Token>
+      <Token index="315">be</Token>
+      <Token index="316">con-</Token>
+      <Token index="317">sidered</Token>
+      <Token index="318">to</Token>
+      <Token index="319">have</Token>
+      <Token index="320">an</Token>
+      <Token index="321">associated</Token>
+      <Token index="322">uncertainty</Token>
+      <Token index="323">of</Token>
+      <Token index="324">±10%.</Token>
+      <Token index="325">ASME</Token>
+      <Token index="326">Boiler</Token>
+      <Token index="327">and</Token>
+      <Token index="328">Pressure</Token>
+      <Token index="329">Vessel</Token>
+      <Token index="330">Committee</Token>
+      <Token index="331">II</Token>
+      <Token index="332">on</Token>
+      <Token index="333">Poisson’s</Token>
+      <Token index="334">Materials</Token>
+      <Token index="335">Moduli</Token>
+      <Token index="336">of</Token>
+      <Token index="337">elasticity</Token>
+      <Token index="338">and</Token>
+      <Token index="339">ratio</Token>
+      <Token index="340">are</Token>
+      <Token index="341">also</Token>
+      <Token index="342">typical</Token>
+      <Token index="343">Two</Token>
+      <Token index="344">Park</Token>
+      <Token index="345">Avenue</Token>
+      <Token index="346">values,</Token>
+      <Token index="347">but</Token>
+      <Token index="348">the</Token>
+      <Token index="349">values</Token>
+      <Token index="350">of</Token>
+      <Token index="351">modulus</Token>
+      <Token index="352">of</Token>
+      <Token index="353">elasticity,</Token>
+      <Token index="354">shown</Token>
+      <Token index="355">as</Token>
+      <Token index="356">a</Token>
+      <Token index="357">10016‐5990</Token>
+      <Token index="358">New</Token>
+      <Token index="359">York,</Token>
+      <Token index="360">NY</Token>
+      <Token index="361">function</Token>
+      <Token index="362">of</Token>
+      <Token index="363">temperature</Token>
+      <Token index="364">in</Token>
+      <Token index="365">Tables</Token>
+      <Token index="366">TM-1</Token>
+      <Token index="367">through</Token>
+      <Token index="368">TM-5,</Token>
+      <Token index="369">tend</Token>
+      <Token index="370">to</Token>
+      <Token index="371">be</Token>
+      <Token index="372">closer</Token>
+      <Token index="373">to</Token>
+      <Token index="374">average</Token>
+      <Token index="375">values</Token>
+      <Token index="376">since</Token>
+      <Token index="377">their</Token>
+      <Token index="378">tempera-</Token>
+      <Token index="379">“average”</Token>
+      <Token index="380">room‐</Token>
+      <Token index="381">ture</Token>
+      <Token index="382">dependency</Token>
+      <Token index="383">is</Token>
+      <Token index="384">factored</Token>
+      <Token index="385">against</Token>
+      <Token index="386">an</Token>
+      <Token index="387">temperature</Token>
+      <Token index="388">value.</Token>
+      <Token index="389">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="390">1155</Token>
+      <Token index="391">Copyright</Token>
+      <Token index="392">ASME</Token>
+      <Token index="393">International</Token>
+      <Token index="394">(BPVC)</Token>
+      <Token index="395">Provided</Token>
+      <Token index="396">by</Token>
+      <Token index="397">Accuris</Token>
+      <Token index="398">under</Token>
+      <Token index="399">license</Token>
+      <Token index="400">with</Token>
+      <Token index="401">ASME</Token>
+      <Token index="402">Licensee=BREMBANA</Token>
+      <Token index="403">&amp;</Token>
+      <Token index="404">ROLLE</Token>
+      <Token index="405">GROUP</Token>
+      <Token index="406">-</Token>
+      <Token index="407">Bergamasque:</Token>
+      <Token index="408">Albrèmb/8355778001,</Token>
+      <Token index="409">User=Tosto,</Token>
+      <Token index="410">Natale</Token>
+      <Token index="411">No</Token>
+      <Token index="412">reproduction</Token>
+      <Token index="413">or</Token>
+      <Token index="414">networking</Token>
+      <Token index="415">permitted</Token>
+      <Token index="416">without</Token>
+      <Token index="417">license</Token>
+      <Token index="418">from</Token>
+      <Token index="419">Accuris</Token>
+      <Token index="420">Not</Token>
+      <Token index="421">for</Token>
+      <Token index="422">Resale,</Token>
+      <Token index="423">10/20/2025</Token>
+      <Token index="424">03:54:29</Token>
+      <Token index="425">MDT</Token>
+    </Page>
+    <Page sourcePage="1206">
+      <Token index="426">ASME</Token>
+      <Token index="427">BPVC.II.D.M-2025</Token>
+      <Token index="428">Table</Token>
+      <Token index="429">TE-1</Token>
+      <Token index="430">ð25Þ</Token>
+      <Token index="431">Thermal</Token>
+      <Token index="432">Expansion</Token>
+      <Token index="433">for</Token>
+      <Token index="434">Ferrous</Token>
+      <Token index="435">Materials</Token>
+      <Token index="436">5Cr–1Mo</Token>
+      <Token index="437">Coefficients</Token>
+      <Token index="438">for</Token>
+      <Token index="439">Carbon</Token>
+      <Token index="440">and</Token>
+      <Token index="441">Low</Token>
+      <Token index="442">Alloy</Token>
+      <Token index="443">Coefficients</Token>
+      <Token index="444">for</Token>
+      <Token index="445">Other</Token>
+      <Token index="446">Alloy</Token>
+      <Token index="447">Steels</Token>
+      <Token index="448">Coefficients</Token>
+      <Token index="449">for</Token>
+      <Token index="450">and</Token>
+      <Token index="451">29Cr–7Ni–2Mo–N</Token>
+      <Token index="452">Steels</Token>
+      <Token index="453">(Group</Token>
+      <Token index="454">1)</Token>
+      <Token index="455">[Note</Token>
+      <Token index="456">(1)]</Token>
+      <Token index="457">(Group</Token>
+      <Token index="458">2)</Token>
+      <Token index="459">[Note</Token>
+      <Token index="460">(2)]</Token>
+      <Token index="461">Steels</Token>
+      <Token index="462">Temperature,</Token>
+      <Token index="463">°C</Token>
+      <Token index="464">A</Token>
+      <Token index="465">B</Token>
+      <Token index="466">C</Token>
+      <Token index="467">A</Token>
+      <Token index="468">B</Token>
+      <Token index="469">C</Token>
+      <Token index="470">A</Token>
+      <Token index="471">B</Token>
+      <Token index="472">C</Token>
+      <Token index="473">20</Token>
+      <Token index="474">11.5</Token>
+      <Token index="475">11.5</Token>
+      <Token index="476">0</Token>
+      <Token index="477">12.6</Token>
+      <Token index="478">12.6</Token>
+      <Token index="479">0</Token>
+      <Token index="480">11.5</Token>
+      <Token index="481">11.5</Token>
+      <Token index="482">0</Token>
+      <Token index="483">50</Token>
+      <Token index="484">12.0</Token>
+      <Token index="485">11.8</Token>
+      <Token index="486">0.35</Token>
+      <Token index="487">13.0</Token>
+      <Token index="488">12.8</Token>
+      <Token index="489">0.38</Token>
+      <Token index="490">12.0</Token>
+      <Token index="491">11.8</Token>
+      <Token index="492">0.35</Token>
+      <Token index="493">75</Token>
+      <Token index="494">12.3</Token>
+      <Token index="495">11.9</Token>
+      <Token index="496">0.65</Token>
+      <Token index="497">13.3</Token>
+      <Token index="498">13.0</Token>
+      <Token index="499">0.72</Token>
+      <Token index="500">12.3</Token>
+      <Token index="501">12.0</Token>
+      <Token index="502">0.66</Token>
+      <Token index="503">100</Token>
+      <Token index="504">12.7</Token>
+      <Token index="505">12.1</Token>
+      <Token index="506">0.97</Token>
+      <Token index="507">13.5</Token>
+      <Token index="508">13.1</Token>
+      <Token index="509">1.0</Token>
+      <Token index="510">12.6</Token>
+      <Token index="511">12.1</Token>
+      <Token index="512">0.97</Token>
+      <Token index="513">125</Token>
+      <Token index="514">12.9</Token>
+      <Token index="515">12.3</Token>
+      <Token index="516">1.3</Token>
+      <Token index="517">13.8</Token>
+      <Token index="518">13.2</Token>
+      <Token index="519">1.4</Token>
+      <Token index="520">12.8</Token>
+      <Token index="521">12.3</Token>
+      <Token index="522">1.3</Token>
+      <Token index="523">150</Token>
+      <Token index="524">13.2</Token>
+      <Token index="525">12.4</Token>
+      <Token index="526">1.6</Token>
+      <Token index="527">14.0</Token>
+      <Token index="528">13.4</Token>
+      <Token index="529">1.7</Token>
+      <Token index="530">12.9</Token>
+      <Token index="531">12.4</Token>
+      <Token index="532">1.6</Token>
+      <Token index="533">175</Token>
+      <Token index="534">13.5</Token>
+      <Token index="535">12.6</Token>
+      <Token index="536">2.0</Token>
+      <Token index="537">14.2</Token>
+      <Token index="538">13.5</Token>
+      <Token index="539">2.1</Token>
+      <Token index="540">13.0</Token>
+      <Token index="541">12.5</Token>
+      <Token index="542">1.9</Token>
+      <Token index="543">200</Token>
+      <Token index="544">13.8</Token>
+      <Token index="545">12.7</Token>
+      <Token index="546">2.3</Token>
+      <Token index="547">14.4</Token>
+      <Token index="548">13.6</Token>
+      <Token index="549">2.4</Token>
+      <Token index="550">13.2</Token>
+      <Token index="551">12.6</Token>
+      <Token index="552">2.3</Token>
+      <Token index="553">225</Token>
+      <Token index="554">14.0</Token>
+      <Token index="555">12.9</Token>
+      <Token index="556">2.6</Token>
+      <Token index="557">14.6</Token>
+      <Token index="558">13.7</Token>
+      <Token index="559">2.8</Token>
+      <Token index="560">13.3</Token>
+      <Token index="561">12.6</Token>
+      <Token index="562">2.6</Token>
+      <Token index="563">250</Token>
+      <Token index="564">14.3</Token>
+      <Token index="565">13.0</Token>
+      <Token index="566">3.0</Token>
+      <Token index="567">14.8</Token>
+      <Token index="568">13.8</Token>
+      <Token index="569">3.2</Token>
+      <Token index="570">13.4</Token>
+      <Token index="571">12.7</Token>
+      <Token index="572">2.9</Token>
+      <Token index="573">275</Token>
+      <Token index="574">14.6</Token>
+      <Token index="575">13.2</Token>
+      <Token index="576">3.4</Token>
+      <Token index="577">15.0</Token>
+      <Token index="578">13.9</Token>
+      <Token index="579">3.6</Token>
+      <Token index="580">13.5</Token>
+      <Token index="581">12.8</Token>
+      <Token index="582">3.3</Token>
+      <Token index="583">300</Token>
+      <Token index="584">14.9</Token>
+      <Token index="585">13.3</Token>
+      <Token index="586">3.7</Token>
+      <Token index="587">15.1</Token>
+      <Token index="588">14.0</Token>
+      <Token index="589">3.9</Token>
+      <Token index="590">13.6</Token>
+      <Token index="591">12.8</Token>
+      <Token index="592">3.6</Token>
+      <Token index="593">325</Token>
+      <Token index="594">15.1</Token>
+      <Token index="595">13.4</Token>
+      <Token index="596">4.1</Token>
+      <Token index="597">15.3</Token>
+      <Token index="598">14.1</Token>
+      <Token index="599">4.3</Token>
+      <Token index="600">13.7</Token>
+      <Token index="601">12.9</Token>
+      <Token index="602">3.9</Token>
+      <Token index="603">350</Token>
+      <Token index="604">15.4</Token>
+      <Token index="605">13.6</Token>
+      <Token index="606">4.5</Token>
+      <Token index="607">15.4</Token>
+      <Token index="608">14.2</Token>
+      <Token index="609">4.7</Token>
+      <Token index="610">13.8</Token>
+      <Token index="611">13.0</Token>
+      <Token index="612">4.3</Token>
+      <Token index="613">375</Token>
+      <Token index="614">15.7</Token>
+      <Token index="615">13.7</Token>
+      <Token index="616">4.9</Token>
+      <Token index="617">15.5</Token>
+      <Token index="618">14.3</Token>
+      <Token index="619">5.1</Token>
+      <Token index="620">14.0</Token>
+      <Token index="621">13.0</Token>
+      <Token index="622">4.6</Token>
+      <Token index="623">400</Token>
+      <Token index="624">15.9</Token>
+      <Token index="625">13.8</Token>
+      <Token index="626">5.3</Token>
+      <Token index="627">15.7</Token>
+      <Token index="628">14.4</Token>
+      <Token index="629">5.5</Token>
+      <Token index="630">14.1</Token>
+      <Token index="631">13.1</Token>
+      <Token index="632">5.0</Token>
+      <Token index="633">425</Token>
+      <Token index="634">16.1</Token>
+      <Token index="635">14.0</Token>
+      <Token index="636">5.7</Token>
+      <Token index="637">15.8</Token>
+      <Token index="638">14.5</Token>
+      <Token index="639">5.9</Token>
+      <Token index="640">14.2</Token>
+      <Token index="641">13.2</Token>
+      <Token index="642">5.3</Token>
+      <Token index="643">450</Token>
+      <Token index="644">16.4</Token>
+      <Token index="645">14.1</Token>
+      <Token index="646">6.1</Token>
+      <Token index="647">15.9</Token>
+      <Token index="648">14.6</Token>
+      <Token index="649">6.3</Token>
+      <Token index="650">14.4</Token>
+      <Token index="651">13.2</Token>
+      <Token index="652">5.7</Token>
+      <Token index="653">475</Token>
+      <Token index="654">16.5</Token>
+      <Token index="655">14.2</Token>
+      <Token index="656">6.5</Token>
+      <Token index="657">16.0</Token>
+      <Token index="658">14.6</Token>
+      <Token index="659">6.7</Token>
+      <Token index="660">14.5</Token>
+      <Token index="661">13.3</Token>
+      <Token index="662">6.1</Token>
+      <Token index="663">500</Token>
+      <Token index="664">16.7</Token>
+      <Token index="665">14.4</Token>
+      <Token index="666">6.9</Token>
+      <Token index="667">16.1</Token>
+      <Token index="668">14.7</Token>
+      <Token index="669">7.1</Token>
+      <Token index="670">14.6</Token>
+      <Token index="671">13.4</Token>
+      <Token index="672">6.4</Token>
+      <Token index="673">525</Token>
+      <Token index="674">16.8</Token>
+      <Token index="675">14.5</Token>
+      <Token index="676">7.3</Token>
+      <Token index="677">16.2</Token>
+      <Token index="678">14.8</Token>
+      <Token index="679">7.5</Token>
+      <Token index="680">14.7</Token>
+      <Token index="681">13.4</Token>
+      <Token index="682">6.8</Token>
+      <Token index="683">550</Token>
+      <Token index="684">16.9</Token>
+      <Token index="685">14.6</Token>
+      <Token index="686">7.7</Token>
+      <Token index="687">16.2</Token>
+      <Token index="688">14.8</Token>
+      <Token index="689">7.9</Token>
+      <Token index="690">14.8</Token>
+      <Token index="691">13.5</Token>
+      <Token index="692">7.2</Token>
+      <Token index="693">575</Token>
+      <Token index="694">17.0</Token>
+      <Token index="695">14.7</Token>
+      <Token index="696">8.2</Token>
+      <Token index="697">16.3</Token>
+      <Token index="698">14.9</Token>
+      <Token index="699">8.3</Token>
+      <Token index="700">14.9</Token>
+      <Token index="701">13.6</Token>
+      <Token index="702">7.5</Token>
+      <Token index="703">600</Token>
+      <Token index="704">17.0</Token>
+      <Token index="705">14.8</Token>
+      <Token index="706">8.6</Token>
+      <Token index="707">16.4</Token>
+      <Token index="708">15.0</Token>
+      <Token index="709">8.7</Token>
+      <Token index="710">15.0</Token>
+      <Token index="711">13.6</Token>
+      <Token index="712">7.9</Token>
+      <Token index="713">625</Token>
+      <Token index="714">17.1</Token>
+      <Token index="715">14.9</Token>
+      <Token index="716">9.0</Token>
+      <Token index="717">16.4</Token>
+      <Token index="718">15.0</Token>
+      <Token index="719">9.1</Token>
+      <Token index="720">15.1</Token>
+      <Token index="721">13.7</Token>
+      <Token index="722">8.3</Token>
+      <Token index="723">650</Token>
+      <Token index="724">17.1</Token>
+      <Token index="725">15.0</Token>
+      <Token index="726">9.4</Token>
+      <Token index="727">16.4</Token>
+      <Token index="728">15.1</Token>
+      <Token index="729">9.5</Token>
+      <Token index="730">15.2</Token>
+      <Token index="731">13.7</Token>
+      <Token index="732">8.7</Token>
+      <Token index="733">675</Token>
+      <Token index="734">17.1</Token>
+      <Token index="735">15.1</Token>
+      <Token index="736">9.9</Token>
+      <Token index="737">16.4</Token>
+      <Token index="738">15.1</Token>
+      <Token index="739">9.9</Token>
+      <Token index="740">15.3</Token>
+      <Token index="741">13.8</Token>
+      <Token index="742">9.0</Token>
+      <Token index="743">700</Token>
+      <Token index="744">17.1</Token>
+      <Token index="745">15.1</Token>
+      <Token index="746">10.3</Token>
+      <Token index="747">16.4</Token>
+      <Token index="748">15.2</Token>
+      <Token index="749">10.3</Token>
+      <Token index="750">15.4</Token>
+      <Token index="751">13.9</Token>
+      <Token index="752">9.4</Token>
+      <Token index="753">725</Token>
+      <Token index="754">17.1</Token>
+      <Token index="755">15.2</Token>
+      <Token index="756">10.7</Token>
+      <Token index="757">16.3</Token>
+      <Token index="758">15.2</Token>
+      <Token index="759">10.7</Token>
+      <Token index="760">15.6</Token>
+      <Token index="761">13.9</Token>
+      <Token index="762">9.8</Token>
+      <Token index="763">750</Token>
+      <Token index="764">17.2</Token>
+      <Token index="765">15.3</Token>
+      <Token index="766">11.1</Token>
+      <Token index="767">16.3</Token>
+      <Token index="768">15.3</Token>
+      <Token index="769">11.1</Token>
+      <Token index="770">15.9</Token>
+      <Token index="771">14.0</Token>
+      <Token index="772">10.2</Token>
+      <Token index="773">775</Token>
+      <Token index="774">17.4</Token>
+      <Token index="775">15.3</Token>
+      <Token index="776">11.6</Token>
+      <Token index="777">16.2</Token>
+      <Token index="778">15.3</Token>
+      <Token index="779">11.1</Token>
+      <Token index="780">16.3</Token>
+      <Token index="781">14.0</Token>
+      <Token index="782">10.6</Token>
+      <Token index="783">800</Token>
+      <Token index="784">17.7</Token>
+      <Token index="785">15.4</Token>
+      <Token index="786">12.0</Token>
+      <Token index="787">16.0</Token>
+      <Token index="788">15.3</Token>
+      <Token index="789">11.5</Token>
+      <Token index="790">16.8</Token>
+      <Token index="791">14.1</Token>
+      <Token index="792">11.0</Token>
+      <Token index="793">825</Token>
+      <Token index="794">18.1</Token>
+      <Token index="795">15.5</Token>
+      <Token index="796">12.5</Token>
+      <Token index="797">15.8</Token>
+      <Token index="798">15.3</Token>
+      <Token index="799">11.9</Token>
+      <Token index="800">17.4</Token>
+      <Token index="801">14.2</Token>
+      <Token index="802">11.4</Token>
+      <Token index="803">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="804">1156</Token>
+      <Token index="805">Copyright</Token>
+      <Token index="806">ASME</Token>
+      <Token index="807">International</Token>
+      <Token index="808">(BPVC)</Token>
+      <Token index="809">Provided</Token>
+      <Token index="810">by</Token>
+      <Token index="811">Accuris</Token>
+      <Token index="812">under</Token>
+      <Token index="813">license</Token>
+      <Token index="814">with</Token>
+      <Token index="815">ASME</Token>
+      <Token index="816">Licensee=BREMBANA</Token>
+      <Token index="817">&amp;</Token>
+      <Token index="818">ROLLE</Token>
+      <Token index="819">GROUP</Token>
+      <Token index="820">-</Token>
+      <Token index="821">Bergamasque:</Token>
+      <Token index="822">Albrèmb/8355778001,</Token>
+      <Token index="823">User=Tosto,</Token>
+      <Token index="824">Natale</Token>
+      <Token index="825">No</Token>
+      <Token index="826">reproduction</Token>
+      <Token index="827">or</Token>
+      <Token index="828">networking</Token>
+      <Token index="829">permitted</Token>
+      <Token index="830">without</Token>
+      <Token index="831">license</Token>
+      <Token index="832">from</Token>
+      <Token index="833">Accuris</Token>
+      <Token index="834">Not</Token>
+      <Token index="835">for</Token>
+      <Token index="836">Resale,</Token>
+      <Token index="837">10/20/2025</Token>
+      <Token index="838">03:54:29</Token>
+      <Token index="839">MDT</Token>
+    </Page>
+    <Page sourcePage="1207">
+      <Token index="840">ASME</Token>
+      <Token index="841">BPVC.II.D.M-2025</Token>
+      <Token index="842">Table</Token>
+      <Token index="843">TE-1</Token>
+      <Token index="844">Thermal</Token>
+      <Token index="845">Expansion</Token>
+      <Token index="846">for</Token>
+      <Token index="847">Ferrous</Token>
+      <Token index="848">Materials</Token>
+      <Token index="849">(Cont'd)</Token>
+      <Token index="850">9Cr–1Mo</Token>
+      <Token index="851">Coefficients</Token>
+      <Token index="852">for</Token>
+      <Token index="853">Steels</Token>
+      <Token index="854">(In-</Token>
+      <Token index="855">5Ni–1/4Mo</Token>
+      <Token index="856">cluding</Token>
+      <Token index="857">Grades</Token>
+      <Token index="858">9,</Token>
+      <Token index="859">91,</Token>
+      <Token index="860">911,</Token>
+      <Token index="861">and</Token>
+      <Token index="862">92)</Token>
+      <Token index="863">Coefficients</Token>
+      <Token index="864">for</Token>
+      <Token index="865">Steels</Token>
+      <Token index="866">Coefficients</Token>
+      <Token index="867">for</Token>
+      <Token index="868">7%</Token>
+      <Token index="869">Nickel</Token>
+      <Token index="870">Steel</Token>
+      <Token index="871">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="872">Temperature,</Token>
+      <Token index="873">°C</Token>
+      <Token index="874">A</Token>
+      <Token index="875">B</Token>
+      <Token index="876">C</Token>
+      <Token index="877">A</Token>
+      <Token index="878">B</Token>
+      <Token index="879">C</Token>
+      <Token index="880">A</Token>
+      <Token index="881">B</Token>
+      <Token index="882">C</Token>
+      <Token index="883">20</Token>
+      <Token index="884">10.5</Token>
+      <Token index="885">10.5</Token>
+      <Token index="886">0</Token>
+      <Token index="887">11.2</Token>
+      <Token index="888">11.2</Token>
+      <Token index="889">0</Token>
+      <Token index="890">10.6</Token>
+      <Token index="891">10.6</Token>
+      <Token index="892">0</Token>
+      <Token index="893">50</Token>
+      <Token index="894">10.8</Token>
+      <Token index="895">10.6</Token>
+      <Token index="896">0.32</Token>
+      <Token index="897">11.6</Token>
+      <Token index="898">11.4</Token>
+      <Token index="899">0.34</Token>
+      <Token index="900">11.1</Token>
+      <Token index="901">10.8</Token>
+      <Token index="902">0.32</Token>
+      <Token index="903">75</Token>
+      <Token index="904">11.0</Token>
+      <Token index="905">10.7</Token>
+      <Token index="906">0.59</Token>
+      <Token index="907">12.0</Token>
+      <Token index="908">11.6</Token>
+      <Token index="909">0.64</Token>
+      <Token index="910">11.6</Token>
+      <Token index="911">11.1</Token>
+      <Token index="912">0.61</Token>
+      <Token index="913">100</Token>
+      <Token index="914">11.2</Token>
+      <Token index="915">10.9</Token>
+      <Token index="916">0.87</Token>
+      <Token index="917">12.3</Token>
+      <Token index="918">11.8</Token>
+      <Token index="919">0.94</Token>
+      <Token index="920">11.9</Token>
+      <Token index="921">11.3</Token>
+      <Token index="922">0.90</Token>
+      <Token index="923">125</Token>
+      <Token index="924">11.4</Token>
+      <Token index="925">11.0</Token>
+      <Token index="926">1.2</Token>
+      <Token index="927">12.5</Token>
+      <Token index="928">11.9</Token>
+      <Token index="929">1.3</Token>
+      <Token index="930">12.2</Token>
+      <Token index="931">11.5</Token>
+      <Token index="932">1.3</Token>
+      <Token index="933">150</Token>
+      <Token index="934">11.6</Token>
+      <Token index="935">11.1</Token>
+      <Token index="936">1.4</Token>
+      <Token index="937">12.7</Token>
+      <Token index="938">12.0</Token>
+      <Token index="939">1.6</Token>
+      <Token index="940">12.5</Token>
+      <Token index="941">11.6</Token>
+      <Token index="942">1.6</Token>
+      <Token index="943">12.7</Token>
+      <Token index="944">11.8</Token>
+      <Token index="945">1.9</Token>
+      <Token index="946">175</Token>
+      <Token index="947">11.8</Token>
+      <Token index="948">11.2</Token>
+      <Token index="949">1.7</Token>
+      <Token index="950">13.0</Token>
+      <Token index="951">12.2</Token>
+      <Token index="952">1.9</Token>
+      <Token index="953">200</Token>
+      <Token index="954">12.0</Token>
+      <Token index="955">11.3</Token>
+      <Token index="956">2.0</Token>
+      <Token index="957">13.2</Token>
+      <Token index="958">12.3</Token>
+      <Token index="959">2.2</Token>
+      <Token index="960">12.9</Token>
+      <Token index="961">11.9</Token>
+      <Token index="962">2.2</Token>
+      <Token index="963">225</Token>
+      <Token index="964">12.2</Token>
+      <Token index="965">11.4</Token>
+      <Token index="966">2.3</Token>
+      <Token index="967">13.4</Token>
+      <Token index="968">12.4</Token>
+      <Token index="969">2.5</Token>
+      <Token index="970">13.1</Token>
+      <Token index="971">12.1</Token>
+      <Token index="972">2.5</Token>
+      <Token index="973">250</Token>
+      <Token index="974">12.4</Token>
+      <Token index="975">11.5</Token>
+      <Token index="976">2.6</Token>
+      <Token index="977">13.6</Token>
+      <Token index="978">12.5</Token>
+      <Token index="979">2.9</Token>
+      <Token index="980">13.2</Token>
+      <Token index="981">12.2</Token>
+      <Token index="982">2.8</Token>
+      <Token index="983">275</Token>
+      <Token index="984">12.5</Token>
+      <Token index="985">11.6</Token>
+      <Token index="986">3.0</Token>
+      <Token index="987">13.8</Token>
+      <Token index="988">12.7</Token>
+      <Token index="989">3.2</Token>
+      <Token index="990">13.4</Token>
+      <Token index="991">12.3</Token>
+      <Token index="992">3.1</Token>
+      <Token index="993">300</Token>
+      <Token index="994">12.7</Token>
+      <Token index="995">11.7</Token>
+      <Token index="996">3.3</Token>
+      <Token index="997">14.0</Token>
+      <Token index="998">12.8</Token>
+      <Token index="999">3.6</Token>
+      <Token index="1000">13.5</Token>
+      <Token index="1001">12.4</Token>
+      <Token index="1002">3.5</Token>
+      <Token index="1003">13.7</Token>
+      <Token index="1004">12.5</Token>
+      <Token index="1005">3.8</Token>
+      <Token index="1006">325</Token>
+      <Token index="1007">12.8</Token>
+      <Token index="1008">11.8</Token>
+      <Token index="1009">3.6</Token>
+      <Token index="1010">14.3</Token>
+      <Token index="1011">12.9</Token>
+      <Token index="1012">3.9</Token>
+      <Token index="1013">350</Token>
+      <Token index="1014">13.0</Token>
+      <Token index="1015">11.9</Token>
+      <Token index="1016">3.9</Token>
+      <Token index="1017">14.5</Token>
+      <Token index="1018">13.0</Token>
+      <Token index="1019">4.3</Token>
+      <Token index="1020">13.9</Token>
+      <Token index="1021">12.6</Token>
+      <Token index="1022">4.2</Token>
+      <Token index="1023">375</Token>
+      <Token index="1024">13.1</Token>
+      <Token index="1025">11.9</Token>
+      <Token index="1026">4.2</Token>
+      <Token index="1027">14.6</Token>
+      <Token index="1028">13.1</Token>
+      <Token index="1029">4.7</Token>
+      <Token index="1030">14.0</Token>
+      <Token index="1031">12.7</Token>
+      <Token index="1032">4.5</Token>
+      <Token index="1033">400</Token>
+      <Token index="1034">13.3</Token>
+      <Token index="1035">12.0</Token>
+      <Token index="1036">4.6</Token>
+      <Token index="1037">14.8</Token>
+      <Token index="1038">13.2</Token>
+      <Token index="1039">5.0</Token>
+      <Token index="1040">14.2</Token>
+      <Token index="1041">12.8</Token>
+      <Token index="1042">4.9</Token>
+      <Token index="1043">425</Token>
+      <Token index="1044">13.4</Token>
+      <Token index="1045">12.1</Token>
+      <Token index="1046">4.9</Token>
+      <Token index="1047">15.0</Token>
+      <Token index="1048">13.3</Token>
+      <Token index="1049">5.4</Token>
+      <Token index="1050">14.4</Token>
+      <Token index="1051">12.9</Token>
+      <Token index="1052">5.2</Token>
+      <Token index="1053">450</Token>
+      <Token index="1054">13.6</Token>
+      <Token index="1055">12.2</Token>
+      <Token index="1056">5.2</Token>
+      <Token index="1057">15.1</Token>
+      <Token index="1058">13.4</Token>
+      <Token index="1059">5.8</Token>
+      <Token index="1060">14.5</Token>
+      <Token index="1061">13.0</Token>
+      <Token index="1062">5.6</Token>
+      <Token index="1063">14.5</Token>
+      <Token index="1064">13.0</Token>
+      <Token index="1065">5.9</Token>
+      <Token index="1066">475</Token>
+      <Token index="1067">13.7</Token>
+      <Token index="1068">12.3</Token>
+      <Token index="1069">5.6</Token>
+      <Token index="1070">15.3</Token>
+      <Token index="1071">13.5</Token>
+      <Token index="1072">6.1</Token>
+      <Token index="1073">500</Token>
+      <Token index="1074">13.8</Token>
+      <Token index="1075">12.3</Token>
+      <Token index="1076">5.9</Token>
+      <Token index="1077">15.4</Token>
+      <Token index="1078">13.6</Token>
+      <Token index="1079">6.5</Token>
+      <Token index="1080">14.4</Token>
+      <Token index="1081">13.1</Token>
+      <Token index="1082">6.3</Token>
+      <Token index="1083">525</Token>
+      <Token index="1084">14.0</Token>
+      <Token index="1085">12.4</Token>
+      <Token index="1086">6.3</Token>
+      <Token index="1087">15.6</Token>
+      <Token index="1088">13.7</Token>
+      <Token index="1089">6.9</Token>
+      <Token index="1090">...</Token>
+      <Token index="1091">...</Token>
+      <Token index="1092">...</Token>
+      <Token index="1093">550</Token>
+      <Token index="1094">14.2</Token>
+      <Token index="1095">12.5</Token>
+      <Token index="1096">6.6</Token>
+      <Token index="1097">15.8</Token>
+      <Token index="1098">13.8</Token>
+      <Token index="1099">7.3</Token>
+      <Token index="1100">...</Token>
+      <Token index="1101">...</Token>
+      <Token index="1102">...</Token>
+      <Token index="1103">575</Token>
+      <Token index="1104">14.4</Token>
+      <Token index="1105">12.6</Token>
+      <Token index="1106">7.0</Token>
+      <Token index="1107">16.0</Token>
+      <Token index="1108">13.9</Token>
+      <Token index="1109">7.7</Token>
+      <Token index="1110">...</Token>
+      <Token index="1111">...</Token>
+      <Token index="1112">...</Token>
+      <Token index="1113">600</Token>
+      <Token index="1114">14.6</Token>
+      <Token index="1115">12.7</Token>
+      <Token index="1116">7.3</Token>
+      <Token index="1117">16.4</Token>
+      <Token index="1118">14.0</Token>
+      <Token index="1119">8.1</Token>
+      <Token index="1120">...</Token>
+      <Token index="1121">...</Token>
+      <Token index="1122">...</Token>
+      <Token index="1123">625</Token>
+      <Token index="1124">14.9</Token>
+      <Token index="1125">12.7</Token>
+      <Token index="1126">7.7</Token>
+      <Token index="1127">16.9</Token>
+      <Token index="1128">14.1</Token>
+      <Token index="1129">8.5</Token>
+      <Token index="1130">...</Token>
+      <Token index="1131">...</Token>
+      <Token index="1132">...</Token>
+      <Token index="1133">650</Token>
+      <Token index="1134">15.2</Token>
+      <Token index="1135">12.8</Token>
+      <Token index="1136">8.1</Token>
+      <Token index="1137">17.5</Token>
+      <Token index="1138">14.2</Token>
+      <Token index="1139">9.0</Token>
+      <Token index="1140">...</Token>
+      <Token index="1141">...</Token>
+      <Token index="1142">...</Token>
+      <Token index="1143">675</Token>
+      <Token index="1144">15.5</Token>
+      <Token index="1145">12.9</Token>
+      <Token index="1146">8.5</Token>
+      <Token index="1147">...</Token>
+      <Token index="1148">...</Token>
+      <Token index="1149">...</Token>
+      <Token index="1150">...</Token>
+      <Token index="1151">...</Token>
+      <Token index="1152">...</Token>
+      <Token index="1153">700</Token>
+      <Token index="1154">16.0</Token>
+      <Token index="1155">13.0</Token>
+      <Token index="1156">8.9</Token>
+      <Token index="1157">...</Token>
+      <Token index="1158">...</Token>
+      <Token index="1159">...</Token>
+      <Token index="1160">...</Token>
+      <Token index="1161">...</Token>
+      <Token index="1162">...</Token>
+      <Token index="1163">725</Token>
+      <Token index="1164">16.5</Token>
+      <Token index="1165">13.1</Token>
+      <Token index="1166">9.3</Token>
+      <Token index="1167">...</Token>
+      <Token index="1168">...</Token>
+      <Token index="1169">...</Token>
+      <Token index="1170">...</Token>
+      <Token index="1171">...</Token>
+      <Token index="1172">...</Token>
+      <Token index="1173">750</Token>
+      <Token index="1174">17.1</Token>
+      <Token index="1175">13.3</Token>
+      <Token index="1176">9.7</Token>
+      <Token index="1177">...</Token>
+      <Token index="1178">...</Token>
+      <Token index="1179">...</Token>
+      <Token index="1180">...</Token>
+      <Token index="1181">...</Token>
+      <Token index="1182">...</Token>
+      <Token index="1183">775</Token>
+      <Token index="1184">17.9</Token>
+      <Token index="1185">13.4</Token>
+      <Token index="1186">10.1</Token>
+      <Token index="1187">...</Token>
+      <Token index="1188">...</Token>
+      <Token index="1189">...</Token>
+      <Token index="1190">...</Token>
+      <Token index="1191">...</Token>
+      <Token index="1192">...</Token>
+      <Token index="1193">800</Token>
+      <Token index="1194">18.8</Token>
+      <Token index="1195">13.6</Token>
+      <Token index="1196">10.6</Token>
+      <Token index="1197">...</Token>
+      <Token index="1198">...</Token>
+      <Token index="1199">...</Token>
+      <Token index="1200">...</Token>
+      <Token index="1201">...</Token>
+      <Token index="1202">...</Token>
+      <Token index="1203">825</Token>
+      <Token index="1204">19.9</Token>
+      <Token index="1205">13.8</Token>
+      <Token index="1206">11.1</Token>
+      <Token index="1207">...</Token>
+      <Token index="1208">...</Token>
+      <Token index="1209">...</Token>
+      <Token index="1210">...</Token>
+      <Token index="1211">...</Token>
+      <Token index="1212">...</Token>
+      <Token index="1213">1157</Token>
+      <Token index="1214">Copyright</Token>
+      <Token index="1215">ASME</Token>
+      <Token index="1216">International</Token>
+      <Token index="1217">(BPVC)</Token>
+      <Token index="1218">Provided</Token>
+      <Token index="1219">by</Token>
+      <Token index="1220">Accuris</Token>
+      <Token index="1221">under</Token>
+      <Token index="1222">license</Token>
+      <Token index="1223">with</Token>
+      <Token index="1224">ASME</Token>
+      <Token index="1225">Licensee=BREMBANA</Token>
+      <Token index="1226">&amp;</Token>
+      <Token index="1227">ROLLE</Token>
+      <Token index="1228">GROUP</Token>
+      <Token index="1229">-</Token>
+      <Token index="1230">Bergamasque:</Token>
+      <Token index="1231">Albrèmb/8355778001,</Token>
+      <Token index="1232">User=Tosto,</Token>
+      <Token index="1233">Natale</Token>
+      <Token index="1234">No</Token>
+      <Token index="1235">reproduction</Token>
+      <Token index="1236">or</Token>
+      <Token index="1237">networking</Token>
+      <Token index="1238">permitted</Token>
+      <Token index="1239">without</Token>
+      <Token index="1240">license</Token>
+      <Token index="1241">from</Token>
+      <Token index="1242">Accuris</Token>
+      <Token index="1243">Not</Token>
+      <Token index="1244">for</Token>
+      <Token index="1245">Resale,</Token>
+      <Token index="1246">10/20/2025</Token>
+      <Token index="1247">03:54:29</Token>
+      <Token index="1248">MDT</Token>
+    </Page>
+    <Page sourcePage="1208">
+      <Token index="1249">ASME</Token>
+      <Token index="1250">BPVC.II.D.M-2025</Token>
+      <Token index="1251">Table</Token>
+      <Token index="1252">TE-1</Token>
+      <Token index="1253">Thermal</Token>
+      <Token index="1254">Expansion</Token>
+      <Token index="1255">for</Token>
+      <Token index="1256">Ferrous</Token>
+      <Token index="1257">Materials</Token>
+      <Token index="1258">(Cont'd)</Token>
+      <Token index="1259">12Cr–1Al,</Token>
+      <Token index="1260">Coefficients</Token>
+      <Token index="1261">for</Token>
+      <Token index="1262">12Cr,</Token>
+      <Token index="1263">13Cr,</Token>
+      <Token index="1264">13Cr–4Ni</Token>
+      <Token index="1265">Coefficients</Token>
+      <Token index="1266">for</Token>
+      <Token index="1267">8Ni</Token>
+      <Token index="1268">and</Token>
+      <Token index="1269">9Ni</Token>
+      <Token index="1270">Steels</Token>
+      <Token index="1271">and</Token>
+      <Token index="1272">Steels</Token>
+      <Token index="1273">Coefficients</Token>
+      <Token index="1274">for</Token>
+      <Token index="1275">15Cr</Token>
+      <Token index="1276">and</Token>
+      <Token index="1277">17Cr</Token>
+      <Token index="1278">Steels</Token>
+      <Token index="1279">Temperature,</Token>
+      <Token index="1280">°C</Token>
+      <Token index="1281">A</Token>
+      <Token index="1282">B</Token>
+      <Token index="1283">C</Token>
+      <Token index="1284">A</Token>
+      <Token index="1285">B</Token>
+      <Token index="1286">C</Token>
+      <Token index="1287">A</Token>
+      <Token index="1288">B</Token>
+      <Token index="1289">C</Token>
+      <Token index="1290">20</Token>
+      <Token index="1291">9.9</Token>
+      <Token index="1292">9.9</Token>
+      <Token index="1293">0</Token>
+      <Token index="1294">10.6</Token>
+      <Token index="1295">10.6</Token>
+      <Token index="1296">0</Token>
+      <Token index="1297">9.6</Token>
+      <Token index="1298">9.6</Token>
+      <Token index="1299">0</Token>
+      <Token index="1300">50</Token>
+      <Token index="1301">10.5</Token>
+      <Token index="1302">10.2</Token>
+      <Token index="1303">0.31</Token>
+      <Token index="1304">11.1</Token>
+      <Token index="1305">10.9</Token>
+      <Token index="1306">0.33</Token>
+      <Token index="1307">9.9</Token>
+      <Token index="1308">9.7</Token>
+      <Token index="1309">0.29</Token>
+      <Token index="1310">75</Token>
+      <Token index="1311">11.1</Token>
+      <Token index="1312">10.5</Token>
+      <Token index="1313">0.58</Token>
+      <Token index="1314">11.3</Token>
+      <Token index="1315">11.0</Token>
+      <Token index="1316">0.61</Token>
+      <Token index="1317">10.1</Token>
+      <Token index="1318">9.9</Token>
+      <Token index="1319">0.54</Token>
+      <Token index="1320">100</Token>
+      <Token index="1321">11.5</Token>
+      <Token index="1322">10.7</Token>
+      <Token index="1323">0.86</Token>
+      <Token index="1324">11.5</Token>
+      <Token index="1325">11.1</Token>
+      <Token index="1326">0.89</Token>
+      <Token index="1327">10.3</Token>
+      <Token index="1328">10.0</Token>
+      <Token index="1329">0.80</Token>
+      <Token index="1330">125</Token>
+      <Token index="1331">11.9</Token>
+      <Token index="1332">11.0</Token>
+      <Token index="1333">1.2</Token>
+      <Token index="1334">11.7</Token>
+      <Token index="1335">11.3</Token>
+      <Token index="1336">1.2</Token>
+      <Token index="1337">10.5</Token>
+      <Token index="1338">10.1</Token>
+      <Token index="1339">1.1</Token>
+      <Token index="1340">150</Token>
+      <Token index="1341">12.2</Token>
+      <Token index="1342">11.2</Token>
+      <Token index="1343">1.5</Token>
+      <Token index="1344">11.8</Token>
+      <Token index="1345">11.4</Token>
+      <Token index="1346">1.5</Token>
+      <Token index="1347">10.7</Token>
+      <Token index="1348">10.2</Token>
+      <Token index="1349">1.3</Token>
+      <Token index="1350">175</Token>
+      <Token index="1351">12.4</Token>
+      <Token index="1352">11.4</Token>
+      <Token index="1353">1.8</Token>
+      <Token index="1354">11.9</Token>
+      <Token index="1355">11.4</Token>
+      <Token index="1356">1.8</Token>
+      <Token index="1357">10.9</Token>
+      <Token index="1358">10.3</Token>
+      <Token index="1359">1.6</Token>
+      <Token index="1360">200</Token>
+      <Token index="1361">12.6</Token>
+      <Token index="1362">11.5</Token>
+      <Token index="1363">2.1</Token>
+      <Token index="1364">12.0</Token>
+      <Token index="1365">11.5</Token>
+      <Token index="1366">2.1</Token>
+      <Token index="1367">11.1</Token>
+      <Token index="1368">10.4</Token>
+      <Token index="1369">1.9</Token>
+      <Token index="1370">225</Token>
+      <Token index="1371">12.7</Token>
+      <Token index="1372">11.7</Token>
+      <Token index="1373">2.4</Token>
+      <Token index="1374">12.1</Token>
+      <Token index="1375">11.6</Token>
+      <Token index="1376">2.4</Token>
+      <Token index="1377">11.2</Token>
+      <Token index="1378">10.5</Token>
+      <Token index="1379">2.2</Token>
+      <Token index="1380">250</Token>
+      <Token index="1381">12.8</Token>
+      <Token index="1382">11.8</Token>
+      <Token index="1383">2.7</Token>
+      <Token index="1384">12.1</Token>
+      <Token index="1385">11.6</Token>
+      <Token index="1386">2.7</Token>
+      <Token index="1387">11.4</Token>
+      <Token index="1388">10.6</Token>
+      <Token index="1389">2.4</Token>
+      <Token index="1390">275</Token>
+      <Token index="1391">12.9</Token>
+      <Token index="1392">11.9</Token>
+      <Token index="1393">3.0</Token>
+      <Token index="1394">12.2</Token>
+      <Token index="1395">11.7</Token>
+      <Token index="1396">3.0</Token>
+      <Token index="1397">11.5</Token>
+      <Token index="1398">10.7</Token>
+      <Token index="1399">2.7</Token>
+      <Token index="1400">300</Token>
+      <Token index="1401">12.9</Token>
+      <Token index="1402">12.0</Token>
+      <Token index="1403">3.4</Token>
+      <Token index="1404">12.3</Token>
+      <Token index="1405">11.7</Token>
+      <Token index="1406">3.3</Token>
+      <Token index="1407">11.7</Token>
+      <Token index="1408">10.8</Token>
+      <Token index="1409">3.0</Token>
+      <Token index="1410">325</Token>
+      <Token index="1411">13.1</Token>
+      <Token index="1412">12.0</Token>
+      <Token index="1413">3.7</Token>
+      <Token index="1414">12.4</Token>
+      <Token index="1415">11.8</Token>
+      <Token index="1416">3.6</Token>
+      <Token index="1417">11.8</Token>
+      <Token index="1418">10.8</Token>
+      <Token index="1419">3.3</Token>
+      <Token index="1420">350</Token>
+      <Token index="1421">13.2</Token>
+      <Token index="1422">12.1</Token>
+      <Token index="1423">4.0</Token>
+      <Token index="1424">12.5</Token>
+      <Token index="1425">11.8</Token>
+      <Token index="1426">3.9</Token>
+      <Token index="1427">11.9</Token>
+      <Token index="1428">10.9</Token>
+      <Token index="1429">3.6</Token>
+      <Token index="1430">375</Token>
+      <Token index="1431">13.4</Token>
+      <Token index="1432">12.2</Token>
+      <Token index="1433">4.3</Token>
+      <Token index="1434">12.6</Token>
+      <Token index="1435">11.9</Token>
+      <Token index="1436">4.2</Token>
+      <Token index="1437">12.0</Token>
+      <Token index="1438">11.0</Token>
+      <Token index="1439">3.9</Token>
+      <Token index="1440">400</Token>
+      <Token index="1441">13.6</Token>
+      <Token index="1442">12.3</Token>
+      <Token index="1443">4.7</Token>
+      <Token index="1444">12.7</Token>
+      <Token index="1445">11.9</Token>
+      <Token index="1446">4.5</Token>
+      <Token index="1447">12.0</Token>
+      <Token index="1448">11.0</Token>
+      <Token index="1449">4.2</Token>
+      <Token index="1450">425</Token>
+      <Token index="1451">13.7</Token>
+      <Token index="1452">12.4</Token>
+      <Token index="1453">5.0</Token>
+      <Token index="1454">12.8</Token>
+      <Token index="1455">12.0</Token>
+      <Token index="1456">4.9</Token>
+      <Token index="1457">12.1</Token>
+      <Token index="1458">11.1</Token>
+      <Token index="1459">4.5</Token>
+      <Token index="1460">450</Token>
+      <Token index="1461">13.8</Token>
+      <Token index="1462">12.5</Token>
+      <Token index="1463">5.4</Token>
+      <Token index="1464">12.9</Token>
+      <Token index="1465">12.0</Token>
+      <Token index="1466">5.2</Token>
+      <Token index="1467">12.2</Token>
+      <Token index="1468">11.2</Token>
+      <Token index="1469">4.8</Token>
+      <Token index="1470">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="1471">475</Token>
+      <Token index="1472">13.7</Token>
+      <Token index="1473">12.5</Token>
+      <Token index="1474">5.7</Token>
+      <Token index="1475">13.0</Token>
+      <Token index="1476">12.1</Token>
+      <Token index="1477">5.5</Token>
+      <Token index="1478">12.2</Token>
+      <Token index="1479">11.2</Token>
+      <Token index="1480">5.1</Token>
+      <Token index="1481">500</Token>
+      <Token index="1482">13.4</Token>
+      <Token index="1483">12.6</Token>
+      <Token index="1484">6.0</Token>
+      <Token index="1485">13.1</Token>
+      <Token index="1486">12.1</Token>
+      <Token index="1487">5.8</Token>
+      <Token index="1488">12.2</Token>
+      <Token index="1489">11.3</Token>
+      <Token index="1490">5.4</Token>
+      <Token index="1491">525</Token>
+      <Token index="1492">12.7</Token>
+      <Token index="1493">12.6</Token>
+      <Token index="1494">6.4</Token>
+      <Token index="1495">13.2</Token>
+      <Token index="1496">12.2</Token>
+      <Token index="1497">6.2</Token>
+      <Token index="1498">12.3</Token>
+      <Token index="1499">11.3</Token>
+      <Token index="1500">5.7</Token>
+      <Token index="1501">550</Token>
+      <Token index="1502">11.6</Token>
+      <Token index="1503">12.6</Token>
+      <Token index="1504">6.7</Token>
+      <Token index="1505">13.3</Token>
+      <Token index="1506">12.2</Token>
+      <Token index="1507">6.5</Token>
+      <Token index="1508">12.3</Token>
+      <Token index="1509">11.4</Token>
+      <Token index="1510">6.0</Token>
+      <Token index="1511">575</Token>
+      <Token index="1512">...</Token>
+      <Token index="1513">...</Token>
+      <Token index="1514">...</Token>
+      <Token index="1515">13.3</Token>
+      <Token index="1516">12.3</Token>
+      <Token index="1517">6.8</Token>
+      <Token index="1518">12.4</Token>
+      <Token index="1519">11.4</Token>
+      <Token index="1520">6.3</Token>
+      <Token index="1521">600</Token>
+      <Token index="1522">...</Token>
+      <Token index="1523">...</Token>
+      <Token index="1524">...</Token>
+      <Token index="1525">13.3</Token>
+      <Token index="1526">12.3</Token>
+      <Token index="1527">7.2</Token>
+      <Token index="1528">12.5</Token>
+      <Token index="1529">11.5</Token>
+      <Token index="1530">6.6</Token>
+      <Token index="1531">625</Token>
+      <Token index="1532">...</Token>
+      <Token index="1533">...</Token>
+      <Token index="1534">...</Token>
+      <Token index="1535">13.4</Token>
+      <Token index="1536">12.4</Token>
+      <Token index="1537">7.5</Token>
+      <Token index="1538">12.5</Token>
+      <Token index="1539">11.5</Token>
+      <Token index="1540">7.0</Token>
+      <Token index="1541">650</Token>
+      <Token index="1542">...</Token>
+      <Token index="1543">...</Token>
+      <Token index="1544">...</Token>
+      <Token index="1545">13.4</Token>
+      <Token index="1546">12.4</Token>
+      <Token index="1547">7.8</Token>
+      <Token index="1548">12.7</Token>
+      <Token index="1549">11.5</Token>
+      <Token index="1550">7.3</Token>
+      <Token index="1551">675</Token>
+      <Token index="1552">...</Token>
+      <Token index="1553">...</Token>
+      <Token index="1554">...</Token>
+      <Token index="1555">13.4</Token>
+      <Token index="1556">12.5</Token>
+      <Token index="1557">8.2</Token>
+      <Token index="1558">12.8</Token>
+      <Token index="1559">11.6</Token>
+      <Token index="1560">7.6</Token>
+      <Token index="1561">700</Token>
+      <Token index="1562">...</Token>
+      <Token index="1563">...</Token>
+      <Token index="1564">...</Token>
+      <Token index="1565">13.4</Token>
+      <Token index="1566">12.5</Token>
+      <Token index="1567">8.5</Token>
+      <Token index="1568">13.0</Token>
+      <Token index="1569">11.6</Token>
+      <Token index="1570">7.9</Token>
+      <Token index="1571">725</Token>
+      <Token index="1572">...</Token>
+      <Token index="1573">...</Token>
+      <Token index="1574">...</Token>
+      <Token index="1575">13.4</Token>
+      <Token index="1576">12.5</Token>
+      <Token index="1577">8.8</Token>
+      <Token index="1578">13.3</Token>
+      <Token index="1579">11.7</Token>
+      <Token index="1580">8.2</Token>
+      <Token index="1581">750</Token>
+      <Token index="1582">...</Token>
+      <Token index="1583">...</Token>
+      <Token index="1584">...</Token>
+      <Token index="1585">13.4</Token>
+      <Token index="1586">12.5</Token>
+      <Token index="1587">9.2</Token>
+      <Token index="1588">13.6</Token>
+      <Token index="1589">11.7</Token>
+      <Token index="1590">8.6</Token>
+      <Token index="1591">775</Token>
+      <Token index="1592">...</Token>
+      <Token index="1593">...</Token>
+      <Token index="1594">...</Token>
+      <Token index="1595">13.5</Token>
+      <Token index="1596">12.6</Token>
+      <Token index="1597">9.5</Token>
+      <Token index="1598">14.0</Token>
+      <Token index="1599">11.8</Token>
+      <Token index="1600">8.9</Token>
+      <Token index="1601">800</Token>
+      <Token index="1602">...</Token>
+      <Token index="1603">...</Token>
+      <Token index="1604">...</Token>
+      <Token index="1605">13.6</Token>
+      <Token index="1606">12.6</Token>
+      <Token index="1607">9.8</Token>
+      <Token index="1608">14.5</Token>
+      <Token index="1609">11.9</Token>
+      <Token index="1610">9.3</Token>
+      <Token index="1611">825</Token>
+      <Token index="1612">...</Token>
+      <Token index="1613">...</Token>
+      <Token index="1614">...</Token>
+      <Token index="1615">13.8</Token>
+      <Token index="1616">12.6</Token>
+      <Token index="1617">10.2</Token>
+      <Token index="1618">15.2</Token>
+      <Token index="1619">12.0</Token>
+      <Token index="1620">9.6</Token>
+      <Token index="1621">1158</Token>
+      <Token index="1622">Copyright</Token>
+      <Token index="1623">ASME</Token>
+      <Token index="1624">International</Token>
+      <Token index="1625">(BPVC)</Token>
+      <Token index="1626">Provided</Token>
+      <Token index="1627">by</Token>
+      <Token index="1628">Accuris</Token>
+      <Token index="1629">under</Token>
+      <Token index="1630">license</Token>
+      <Token index="1631">with</Token>
+      <Token index="1632">ASME</Token>
+      <Token index="1633">Licensee=BREMBANA</Token>
+      <Token index="1634">&amp;</Token>
+      <Token index="1635">ROLLE</Token>
+      <Token index="1636">GROUP</Token>
+      <Token index="1637">-</Token>
+      <Token index="1638">Bergamasque:</Token>
+      <Token index="1639">Albrèmb/8355778001,</Token>
+      <Token index="1640">User=Tosto,</Token>
+      <Token index="1641">Natale</Token>
+      <Token index="1642">No</Token>
+      <Token index="1643">reproduction</Token>
+      <Token index="1644">or</Token>
+      <Token index="1645">networking</Token>
+      <Token index="1646">permitted</Token>
+      <Token index="1647">without</Token>
+      <Token index="1648">license</Token>
+      <Token index="1649">from</Token>
+      <Token index="1650">Accuris</Token>
+      <Token index="1651">Not</Token>
+      <Token index="1652">for</Token>
+      <Token index="1653">Resale,</Token>
+      <Token index="1654">10/20/2025</Token>
+      <Token index="1655">03:54:29</Token>
+      <Token index="1656">MDT</Token>
+    </Page>
+    <Page sourcePage="1209">
+      <Token index="1657">ASME</Token>
+      <Token index="1658">BPVC.II.D.M-2025</Token>
+      <Token index="1659">Table</Token>
+      <Token index="1660">TE-1</Token>
+      <Token index="1661">Thermal</Token>
+      <Token index="1662">Expansion</Token>
+      <Token index="1663">for</Token>
+      <Token index="1664">Ferrous</Token>
+      <Token index="1665">Materials</Token>
+      <Token index="1666">(Cont'd)</Token>
+      <Token index="1667">Coefficients</Token>
+      <Token index="1668">for</Token>
+      <Token index="1669">Austenitic</Token>
+      <Token index="1670">Stainless</Token>
+      <Token index="1671">Coefficients</Token>
+      <Token index="1672">for</Token>
+      <Token index="1673">Other</Token>
+      <Token index="1674">Austenitic</Token>
+      <Token index="1675">Coefficients</Token>
+      <Token index="1676">for</Token>
+      <Token index="1677">27Cr</Token>
+      <Token index="1678">Steels</Token>
+      <Token index="1679">Steels</Token>
+      <Token index="1680">(Group</Token>
+      <Token index="1681">3)</Token>
+      <Token index="1682">[Note</Token>
+      <Token index="1683">(3)]</Token>
+      <Token index="1684">Stainless</Token>
+      <Token index="1685">Steels</Token>
+      <Token index="1686">(Group</Token>
+      <Token index="1687">4)</Token>
+      <Token index="1688">[Note</Token>
+      <Token index="1689">(4)]</Token>
+      <Token index="1690">Temperature,</Token>
+      <Token index="1691">°C</Token>
+      <Token index="1692">A</Token>
+      <Token index="1693">B</Token>
+      <Token index="1694">C</Token>
+      <Token index="1695">A</Token>
+      <Token index="1696">B</Token>
+      <Token index="1697">C</Token>
+      <Token index="1698">A</Token>
+      <Token index="1699">B</Token>
+      <Token index="1700">C</Token>
+      <Token index="1701">20</Token>
+      <Token index="1702">9.0</Token>
+      <Token index="1703">9.0</Token>
+      <Token index="1704">0</Token>
+      <Token index="1705">15.3</Token>
+      <Token index="1706">15.3</Token>
+      <Token index="1707">0</Token>
+      <Token index="1708">14.7</Token>
+      <Token index="1709">14.7</Token>
+      <Token index="1710">0</Token>
+      <Token index="1711">50</Token>
+      <Token index="1712">9.3</Token>
+      <Token index="1713">9.2</Token>
+      <Token index="1714">0.28</Token>
+      <Token index="1715">16.0</Token>
+      <Token index="1716">15.6</Token>
+      <Token index="1717">0.47</Token>
+      <Token index="1718">15.2</Token>
+      <Token index="1719">15.0</Token>
+      <Token index="1720">0.45</Token>
+      <Token index="1721">75</Token>
+      <Token index="1722">9.4</Token>
+      <Token index="1723">9.2</Token>
+      <Token index="1724">0.51</Token>
+      <Token index="1725">16.5</Token>
+      <Token index="1726">15.9</Token>
+      <Token index="1727">0.87</Token>
+      <Token index="1728">15.6</Token>
+      <Token index="1729">15.2</Token>
+      <Token index="1730">0.84</Token>
+      <Token index="1731">100</Token>
+      <Token index="1732">9.5</Token>
+      <Token index="1733">9.3</Token>
+      <Token index="1734">0.74</Token>
+      <Token index="1735">17.0</Token>
+      <Token index="1736">16.2</Token>
+      <Token index="1737">1.3</Token>
+      <Token index="1738">16.0</Token>
+      <Token index="1739">15.4</Token>
+      <Token index="1740">1.2</Token>
+      <Token index="1741">125</Token>
+      <Token index="1742">9.6</Token>
+      <Token index="1743">9.4</Token>
+      <Token index="1744">0.99</Token>
+      <Token index="1745">17.4</Token>
+      <Token index="1746">16.4</Token>
+      <Token index="1747">1.7</Token>
+      <Token index="1748">16.3</Token>
+      <Token index="1749">15.6</Token>
+      <Token index="1750">1.6</Token>
+      <Token index="1751">150</Token>
+      <Token index="1752">9.7</Token>
+      <Token index="1753">9.4</Token>
+      <Token index="1754">1.2</Token>
+      <Token index="1755">17.8</Token>
+      <Token index="1756">16.6</Token>
+      <Token index="1757">2.2</Token>
+      <Token index="1758">16.5</Token>
+      <Token index="1759">15.7</Token>
+      <Token index="1760">2.0</Token>
+      <Token index="1761">175</Token>
+      <Token index="1762">9.8</Token>
+      <Token index="1763">9.5</Token>
+      <Token index="1764">1.5</Token>
+      <Token index="1765">18.1</Token>
+      <Token index="1766">16.8</Token>
+      <Token index="1767">2.6</Token>
+      <Token index="1768">16.8</Token>
+      <Token index="1769">15.9</Token>
+      <Token index="1770">2.5</Token>
+      <Token index="1771">200</Token>
+      <Token index="1772">9.9</Token>
+      <Token index="1773">9.5</Token>
+      <Token index="1774">1.7</Token>
+      <Token index="1775">18.4</Token>
+      <Token index="1776">17.0</Token>
+      <Token index="1777">3.1</Token>
+      <Token index="1778">16.9</Token>
+      <Token index="1779">16.0</Token>
+      <Token index="1780">2.9</Token>
+      <Token index="1781">225</Token>
+      <Token index="1782">10.0</Token>
+      <Token index="1783">9.6</Token>
+      <Token index="1784">2.0</Token>
+      <Token index="1785">18.6</Token>
+      <Token index="1786">17.2</Token>
+      <Token index="1787">3.5</Token>
+      <Token index="1788">17.1</Token>
+      <Token index="1789">16.1</Token>
+      <Token index="1790">3.3</Token>
+      <Token index="1791">250</Token>
+      <Token index="1792">10.1</Token>
+      <Token index="1793">9.6</Token>
+      <Token index="1794">2.2</Token>
+      <Token index="1795">18.8</Token>
+      <Token index="1796">17.4</Token>
+      <Token index="1797">4.0</Token>
+      <Token index="1798">17.3</Token>
+      <Token index="1799">16.3</Token>
+      <Token index="1800">3.7</Token>
+      <Token index="1801">275</Token>
+      <Token index="1802">10.2</Token>
+      <Token index="1803">9.7</Token>
+      <Token index="1804">2.5</Token>
+      <Token index="1805">18.9</Token>
+      <Token index="1806">17.5</Token>
+      <Token index="1807">4.5</Token>
+      <Token index="1808">17.4</Token>
+      <Token index="1809">16.4</Token>
+      <Token index="1810">4.2</Token>
+      <Token index="1811">300</Token>
+      <Token index="1812">10.3</Token>
+      <Token index="1813">9.7</Token>
+      <Token index="1814">2.7</Token>
+      <Token index="1815">19.1</Token>
+      <Token index="1816">17.7</Token>
+      <Token index="1817">4.9</Token>
+      <Token index="1818">17.6</Token>
+      <Token index="1819">16.5</Token>
+      <Token index="1820">4.6</Token>
+      <Token index="1821">325</Token>
+      <Token index="1822">10.5</Token>
+      <Token index="1823">9.8</Token>
+      <Token index="1824">3.0</Token>
+      <Token index="1825">19.2</Token>
+      <Token index="1826">17.8</Token>
+      <Token index="1827">5.4</Token>
+      <Token index="1828">17.7</Token>
+      <Token index="1829">16.6</Token>
+      <Token index="1830">5.0</Token>
+      <Token index="1831">350</Token>
+      <Token index="1832">10.6</Token>
+      <Token index="1833">9.9</Token>
+      <Token index="1834">3.3</Token>
+      <Token index="1835">19.3</Token>
+      <Token index="1836">17.9</Token>
+      <Token index="1837">5.9</Token>
+      <Token index="1838">17.8</Token>
+      <Token index="1839">16.6</Token>
+      <Token index="1840">5.5</Token>
+      <Token index="1841">375</Token>
+      <Token index="1842">10.8</Token>
+      <Token index="1843">9.9</Token>
+      <Token index="1844">3.5</Token>
+      <Token index="1845">19.4</Token>
+      <Token index="1846">18.0</Token>
+      <Token index="1847">6.4</Token>
+      <Token index="1848">18.0</Token>
+      <Token index="1849">16.7</Token>
+      <Token index="1850">5.9</Token>
+      <Token index="1851">400</Token>
+      <Token index="1852">10.9</Token>
+      <Token index="1853">10.0</Token>
+      <Token index="1854">3.8</Token>
+      <Token index="1855">19.5</Token>
+      <Token index="1856">18.1</Token>
+      <Token index="1857">6.9</Token>
+      <Token index="1858">18.1</Token>
+      <Token index="1859">16.8</Token>
+      <Token index="1860">6.4</Token>
+      <Token index="1861">425</Token>
+      <Token index="1862">11.1</Token>
+      <Token index="1863">10.0</Token>
+      <Token index="1864">4.1</Token>
+      <Token index="1865">19.6</Token>
+      <Token index="1866">18.2</Token>
+      <Token index="1867">7.4</Token>
+      <Token index="1868">18.3</Token>
+      <Token index="1869">16.9</Token>
+      <Token index="1870">6.8</Token>
+      <Token index="1871">450</Token>
+      <Token index="1872">11.2</Token>
+      <Token index="1873">10.1</Token>
+      <Token index="1874">4.3</Token>
+      <Token index="1875">19.8</Token>
+      <Token index="1876">18.3</Token>
+      <Token index="1877">7.9</Token>
+      <Token index="1878">18.4</Token>
+      <Token index="1879">17.0</Token>
+      <Token index="1880">7.3</Token>
+      <Token index="1881">475</Token>
+      <Token index="1882">11.3</Token>
+      <Token index="1883">10.2</Token>
+      <Token index="1884">4.6</Token>
+      <Token index="1885">20.0</Token>
+      <Token index="1886">18.4</Token>
+      <Token index="1887">8.3</Token>
+      <Token index="1888">18.6</Token>
+      <Token index="1889">17.1</Token>
+      <Token index="1890">7.8</Token>
+      <Token index="1891">500</Token>
+      <Token index="1892">11.4</Token>
+      <Token index="1893">10.2</Token>
+      <Token index="1894">4.9</Token>
+      <Token index="1895">20.2</Token>
+      <Token index="1896">18.4</Token>
+      <Token index="1897">8.9</Token>
+      <Token index="1898">18.8</Token>
+      <Token index="1899">17.2</Token>
+      <Token index="1900">8.2</Token>
+      <Token index="1901">525</Token>
+      <Token index="1902">11.5</Token>
+      <Token index="1903">10.3</Token>
+      <Token index="1904">5.2</Token>
+      <Token index="1905">20.4</Token>
+      <Token index="1906">18.5</Token>
+      <Token index="1907">9.4</Token>
+      <Token index="1908">19.0</Token>
+      <Token index="1909">17.2</Token>
+      <Token index="1910">8.7</Token>
+      <Token index="1911">550</Token>
+      <Token index="1912">11.6</Token>
+      <Token index="1913">10.4</Token>
+      <Token index="1914">5.5</Token>
+      <Token index="1915">20.6</Token>
+      <Token index="1916">18.6</Token>
+      <Token index="1917">9.9</Token>
+      <Token index="1918">19.2</Token>
+      <Token index="1919">17.3</Token>
+      <Token index="1920">9.2</Token>
+      <Token index="1921">575</Token>
+      <Token index="1922">11.6</Token>
+      <Token index="1923">10.4</Token>
+      <Token index="1924">5.8</Token>
+      <Token index="1925">20.9</Token>
+      <Token index="1926">18.7</Token>
+      <Token index="1927">10.4</Token>
+      <Token index="1928">19.4</Token>
+      <Token index="1929">17.4</Token>
+      <Token index="1930">9.7</Token>
+      <Token index="1931">600</Token>
+      <Token index="1932">11.7</Token>
+      <Token index="1933">10.5</Token>
+      <Token index="1934">6.1</Token>
+      <Token index="1935">21.1</Token>
+      <Token index="1936">18.8</Token>
+      <Token index="1937">10.9</Token>
+      <Token index="1938">19.6</Token>
+      <Token index="1939">17.5</Token>
+      <Token index="1940">10.2</Token>
+      <Token index="1941">625</Token>
+      <Token index="1942">11.7</Token>
+      <Token index="1943">10.5</Token>
+      <Token index="1944">6.4</Token>
+      <Token index="1945">21.4</Token>
+      <Token index="1946">18.9</Token>
+      <Token index="1947">11.4</Token>
+      <Token index="1948">19.8</Token>
+      <Token index="1949">17.6</Token>
+      <Token index="1950">10.6</Token>
+      <Token index="1951">650</Token>
+      <Token index="1952">11.8</Token>
+      <Token index="1953">10.6</Token>
+      <Token index="1954">6.7</Token>
+      <Token index="1955">21.6</Token>
+      <Token index="1956">19.0</Token>
+      <Token index="1957">12.0</Token>
+      <Token index="1958">20.0</Token>
+      <Token index="1959">17.7</Token>
+      <Token index="1960">11.1</Token>
+      <Token index="1961">675</Token>
+      <Token index="1962">11.9</Token>
+      <Token index="1963">10.6</Token>
+      <Token index="1964">7.0</Token>
+      <Token index="1965">21.7</Token>
+      <Token index="1966">19.1</Token>
+      <Token index="1967">12.5</Token>
+      <Token index="1968">20.3</Token>
+      <Token index="1969">17.8</Token>
+      <Token index="1970">11.7</Token>
+      <Token index="1971">700</Token>
+      <Token index="1972">12.0</Token>
+      <Token index="1973">10.7</Token>
+      <Token index="1974">7.2</Token>
+      <Token index="1975">21.7</Token>
+      <Token index="1976">19.2</Token>
+      <Token index="1977">13.1</Token>
+      <Token index="1978">20.5</Token>
+      <Token index="1979">17.9</Token>
+      <Token index="1980">12.2</Token>
+      <Token index="1981">725</Token>
+      <Token index="1982">12.2</Token>
+      <Token index="1983">10.7</Token>
+      <Token index="1984">7.6</Token>
+      <Token index="1985">21.5</Token>
+      <Token index="1986">19.3</Token>
+      <Token index="1987">13.6</Token>
+      <Token index="1988">20.7</Token>
+      <Token index="1989">18.0</Token>
+      <Token index="1990">12.7</Token>
+      <Token index="1991">750</Token>
+      <Token index="1992">12.4</Token>
+      <Token index="1993">10.8</Token>
+      <Token index="1994">7.9</Token>
+      <Token index="1995">21.2</Token>
+      <Token index="1996">19.4</Token>
+      <Token index="1997">14.1</Token>
+      <Token index="1998">20.9</Token>
+      <Token index="1999">18.1</Token>
+      <Token index="2000">13.2</Token>
+      <Token index="2001">775</Token>
+      <Token index="2002">12.9</Token>
+      <Token index="2003">10.8</Token>
+      <Token index="2004">8.2</Token>
+      <Token index="2005">20.6</Token>
+      <Token index="2006">19.4</Token>
+      <Token index="2007">14.7</Token>
+      <Token index="2008">21.2</Token>
+      <Token index="2009">18.2</Token>
+      <Token index="2010">13.7</Token>
+      <Token index="2011">800</Token>
+      <Token index="2012">13.4</Token>
+      <Token index="2013">10.9</Token>
+      <Token index="2014">8.5</Token>
+      <Token index="2015">19.7</Token>
+      <Token index="2016">19.4</Token>
+      <Token index="2017">15.2</Token>
+      <Token index="2018">21.4</Token>
+      <Token index="2019">18.3</Token>
+      <Token index="2020">14.3</Token>
+      <Token index="2021">825</Token>
+      <Token index="2022">14.2</Token>
+      <Token index="2023">11.0</Token>
+      <Token index="2024">8.8</Token>
+      <Token index="2025">18.4</Token>
+      <Token index="2026">19.4</Token>
+      <Token index="2027">15.6</Token>
+      <Token index="2028">21.6</Token>
+      <Token index="2029">18.4</Token>
+      <Token index="2030">14.8</Token>
+      <Token index="2031">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="2032">1159</Token>
+      <Token index="2033">Copyright</Token>
+      <Token index="2034">ASME</Token>
+      <Token index="2035">International</Token>
+      <Token index="2036">(BPVC)</Token>
+      <Token index="2037">Provided</Token>
+      <Token index="2038">by</Token>
+      <Token index="2039">Accuris</Token>
+      <Token index="2040">under</Token>
+      <Token index="2041">license</Token>
+      <Token index="2042">with</Token>
+      <Token index="2043">ASME</Token>
+      <Token index="2044">Licensee=BREMBANA</Token>
+      <Token index="2045">&amp;</Token>
+      <Token index="2046">ROLLE</Token>
+      <Token index="2047">GROUP</Token>
+      <Token index="2048">-</Token>
+      <Token index="2049">Bergamasque:</Token>
+      <Token index="2050">Albrèmb/8355778001,</Token>
+      <Token index="2051">User=Tosto,</Token>
+      <Token index="2052">Natale</Token>
+      <Token index="2053">No</Token>
+      <Token index="2054">reproduction</Token>
+      <Token index="2055">or</Token>
+      <Token index="2056">networking</Token>
+      <Token index="2057">permitted</Token>
+      <Token index="2058">without</Token>
+      <Token index="2059">license</Token>
+      <Token index="2060">from</Token>
+      <Token index="2061">Accuris</Token>
+      <Token index="2062">Not</Token>
+      <Token index="2063">for</Token>
+      <Token index="2064">Resale,</Token>
+      <Token index="2065">10/20/2025</Token>
+      <Token index="2066">03:54:29</Token>
+      <Token index="2067">MDT</Token>
+    </Page>
+    <Page sourcePage="1210">
+      <Token index="2068">ASME</Token>
+      <Token index="2069">BPVC.II.D.M-2025</Token>
+      <Token index="2070">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="2071">Table</Token>
+      <Token index="2072">TE-1</Token>
+      <Token index="2073">Thermal</Token>
+      <Token index="2074">Expansion</Token>
+      <Token index="2075">for</Token>
+      <Token index="2076">Ferrous</Token>
+      <Token index="2077">Materials</Token>
+      <Token index="2078">(Cont'd)</Token>
+      <Token index="2079">Coefficients</Token>
+      <Token index="2080">for</Token>
+      <Token index="2081">Precipitation</Token>
+      <Token index="2082">Coefficients</Token>
+      <Token index="2083">for</Token>
+      <Token index="2084">Precipitation</Token>
+      <Token index="2085">17Cr–4Ni–4Cu</Token>
+      <Token index="2086">17Cr–4Ni–4Cu</Token>
+      <Token index="2087">Hardened</Token>
+      <Token index="2088">Stainless</Token>
+      <Token index="2089">Hardened</Token>
+      <Token index="2090">Stainless</Token>
+      <Token index="2091">Coefficients</Token>
+      <Token index="2092">for</Token>
+      <Token index="2093">Ductile</Token>
+      <Token index="2094">Cast</Token>
+      <Token index="2095">Iron</Token>
+      <Token index="2096">Steels,</Token>
+      <Token index="2097">Condition</Token>
+      <Token index="2098">1075</Token>
+      <Token index="2099">Steels,</Token>
+      <Token index="2100">Condition</Token>
+      <Token index="2101">1150</Token>
+      <Token index="2102">Temperature,</Token>
+      <Token index="2103">°C</Token>
+      <Token index="2104">A</Token>
+      <Token index="2105">B</Token>
+      <Token index="2106">C</Token>
+      <Token index="2107">A</Token>
+      <Token index="2108">B</Token>
+      <Token index="2109">C</Token>
+      <Token index="2110">A</Token>
+      <Token index="2111">B</Token>
+      <Token index="2112">C</Token>
+      <Token index="2113">20</Token>
+      <Token index="2114">10.3</Token>
+      <Token index="2115">10.3</Token>
+      <Token index="2116">0</Token>
+      <Token index="2117">11.1</Token>
+      <Token index="2118">11.1</Token>
+      <Token index="2119">0</Token>
+      <Token index="2120">11.5</Token>
+      <Token index="2121">11.5</Token>
+      <Token index="2122">0</Token>
+      <Token index="2123">50</Token>
+      <Token index="2124">10.7</Token>
+      <Token index="2125">10.5</Token>
+      <Token index="2126">0.32</Token>
+      <Token index="2127">11.3</Token>
+      <Token index="2128">11.2</Token>
+      <Token index="2129">0.34</Token>
+      <Token index="2130">11.8</Token>
+      <Token index="2131">11.6</Token>
+      <Token index="2132">0.35</Token>
+      <Token index="2133">75</Token>
+      <Token index="2134">11.1</Token>
+      <Token index="2135">10.7</Token>
+      <Token index="2136">0.59</Token>
+      <Token index="2137">11.4</Token>
+      <Token index="2138">11.3</Token>
+      <Token index="2139">0.62</Token>
+      <Token index="2140">12.0</Token>
+      <Token index="2141">11.8</Token>
+      <Token index="2142">0.65</Token>
+      <Token index="2143">100</Token>
+      <Token index="2144">11.6</Token>
+      <Token index="2145">10.9</Token>
+      <Token index="2146">0.87</Token>
+      <Token index="2147">11.6</Token>
+      <Token index="2148">11.4</Token>
+      <Token index="2149">0.91</Token>
+      <Token index="2150">12.3</Token>
+      <Token index="2151">11.9</Token>
+      <Token index="2152">0.95</Token>
+      <Token index="2153">125</Token>
+      <Token index="2154">12.1</Token>
+      <Token index="2155">11.1</Token>
+      <Token index="2156">1.2</Token>
+      <Token index="2157">11.7</Token>
+      <Token index="2158">11.4</Token>
+      <Token index="2159">1.2</Token>
+      <Token index="2160">12.5</Token>
+      <Token index="2161">12.0</Token>
+      <Token index="2162">1.3</Token>
+      <Token index="2163">150</Token>
+      <Token index="2164">12.5</Token>
+      <Token index="2165">11.3</Token>
+      <Token index="2166">1.5</Token>
+      <Token index="2167">11.8</Token>
+      <Token index="2168">11.5</Token>
+      <Token index="2169">1.5</Token>
+      <Token index="2170">12.7</Token>
+      <Token index="2171">12.1</Token>
+      <Token index="2172">1.6</Token>
+      <Token index="2173">175</Token>
+      <Token index="2174">13.0</Token>
+      <Token index="2175">11.6</Token>
+      <Token index="2176">1.8</Token>
+      <Token index="2177">12.0</Token>
+      <Token index="2178">11.6</Token>
+      <Token index="2179">1.8</Token>
+      <Token index="2180">12.9</Token>
+      <Token index="2181">12.2</Token>
+      <Token index="2182">1.9</Token>
+      <Token index="2183">200</Token>
+      <Token index="2184">13.3</Token>
+      <Token index="2185">11.8</Token>
+      <Token index="2186">2.1</Token>
+      <Token index="2187">12.1</Token>
+      <Token index="2188">11.6</Token>
+      <Token index="2189">2.1</Token>
+      <Token index="2190">13.1</Token>
+      <Token index="2191">12.3</Token>
+      <Token index="2192">2.2</Token>
+      <Token index="2193">225</Token>
+      <Token index="2194">13.6</Token>
+      <Token index="2195">12.0</Token>
+      <Token index="2196">2.5</Token>
+      <Token index="2197">12.2</Token>
+      <Token index="2198">11.7</Token>
+      <Token index="2199">2.4</Token>
+      <Token index="2200">13.2</Token>
+      <Token index="2201">12.4</Token>
+      <Token index="2202">2.6</Token>
+      <Token index="2203">250</Token>
+      <Token index="2204">13.9</Token>
+      <Token index="2205">12.2</Token>
+      <Token index="2206">2.8</Token>
+      <Token index="2207">12.3</Token>
+      <Token index="2208">11.8</Token>
+      <Token index="2209">2.7</Token>
+      <Token index="2210">13.4</Token>
+      <Token index="2211">12.5</Token>
+      <Token index="2212">2.9</Token>
+      <Token index="2213">275</Token>
+      <Token index="2214">14.1</Token>
+      <Token index="2215">12.4</Token>
+      <Token index="2216">3.1</Token>
+      <Token index="2217">12.5</Token>
+      <Token index="2218">11.8</Token>
+      <Token index="2219">3.0</Token>
+      <Token index="2220">13.5</Token>
+      <Token index="2221">12.6</Token>
+      <Token index="2222">3.2</Token>
+      <Token index="2223">300</Token>
+      <Token index="2224">14.2</Token>
+      <Token index="2225">12.5</Token>
+      <Token index="2226">3.5</Token>
+      <Token index="2227">12.6</Token>
+      <Token index="2228">11.9</Token>
+      <Token index="2229">3.3</Token>
+      <Token index="2230">13.5</Token>
+      <Token index="2231">12.7</Token>
+      <Token index="2232">3.6</Token>
+      <Token index="2233">325</Token>
+      <Token index="2234">14.2</Token>
+      <Token index="2235">12.6</Token>
+      <Token index="2236">3.9</Token>
+      <Token index="2237">12.7</Token>
+      <Token index="2238">11.9</Token>
+      <Token index="2239">3.6</Token>
+      <Token index="2240">13.6</Token>
+      <Token index="2241">12.8</Token>
+      <Token index="2242">3.9</Token>
+      <Token index="2243">350</Token>
+      <Token index="2244">14.3</Token>
+      <Token index="2245">12.8</Token>
+      <Token index="2246">4.2</Token>
+      <Token index="2247">12.8</Token>
+      <Token index="2248">12.0</Token>
+      <Token index="2249">4.0</Token>
+      <Token index="2250">13.6</Token>
+      <Token index="2251">12.8</Token>
+      <Token index="2252">4.2</Token>
+      <Token index="2253">375</Token>
+      <Token index="2254">14.3</Token>
+      <Token index="2255">12.9</Token>
+      <Token index="2256">4.6</Token>
+      <Token index="2257">12.9</Token>
+      <Token index="2258">12.1</Token>
+      <Token index="2259">4.3</Token>
+      <Token index="2260">13.6</Token>
+      <Token index="2261">12.9</Token>
+      <Token index="2262">4.6</Token>
+      <Token index="2263">400</Token>
+      <Token index="2264">14.4</Token>
+      <Token index="2265">13.0</Token>
+      <Token index="2266">4.9</Token>
+      <Token index="2267">13.0</Token>
+      <Token index="2268">12.1</Token>
+      <Token index="2269">4.6</Token>
+      <Token index="2270">13.6</Token>
+      <Token index="2271">12.9</Token>
+      <Token index="2272">4.9</Token>
+      <Token index="2273">425</Token>
+      <Token index="2274">14.5</Token>
+      <Token index="2275">13.1</Token>
+      <Token index="2276">5.3</Token>
+      <Token index="2277">13.0</Token>
+      <Token index="2278">12.2</Token>
+      <Token index="2279">4.9</Token>
+      <Token index="2280">13.7</Token>
+      <Token index="2281">13.0</Token>
+      <Token index="2282">5.3</Token>
+      <Token index="2283">450</Token>
+      <Token index="2284">14.6</Token>
+      <Token index="2285">13.2</Token>
+      <Token index="2286">5.7</Token>
+      <Token index="2287">13.1</Token>
+      <Token index="2288">12.2</Token>
+      <Token index="2289">5.3</Token>
+      <Token index="2290">13.8</Token>
+      <Token index="2291">13.0</Token>
+      <Token index="2292">5.6</Token>
+      <Token index="2293">475</Token>
+      <Token index="2294">14.9</Token>
+      <Token index="2295">13.2</Token>
+      <Token index="2296">6.0</Token>
+      <Token index="2297">13.1</Token>
+      <Token index="2298">12.3</Token>
+      <Token index="2299">5.6</Token>
+      <Token index="2300">13.9</Token>
+      <Token index="2301">13.1</Token>
+      <Token index="2302">5.9</Token>
+      <Token index="2303">500</Token>
+      <Token index="2304">15.1</Token>
+      <Token index="2305">13.3</Token>
+      <Token index="2306">6.4</Token>
+      <Token index="2307">...</Token>
+      <Token index="2308">...</Token>
+      <Token index="2309">...</Token>
+      <Token index="2310">14.3</Token>
+      <Token index="2311">13.1</Token>
+      <Token index="2312">6.3</Token>
+      <Token index="2313">525</Token>
+      <Token index="2314">15.5</Token>
+      <Token index="2315">13.4</Token>
+      <Token index="2316">6.8</Token>
+      <Token index="2317">...</Token>
+      <Token index="2318">...</Token>
+      <Token index="2319">...</Token>
+      <Token index="2320">14.8</Token>
+      <Token index="2321">13.2</Token>
+      <Token index="2322">6.7</Token>
+      <Token index="2323">550</Token>
+      <Token index="2324">16.0</Token>
+      <Token index="2325">13.5</Token>
+      <Token index="2326">7.2</Token>
+      <Token index="2327">...</Token>
+      <Token index="2328">...</Token>
+      <Token index="2329">...</Token>
+      <Token index="2330">15.6</Token>
+      <Token index="2331">13.3</Token>
+      <Token index="2332">7.0</Token>
+      <Token index="2333">575</Token>
+      <Token index="2334">...</Token>
+      <Token index="2335">...</Token>
+      <Token index="2336">...</Token>
+      <Token index="2337">...</Token>
+      <Token index="2338">...</Token>
+      <Token index="2339">...</Token>
+      <Token index="2340">...</Token>
+      <Token index="2341">...</Token>
+      <Token index="2342">...</Token>
+      <Token index="2343">600</Token>
+      <Token index="2344">...</Token>
+      <Token index="2345">...</Token>
+      <Token index="2346">...</Token>
+      <Token index="2347">...</Token>
+      <Token index="2348">...</Token>
+      <Token index="2349">...</Token>
+      <Token index="2350">...</Token>
+      <Token index="2351">...</Token>
+      <Token index="2352">...</Token>
+      <Token index="2353">625</Token>
+      <Token index="2354">...</Token>
+      <Token index="2355">...</Token>
+      <Token index="2356">...</Token>
+      <Token index="2357">...</Token>
+      <Token index="2358">...</Token>
+      <Token index="2359">...</Token>
+      <Token index="2360">...</Token>
+      <Token index="2361">...</Token>
+      <Token index="2362">...</Token>
+      <Token index="2363">650</Token>
+      <Token index="2364">...</Token>
+      <Token index="2365">...</Token>
+      <Token index="2366">...</Token>
+      <Token index="2367">...</Token>
+      <Token index="2368">...</Token>
+      <Token index="2369">...</Token>
+      <Token index="2370">...</Token>
+      <Token index="2371">...</Token>
+      <Token index="2372">...</Token>
+      <Token index="2373">675</Token>
+      <Token index="2374">...</Token>
+      <Token index="2375">...</Token>
+      <Token index="2376">...</Token>
+      <Token index="2377">...</Token>
+      <Token index="2378">...</Token>
+      <Token index="2379">...</Token>
+      <Token index="2380">...</Token>
+      <Token index="2381">...</Token>
+      <Token index="2382">...</Token>
+      <Token index="2383">700</Token>
+      <Token index="2384">...</Token>
+      <Token index="2385">...</Token>
+      <Token index="2386">...</Token>
+      <Token index="2387">...</Token>
+      <Token index="2388">...</Token>
+      <Token index="2389">...</Token>
+      <Token index="2390">...</Token>
+      <Token index="2391">...</Token>
+      <Token index="2392">...</Token>
+      <Token index="2393">725</Token>
+      <Token index="2394">...</Token>
+      <Token index="2395">...</Token>
+      <Token index="2396">...</Token>
+      <Token index="2397">...</Token>
+      <Token index="2398">...</Token>
+      <Token index="2399">...</Token>
+      <Token index="2400">...</Token>
+      <Token index="2401">...</Token>
+      <Token index="2402">...</Token>
+      <Token index="2403">750</Token>
+      <Token index="2404">...</Token>
+      <Token index="2405">...</Token>
+      <Token index="2406">...</Token>
+      <Token index="2407">...</Token>
+      <Token index="2408">...</Token>
+      <Token index="2409">...</Token>
+      <Token index="2410">...</Token>
+      <Token index="2411">...</Token>
+      <Token index="2412">...</Token>
+      <Token index="2413">775</Token>
+      <Token index="2414">...</Token>
+      <Token index="2415">...</Token>
+      <Token index="2416">...</Token>
+      <Token index="2417">...</Token>
+      <Token index="2418">...</Token>
+      <Token index="2419">...</Token>
+      <Token index="2420">...</Token>
+      <Token index="2421">...</Token>
+      <Token index="2422">...</Token>
+      <Token index="2423">800</Token>
+      <Token index="2424">...</Token>
+      <Token index="2425">...</Token>
+      <Token index="2426">...</Token>
+      <Token index="2427">...</Token>
+      <Token index="2428">...</Token>
+      <Token index="2429">...</Token>
+      <Token index="2430">...</Token>
+      <Token index="2431">...</Token>
+      <Token index="2432">...</Token>
+      <Token index="2433">825</Token>
+      <Token index="2434">...</Token>
+      <Token index="2435">...</Token>
+      <Token index="2436">...</Token>
+      <Token index="2437">...</Token>
+      <Token index="2438">...</Token>
+      <Token index="2439">...</Token>
+      <Token index="2440">...</Token>
+      <Token index="2441">...</Token>
+      <Token index="2442">...</Token>
+      <Token index="2443">10−6</Token>
+      <Token index="2444">GENERAL</Token>
+      <Token index="2445">NOTE:</Token>
+      <Token index="2446">Coefficient</Token>
+      <Token index="2447">A</Token>
+      <Token index="2448">is</Token>
+      <Token index="2449">the</Token>
+      <Token index="2450">instantaneous</Token>
+      <Token index="2451">coefficient</Token>
+      <Token index="2452">of</Token>
+      <Token index="2453">thermal</Token>
+      <Token index="2454">expansion</Token>
+      <Token index="2455">×</Token>
+      <Token index="2456">(mm/mm/°C).</Token>
+      <Token index="2457">Coefficient</Token>
+      <Token index="2458">B</Token>
+      <Token index="2459">is</Token>
+      <Token index="2460">the</Token>
+      <Token index="2461">mean</Token>
+      <Token index="2462">coeffi-</Token>
+      <Token index="2463">10−6</Token>
+      <Token index="2464">cient</Token>
+      <Token index="2465">of</Token>
+      <Token index="2466">thermal</Token>
+      <Token index="2467">expansion</Token>
+      <Token index="2468">×</Token>
+      <Token index="2469">(mm/mm/°C)</Token>
+      <Token index="2470">in</Token>
+      <Token index="2471">going</Token>
+      <Token index="2472">from</Token>
+      <Token index="2473">20°C</Token>
+      <Token index="2474">to</Token>
+      <Token index="2475">indicated</Token>
+      <Token index="2476">temperature.</Token>
+      <Token index="2477">Coefficient</Token>
+      <Token index="2478">C</Token>
+      <Token index="2479">is</Token>
+      <Token index="2480">the</Token>
+      <Token index="2481">linear</Token>
+      <Token index="2482">thermal</Token>
+      <Token index="2483">expansion</Token>
+      <Token index="2484">(mm/m)</Token>
+      <Token index="2485">in</Token>
+      <Token index="2486">going</Token>
+      <Token index="2487">from</Token>
+      <Token index="2488">20°C</Token>
+      <Token index="2489">to</Token>
+      <Token index="2490">indicated</Token>
+      <Token index="2491">temperature.</Token>
+      <Token index="2492">NOTES:</Token>
+      <Token index="2493">(1)</Token>
+      <Token index="2494">Group</Token>
+      <Token index="2495">1</Token>
+      <Token index="2496">alloys</Token>
+      <Token index="2497">(by</Token>
+      <Token index="2498">nominal</Token>
+      <Token index="2499">composition):</Token>
+      <Token index="2500">11/4Cr–1/2Mo</Token>
+      <Token index="2501">3/4Ni–1/2Cr–1/2Mo–V</Token>
+      <Token index="2502">Carbon</Token>
+      <Token index="2503">steel</Token>
+      <Token index="2504">11/4Cr–1/2Mo–Si</Token>
+      <Token index="2505">3/4Ni–1/2Cu–Mo</Token>
+      <Token index="2506">C–Mn–Cb</Token>
+      <Token index="2507">13/4Cr–1/2Mo–Cu</Token>
+      <Token index="2508">3/4Ni–1/2Mo–1/3Cr–V</Token>
+      <Token index="2509">C–Mn–Si–Cb</Token>
+      <Token index="2510">13/4Cr–1/2Mo–Ti</Token>
+      <Token index="2511">3/4Ni–1/2Mo–Cr–V</Token>
+      <Token index="2512">C–Mn–Si–V</Token>
+      <Token index="2513">2Cr–1/2Mo</Token>
+      <Token index="2514">3/4Ni–1Mo–3/4Cr</Token>
+      <Token index="2515">C–Mn–Ti</Token>
+      <Token index="2516">21/4Cr–1Mo</Token>
+      <Token index="2517">1Ni–1/2Cr–1/2Mo</Token>
+      <Token index="2518">C–Si–Ti</Token>
+      <Token index="2519">C–1/4Mo</Token>
+      <Token index="2520">11/4Ni–1Cr–1/2Mo</Token>
+      <Token index="2521">3Cr–1Mo</Token>
+      <Token index="2522">C–1/2Mo</Token>
+      <Token index="2523">3Cr–1Mo–1/4V–Cb–Ca</Token>
+      <Token index="2524">13/4Ni–3/4Cr–1/4Mo</Token>
+      <Token index="2525">1/2Cr–1/5Mo</Token>
+      <Token index="2526">3Cr–1Mo–1/4V–Ti–B</Token>
+      <Token index="2527">2Ni–3/4Cr–1/4Mo</Token>
+      <Token index="2528">1/2Cr–1/5Mo–V</Token>
+      <Token index="2529">Mn–1/4Mo</Token>
+      <Token index="2530">2Ni–3/4Cr–1/3Mo</Token>
+      <Token index="2531">1/2Cr–1/4Mo–Si</Token>
+      <Token index="2532">Mn–1/2Mo</Token>
+      <Token index="2533">2Ni–11/2Cr–1/4Mo–V</Token>
+      <Token index="2534">1/2Cr–1/2Mo</Token>
+      <Token index="2535">Mn–1/2Mo–1/4Ni</Token>
+      <Token index="2536">21/2Ni</Token>
+      <Token index="2537">3/4Cr–1/2Ni–Cu</Token>
+      <Token index="2538">Mn–1/2Mo–1/2Ni</Token>
+      <Token index="2539">23/4Ni–11/2Cr–1/2Mo–V</Token>
+      <Token index="2540">3/4Cr–3/4Ni–Cu–Al</Token>
+      <Token index="2541">Mn–1/2Mo–3/4Ni</Token>
+      <Token index="2542">31/2Ni</Token>
+      <Token index="2543">1Cr–1/5Mo</Token>
+      <Token index="2544">31/2Ni–11/2Cr–1/2Mo–1/2Mn</Token>
+      <Token index="2545">Mn–V</Token>
+      <Token index="2546">1Cr–1/5Mo–Si</Token>
+      <Token index="2547">1/2Ni–1/2Cr–1/4Mo</Token>
+      <Token index="2548">31/2Ni–13/4Cr–1/2Mo–V</Token>
+      <Token index="2549">1Cr–1/2Mo</Token>
+      <Token index="2550">1/2Ni–1/2Cr–1/4Mo–V</Token>
+      <Token index="2551">4Ni–11/2Cr–1/2Mo–V</Token>
+      <Token index="2552">1Cr–1/2Mo–V</Token>
+      <Token index="2553">1/2Ni–1/2Mo–V</Token>
+      <Token index="2554">1160</Token>
+      <Token index="2555">Copyright</Token>
+      <Token index="2556">ASME</Token>
+      <Token index="2557">International</Token>
+      <Token index="2558">(BPVC)</Token>
+      <Token index="2559">Provided</Token>
+      <Token index="2560">by</Token>
+      <Token index="2561">Accuris</Token>
+      <Token index="2562">under</Token>
+      <Token index="2563">license</Token>
+      <Token index="2564">with</Token>
+      <Token index="2565">ASME</Token>
+      <Token index="2566">Licensee=BREMBANA</Token>
+      <Token index="2567">&amp;</Token>
+      <Token index="2568">ROLLE</Token>
+      <Token index="2569">GROUP</Token>
+      <Token index="2570">-</Token>
+      <Token index="2571">Bergamasque:</Token>
+      <Token index="2572">Albrèmb/8355778001,</Token>
+      <Token index="2573">User=Tosto,</Token>
+      <Token index="2574">Natale</Token>
+      <Token index="2575">No</Token>
+      <Token index="2576">reproduction</Token>
+      <Token index="2577">or</Token>
+      <Token index="2578">networking</Token>
+      <Token index="2579">permitted</Token>
+      <Token index="2580">without</Token>
+      <Token index="2581">license</Token>
+      <Token index="2582">from</Token>
+      <Token index="2583">Accuris</Token>
+      <Token index="2584">Not</Token>
+      <Token index="2585">for</Token>
+      <Token index="2586">Resale,</Token>
+      <Token index="2587">10/20/2025</Token>
+      <Token index="2588">03:54:29</Token>
+      <Token index="2589">MDT</Token>
+    </Page>
+    <Page sourcePage="1211">
+      <Token index="2590">ASME</Token>
+      <Token index="2591">BPVC.II.D.M-2025</Token>
+      <Token index="2592">NOTES</Token>
+      <Token index="2593">(CONT'D):</Token>
+      <Token index="2594">(2)</Token>
+      <Token index="2595">Group</Token>
+      <Token index="2596">2</Token>
+      <Token index="2597">alloys</Token>
+      <Token index="2598">(by</Token>
+      <Token index="2599">nominal</Token>
+      <Token index="2600">composition):</Token>
+      <Token index="2601">18Cr–5Ni–3Mo–N</Token>
+      <Token index="2602">23Cr–4Ni–Mo–Cu</Token>
+      <Token index="2603">27Cr–7.5Ni–4.5Mo–Co–N</Token>
+      <Token index="2604">22Cr–2Ni–Mo–N</Token>
+      <Token index="2605">25Cr–7Ni–4Mo–N</Token>
+      <Token index="2606">22Cr–5Ni–3Mo–N</Token>
+      <Token index="2607">25Cr–6Ni–Mo–N</Token>
+      <Token index="2608">(3)</Token>
+      <Token index="2609">Group</Token>
+      <Token index="2610">3</Token>
+      <Token index="2611">alloys</Token>
+      <Token index="2612">(by</Token>
+      <Token index="2613">nominal</Token>
+      <Token index="2614">composition):</Token>
+      <Token index="2615">16Cr–12Ni–2Mo</Token>
+      <Token index="2616">18Cr–10Ni–Cb</Token>
+      <Token index="2617">18Cr–18Ni–2Si</Token>
+      <Token index="2618">16Cr–12Ni–2Mo–N</Token>
+      <Token index="2619">18Cr–10Ni–Ti</Token>
+      <Token index="2620">19Cr–9Ni–Mo–W</Token>
+      <Token index="2621">16Cr–12Ni–2Mo–Ti</Token>
+      <Token index="2622">18Cr–11Ni</Token>
+      <Token index="2623">21Cr–11Ni–N</Token>
+      <Token index="2624">18Cr–8Ni</Token>
+      <Token index="2625">18Cr–13Ni–3Mo</Token>
+      <Token index="2626">18Cr–8Ni–N</Token>
+      <Token index="2627">18Cr–15Ni–4Si</Token>
+      <Token index="2628">(4)</Token>
+      <Token index="2629">Group</Token>
+      <Token index="2630">4</Token>
+      <Token index="2631">alloys</Token>
+      <Token index="2632">(by</Token>
+      <Token index="2633">nominal</Token>
+      <Token index="2634">composition):</Token>
+      <Token index="2635">14Cr–16Ni–6Si–Cu–Mo</Token>
+      <Token index="2636">22Cr–13Ni–5Mn</Token>
+      <Token index="2637">25Cr–20Ni–2Mo</Token>
+      <Token index="2638">25Ni–15Cr–2Ti</Token>
+      <Token index="2639">23Cr–12Ni</Token>
+      <Token index="2640">31Ni–31Fe–29Cr–Mo</Token>
+      <Token index="2641">29Ni–20Cr–3Cu–2Mo</Token>
+      <Token index="2642">24Cr–22Ni–6Mo–2W–Cu–N</Token>
+      <Token index="2643">44Fe–25Ni–21Cr–Mo</Token>
+      <Token index="2644">18Cr–20Ni–5.5Si</Token>
+      <Token index="2645">25Cr–12Ni</Token>
+      <Token index="2646">47Fe–25Ni–23Cr–5.5Mo–N</Token>
+      <Token index="2647">20Cr–18Ni–6Mo</Token>
+      <Token index="2648">25Cr–20Ni</Token>
+      <Token index="2649">Table</Token>
+      <Token index="2650">TE-2</Token>
+      <Token index="2651">Thermal</Token>
+      <Token index="2652">Expansion</Token>
+      <Token index="2653">for</Token>
+      <Token index="2654">Aluminum</Token>
+      <Token index="2655">Alloys</Token>
+      <Token index="2656">Coefficients</Token>
+      <Token index="2657">for</Token>
+      <Token index="2658">Aluminum</Token>
+      <Token index="2659">Alloys</Token>
+      <Token index="2660">Temperature,</Token>
+      <Token index="2661">°C</Token>
+      <Token index="2662">A</Token>
+      <Token index="2663">B</Token>
+      <Token index="2664">C</Token>
+      <Token index="2665">20</Token>
+      <Token index="2666">21.7</Token>
+      <Token index="2667">21.7</Token>
+      <Token index="2668">0</Token>
+      <Token index="2669">50</Token>
+      <Token index="2670">23.3</Token>
+      <Token index="2671">22.6</Token>
+      <Token index="2672">0.68</Token>
+      <Token index="2673">75</Token>
+      <Token index="2674">23.9</Token>
+      <Token index="2675">23.1</Token>
+      <Token index="2676">1.3</Token>
+      <Token index="2677">100</Token>
+      <Token index="2678">24.3</Token>
+      <Token index="2679">23.4</Token>
+      <Token index="2680">1.9</Token>
+      <Token index="2681">125</Token>
+      <Token index="2682">24.7</Token>
+      <Token index="2683">23.7</Token>
+      <Token index="2684">2.5</Token>
+      <Token index="2685">150</Token>
+      <Token index="2686">25.2</Token>
+      <Token index="2687">23.9</Token>
+      <Token index="2688">3.1</Token>
+      <Token index="2689">175</Token>
+      <Token index="2690">25.7</Token>
+      <Token index="2691">24.2</Token>
+      <Token index="2692">3.7</Token>
+      <Token index="2693">200</Token>
+      <Token index="2694">26.4</Token>
+      <Token index="2695">24.4</Token>
+      <Token index="2696">4.4</Token>
+      <Token index="2697">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="2698">225</Token>
+      <Token index="2699">27.0</Token>
+      <Token index="2700">24.7</Token>
+      <Token index="2701">5.1</Token>
+      <Token index="2702">250</Token>
+      <Token index="2703">27.5</Token>
+      <Token index="2704">25.0</Token>
+      <Token index="2705">5.7</Token>
+      <Token index="2706">275</Token>
+      <Token index="2707">27.7</Token>
+      <Token index="2708">25.2</Token>
+      <Token index="2709">6.4</Token>
+      <Token index="2710">300</Token>
+      <Token index="2711">27.6</Token>
+      <Token index="2712">25.5</Token>
+      <Token index="2713">7.1</Token>
+      <Token index="2714">325</Token>
+      <Token index="2715">27.1</Token>
+      <Token index="2716">25.6</Token>
+      <Token index="2717">7.8</Token>
+      <Token index="2718">GENERAL</Token>
+      <Token index="2719">NOTES:</Token>
+      <Token index="2720">(a)</Token>
+      <Token index="2721">Aluminum</Token>
+      <Token index="2722">alloys</Token>
+      <Token index="2723">represented</Token>
+      <Token index="2724">by</Token>
+      <Token index="2725">these</Token>
+      <Token index="2726">thermal</Token>
+      <Token index="2727">expansion</Token>
+      <Token index="2728">coeffi-</Token>
+      <Token index="2729">cients</Token>
+      <Token index="2730">include:</Token>
+      <Token index="2731">A03560</Token>
+      <Token index="2732">A93003</Token>
+      <Token index="2733">A95254</Token>
+      <Token index="2734">A24430</Token>
+      <Token index="2735">A93004</Token>
+      <Token index="2736">A95454</Token>
+      <Token index="2737">A91060</Token>
+      <Token index="2738">A95052</Token>
+      <Token index="2739">A95456</Token>
+      <Token index="2740">A95652</Token>
+      <Token index="2741">A91100</Token>
+      <Token index="2742">A95083</Token>
+      <Token index="2743">A92014</Token>
+      <Token index="2744">A95086</Token>
+      <Token index="2745">A96061</Token>
+      <Token index="2746">A92024</Token>
+      <Token index="2747">A95154</Token>
+      <Token index="2748">A96063</Token>
+      <Token index="2749">(b)</Token>
+      <Token index="2750">Coefficient</Token>
+      <Token index="2751">A</Token>
+      <Token index="2752">is</Token>
+      <Token index="2753">the</Token>
+      <Token index="2754">instantaneous</Token>
+      <Token index="2755">coefficient</Token>
+      <Token index="2756">of</Token>
+      <Token index="2757">thermal</Token>
+      <Token index="2758">expan-</Token>
+      <Token index="2759">10−6</Token>
+      <Token index="2760">sion</Token>
+      <Token index="2761">×</Token>
+      <Token index="2762">(mm/mm/°C).</Token>
+      <Token index="2763">Coefficient</Token>
+      <Token index="2764">B</Token>
+      <Token index="2765">is</Token>
+      <Token index="2766">the</Token>
+      <Token index="2767">mean</Token>
+      <Token index="2768">coefficient</Token>
+      <Token index="2769">10−6</Token>
+      <Token index="2770">of</Token>
+      <Token index="2771">thermal</Token>
+      <Token index="2772">expansion</Token>
+      <Token index="2773">×</Token>
+      <Token index="2774">(mm/mm/°C)</Token>
+      <Token index="2775">in</Token>
+      <Token index="2776">going</Token>
+      <Token index="2777">from</Token>
+      <Token index="2778">20°C</Token>
+      <Token index="2779">to</Token>
+      <Token index="2780">indicated</Token>
+      <Token index="2781">temperature.</Token>
+      <Token index="2782">Coefficient</Token>
+      <Token index="2783">C</Token>
+      <Token index="2784">is</Token>
+      <Token index="2785">the</Token>
+      <Token index="2786">linear</Token>
+      <Token index="2787">thermal</Token>
+      <Token index="2788">ex-</Token>
+      <Token index="2789">pansion</Token>
+      <Token index="2790">(mm/m)</Token>
+      <Token index="2791">in</Token>
+      <Token index="2792">going</Token>
+      <Token index="2793">from</Token>
+      <Token index="2794">20°C</Token>
+      <Token index="2795">to</Token>
+      <Token index="2796">indicated</Token>
+      <Token index="2797">temperature.</Token>
+      <Token index="2798">1161</Token>
+      <Token index="2799">Copyright</Token>
+      <Token index="2800">ASME</Token>
+      <Token index="2801">International</Token>
+      <Token index="2802">(BPVC)</Token>
+      <Token index="2803">Provided</Token>
+      <Token index="2804">by</Token>
+      <Token index="2805">Accuris</Token>
+      <Token index="2806">under</Token>
+      <Token index="2807">license</Token>
+      <Token index="2808">with</Token>
+      <Token index="2809">ASME</Token>
+      <Token index="2810">Licensee=BREMBANA</Token>
+      <Token index="2811">&amp;</Token>
+      <Token index="2812">ROLLE</Token>
+      <Token index="2813">GROUP</Token>
+      <Token index="2814">-</Token>
+      <Token index="2815">Bergamasque:</Token>
+      <Token index="2816">Albrèmb/8355778001,</Token>
+      <Token index="2817">User=Tosto,</Token>
+      <Token index="2818">Natale</Token>
+      <Token index="2819">No</Token>
+      <Token index="2820">reproduction</Token>
+      <Token index="2821">or</Token>
+      <Token index="2822">networking</Token>
+      <Token index="2823">permitted</Token>
+      <Token index="2824">without</Token>
+      <Token index="2825">license</Token>
+      <Token index="2826">from</Token>
+      <Token index="2827">Accuris</Token>
+      <Token index="2828">Not</Token>
+      <Token index="2829">for</Token>
+      <Token index="2830">Resale,</Token>
+      <Token index="2831">10/20/2025</Token>
+      <Token index="2832">03:54:29</Token>
+      <Token index="2833">MDT</Token>
+    </Page>
+  </RawTokens>
+</PhysicalPropertyTableImport>

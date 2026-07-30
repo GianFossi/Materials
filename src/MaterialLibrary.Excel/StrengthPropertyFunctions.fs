@@ -48,7 +48,7 @@ module StrengthPropertyFunctions =
                   box r.ElongationPercent
                   box r.ReductionOfAreaPercent ])
             |> ExcelHelpers.gridOfRows
-                [ "Temperature_degC"; "YieldStrength_MPa"; "TensileStrength_MPa"; "Elongation_pct"; "ReductionOfArea_pct" ])
+                [ "Temperature"; "YieldStrength"; "TensileStrength"; "Elongation"; "ReductionOfArea" ])
         |> ExcelHelpers.ofGridResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated yield strength (MPa) at a given temperature (degC). Linear interpolation between tabulated values.")>]
@@ -64,6 +64,18 @@ module StrengthPropertyFunctions =
             AdHocTable.interpolate "YieldStrength" "Temperature" "degC" "YieldStrength" "MPa" points temperatureC)
         |> ExcelHelpers.ofFloatResult
 
+    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete yield-strength table Sy: temperature (degC), yield strength (MPa).")>]
+    let MatYieldStrengthTable
+        ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
+        : obj[,] =
+        ExcelHelpers.withMaterial materialId (fun material -> Ok material.StrengthProperties.TensileProperties)
+        |> Result.map (fun rows ->
+            rows
+            |> List.sortBy (fun r -> r.Temperature)
+            |> List.map (fun r -> [ box r.Temperature; box r.YieldStrength ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "Sy" ])
+        |> ExcelHelpers.ofGridResult
+
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated ultimate tensile strength (MPa) at a given temperature (degC). Linear interpolation between tabulated values.")>]
     let MatUltimateStrength
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
@@ -77,6 +89,18 @@ module StrengthPropertyFunctions =
             AdHocTable.interpolate "UltimateStrength" "Temperature" "degC" "TensileStrength" "MPa" points temperatureC)
         |> ExcelHelpers.ofFloatResult
 
+    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete ultimate-strength table Su: temperature (degC), ultimate tensile strength (MPa).")>]
+    let MatUltimateStrengthTable
+        ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
+        : obj[,] =
+        ExcelHelpers.withMaterial materialId (fun material -> Ok material.StrengthProperties.TensileProperties)
+        |> Result.map (fun rows ->
+            rows
+            |> List.sortBy (fun r -> r.Temperature)
+            |> List.map (fun r -> [ box r.Temperature; box r.TensileStrength ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "Su" ])
+        |> ExcelHelpers.ofGridResult
+
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete compression-properties table: temperature (degC), compressive strength, compressive yield (MPa), if the material has one.")>]
     let MatCompressionPropertiesTable
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
@@ -89,7 +113,7 @@ module StrengthPropertyFunctions =
             rows
             |> List.sortBy (fun r -> r.Temperature)
             |> List.map (fun r -> [ box r.Temperature; box r.CompressiveStrength; box r.CompressiveYield ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "CompressiveStrength_MPa"; "CompressiveYield_MPa" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "CompressiveStrength"; "CompressiveYield" ])
         |> ExcelHelpers.ofGridResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated compressive strength (MPa) at a given temperature (degC), if the material has compression data.")>]
@@ -131,12 +155,33 @@ module StrengthPropertyFunctions =
         (dataset.SizeMinimum |> Option.forall (fun lo -> size >= lo))
         && (dataset.SizeMaximum |> Option.forall (fun hi -> size <= hi))
 
+    let private effectiveAllowableStressSource (material: Material) (source: AllowableStressSource) =
+        let isBoltingOnlyMaterial =
+            material.StrengthProperties.AllowableStressDatasets
+            |> List.exists (fun d -> d.Source = BoltingAllowableStress)
+            && material.StrengthProperties.AllowableStressDatasets
+               |> List.forall (fun d -> d.Source = BoltingAllowableStress)
+
+        match source with
+        | Division1AllowableStress
+        | Division1HighAllowableStress
+        | Division2AllowableStress when isBoltingOnlyMaterial -> BoltingAllowableStress
+        | _ -> source
+
+    let private allowableStressDatasetsForSource (material: Material) (source: AllowableStressSource) =
+        let effectiveSource = effectiveAllowableStressSource material source
+
+        material.StrengthProperties.AllowableStressDatasets
+        |> List.filter (fun d -> d.Source = effectiveSource)
+
     let private selectAllowableStressDataset
         (material: Material)
         (source: AllowableStressSource)
         (sizeMm: float option)
         : Result<AllowableStressDataset, MaterialError> =
-        match material.StrengthProperties.AllowableStressDatasets |> List.filter (fun d -> d.Source = source) with
+        let effectiveSource = effectiveAllowableStressSource material source
+
+        match allowableStressDatasetsForSource material source with
         | [] -> Error(MaterialError.InvalidOperation(sprintf "No allowable-stress dataset for source %A" source))
         | candidates ->
             match sizeMm with
@@ -146,7 +191,7 @@ module StrengthPropertyFunctions =
                 | None ->
                     Error(
                         MaterialError.InvalidOperation(
-                            sprintf "No %A allowable-stress dataset covers size %.3f mm" source size
+                            sprintf "No %A allowable-stress dataset covers size %.3f mm" effectiveSource size
                         )
                     )
             | None ->
@@ -169,9 +214,16 @@ module StrengthPropertyFunctions =
         | None, Some hi -> sprintf "<= %.3f mm" hi
         | Some lo, Some hi -> sprintf "%.3f - %.3f mm" lo hi
 
+    let private allowableStressSizeSortKey (dataset: AllowableStressDataset) =
+        let lower = dataset.SizeMinimum |> Option.defaultValue Double.NegativeInfinity
+        let upper = dataset.SizeMaximum |> Option.defaultValue Double.PositiveInfinity
+        lower, upper, dataset.DatabaseRowId
+
     let private allowableStressSourceGrid (datasets: AllowableStressDataset list) : obj[,] =
+        let orderedDatasets = datasets |> List.sortBy allowableStressSizeSortKey
+
         let xs =
-            datasets
+            orderedDatasets
             |> List.collect (fun d -> d.Table.Columns |> List.collect (fun c -> c.Entries))
             |> List.map (fun e -> e.X)
             |> List.distinct
@@ -181,7 +233,7 @@ module StrengthPropertyFunctions =
             xs
             |> List.map (fun x ->
                 let cells =
-                    datasets
+                    orderedDatasets
                     |> List.map (fun d ->
                         d.Table.Columns
                         |> List.collect (fun c -> c.Entries)
@@ -191,14 +243,14 @@ module StrengthPropertyFunctions =
 
                 box x :: cells)
 
-        ExcelHelpers.gridOfRows ("Temperature_degC" :: (datasets |> List.map allowableStressSourceLabel)) rows
+        ExcelHelpers.gridOfRows ("Temperature" :: (orderedDatasets |> List.map allowableStressSourceLabel)) rows
 
-    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated allowable stress (MPa) at a given temperature (degC) and size (mm). source: \"S1\" (default, ASME I/VIII-1), \"S1H\" (high strength), \"S2\" (VIII-2), \"Bolting\".")>]
+    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated allowable stress (MPa) at a given temperature (degC) and size (mm). source: \"S1\" (default), \"S1H\"/High, \"S2\", \"Bolting\"/S3. Bolting-only materials use S3 from asme_materials.db for S1/S1H/S2 requests.")>]
     let MatAllowableStress
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         ([<ExcelArgument(Description = "Nominal size/thickness, mm. Required whenever more than one size range exists for the chosen source.")>] sizeMm: obj)
-        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H, S2, Bolting.")>] source: obj)
+        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H/High, S2, Bolting/S3.")>] source: obj)
         : obj =
         ExcelHelpers.withMaterial materialId (fun material ->
             selectAllowableStressDataset material (parseAllowableStressSource (Args.optionalTextOption source)) (Args.optionalNumberOption sizeMm)
@@ -206,10 +258,10 @@ module StrengthPropertyFunctions =
             |> Result.map (fun result -> result.Value))
         |> ExcelHelpers.ofFloatResult
 
-    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete allowable-stress table for one source. Pass sizeMm to see only the size range that covers it; leave blank to see every size range side by side.")>]
+    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete allowable-stress table for one source. Pass sizeMm to select one size range. Bolting-only materials use S3 from asme_materials.db for S1/S1H/S2 requests.")>]
     let MatAllowableStressTable
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
-        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H, S2, Bolting.")>] source: obj)
+        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H/High, S2, Bolting/S3.")>] source: obj)
         ([<ExcelArgument(Description = "Optional nominal size/thickness, mm, to show only its size range.")>] sizeMm: obj)
         : obj[,] =
         let result =
@@ -221,7 +273,7 @@ module StrengthPropertyFunctions =
                     selectAllowableStressDataset material sourceValue (Some size)
                     |> Result.map (fun dataset -> ExcelHelpers.table1DToGrid dataset.Table)
                 | None ->
-                    match material.StrengthProperties.AllowableStressDatasets |> List.filter (fun d -> d.Source = sourceValue) with
+                    match allowableStressDatasetsForSource material sourceValue with
                     | [] -> Error(MaterialError.InvalidOperation(sprintf "No allowable-stress dataset for source %A" sourceValue))
                     | datasets -> Ok(allowableStressSourceGrid datasets))
 
@@ -461,7 +513,7 @@ module StrengthPropertyFunctions =
             rows
             |> List.sortBy (fun r -> r.Temperature)
             |> List.map (fun r -> [ box r.Temperature; box r.A; box r.N; box r.M ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "A"; "n"; "m" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "A"; "n"; "m" ])
         |> ExcelHelpers.ofGridResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Creep strain (%) from the Norton Power Law model stored for this material at an exact temperature (degC).")>]
@@ -485,7 +537,7 @@ module StrengthPropertyFunctions =
             rows
             |> List.sortBy (fun r -> r.Temperature)
             |> List.map (fun r -> [ box r.Temperature; box r.A; box r.N; box r.M; box r.Alpha; box r.Q ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "A"; "n"; "m"; "alpha_per_MPa"; "Q_J_mol" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "A"; "n"; "m"; "alpha"; "Q" ])
         |> ExcelHelpers.ofGridResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Creep strain (%) from the Garofalo model stored for this material at an exact temperature (degC), including the Arrhenius activation-energy term.")>]
@@ -511,7 +563,7 @@ module StrengthPropertyFunctions =
             |> List.sortBy (fun r -> r.Temperature)
             |> List.map (fun r ->
                 [ box r.Temperature; box r.A1; box r.N1; box r.M1; box r.A2; box r.N2; box r.M2; box r.Description ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "A1"; "N1"; "M1"; "A2"; "N2"; "M2"; "Description" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "A1"; "N1"; "M1"; "A2"; "N2"; "M2"; "Description" ])
         |> ExcelHelpers.ofGridResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Final cumulative creep strain (%) at totalTimeHours from the Kachanov-Omega model stored for this material at an exact temperature (degC), integrated with timeSteps explicit-Euler steps.")>]
@@ -555,7 +607,7 @@ module StrengthPropertyFunctions =
             |> Result.map (fun strains ->
                 strains
                 |> List.mapi (fun i strain -> [ box (totalTimeHours * float i / float steps); box strain ])
-                |> ExcelHelpers.gridOfRows [ "Time_hours"; "Strain_pct" ]))
+                |> ExcelHelpers.gridOfRows [ "Time"; "Strain" ]))
         |> ExcelHelpers.ofGridResult
 
     // ── Creep: reference stress tables (rupture at fixed duration, stress at fixed creep rate) ──
@@ -878,7 +930,7 @@ module StrengthPropertyFunctions =
                 curve.Points
                 |> List.sortBy (fun p -> p.LarsonMillerParameter)
                 |> List.map (fun p -> [ box p.LarsonMillerParameter; box p.Stress ])
-                |> ExcelHelpers.gridOfRows [ "LarsonMillerParameter"; "Stress_MPa" ]))
+                |> ExcelHelpers.gridOfRows [ "LarsonMillerParameter"; "Stress" ]))
         |> ExcelHelpers.ofGridResult
 
     // ── Code Case 2964 ──────────────────────────────────────────────────────
@@ -897,7 +949,7 @@ module StrengthPropertyFunctions =
                   box r.B0; box r.B1; box r.B2; box r.B3; box r.B4
                   box (defaultArg r.Notes "") ])
             |> ExcelHelpers.gridOfRows
-                [ "Temperature_degC"; "A0"; "A1"; "A2"; "A3"; "A4"; "B0"; "B1"; "B2"; "B3"; "B4"; "Notes" ])
+                [ "Temperature"; "A0"; "A1"; "A2"; "A3"; "A4"; "B0"; "B1"; "B2"; "B3"; "B4"; "Notes" ])
         |> ExcelHelpers.ofGridResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Stored Code Case 2964 Appendix III factor rule (material family, temperature limit degF, m2 coefficient, eps'p, notes) for this material.")>]
@@ -927,7 +979,7 @@ module StrengthPropertyFunctions =
         LibraryCache.current().GetCodeCase2964EvaluatedFactorValues(materialId, temperatureC)
         |> Result.map (fun values ->
             ExcelHelpers.gridOfRows
-                [ "Temperature_degC"; "TemperatureF"; "StrengthRatioR"; "M2"; "EpsPrimeP"; "MaterialFamily"; "StrengthRatioSource" ]
+                [ "Temperature"; "TemperatureF"; "StrengthRatioR"; "M2"; "EpsPrimeP"; "MaterialFamily"; "StrengthRatioSource" ]
                 [ [ box values.Temperature
                     box values.TemperatureF
                     box values.StrengthRatioR

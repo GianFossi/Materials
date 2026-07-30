@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PhysicalPropertyTableImport name="TE-5" sourceTable="TE-5" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1223" sourcePageEnd="1223" status="raw-tokenized-review-required">
+  <ReferenceData>TE-5</ReferenceData>
+  <Notes>Thermal expansion values for titanium and zirconium alloys; source columns A, B, and C retained as raw PDF tokens. Validate wrapped rows, repeated headers, and table continuation before SQLite import.</Notes>
+  <SourceColumns>A=instantaneous thermal expansion factor; B=average thermal expansion factor; C=linear thermal expansion; Temperature=degC. Confirm ASME notation before import.</SourceColumns>
+  <RawText>--- SourcePage 1223 ---
+Table TE-5
+Thermal Expansion for Titanium Alloys
+Temperature,
+°C
+Coefficients for
+Titanium Alloy,
+Grades 1, 2, 2H,
+3, 7, 7H, 11, 12,
+16, 16H, 17, 26,
+26H, and 27
+Coefficients for
+Titanium Alloy,
+Grades 9 and
+28
+Coefficients for
+Titanium Alloy,
+Grade 38
+A
+B
+C
+A
+B
+C
+A
+B
+C
+20
+8.3
+8.3
+0
+8.4
+8.4
+0
+8.7
+8.7
+0
+50
+8.5
+8.4
+0.25
+8.6
+8.6
+0.26
+8.8
+8.7
+0.26
+75
+8.6
+8.5
+0.47
+8.8
+8.6
+0.47
+8.9
+8.7
+0.48
+100
+8.7
+8.5
+0.68
+8.9
+8.7
+0.70
+9.0
+8.7
+0.70
+125
+8.7
+8.6
+0.90
+9.2
+8.8
+0.92
+9.1
+8.8
+0.92
+150
+8.7
+8.6
+1.1
+9.4
+8.9
+1.2
+9.2
+8.9
+1.2
+175
+8.8
+8.6
+1.3
+9.5
+9.0
+1.4
+9.2
+8.9
+1.4
+200
+8.9
+8.7
+1.6
+9.6
+9.0
+1.6
+9.3
+9.0
+1.6
+225
+9.0
+8.7
+1.8
+9.5
+9.1
+1.9
+9.4
+9.0
+1.8
+250
+9.1
+8.7
+2.0
+9.5
+9.2
+2.1
+9.5
+9.1
+2.1
+275
+9.1
+8.8
+2.2
+9.7
+9.2
+2.3
+9.5
+9.1
+2.3
+300
+9.2
+8.8
+2.5
+10.4
+9.3
+2.6
+9.6
+9.2
+2.6
+325
+9.3
+8.8
+2.7
+...
+...
+...
+9.7
+9.2
+2.8
+350
+9.5
+8.9
+2.9
+...
+...
+...
+9.7
+9.2
+3.0
+375
+9.9
+8.9
+3.2
+...
+...
+...
+9.8
+9.3
+3.3
+400
+10.6
+9.0
+3.4
+...
+...
+...
+9.8
+9.3
+3.5
+425
+11.8
+9.2
+3.7
+...
+...
+...
+9.9
+9.3
+3.8
+GENERAL NOTE: Coefficient A is the instantaneous coefficient of
+thermal expansion × 10−6 (mm/mm/°C). Coefficient B is the mean
+coefficient of thermal expansion × 10−6 (mm/mm/°C) in going
+from 20°C to indicated temperature. Coefficient C is the linear
+thermal expansion (mm/m) in going from 20°C to indicated
+temperature.
+1173
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</RawText>
+  <RawTokens>
+    <Page sourcePage="1223">
+      <Token index="0">ASME</Token>
+      <Token index="1">BPVC.II.D.M-2025</Token>
+      <Token index="2">Table</Token>
+      <Token index="3">TE-5</Token>
+      <Token index="4">Thermal</Token>
+      <Token index="5">Expansion</Token>
+      <Token index="6">for</Token>
+      <Token index="7">Titanium</Token>
+      <Token index="8">Alloys</Token>
+      <Token index="9">Coefficients</Token>
+      <Token index="10">for</Token>
+      <Token index="11">Titanium</Token>
+      <Token index="12">Alloy,</Token>
+      <Token index="13">Grades</Token>
+      <Token index="14">1,</Token>
+      <Token index="15">2,</Token>
+      <Token index="16">2H,</Token>
+      <Token index="17">Coefficients</Token>
+      <Token index="18">for</Token>
+      <Token index="19">3,</Token>
+      <Token index="20">7,</Token>
+      <Token index="21">7H,</Token>
+      <Token index="22">11,</Token>
+      <Token index="23">12,</Token>
+      <Token index="24">Titanium</Token>
+      <Token index="25">Alloy,</Token>
+      <Token index="26">Coefficients</Token>
+      <Token index="27">for</Token>
+      <Token index="28">Grades</Token>
+      <Token index="29">9</Token>
+      <Token index="30">and</Token>
+      <Token index="31">Titanium</Token>
+      <Token index="32">Alloy,</Token>
+      <Token index="33">16,</Token>
+      <Token index="34">16H,</Token>
+      <Token index="35">17,</Token>
+      <Token index="36">26,</Token>
+      <Token index="37">26H,</Token>
+      <Token index="38">and</Token>
+      <Token index="39">27</Token>
+      <Token index="40">28</Token>
+      <Token index="41">Grade</Token>
+      <Token index="42">38</Token>
+      <Token index="43">Temperature,</Token>
+      <Token index="44">°C</Token>
+      <Token index="45">A</Token>
+      <Token index="46">B</Token>
+      <Token index="47">C</Token>
+      <Token index="48">A</Token>
+      <Token index="49">B</Token>
+      <Token index="50">C</Token>
+      <Token index="51">A</Token>
+      <Token index="52">B</Token>
+      <Token index="53">C</Token>
+      <Token index="54">20</Token>
+      <Token index="55">8.3</Token>
+      <Token index="56">8.3</Token>
+      <Token index="57">0</Token>
+      <Token index="58">8.4</Token>
+      <Token index="59">8.4</Token>
+      <Token index="60">0</Token>
+      <Token index="61">8.7</Token>
+      <Token index="62">8.7</Token>
+      <Token index="63">0</Token>
+      <Token index="64">50</Token>
+      <Token index="65">8.5</Token>
+      <Token index="66">8.4</Token>
+      <Token index="67">0.25</Token>
+      <Token index="68">8.6</Token>
+      <Token index="69">8.6</Token>
+      <Token index="70">0.26</Token>
+      <Token index="71">8.8</Token>
+      <Token index="72">8.7</Token>
+      <Token index="73">0.26</Token>
+      <Token index="74">75</Token>
+      <Token index="75">8.6</Token>
+      <Token index="76">8.5</Token>
+      <Token index="77">0.47</Token>
+      <Token index="78">8.8</Token>
+      <Token index="79">8.6</Token>
+      <Token index="80">0.47</Token>
+      <Token index="81">8.9</Token>
+      <Token index="82">8.7</Token>
+      <Token index="83">0.48</Token>
+      <Token index="84">100</Token>
+      <Token index="85">8.7</Token>
+      <Token index="86">8.5</Token>
+      <Token index="87">0.68</Token>
+      <Token index="88">8.9</Token>
+      <Token index="89">8.7</Token>
+      <Token index="90">0.70</Token>
+      <Token index="91">9.0</Token>
+      <Token index="92">8.7</Token>
+      <Token index="93">0.70</Token>
+      <Token index="94">125</Token>
+      <Token index="95">8.7</Token>
+      <Token index="96">8.6</Token>
+      <Token index="97">0.90</Token>
+      <Token index="98">9.2</Token>
+      <Token index="99">8.8</Token>
+      <Token index="100">0.92</Token>
+      <Token index="101">9.1</Token>
+      <Token index="102">8.8</Token>
+      <Token index="103">0.92</Token>
+      <Token index="104">150</Token>
+      <Token index="105">8.7</Token>
+      <Token index="106">8.6</Token>
+      <Token index="107">1.1</Token>
+      <Token index="108">9.4</Token>
+      <Token index="109">8.9</Token>
+      <Token index="110">1.2</Token>
+      <Token index="111">9.2</Token>
+      <Token index="112">8.9</Token>
+      <Token index="113">1.2</Token>
+      <Token index="114">175</Token>
+      <Token index="115">8.8</Token>
+      <Token index="116">8.6</Token>
+      <Token index="117">1.3</Token>
+      <Token index="118">9.5</Token>
+      <Token index="119">9.0</Token>
+      <Token index="120">1.4</Token>
+      <Token index="121">9.2</Token>
+      <Token index="122">8.9</Token>
+      <Token index="123">1.4</Token>
+      <Token index="124">200</Token>
+      <Token index="125">8.9</Token>
+      <Token index="126">8.7</Token>
+      <Token index="127">1.6</Token>
+      <Token index="128">9.6</Token>
+      <Token index="129">9.0</Token>
+      <Token index="130">1.6</Token>
+      <Token index="131">9.3</Token>
+      <Token index="132">9.0</Token>
+      <Token index="133">1.6</Token>
+      <Token index="134">225</Token>
+      <Token index="135">9.0</Token>
+      <Token index="136">8.7</Token>
+      <Token index="137">1.8</Token>
+      <Token index="138">9.5</Token>
+      <Token index="139">9.1</Token>
+      <Token index="140">1.9</Token>
+      <Token index="141">9.4</Token>
+      <Token index="142">9.0</Token>
+      <Token index="143">1.8</Token>
+      <Token index="144">250</Token>
+      <Token index="145">9.1</Token>
+      <Token index="146">8.7</Token>
+      <Token index="147">2.0</Token>
+      <Token index="148">9.5</Token>
+      <Token index="149">9.2</Token>
+      <Token index="150">2.1</Token>
+      <Token index="151">9.5</Token>
+      <Token index="152">9.1</Token>
+      <Token index="153">2.1</Token>
+      <Token index="154">275</Token>
+      <Token index="155">9.1</Token>
+      <Token index="156">8.8</Token>
+      <Token index="157">2.2</Token>
+      <Token index="158">9.7</Token>
+      <Token index="159">9.2</Token>
+      <Token index="160">2.3</Token>
+      <Token index="161">9.5</Token>
+      <Token index="162">9.1</Token>
+      <Token index="163">2.3</Token>
+      <Token index="164">300</Token>
+      <Token index="165">9.2</Token>
+      <Token index="166">8.8</Token>
+      <Token index="167">2.5</Token>
+      <Token index="168">10.4</Token>
+      <Token index="169">9.3</Token>
+      <Token index="170">2.6</Token>
+      <Token index="171">9.6</Token>
+      <Token index="172">9.2</Token>
+      <Token index="173">2.6</Token>
+      <Token index="174">325</Token>
+      <Token index="175">9.3</Token>
+      <Token index="176">8.8</Token>
+      <Token index="177">2.7</Token>
+      <Token index="178">...</Token>
+      <Token index="179">...</Token>
+      <Token index="180">...</Token>
+      <Token index="181">9.7</Token>
+      <Token index="182">9.2</Token>
+      <Token index="183">2.8</Token>
+      <Token index="184">350</Token>
+      <Token index="185">9.5</Token>
+      <Token index="186">8.9</Token>
+      <Token index="187">2.9</Token>
+      <Token index="188">...</Token>
+      <Token index="189">...</Token>
+      <Token index="190">...</Token>
+      <Token index="191">9.7</Token>
+      <Token index="192">9.2</Token>
+      <Token index="193">3.0</Token>
+      <Token index="194">375</Token>
+      <Token index="195">9.9</Token>
+      <Token index="196">8.9</Token>
+      <Token index="197">3.2</Token>
+      <Token index="198">...</Token>
+      <Token index="199">...</Token>
+      <Token index="200">...</Token>
+      <Token index="201">9.8</Token>
+      <Token index="202">9.3</Token>
+      <Token index="203">3.3</Token>
+      <Token index="204">400</Token>
+      <Token index="205">10.6</Token>
+      <Token index="206">9.0</Token>
+      <Token index="207">3.4</Token>
+      <Token index="208">...</Token>
+      <Token index="209">...</Token>
+      <Token index="210">...</Token>
+      <Token index="211">9.8</Token>
+      <Token index="212">9.3</Token>
+      <Token index="213">3.5</Token>
+      <Token index="214">425</Token>
+      <Token index="215">11.8</Token>
+      <Token index="216">9.2</Token>
+      <Token index="217">3.7</Token>
+      <Token index="218">...</Token>
+      <Token index="219">...</Token>
+      <Token index="220">...</Token>
+      <Token index="221">9.9</Token>
+      <Token index="222">9.3</Token>
+      <Token index="223">3.8</Token>
+      <Token index="224">GENERAL</Token>
+      <Token index="225">NOTE:</Token>
+      <Token index="226">Coefficient</Token>
+      <Token index="227">A</Token>
+      <Token index="228">is</Token>
+      <Token index="229">the</Token>
+      <Token index="230">instantaneous</Token>
+      <Token index="231">coefficient</Token>
+      <Token index="232">of</Token>
+      <Token index="233">10−6</Token>
+      <Token index="234">thermal</Token>
+      <Token index="235">expansion</Token>
+      <Token index="236">×</Token>
+      <Token index="237">(mm/mm/°C).</Token>
+      <Token index="238">Coefficient</Token>
+      <Token index="239">B</Token>
+      <Token index="240">is</Token>
+      <Token index="241">the</Token>
+      <Token index="242">mean</Token>
+      <Token index="243">10−6</Token>
+      <Token index="244">coefficient</Token>
+      <Token index="245">of</Token>
+      <Token index="246">thermal</Token>
+      <Token index="247">expansion</Token>
+      <Token index="248">×</Token>
+      <Token index="249">(mm/mm/°C)</Token>
+      <Token index="250">in</Token>
+      <Token index="251">going</Token>
+      <Token index="252">from</Token>
+      <Token index="253">20°C</Token>
+      <Token index="254">to</Token>
+      <Token index="255">indicated</Token>
+      <Token index="256">temperature.</Token>
+      <Token index="257">Coefficient</Token>
+      <Token index="258">C</Token>
+      <Token index="259">is</Token>
+      <Token index="260">the</Token>
+      <Token index="261">linear</Token>
+      <Token index="262">thermal</Token>
+      <Token index="263">expansion</Token>
+      <Token index="264">(mm/m)</Token>
+      <Token index="265">in</Token>
+      <Token index="266">going</Token>
+      <Token index="267">from</Token>
+      <Token index="268">20°C</Token>
+      <Token index="269">to</Token>
+      <Token index="270">indicated</Token>
+      <Token index="271">temperature.</Token>
+      <Token index="272">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="273">1173</Token>
+      <Token index="274">Copyright</Token>
+      <Token index="275">ASME</Token>
+      <Token index="276">International</Token>
+      <Token index="277">(BPVC)</Token>
+      <Token index="278">Provided</Token>
+      <Token index="279">by</Token>
+      <Token index="280">Accuris</Token>
+      <Token index="281">under</Token>
+      <Token index="282">license</Token>
+      <Token index="283">with</Token>
+      <Token index="284">ASME</Token>
+      <Token index="285">Licensee=BREMBANA</Token>
+      <Token index="286">&amp;</Token>
+      <Token index="287">ROLLE</Token>
+      <Token index="288">GROUP</Token>
+      <Token index="289">-</Token>
+      <Token index="290">Bergamasque:</Token>
+      <Token index="291">Albrèmb/8355778001,</Token>
+      <Token index="292">User=Tosto,</Token>
+      <Token index="293">Natale</Token>
+      <Token index="294">No</Token>
+      <Token index="295">reproduction</Token>
+      <Token index="296">or</Token>
+      <Token index="297">networking</Token>
+      <Token index="298">permitted</Token>
+      <Token index="299">without</Token>
+      <Token index="300">license</Token>
+      <Token index="301">from</Token>
+      <Token index="302">Accuris</Token>
+      <Token index="303">Not</Token>
+      <Token index="304">for</Token>
+      <Token index="305">Resale,</Token>
+      <Token index="306">10/20/2025</Token>
+      <Token index="307">03:54:29</Token>
+      <Token index="308">MDT</Token>
+    </Page>
+  </RawTokens>
+</PhysicalPropertyTableImport>

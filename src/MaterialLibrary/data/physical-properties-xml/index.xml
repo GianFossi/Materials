@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PhysicalPropertyTables sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1205" sourcePageEnd="1245" status="review-before-database-import" count="14">
+  <Table name="TE-1" sourceTable="TE-1" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1205" sourcePageEnd="1211" file="ThermalExpansion/TE-1.xml"/>
+  <Table name="TE-2" sourceTable="TE-2" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1211" sourcePageEnd="1211" file="ThermalExpansion/TE-2.xml"/>
+  <Table name="TE-3" sourceTable="TE-3" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1212" sourcePageEnd="1212" file="ThermalExpansion/TE-3.xml"/>
+  <Table name="TE-4" sourceTable="TE-4" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1213" sourcePageEnd="1222" file="ThermalExpansion/TE-4.xml"/>
+  <Table name="TE-5" sourceTable="TE-5" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1223" sourcePageEnd="1223" file="ThermalExpansion/TE-5.xml"/>
+  <Table name="TCD" sourceTable="TCD" targetTable="ThermalConductivityTable" targetQuantity="ThermalConductivity" sourcePageStart="1224" sourcePageEnd="1237" file="ThermalConductivity/TCD-ThermalConductivity.xml"/>
+  <Table name="TCD" sourceTable="TCD" targetTable="ThermalDiffusivityTable" targetQuantity="ThermalDiffusivity" sourcePageStart="1224" sourcePageEnd="1237" file="ThermalDiffusivity/TCD-ThermalDiffusivity.xml"/>
+  <Table name="TM-1" sourceTable="TM-1" targetTable="ElasticModulusTable" targetQuantity="ElasticYoungModulus" sourcePageStart="1238" sourcePageEnd="1240" file="ElasticModulus/TM-1.xml"/>
+  <Table name="TM-2" sourceTable="TM-2" targetTable="ElasticModulusTable" targetQuantity="ElasticYoungModulus" sourcePageStart="1241" sourcePageEnd="1241" file="ElasticModulus/TM-2.xml"/>
+  <Table name="TM-3" sourceTable="TM-3" targetTable="ElasticModulusTable" targetQuantity="ElasticYoungModulus" sourcePageStart="1242" sourcePageEnd="1242" file="ElasticModulus/TM-3.xml"/>
+  <Table name="TM-4" sourceTable="TM-4" targetTable="ElasticModulusTable" targetQuantity="ElasticYoungModulus" sourcePageStart="1243" sourcePageEnd="1243" file="ElasticModulus/TM-4.xml"/>
+  <Table name="TM-5" sourceTable="TM-5" targetTable="ElasticModulusTable" targetQuantity="ElasticYoungModulus" sourcePageStart="1244" sourcePageEnd="1244" file="ElasticModulus/TM-5.xml"/>
+  <Table name="PRD" sourceTable="PRD" targetTable="DensityTable" targetQuantity="Density" sourcePageStart="1244" sourcePageEnd="1245" file="Density/PRD-Density.xml"/>
+  <Table name="PRD" sourceTable="PRD" targetTable="PoissonRatioTable" targetQuantity="PoissonRatio" sourcePageStart="1244" sourcePageEnd="1245" file="PoissonRatio/PRD-PoissonRatio.xml"/>
+</PhysicalPropertyTables>

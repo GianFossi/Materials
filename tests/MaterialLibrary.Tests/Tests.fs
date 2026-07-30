@@ -3,7 +3,9 @@ module MaterialLibrary.Tests
 open Xunit
 open System.IO
 open System.Text.RegularExpressions
+open System.Xml.Linq
 open MaterialLibrary
+open MaterialLibrary.Crud
 open MaterialLibrary.Domain
 open MaterialLibrary.Domain.Database.Lookup
 open MaterialLibrary.Interpolation
@@ -57,6 +59,17 @@ let ``material filtering combines criteria and rejects ambiguous unique matches`
     Assert.True(MaterialFiltering.findUnique criteria [ plate; duplicate ] |> Result.isError)
 
 [<Fact>]
+let ``material filtering orders numeric database IDs numerically`` () =
+    let materialWithId id =
+        { createTestMaterial () with Id = id }
+        |> Material.setIdentity "Plate" "Carbon steel" "SA-516" "70" "" "K02700"
+
+    let criteria = MaterialSearchCriteria.identity "Plate" "SA-516" "70" None
+    let matches = MaterialFiltering.findMany criteria [ materialWithId "10"; materialWithId "2"; materialWithId "1" ]
+
+    Assert.Equal<string list>([ "1"; "2"; "10" ], matches |> List.map (fun material -> material.Id))
+
+[<Fact>]
 let ``ASME family classification covers supported steel families`` () =
     let classify specification grade condition composition uns =
         AsmeMaterialFamilyClassification.classify specification grade condition composition uns
@@ -86,6 +99,45 @@ let ``material filtering can select an ASME family`` () =
     Assert.Equal<Material>(stainless, matchResult)
 
 [<Fact>]
+let ``material library search uses ASME identity criteria`` () =
+    let target =
+        createTestMaterial ()
+        |> Material.setIdentity "Plate" "Carbon steel" "SA-516" "70" "Normalized" "K02700"
+        |> fun material -> { material with Family = Some CS }
+
+    let other =
+        { target with Id = "other" }
+        |> Material.setIdentity "Smls. tube" "18Cr-8Ni" "SA-213" "TP304" "" "S30400"
+        |> fun material -> { material with Family = Some SSA }
+
+    let library = MaterialLibrary.create [ other; target ] |> expectOk
+
+    let matches =
+        library.SearchMaterials(
+            Some "SA-516",
+            Some "70",
+            Some "Norm",
+            Some "K02700",
+            Some "Carbon",
+            Some "Plate",
+            Some CS
+        )
+
+    let criteriaMatches =
+        library.Search
+            { MaterialSearchCriteria.empty with
+                Specification = Some(Contains "SA-516")
+                Grade = Some(Contains "70")
+                ClassConditionTemper = Some(Contains "Norm")
+                Uns = Some(Contains "K02700")
+                NominalComposition = Some(Contains "Carbon")
+                ProductForm = Some(Contains "Plate")
+                Family = Some CS }
+
+    Assert.Equal<Material list>([ target ], matches)
+    Assert.Equal<Material list>(matches, criteriaMatches)
+
+[<Fact>]
 let ``requested database library loads six materials and classifies allowable stress sources`` () =
     let databasePath =
         Configuration.createDefault ()
@@ -94,6 +146,7 @@ let ``requested database library loads six materials and classifies allowable st
     let materials = RequestedMaterialLibrary.loadMaterials databasePath |> expectOk
 
     Assert.Equal(6, materials.Length)
+    Assert.All(materials, fun material -> Assert.False(material.Id.StartsWith("ASME-")))
     Assert.Contains(materials, fun material -> material.Specification = "SA-516" && material.Grade = "70")
     Assert.Contains(
         materials,
@@ -172,7 +225,17 @@ let ``requested database library loads six materials and classifies allowable st
         materials
         |> List.find (fun material -> material.Specification = "SA-193" && material.Grade = "B7")
 
+    let b7TensileAt400 =
+        b7.StrengthProperties.TensileProperties
+        |> List.find (fun properties -> properties.Temperature = 400.0)
+
+    Assert.Equal(381.0, b7TensileAt400.YieldStrength, 12)
+    Assert.Equal(629.0, b7TensileAt400.TensileStrength, 12)
     Assert.Equal(3, b7.StrengthProperties.AllowableStressDatasets.Length)
+    Assert.Equal<float option list>(
+        [ Some 64.0; Some 100.0; Some 180.0 ],
+        b7.StrengthProperties.AllowableStressDatasets |> List.map (fun dataset -> dataset.SizeMaximum)
+    )
     Assert.All(
         b7.StrengthProperties.AllowableStressDatasets,
         fun dataset -> Assert.Equal(BoltingAllowableStress, dataset.Source)
@@ -573,6 +636,19 @@ let ``configuration validation rejects unsafe numerical defaults`` () =
     Assert.True(Configuration.validate invalid |> Result.isError)
 
 [<Fact>]
+let ``ASME database fallback file name is asme materials db`` () =
+    let baseDirectory = Path.Combine(Path.GetTempPath(), $"material-library-empty-{System.Guid.NewGuid():N}")
+
+    try
+        Directory.CreateDirectory(baseDirectory) |> ignore
+        let resolved = Configuration.resolveAsmeDatabasePath (Some baseDirectory)
+
+        Assert.Equal(Path.Combine(baseDirectory, "asme_materials.db"), resolved)
+    finally
+        if Directory.Exists(baseDirectory) then
+            Directory.Delete(baseDirectory, true)
+
+[<Fact>]
 let ``material JSON strictly enforces current schema`` () =
     let material =
         { createTestMaterial () with
@@ -828,3 +904,162 @@ let ``configuration save validates before touching destination`` () =
     finally
         if File.Exists(path) then
             File.Delete(path)
+
+[<Fact>]
+let ``XML data helpers read and write staged files`` () =
+    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-data-{System.Guid.NewGuid():N}")
+    let document = XDocument(XElement("PhysicalPropertyTableImport", XAttribute("targetTable", "DensityTable")))
+
+    try
+        let written =
+            MaterialLibraryDataXml.writeFile dataRoot "physical-properties-xml/Density/PRD-Density.xml" document
+            |> expectOk
+
+        Assert.True(File.Exists(written))
+
+        let file =
+            MaterialLibraryDataXml.readFile dataRoot "physical-properties-xml/Density/PRD-Density.xml"
+            |> expectOk
+
+        Assert.Equal("physical-properties-xml/Density/PRD-Density.xml", file.RelativePath)
+        Assert.Equal("Density", file.Folder)
+        Assert.Equal("PRD-Density.xml", file.FileName)
+        Assert.Equal("PhysicalPropertyTableImport", file.RootName)
+        Assert.Equal("DensityTable", file.RootAttributes["targetTable"])
+
+        let library = MaterialLibrary.empty ()
+
+        let fileFromLibrary =
+            library.ReadXmlDataFile(dataRoot, "physical-properties-xml/Density/PRD-Density.xml")
+            |> expectOk
+
+        Assert.Equal(file.RelativePath, fileFromLibrary.RelativePath)
+
+        let folder =
+            MaterialLibraryDataXml.readFolder dataRoot "physical-properties-xml"
+            |> expectOk
+
+        Assert.Single(folder) |> ignore
+    finally
+        if Directory.Exists(dataRoot) then
+            Directory.Delete(dataRoot, true)
+
+[<Fact>]
+let ``XML data helpers read repository physical-property staging folder`` () =
+    match MaterialLibraryDataXml.tryFindDefaultDataRoot () with
+    | None -> Assert.True(true)
+    | Some dataRoot ->
+        let files =
+            MaterialLibraryDataXml.readFolder dataRoot "physical-properties-xml"
+            |> expectOk
+
+        Assert.Contains(files, fun file -> file.RelativePath = "physical-properties-xml/ThermalExpansion/TE-1.xml")
+        Assert.Contains(files, fun file -> file.RelativePath = "physical-properties-xml/ThermalDiffusivity/TCD-ThermalDiffusivity.xml")
+        Assert.Contains(files, fun file -> file.RelativePath = "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml")
+
+[<Fact>]
+let ``CRUD repository creates reads updates deletes and persists materials`` () =
+    let path = Path.Combine(Path.GetTempPath(), $"material-library-crud-{System.Guid.NewGuid():N}.json")
+    let repo = MaterialCrudRepository()
+    let material = createTestMaterial ()
+
+    try
+        Assert.True(repo.Create(material) |> Result.isOk)
+        Assert.Equal(material.Id, (repo.Read(material.Id) |> expectOk).Id)
+
+        Assert.True(
+            repo.Update(material.Id, fun current -> Ok { current with Grade = "71" })
+            |> Result.isOk
+        )
+
+        Assert.Equal("71", (repo.Read(material.Id) |> expectOk).Grade)
+        Assert.True(repo.SaveToFile(path, "test", None) |> Result.isOk)
+
+        let loaded = MaterialCrudRepository.LoadFromFile(path) |> expectOk
+        Assert.Equal("71", (loaded.Read(material.Id) |> expectOk).Grade)
+
+        Assert.True(repo.Delete(material.Id) |> Result.isOk)
+        Assert.True(repo.Read(material.Id) |> Result.isError)
+    finally
+        if File.Exists(path) then
+            File.Delete(path)
+
+[<Fact>]
+let ``CRUD configuration can save read and delete XML config`` () =
+    let path = Path.Combine(Path.GetTempPath(), $"material-library-crud-{System.Guid.NewGuid():N}.xml")
+
+    try
+        let config = ConfigurationCrud.createDefault ()
+        Assert.True(ConfigurationCrud.save path config |> Result.isOk)
+        Assert.Equal("asme_materials.db", (ConfigurationCrud.read path |> expectOk).Io.AsmeMaterialDatabaseFile)
+        Assert.True(ConfigurationCrud.delete path |> Result.isOk)
+        Assert.False(File.Exists(path))
+    finally
+        if File.Exists(path) then
+            File.Delete(path)
+
+[<Fact>]
+let ``CRUD XML import stores staged XML inside specific material`` () =
+    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-crud-data-{System.Guid.NewGuid():N}")
+    let sourceRelativePath = "physical-properties-xml/Density/PRD-Density.xml"
+    let source = XDocument(XElement("PhysicalPropertyTableImport", XAttribute("targetTable", "DensityTable")))
+    let repo = MaterialCrudRepository([ createTestMaterial () ])
+
+    try
+        MaterialLibraryDataXml.writeFile dataRoot sourceRelativePath source |> expectOk |> ignore
+
+        Assert.True(
+            repo.ImportXmlDataIntoMaterial(dataRoot, "SA-516-70", sourceRelativePath)
+            |> Result.isOk
+        )
+
+        let updated = repo.Read("SA-516-70") |> expectOk
+        Assert.Contains("materials/SA-516-70/PRD-Density.xml", defaultArg updated.Notes "")
+
+        let exportFolder = Path.Combine(dataRoot, "export")
+        let exported = repo.ExportMaterialXmlData(dataRoot, "SA-516-70", exportFolder) |> expectOk
+
+        Assert.Single(exported) |> ignore
+        Assert.True(File.Exists(exported.Head))
+    finally
+        if Directory.Exists(dataRoot) then
+            Directory.Delete(dataRoot, true)
+
+[<Fact>]
+let ``XML data helpers reject paths outside data root`` () =
+    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-safe-data-{System.Guid.NewGuid():N}")
+
+    try
+        Directory.CreateDirectory(dataRoot) |> ignore
+        let document = XDocument(XElement("PhysicalPropertyTableImport"))
+        Assert.True(MaterialLibraryDataXml.writeFile dataRoot "../escape.xml" document |> Result.isError)
+        Assert.True(MaterialLibraryDataXml.readFile dataRoot "../escape.xml" |> Result.isError)
+    finally
+        if Directory.Exists(dataRoot) then
+            Directory.Delete(dataRoot, true)
+
+[<Fact>]
+let ``CRUD XML batch import preserves source order`` () =
+    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-crud-batch-{System.Guid.NewGuid():N}")
+    let material = createTestMaterial ()
+
+    try
+        [ "physical-properties-xml/Density/PRD-Density.xml"; "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml" ]
+        |> List.iter (fun path ->
+            MaterialLibraryDataXml.writeFile dataRoot path (XDocument(XElement("PhysicalPropertyTableImport")))
+            |> expectOk
+            |> ignore)
+
+        let _, imported =
+            XmlDataCrud.importFilesIntoMaterial
+                dataRoot
+                material
+                [ "physical-properties-xml/Density/PRD-Density.xml"
+                  "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml" ]
+            |> expectOk
+
+        Assert.Equal("materials/SA-516-70/PRD-Density.xml", imported[0].RelativePath)
+        Assert.Equal("materials/SA-516-70/PRD-PoissonRatio.xml", imported[1].RelativePath)
+    finally
+        if Directory.Exists(dataRoot) then
+            Directory.Delete(dataRoot, true)

@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExternalPressureTableImport name="NFA-2" figure="NFA-2" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" pdfPage="1342" printedPage="1292" units="A=dimensionless; B=MPa; Temperature=degC" status="raw-tokenized-review-required">
+  <ReferenceData>NFA-2</ReferenceData>
+  <Notes>Extracted from ASME BPVC II-D Metric 2025 external-pressure tabular values. RawTokens preserve PDF text; validate continuation exponents before SQLite import.</Notes>
+  <RawText>Temp., °C
+A
+B, MPa
+40
+1.00 -05
+3.45 -01
+4.05 -04
+1.38 +01
+5.00
+1.71
+6.00
+2.01
+7.00
+2.28
+8.00
+2.52
+9.00
+2.76
+1.00 -03
+2.94
+1.50
+3.59
+2.00
+4.03
+2.50
+4.29
+3.00
+4.50
+4.00
+4.79
+5.00
+5.01
+6.00
+5.10
+1.00 -02
+5.47
+2.00
+5.82
+4.00
+6.10
+5.00
+6.19
+1.00 -01
+6.19
+95
+1.02 -05
+3.45 -01
+3.01 -04
+9.86 +00
+6.00
+1.82 +01
+7.00
+2.06
+1.00 -03
+2.63
+1.50
+3.23
+2.00
+3.62
+2.50
+3.90
+3.00
+4.08
+4.00
+4.30
+5.00
+4.45
+6.00
+4.54
+1.00 -02
+4.79
+5.00
+5.52
+1.00 -01
+5.52
+150
+1.10 -05
+3.45 -01
+Temp., °C
+A
+B, MPa
+150
+1.99 -04
+6.21 +00
+2.50
+7.65
+3.00
+9.24
+4.00
+1.16 +01
+5.00
+1.36
+6.00
+1.54
+7.00
+1.68
+1.00 -03
+2.06
+1.50
+2.48
+2.50
+2.93
+3.00
+3.10
+4.00
+3.34
+5.00
+3.50
+1.00 -02
+3.88
+1.50
+4.08
+1.00 -01
+4.08
+205
+1.18 -05
+3.45 -01
+1.47 -04
+4.16 +00
+2.00
+5.48
+2.50
+6.57
+3.00
+7.45
+4.00
+8.83
+5.00
+1.00 +01
+1.00 -03
+1.38
+1.50
+1.61
+2.00
+1.79
+2.50
+1.92
+3.00
+2.03
+5.00
+2.30
+6.00
+2.36
+7.00
+2.41
+1.00 -02
+2.54
+1.50
+2.65
+2.00
+2.70
+2.50
+2.75
+1.00 -01
+2.75
+1292
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</RawText>
+  <RawTokens>
+    <Token index="1">°C</Token>
+    <Token index="2">40</Token>
+    <Token index="3">1.00</Token>
+    <Token index="4">-05</Token>
+    <Token index="5">3.45</Token>
+    <Token index="6">-01</Token>
+    <Token index="7">4.05</Token>
+    <Token index="8">-04</Token>
+    <Token index="9">1.38</Token>
+    <Token index="10">+01</Token>
+    <Token index="11">5.00</Token>
+    <Token index="12">1.71</Token>
+    <Token index="13">6.00</Token>
+    <Token index="14">2.01</Token>
+    <Token index="15">7.00</Token>
+    <Token index="16">2.28</Token>
+    <Token index="17">8.00</Token>
+    <Token index="18">2.52</Token>
+    <Token index="19">9.00</Token>
+    <Token index="20">2.76</Token>
+    <Token index="21">1.00</Token>
+    <Token index="22">-03</Token>
+    <Token index="23">2.94</Token>
+    <Token index="24">1.50</Token>
+    <Token index="25">3.59</Token>
+    <Token index="26">2.00</Token>
+    <Token index="27">4.03</Token>
+    <Token index="28">2.50</Token>
+    <Token index="29">4.29</Token>
+    <Token index="30">3.00</Token>
+    <Token index="31">4.50</Token>
+    <Token index="32">4.00</Token>
+    <Token index="33">4.79</Token>
+    <Token index="34">5.00</Token>
+    <Token index="35">5.01</Token>
+    <Token index="36">6.00</Token>
+    <Token index="37">5.10</Token>
+    <Token index="38">1.00</Token>
+    <Token index="39">-02</Token>
+    <Token index="40">5.47</Token>
+    <Token index="41">2.00</Token>
+    <Token index="42">5.82</Token>
+    <Token index="43">4.00</Token>
+    <Token index="44">6.10</Token>
+    <Token index="45">5.00</Token>
+    <Token index="46">6.19</Token>
+    <Token index="47">1.00</Token>
+    <Token index="48">-01</Token>
+    <Token index="49">6.19</Token>
+    <Token index="50">95</Token>
+    <Token index="51">1.02</Token>
+    <Token index="52">-05</Token>
+    <Token index="53">3.45</Token>
+    <Token index="54">-01</Token>
+    <Token index="55">3.01</Token>
+    <Token index="56">-04</Token>
+    <Token index="57">9.86</Token>
+    <Token index="58">+00</Token>
+    <Token index="59">6.00</Token>
+    <Token index="60">1.82</Token>
+    <Token index="61">+01</Token>
+    <Token index="62">7.00</Token>
+    <Token index="63">2.06</Token>
+    <Token index="64">1.00</Token>
+    <Token index="65">-03</Token>
+    <Token index="66">2.63</Token>
+    <Token index="67">1.50</Token>
+    <Token index="68">3.23</Token>
+    <Token index="69">2.00</Token>
+    <Token index="70">3.62</Token>
+    <Token index="71">2.50</Token>
+    <Token index="72">3.90</Token>
+    <Token index="73">3.00</Token>
+    <Token index="74">4.08</Token>
+    <Token index="75">4.00</Token>
+    <Token index="76">4.30</Token>
+    <Token index="77">5.00</Token>
+    <Token index="78">4.45</Token>
+    <Token index="79">6.00</Token>
+    <Token index="80">4.54</Token>
+    <Token index="81">1.00</Token>
+    <Token index="82">-02</Token>
+    <Token index="83">4.79</Token>
+    <Token index="84">5.00</Token>
+    <Token index="85">5.52</Token>
+    <Token index="86">1.00</Token>
+    <Token index="87">-01</Token>
+    <Token index="88">5.52</Token>
+    <Token index="89">150</Token>
+    <Token index="90">1.10</Token>
+    <Token index="91">-05</Token>
+    <Token index="92">3.45</Token>
+    <Token index="93">-01</Token>
+    <Token index="94">°C</Token>
+    <Token index="95">150</Token>
+    <Token index="96">1.99</Token>
+    <Token index="97">-04</Token>
+    <Token index="98">6.21</Token>
+    <Token index="99">+00</Token>
+    <Token index="100">2.50</Token>
+    <Token index="101">7.65</Token>
+    <Token index="102">3.00</Token>
+    <Token index="103">9.24</Token>
+    <Token index="104">4.00</Token>
+    <Token index="105">1.16</Token>
+    <Token index="106">+01</Token>
+    <Token index="107">5.00</Token>
+    <Token index="108">1.36</Token>
+    <Token index="109">6.00</Token>
+    <Token index="110">1.54</Token>
+    <Token index="111">7.00</Token>
+    <Token index="112">1.68</Token>
+    <Token index="113">1.00</Token>
+    <Token index="114">-03</Token>
+    <Token index="115">2.06</Token>
+    <Token index="116">1.50</Token>
+    <Token index="117">2.48</Token>
+    <Token index="118">2.50</Token>
+    <Token index="119">2.93</Token>
+    <Token index="120">3.00</Token>
+    <Token index="121">3.10</Token>
+    <Token index="122">4.00</Token>
+    <Token index="123">3.34</Token>
+    <Token index="124">5.00</Token>
+    <Token index="125">3.50</Token>
+    <Token index="126">1.00</Token>
+    <Token index="127">-02</Token>
+    <Token index="128">3.88</Token>
+    <Token index="129">1.50</Token>
+    <Token index="130">4.08</Token>
+    <Token index="131">1.00</Token>
+    <Token index="132">-01</Token>
+    <Token index="133">4.08</Token>
+    <Token index="134">205</Token>
+    <Token index="135">1.18</Token>
+    <Token index="136">-05</Token>
+    <Token index="137">3.45</Token>
+    <Token index="138">-01</Token>
+    <Token index="139">1.47</Token>
+    <Token index="140">-04</Token>
+    <Token index="141">4.16</Token>
+    <Token index="142">+00</Token>
+    <Token index="143">2.00</Token>
+    <Token index="144">5.48</Token>
+    <Token index="145">2.50</Token>
+    <Token index="146">6.57</Token>
+    <Token index="147">3.00</Token>
+    <Token index="148">7.45</Token>
+    <Token index="149">4.00</Token>
+    <Token index="150">8.83</Token>
+    <Token index="151">5.00</Token>
+    <Token index="152">1.00</Token>
+    <Token index="153">+01</Token>
+    <Token index="154">1.00</Token>
+    <Token index="155">-03</Token>
+    <Token index="156">1.38</Token>
+    <Token index="157">1.50</Token>
+    <Token index="158">1.61</Token>
+    <Token index="159">2.00</Token>
+    <Token index="160">1.79</Token>
+    <Token index="161">2.50</Token>
+    <Token index="162">1.92</Token>
+    <Token index="163">3.00</Token>
+    <Token index="164">2.03</Token>
+    <Token index="165">5.00</Token>
+    <Token index="166">2.30</Token>
+    <Token index="167">6.00</Token>
+    <Token index="168">2.36</Token>
+    <Token index="169">7.00</Token>
+    <Token index="170">2.41</Token>
+    <Token index="171">1.00</Token>
+    <Token index="172">-02</Token>
+    <Token index="173">2.54</Token>
+    <Token index="174">1.50</Token>
+    <Token index="175">2.65</Token>
+    <Token index="176">2.00</Token>
+    <Token index="177">2.70</Token>
+    <Token index="178">2.50</Token>
+    <Token index="179">2.75</Token>
+    <Token index="180">1.00</Token>
+    <Token index="181">-01</Token>
+    <Token index="182">2.75</Token>
+    <Token index="183">1292</Token>
+    <Token index="184">ASME</Token>
+    <Token index="185">BPVC.II.D.M-2025</Token>
+    <Token index="186">Copyright</Token>
+    <Token index="187">ASME</Token>
+    <Token index="188">International</Token>
+    <Token index="189">(BPVC)</Token>
+    <Token index="190">Provided</Token>
+    <Token index="191">by</Token>
+    <Token index="192">Accuris</Token>
+    <Token index="193">under</Token>
+    <Token index="194">license</Token>
+    <Token index="195">with</Token>
+    <Token index="196">ASME</Token>
+    <Token index="197">Licensee=BREMBANA</Token>
+    <Token index="198">&amp;</Token>
+    <Token index="199">ROLLE</Token>
+    <Token index="200">GROUP</Token>
+    <Token index="201">-</Token>
+    <Token index="202">Bergamasque:</Token>
+    <Token index="203">Albrèmb/8355778001</Token>
+    <Token index="204">User=Tosto</Token>
+    <Token index="205">Natale</Token>
+    <Token index="206">Not</Token>
+    <Token index="207">for</Token>
+    <Token index="208">Resale</Token>
+    <Token index="209">10/20/2025</Token>
+    <Token index="210">03:54:29</Token>
+    <Token index="211">MDT</Token>
+    <Token index="212">No</Token>
+    <Token index="213">reproduction</Token>
+    <Token index="214">or</Token>
+    <Token index="215">networking</Token>
+    <Token index="216">permitted</Token>
+    <Token index="217">without</Token>
+    <Token index="218">license</Token>
+    <Token index="219">from</Token>
+    <Token index="220">Accuris</Token>
+    <Token index="221">--```````````````````-```-```---</Token>
+  </RawTokens>
+</ExternalPressureTableImport>

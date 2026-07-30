@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/MaterialLibrary/MaterialLibrary.fsproj" />
+    <ProjectReference Include="../../src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

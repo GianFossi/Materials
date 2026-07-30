@@ -1,0 +1,1390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PhysicalPropertyTableImport name="TM-1" sourceTable="TM-1" targetTable="ElasticModulusTable" targetQuantity="ElasticYoungModulus" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1238" sourcePageEnd="1240" status="raw-tokenized-review-required">
+  <ReferenceData>TM-1</ReferenceData>
+  <Notes>Moduli of elasticity for ferrous materials. Validate wrapped rows, repeated headers, and table continuation before SQLite import.</Notes>
+  <SourceColumns>E=Young modulus / modulus of elasticity; Temperature=degC. Preserve ASME source units during import mapping.</SourceColumns>
+  <RawText>--- SourcePage 1238 ---
+ð25Þ
+Table TM-1
+Moduli of Elasticity E of Ferrous Materials for Given Temperatures
+Modulus of Elasticity E = Value Given × 103 MPa, for Temperature, °C, of
+Materials
+−200
+−125
+−75
+25
+100
+150
+200
+250
+300
+350
+400
+450
+500
+550
+600
+650
+700
+Carbon steels with C ≤0.30%
+216
+212
+209
+202
+198
+195
+192
+189
+185
+179
+171
+162
+151
+137
+...
+...
+...
+Carbon steels with C &gt; 0.30%
+215
+211
+207
+201
+197
+194
+191
+188
+183
+178
+170
+161
+149
+136
+121
+...
+...
+Ductile cast iron
+...
+...
+169
+161
+155
+151
+147
+142
+138
+134
+...
+...
+...
+...
+...
+...
+...
+Material Group A [Note (1)]
+214
+210
+207
+200
+196
+193
+190
+187
+183
+177
+170
+160
+149
+135
+121
+...
+...
+Material Group B [Note (2)]
+204
+200
+197
+191
+187
+184
+181
+178
+174
+171
+167
+163
+158
+153
+147
+141
+133
+Material Group C [Note (3)]
+218
+213
+210
+204
+200
+197
+193
+190
+186
+183
+179
+174
+169
+164
+157
+150
+142
+Material Group D [Note (4)]
+225
+220
+217
+210
+206
+202
+199
+196
+192
+188
+184
+180
+175
+169
+162
+155
+146
+Material Group E [Note (5)]
+228
+223
+220
+213
+208
+205
+201
+198
+195
+191
+187
+183
+179
+174
+168
+161
+153
+Material Group F [Note (6)]
+215
+212
+208
+201
+195
+192
+189
+186
+182
+178
+173
+166
+157
+145
+131
+...
+...
+Material Group G [Note (7)]
+209
+204
+201
+195
+189
+186
+183
+179
+176
+172
+169
+165
+160
+156
+151
+146
+140
+Material Group H [Note (9)]
+...
+...
+209
+200
+194
+190
+186
+183
+180
+177
+174
+172
+...
+...
+...
+...
+...
+Material Group I [Note (10)]
+192
+187
+184
+178
+173
+170
+167
+163
+160
+157
+154
+151
+148
+145
+142
+139
+135
+Material Group J [Note (11)]
+214
+209
+205
+197
+191
+187
+184
+180
+176
+172
+168
+164
+161
+157
+...
+...
+...
+S13800 [Note (12)]
+217
+213
+209
+202
+197
+194
+190
+186
+183
+179
+175
+171
+...
+...
+...
+...
+...
+S15500 [Note (13)]
+210
+206
+203
+196
+191
+188
+184
+181
+177
+173
+169
+166
+...
+...
+...
+...
+...
+S45000 [Note (14)]
+218
+213
+210
+203
+198
+194
+191
+187
+183
+179
+175
+171
+...
+...
+...
+...
+...
+S17400 [Note (15)]
+210
+206
+203
+196
+191
+188
+184
+181
+177
+173
+169
+166
+...
+...
+...
+...
+...
+S17700 [Note (16)]
+218
+213
+210
+203
+198
+194
+191
+187
+183
+179
+175
+171
+...
+...
+...
+...
+...
+S66286 [Note (17)]
+214
+211
+208
+201
+196
+192
+189
+185
+181
+178
+174
+169
+...
+...
+...
+...
+...
+NOTES:
+(1)
+Material Group A consists of the following carbon–molybdenum and manganese steels:
+C–1/4Mo
+C–1/2Mo
+Mn–1/4Mo
+Mn–1/2Mo
+Mn–1/2Mo–1/4Ni
+Mn–1/2Mo–1/2Ni
+Mn–1/2Ni–V
+Mn–V
+(2)
+Material Group B consists of the following Ni steels:
+3/4Cr–1/2Ni–Cu
+3/4Cr–3/4Ni–Cu–Al
+1/2Ni–1/2Cr–1/4Mo–V
+1/2Ni–1/2Mo–V
+3/4Ni–1/2Cr–1/2Mo–V
+3/4Ni–1/2Cu–Mo
+3/4Ni–1/2Mo–1/3Cr–V
+3/4Ni–1/2Mo–Cr–V
+3/4Ni–1Mo–3/4Cr
+1Ni–1/2Cr–1/2Mo
+11/4Ni–1Cr–1/2Mo
+13/4Ni–3/4Cr–1/4Mo
+2Ni–11/2Cr–1/4Mo–V
+2Ni–1Cu
+1188
+ASME BPVC.II.D.M-2025
+Copy
+Provid
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No re
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1239 ---
+Table TM-1
+Moduli of Elasticity E of Ferrous Materials for Given Temperatures (Cont'd)
+NOTES (CONT'D):
+21/2Ni
+23/4Ni–11/2Cr–1/2Mo–V
+31/2Ni
+31/2Ni–11/2Cr–1/2Mo–1/2Mn
+31/2Ni–13/4Cr–1/2Mo–V
+4Ni–11/2Cr–1/2Mo–V
+7Ni
+(3)
+Material Group C consists of the following 1/2–2Cr steels:
+1/2Cr–1/5Mo–V
+1/2Cr–1/4Mo–Si
+1/2Cr–1/2Mo
+1Cr–1/5Mo
+1Cr–1/2Mo
+1Cr–1/2Mo–V
+11/4Cr–1/2Mo
+11/4Cr–1/2Mo–Si
+13/4Cr–1/2Mo–Ti
+2Cr–1/2Mo
+(4)
+Material Group D consists of the following 21/4–3Cr steels:
+21/4Cr–1Mo
+3Cr–1Mo
+3Cr–1Mo–1/4V–Cb–Ca
+3Cr–1Mo–1/4V–Ti–B
+(5)
+Material Group E consists of the following 5–9Cr steels:
+5Cr–1/2Mo
+5Cr–1/2Mo–Si
+5Cr–1/2Mo–Ti
+7Cr–1/2Mo
+9Cr–Mo, including variations thereof
+(6)
+Material Group F consists of the following chromium steels:
+11Cr–Ti
+12Cr–Al
+13Cr
+13Cr–4Ni
+15Cr
+17Cr
+(7)
+Material Group G consists of the following austenitic steels:
+16Cr–12Ni–2Mo
+16Cr–12Ni–2Mo–N
+18Cr–3Ni–13Mn
+18Cr–8Ni
+18Cr–8Ni–N
+18Cr–8Ni–S
+18Cr–8Ni–Se
+18Cr–10Ni–Cb
+18Cr–10Ni–Ti
+18Cr–13Ni–3Mo
+18Cr–18Ni–2Si
+21Cr–6Ni–9Mn
+22Cr–13Ni–5Mn
+23Cr–12Ni
+25Cr–20Ni
+1189
+ASME BPVC.II.D.M-2025
+Copy
+Provid
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No re
+--`,,,``,,`,````````,,,,`````,``
+
+--- SourcePage 1240 ---
+Table TM-1
+Moduli of Elasticity E of Ferrous Materials for Given Temperatures (Cont'd)
+NOTES (CONT'D):
+(8)
+Material Group H consists of the following duplex (austenitic–ferritic) stainless steels:
+18Cr–5Ni–3Mo
+22Cr–2Ni–Mo–N
+22Cr–5Ni–3Mo–N
+23Cr–4Ni–Mo–Cu–N
+24Cr–10Ni–4Mo–N
+25Cr–5Ni–3Mo–2Cu
+25Cr–6Ni–Mo–N
+25Cr–6.5Ni–3Mo–N
+25Cr–7Ni–3Mo–W–Cu–N
+25Cr–7Ni–4Mo–N
+25Cr–7.5Ni–3.5Mo–N–Cu–W
+27Cr–7.5Ni–4.5Mo–Co–N
+29Cr–6.5Ni–2Mo–N
+(9)
+Material Group H consists of the following duplex (austenitic–ferritic) stainless steels:
+18Cr–5Ni–3Mo
+22Cr–2Ni–Mo–N
+22Cr–5Ni–3Mo–N
+23Cr–4Ni–Mo–Cu–N
+24Cr–10Ni–4Mo–N
+25Cr–5Ni–3Mo–2Cu
+25Cr–6Ni–Mo–N
+25Cr–6.5Ni–3Mo–N
+25Cr–7Ni–3Mo–W–Cu–N
+25Cr–7Ni–4Mo–N
+25Cr–7.5Ni–3.5Mo–N–Cu–W
+27Cr–7.5Ni–4.5Mo–Co–N
+29Cr–6.5Ni–2Mo–N
+(10) Material Group I consists of the following high-silicon austenitic steels:
+14Cr–16Ni–6Si–Cu–Mo
+17.5Cr–17.5Ni–5.3Si
+18Cr–8Ni–4Si–N
+18Cr–20Ni–5.5Si
+(11) Material Group J consists of the following high-molybdenum austenitic stainless steels:
+27Ni–22Cr–7Mo–Cu–N
+20Cr–18Ni–6Mo
+24Cr–22Ni–6Mo–2W–Cu–N
+31Ni–31Fe–29Cr–Mo
+46Fe–24Ni–21Cr–6Mo–N
+25Ni–47Fe–21Cr–5Mo
+25Ni–47Fe–23Cr–5.5Mo–N
+44Fe–25Ni–21Cr–Mo
+25Ni–20Cr–6Mo–Cu–N
+(12) Also known as 13Cr–8Ni–2Mo, XM‐13, or PH13‐8Mo.
+(13) Also known as 15Cr–5Ni–3Mo, XM‐12, or 15‐5PH.
+(14) Also known as 15Cr–6Ni–Cu–Mo, Custom 450, or XM‐25. Modulus values are for material aged at 480°C.
+(15) Also known as 17Cr–4Ni–4Cu, Grade 630, or 17‐4PH.
+(16) Also known as 17Cr–7Ni–1Al, Grade 631, or 17‐7PH.
+(17) Also known as 25Ni–15Cr–2Ti, Grade 660, or A‐286 stainless steel.
+1190
+ASME BPVC.II.D.M-2025
+Copy
+Provid
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No re
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</RawText>
+  <RawTokens>
+    <Page sourcePage="1238">
+      <Token index="0">ASME</Token>
+      <Token index="1">BPVC.II.D.M-2025</Token>
+      <Token index="2">700</Token>
+      <Token index="3">133</Token>
+      <Token index="4">142</Token>
+      <Token index="5">146</Token>
+      <Token index="6">153</Token>
+      <Token index="7">140</Token>
+      <Token index="8">135</Token>
+      <Token index="9">...</Token>
+      <Token index="10">...</Token>
+      <Token index="11">...</Token>
+      <Token index="12">...</Token>
+      <Token index="13">...</Token>
+      <Token index="14">...</Token>
+      <Token index="15">...</Token>
+      <Token index="16">...</Token>
+      <Token index="17">...</Token>
+      <Token index="18">...</Token>
+      <Token index="19">...</Token>
+      <Token index="20">...</Token>
+      <Token index="21">...</Token>
+      <Token index="22">650</Token>
+      <Token index="23">141</Token>
+      <Token index="24">150</Token>
+      <Token index="25">155</Token>
+      <Token index="26">161</Token>
+      <Token index="27">146</Token>
+      <Token index="28">139</Token>
+      <Token index="29">...</Token>
+      <Token index="30">...</Token>
+      <Token index="31">...</Token>
+      <Token index="32">...</Token>
+      <Token index="33">...</Token>
+      <Token index="34">...</Token>
+      <Token index="35">...</Token>
+      <Token index="36">...</Token>
+      <Token index="37">...</Token>
+      <Token index="38">...</Token>
+      <Token index="39">...</Token>
+      <Token index="40">...</Token>
+      <Token index="41">...</Token>
+      <Token index="42">600</Token>
+      <Token index="43">121</Token>
+      <Token index="44">121</Token>
+      <Token index="45">147</Token>
+      <Token index="46">157</Token>
+      <Token index="47">162</Token>
+      <Token index="48">168</Token>
+      <Token index="49">131</Token>
+      <Token index="50">151</Token>
+      <Token index="51">142</Token>
+      <Token index="52">...</Token>
+      <Token index="53">...</Token>
+      <Token index="54">...</Token>
+      <Token index="55">...</Token>
+      <Token index="56">...</Token>
+      <Token index="57">...</Token>
+      <Token index="58">...</Token>
+      <Token index="59">...</Token>
+      <Token index="60">...</Token>
+      <Token index="61">...</Token>
+      <Token index="62">550</Token>
+      <Token index="63">137</Token>
+      <Token index="64">136</Token>
+      <Token index="65">135</Token>
+      <Token index="66">153</Token>
+      <Token index="67">164</Token>
+      <Token index="68">169</Token>
+      <Token index="69">174</Token>
+      <Token index="70">145</Token>
+      <Token index="71">156</Token>
+      <Token index="72">145</Token>
+      <Token index="73">157</Token>
+      <Token index="74">...</Token>
+      <Token index="75">...</Token>
+      <Token index="76">...</Token>
+      <Token index="77">...</Token>
+      <Token index="78">...</Token>
+      <Token index="79">...</Token>
+      <Token index="80">...</Token>
+      <Token index="81">...</Token>
+      <Token index="82">500</Token>
+      <Token index="83">151</Token>
+      <Token index="84">149</Token>
+      <Token index="85">149</Token>
+      <Token index="86">158</Token>
+      <Token index="87">169</Token>
+      <Token index="88">175</Token>
+      <Token index="89">179</Token>
+      <Token index="90">157</Token>
+      <Token index="91">160</Token>
+      <Token index="92">148</Token>
+      <Token index="93">161</Token>
+      <Token index="94">...</Token>
+      <Token index="95">...</Token>
+      <Token index="96">...</Token>
+      <Token index="97">...</Token>
+      <Token index="98">...</Token>
+      <Token index="99">...</Token>
+      <Token index="100">...</Token>
+      <Token index="101">...</Token>
+      <Token index="102">of</Token>
+      <Token index="103">°C,</Token>
+      <Token index="104">450</Token>
+      <Token index="105">162</Token>
+      <Token index="106">161</Token>
+      <Token index="107">160</Token>
+      <Token index="108">163</Token>
+      <Token index="109">174</Token>
+      <Token index="110">180</Token>
+      <Token index="111">183</Token>
+      <Token index="112">166</Token>
+      <Token index="113">165</Token>
+      <Token index="114">172</Token>
+      <Token index="115">151</Token>
+      <Token index="116">164</Token>
+      <Token index="117">171</Token>
+      <Token index="118">166</Token>
+      <Token index="119">171</Token>
+      <Token index="120">166</Token>
+      <Token index="121">171</Token>
+      <Token index="122">169</Token>
+      <Token index="123">...</Token>
+      <Token index="124">Temperatures</Token>
+      <Token index="125">Temperature,</Token>
+      <Token index="126">400</Token>
+      <Token index="127">171</Token>
+      <Token index="128">170</Token>
+      <Token index="129">170</Token>
+      <Token index="130">167</Token>
+      <Token index="131">179</Token>
+      <Token index="132">184</Token>
+      <Token index="133">187</Token>
+      <Token index="134">173</Token>
+      <Token index="135">169</Token>
+      <Token index="136">174</Token>
+      <Token index="137">154</Token>
+      <Token index="138">168</Token>
+      <Token index="139">175</Token>
+      <Token index="140">169</Token>
+      <Token index="141">175</Token>
+      <Token index="142">169</Token>
+      <Token index="143">175</Token>
+      <Token index="144">174</Token>
+      <Token index="145">...</Token>
+      <Token index="146">for</Token>
+      <Token index="147">350</Token>
+      <Token index="148">179</Token>
+      <Token index="149">178</Token>
+      <Token index="150">134</Token>
+      <Token index="151">177</Token>
+      <Token index="152">171</Token>
+      <Token index="153">183</Token>
+      <Token index="154">188</Token>
+      <Token index="155">191</Token>
+      <Token index="156">178</Token>
+      <Token index="157">172</Token>
+      <Token index="158">177</Token>
+      <Token index="159">157</Token>
+      <Token index="160">172</Token>
+      <Token index="161">179</Token>
+      <Token index="162">173</Token>
+      <Token index="163">179</Token>
+      <Token index="164">173</Token>
+      <Token index="165">179</Token>
+      <Token index="166">178</Token>
+      <Token index="167">MPa,</Token>
+      <Token index="168">Given</Token>
+      <Token index="169">103</Token>
+      <Token index="170">2Ni–11/2Cr–1/4Mo–V</Token>
+      <Token index="171">300</Token>
+      <Token index="172">185</Token>
+      <Token index="173">183</Token>
+      <Token index="174">138</Token>
+      <Token index="175">183</Token>
+      <Token index="176">174</Token>
+      <Token index="177">186</Token>
+      <Token index="178">192</Token>
+      <Token index="179">195</Token>
+      <Token index="180">182</Token>
+      <Token index="181">176</Token>
+      <Token index="182">180</Token>
+      <Token index="183">160</Token>
+      <Token index="184">176</Token>
+      <Token index="185">183</Token>
+      <Token index="186">177</Token>
+      <Token index="187">183</Token>
+      <Token index="188">177</Token>
+      <Token index="189">183</Token>
+      <Token index="190">181</Token>
+      <Token index="191">13/4Ni–3/4Cr–1/4Mo</Token>
+      <Token index="192">11/4Ni–1Cr–1/2Mo</Token>
+      <Token index="193">3/4Ni–1/2Mo–Cr–V</Token>
+      <Token index="194">3/4Ni–1Mo–3/4Cr</Token>
+      <Token index="195">1Ni–1/2Cr–1/2Mo</Token>
+      <Token index="196">×</Token>
+      <Token index="197">for</Token>
+      <Token index="198">Mn–1/2Mo–1/4Ni</Token>
+      <Token index="199">Mn–1/2Mo–1/2Ni</Token>
+      <Token index="200">Given</Token>
+      <Token index="201">Mn–1/2Ni–V</Token>
+      <Token index="202">Materials</Token>
+      <Token index="203">2Ni–1Cu</Token>
+      <Token index="204">250</Token>
+      <Token index="205">189</Token>
+      <Token index="206">188</Token>
+      <Token index="207">142</Token>
+      <Token index="208">187</Token>
+      <Token index="209">178</Token>
+      <Token index="210">190</Token>
+      <Token index="211">196</Token>
+      <Token index="212">198</Token>
+      <Token index="213">186</Token>
+      <Token index="214">179</Token>
+      <Token index="215">183</Token>
+      <Token index="216">163</Token>
+      <Token index="217">180</Token>
+      <Token index="218">186</Token>
+      <Token index="219">181</Token>
+      <Token index="220">187</Token>
+      <Token index="221">181</Token>
+      <Token index="222">187</Token>
+      <Token index="223">185</Token>
+      <Token index="224">Value</Token>
+      <Token index="225">Mn–V</Token>
+      <Token index="226">TM-1</Token>
+      <Token index="227">=</Token>
+      <Token index="228">200</Token>
+      <Token index="229">steels:</Token>
+      <Token index="230">192</Token>
+      <Token index="231">191</Token>
+      <Token index="232">147</Token>
+      <Token index="233">190</Token>
+      <Token index="234">181</Token>
+      <Token index="235">193</Token>
+      <Token index="236">199</Token>
+      <Token index="237">201</Token>
+      <Token index="238">189</Token>
+      <Token index="239">183</Token>
+      <Token index="240">186</Token>
+      <Token index="241">167</Token>
+      <Token index="242">184</Token>
+      <Token index="243">190</Token>
+      <Token index="244">184</Token>
+      <Token index="245">191</Token>
+      <Token index="246">184</Token>
+      <Token index="247">191</Token>
+      <Token index="248">189</Token>
+      <Token index="249">Licensee=BREMBANA</Token>
+      <Token index="250">Not</Token>
+      <Token index="251">E</Token>
+      <Token index="252">Table</Token>
+      <Token index="253">Elasticity</Token>
+      <Token index="254">Ferrous</Token>
+      <Token index="255">for</Token>
+      <Token index="256">Resale,</Token>
+      <Token index="257">manganese</Token>
+      <Token index="258">150</Token>
+      <Token index="259">195</Token>
+      <Token index="260">194</Token>
+      <Token index="261">151</Token>
+      <Token index="262">193</Token>
+      <Token index="263">184</Token>
+      <Token index="264">197</Token>
+      <Token index="265">202</Token>
+      <Token index="266">205</Token>
+      <Token index="267">192</Token>
+      <Token index="268">186</Token>
+      <Token index="269">190</Token>
+      <Token index="270">170</Token>
+      <Token index="271">187</Token>
+      <Token index="272">194</Token>
+      <Token index="273">188</Token>
+      <Token index="274">194</Token>
+      <Token index="275">188</Token>
+      <Token index="276">194</Token>
+      <Token index="277">192</Token>
+      <Token index="278">10/20/2025</Token>
+      <Token index="279">of</Token>
+      <Token index="280">of</Token>
+      <Token index="281">Modulus</Token>
+      <Token index="282">&amp;</Token>
+      <Token index="283">ROLLE</Token>
+      <Token index="284">E</Token>
+      <Token index="285">100</Token>
+      <Token index="286">198</Token>
+      <Token index="287">197</Token>
+      <Token index="288">155</Token>
+      <Token index="289">196</Token>
+      <Token index="290">187</Token>
+      <Token index="291">200</Token>
+      <Token index="292">206</Token>
+      <Token index="293">208</Token>
+      <Token index="294">195</Token>
+      <Token index="295">189</Token>
+      <Token index="296">194</Token>
+      <Token index="297">173</Token>
+      <Token index="298">191</Token>
+      <Token index="299">197</Token>
+      <Token index="300">191</Token>
+      <Token index="301">198</Token>
+      <Token index="302">191</Token>
+      <Token index="303">198</Token>
+      <Token index="304">196</Token>
+      <Token index="305">03:54:29</Token>
+      <Token index="306">and</Token>
+      <Token index="307">Elasticity</Token>
+      <Token index="308">GROUP</Token>
+      <Token index="309">carbon–molybdenum</Token>
+      <Token index="310">MDT</Token>
+      <Token index="311">202</Token>
+      <Token index="312">201</Token>
+      <Token index="313">161</Token>
+      <Token index="314">200</Token>
+      <Token index="315">191</Token>
+      <Token index="316">204</Token>
+      <Token index="317">210</Token>
+      <Token index="318">213</Token>
+      <Token index="319">201</Token>
+      <Token index="320">195</Token>
+      <Token index="321">200</Token>
+      <Token index="322">178</Token>
+      <Token index="323">197</Token>
+      <Token index="324">202</Token>
+      <Token index="325">196</Token>
+      <Token index="326">203</Token>
+      <Token index="327">196</Token>
+      <Token index="328">203</Token>
+      <Token index="329">201</Token>
+      <Token index="330">25</Token>
+      <Token index="331">-</Token>
+      <Token index="332">Bergamasque:</Token>
+      <Token index="333">of</Token>
+      <Token index="334">steels:</Token>
+      <Token index="335">−75</Token>
+      <Token index="336">209</Token>
+      <Token index="337">207</Token>
+      <Token index="338">169</Token>
+      <Token index="339">207</Token>
+      <Token index="340">197</Token>
+      <Token index="341">210</Token>
+      <Token index="342">217</Token>
+      <Token index="343">220</Token>
+      <Token index="344">208</Token>
+      <Token index="345">201</Token>
+      <Token index="346">209</Token>
+      <Token index="347">184</Token>
+      <Token index="348">205</Token>
+      <Token index="349">209</Token>
+      <Token index="350">203</Token>
+      <Token index="351">210</Token>
+      <Token index="352">203</Token>
+      <Token index="353">210</Token>
+      <Token index="354">208</Token>
+      <Token index="355">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="356">Moduli</Token>
+      <Token index="357">Albrèmb/8355778001,</Token>
+      <Token index="358">Ni</Token>
+      <Token index="359">−125</Token>
+      <Token index="360">following</Token>
+      <Token index="361">following</Token>
+      <Token index="362">212</Token>
+      <Token index="363">211</Token>
+      <Token index="364">210</Token>
+      <Token index="365">200</Token>
+      <Token index="366">213</Token>
+      <Token index="367">220</Token>
+      <Token index="368">223</Token>
+      <Token index="369">212</Token>
+      <Token index="370">204</Token>
+      <Token index="371">187</Token>
+      <Token index="372">209</Token>
+      <Token index="373">213</Token>
+      <Token index="374">206</Token>
+      <Token index="375">213</Token>
+      <Token index="376">206</Token>
+      <Token index="377">213</Token>
+      <Token index="378">211</Token>
+      <Token index="379">...</Token>
+      <Token index="380">...</Token>
+      <Token index="381">User=Tosto,</Token>
+      <Token index="382">the</Token>
+      <Token index="383">the</Token>
+      <Token index="384">−200</Token>
+      <Token index="385">216</Token>
+      <Token index="386">215</Token>
+      <Token index="387">214</Token>
+      <Token index="388">204</Token>
+      <Token index="389">218</Token>
+      <Token index="390">225</Token>
+      <Token index="391">228</Token>
+      <Token index="392">215</Token>
+      <Token index="393">209</Token>
+      <Token index="394">192</Token>
+      <Token index="395">214</Token>
+      <Token index="396">217</Token>
+      <Token index="397">210</Token>
+      <Token index="398">218</Token>
+      <Token index="399">210</Token>
+      <Token index="400">218</Token>
+      <Token index="401">214</Token>
+      <Token index="402">...</Token>
+      <Token index="403">...</Token>
+      <Token index="404">of</Token>
+      <Token index="405">of</Token>
+      <Token index="406">consists</Token>
+      <Token index="407">consists</Token>
+      <Token index="408">Natale</Token>
+      <Token index="409">≤0.30%</Token>
+      <Token index="410">0.30%</Token>
+      <Token index="411">(10)]</Token>
+      <Token index="412">(11)]</Token>
+      <Token index="413">(9)]</Token>
+      <Token index="414">(4)]</Token>
+      <Token index="415">(1)]</Token>
+      <Token index="416">(2)]</Token>
+      <Token index="417">(7)]</Token>
+      <Token index="418">(5)]</Token>
+      <Token index="419">(3)]</Token>
+      <Token index="420">(6)]</Token>
+      <Token index="421">1/2Ni–1/2Cr–1/4Mo–V</Token>
+      <Token index="422">3/4Ni–1/2Cr–1/2Mo–V</Token>
+      <Token index="423">3/4Ni–1/2Mo–1/3Cr–V</Token>
+      <Token index="424">A</Token>
+      <Token index="425">B</Token>
+      <Token index="426">[Note</Token>
+      <Token index="427">[Note</Token>
+      <Token index="428">[Note</Token>
+      <Token index="429">[Note</Token>
+      <Token index="430">[Note</Token>
+      <Token index="431">[Note</Token>
+      <Token index="432">[Note</Token>
+      <Token index="433">[Note</Token>
+      <Token index="434">[Note</Token>
+      <Token index="435">[Note</Token>
+      <Token index="436">&gt;</Token>
+      <Token index="437">3/4Cr–3/4Ni–Cu–Al</Token>
+      <Token index="438">Group</Token>
+      <Token index="439">Group</Token>
+      <Token index="440">C</Token>
+      <Token index="441">C</Token>
+      <Token index="442">Materials</Token>
+      <Token index="443">3/4Ni–1/2Cu–Mo</Token>
+      <Token index="444">(12)]</Token>
+      <Token index="445">(13)]</Token>
+      <Token index="446">(14)]</Token>
+      <Token index="447">(15)]</Token>
+      <Token index="448">(16)]</Token>
+      <Token index="449">(17)]</Token>
+      <Token index="450">3/4Cr–1/2Ni–Cu</Token>
+      <Token index="451">with</Token>
+      <Token index="452">with</Token>
+      <Token index="453">1/2Ni–1/2Mo–V</Token>
+      <Token index="454">H</Token>
+      <Token index="455">D</Token>
+      <Token index="456">A</Token>
+      <Token index="457">B</Token>
+      <Token index="458">G</Token>
+      <Token index="459">E</Token>
+      <Token index="460">C</Token>
+      <Token index="461">F</Token>
+      <Token index="462">I</Token>
+      <Token index="463">J</Token>
+      <Token index="464">iron</Token>
+      <Token index="465">Group</Token>
+      <Token index="466">Group</Token>
+      <Token index="467">Group</Token>
+      <Token index="468">Group</Token>
+      <Token index="469">Group</Token>
+      <Token index="470">Group</Token>
+      <Token index="471">Group</Token>
+      <Token index="472">Group</Token>
+      <Token index="473">Group</Token>
+      <Token index="474">Group</Token>
+      <Token index="475">Mn–1/4Mo</Token>
+      <Token index="476">Mn–1/2Mo</Token>
+      <Token index="477">Material</Token>
+      <Token index="478">Material</Token>
+      <Token index="479">[Note</Token>
+      <Token index="480">[Note</Token>
+      <Token index="481">[Note</Token>
+      <Token index="482">[Note</Token>
+      <Token index="483">[Note</Token>
+      <Token index="484">[Note</Token>
+      <Token index="485">steels</Token>
+      <Token index="486">steels</Token>
+      <Token index="487">C–1/4Mo</Token>
+      <Token index="488">C–1/2Mo</Token>
+      <Token index="489">cast</Token>
+      <Token index="490">Material</Token>
+      <Token index="491">Material</Token>
+      <Token index="492">Material</Token>
+      <Token index="493">Material</Token>
+      <Token index="494">Material</Token>
+      <Token index="495">Material</Token>
+      <Token index="496">Material</Token>
+      <Token index="497">Material</Token>
+      <Token index="498">Material</Token>
+      <Token index="499">Material</Token>
+      <Token index="500">NOTES:</Token>
+      <Token index="501">S13800</Token>
+      <Token index="502">S15500</Token>
+      <Token index="503">S45000</Token>
+      <Token index="504">S17400</Token>
+      <Token index="505">S17700</Token>
+      <Token index="506">S66286</Token>
+      <Token index="507">Carbon</Token>
+      <Token index="508">Carbon</Token>
+      <Token index="509">Ductile</Token>
+      <Token index="510">(1)</Token>
+      <Token index="511">(2)</Token>
+      <Token index="512">ð25Þ</Token>
+      <Token index="513">1188</Token>
+      <Token index="514">Copy</Token>
+      <Token index="515">Provid</Token>
+      <Token index="516">No</Token>
+      <Token index="517">re</Token>
+    </Page>
+    <Page sourcePage="1239">
+      <Token index="518">ASME</Token>
+      <Token index="519">BPVC.II.D.M-2025</Token>
+      <Token index="520">(Cont'd)</Token>
+      <Token index="521">Temperatures</Token>
+      <Token index="522">thereof</Token>
+      <Token index="523">variations</Token>
+      <Token index="524">31/2Ni–13/4Cr–1/2Mo–V</Token>
+      <Token index="525">3Cr–1Mo–1/4V–Cb–Ca</Token>
+      <Token index="526">3Cr–1Mo–1/4V–Ti–B</Token>
+      <Token index="527">4Ni–11/2Cr–1/2Mo–V</Token>
+      <Token index="528">Given</Token>
+      <Token index="529">including</Token>
+      <Token index="530">22Cr–13Ni–5Mn</Token>
+      <Token index="531">18Cr–13Ni–3Mo</Token>
+      <Token index="532">11/4Cr–1/2Mo–Si</Token>
+      <Token index="533">13/4Cr–1/2Mo–Ti</Token>
+      <Token index="534">21Cr–6Ni–9Mn</Token>
+      <Token index="535">18Cr–18Ni–2Si</Token>
+      <Token index="536">18Cr–10Ni–Ti</Token>
+      <Token index="537">1Cr–1/2Mo–V</Token>
+      <Token index="538">11/4Cr–1/2Mo</Token>
+      <Token index="539">23Cr–12Ni</Token>
+      <Token index="540">25Cr–20Ni</Token>
+      <Token index="541">2Cr–1/2Mo</Token>
+      <Token index="542">7Cr–1/2Mo</Token>
+      <Token index="543">13Cr–4Ni</Token>
+      <Token index="544">for</Token>
+      <Token index="545">9Cr–Mo,</Token>
+      <Token index="546">15Cr</Token>
+      <Token index="547">17Cr</Token>
+      <Token index="548">TM-1</Token>
+      <Token index="549">Materials</Token>
+      <Token index="550">7Ni</Token>
+      <Token index="551">Licensee=BREMBANA</Token>
+      <Token index="552">Not</Token>
+      <Token index="553">Table</Token>
+      <Token index="554">for</Token>
+      <Token index="555">Resale,</Token>
+      <Token index="556">Ferrous</Token>
+      <Token index="557">10/20/2025</Token>
+      <Token index="558">&amp;</Token>
+      <Token index="559">ROLLE</Token>
+      <Token index="560">03:54:29</Token>
+      <Token index="561">of</Token>
+      <Token index="562">GROUP</Token>
+      <Token index="563">E</Token>
+      <Token index="564">MDT</Token>
+      <Token index="565">Elasticity</Token>
+      <Token index="566">steels:</Token>
+      <Token index="567">steels:</Token>
+      <Token index="568">-</Token>
+      <Token index="569">Bergamasque:</Token>
+      <Token index="570">steels:</Token>
+      <Token index="571">steels:</Token>
+      <Token index="572">steels:</Token>
+      <Token index="573">chromium</Token>
+      <Token index="574">austenitic</Token>
+      <Token index="575">21/4–3Cr</Token>
+      <Token index="576">1/2–2Cr</Token>
+      <Token index="577">5–9Cr</Token>
+      <Token index="578">Albrèmb/8355778001,</Token>
+      <Token index="579">of</Token>
+      <Token index="580">Moduli</Token>
+      <Token index="581">following</Token>
+      <Token index="582">following</Token>
+      <Token index="583">following</Token>
+      <Token index="584">following</Token>
+      <Token index="585">following</Token>
+      <Token index="586">User=Tosto,</Token>
+      <Token index="587">the</Token>
+      <Token index="588">the</Token>
+      <Token index="589">the</Token>
+      <Token index="590">the</Token>
+      <Token index="591">the</Token>
+      <Token index="592">of</Token>
+      <Token index="593">of</Token>
+      <Token index="594">of</Token>
+      <Token index="595">of</Token>
+      <Token index="596">of</Token>
+      <Token index="597">consists</Token>
+      <Token index="598">consists</Token>
+      <Token index="599">Natale</Token>
+      <Token index="600">consists</Token>
+      <Token index="601">consists</Token>
+      <Token index="602">consists</Token>
+      <Token index="603">31/2Ni–11/2Cr–1/2Mo–1/2Mn</Token>
+      <Token index="604">23/4Ni–11/2Cr–1/2Mo–V</Token>
+      <Token index="605">16Cr–12Ni–2Mo–N</Token>
+      <Token index="606">D</Token>
+      <Token index="607">G</Token>
+      <Token index="608">E</Token>
+      <Token index="609">C</Token>
+      <Token index="610">F</Token>
+      <Token index="611">18Cr–3Ni–13Mn</Token>
+      <Token index="612">16Cr–12Ni–2Mo</Token>
+      <Token index="613">Group</Token>
+      <Token index="614">Group</Token>
+      <Token index="615">Group</Token>
+      <Token index="616">Group</Token>
+      <Token index="617">Group</Token>
+      <Token index="618">18Cr–10Ni–Cb</Token>
+      <Token index="619">1/2Cr–1/4Mo–Si</Token>
+      <Token index="620">(CONT'D):</Token>
+      <Token index="621">1/2Cr–1/5Mo–V</Token>
+      <Token index="622">5Cr–1/2Mo–Si</Token>
+      <Token index="623">5Cr–1/2Mo–Ti</Token>
+      <Token index="624">18Cr–8Ni–Se</Token>
+      <Token index="625">18Cr–8Ni–N</Token>
+      <Token index="626">18Cr–8Ni–S</Token>
+      <Token index="627">21/4Cr–1Mo</Token>
+      <Token index="628">1/2Cr–1/2Mo</Token>
+      <Token index="629">1Cr–1/5Mo</Token>
+      <Token index="630">1Cr–1/2Mo</Token>
+      <Token index="631">5Cr–1/2Mo</Token>
+      <Token index="632">18Cr–8Ni</Token>
+      <Token index="633">3Cr–1Mo</Token>
+      <Token index="634">Material</Token>
+      <Token index="635">Material</Token>
+      <Token index="636">Material</Token>
+      <Token index="637">Material</Token>
+      <Token index="638">Material</Token>
+      <Token index="639">12Cr–Al</Token>
+      <Token index="640">11Cr–Ti</Token>
+      <Token index="641">21/2Ni</Token>
+      <Token index="642">31/2Ni</Token>
+      <Token index="643">13Cr</Token>
+      <Token index="644">NOTES</Token>
+      <Token index="645">(3)</Token>
+      <Token index="646">(4)</Token>
+      <Token index="647">(5)</Token>
+      <Token index="648">(6)</Token>
+      <Token index="649">(7)</Token>
+      <Token index="650">--`,,,``,,`,````````,,,,`````,``</Token>
+      <Token index="651">1189</Token>
+      <Token index="652">Copy</Token>
+      <Token index="653">Provid</Token>
+      <Token index="654">No</Token>
+      <Token index="655">re</Token>
+    </Page>
+    <Page sourcePage="1240">
+      <Token index="656">ASME</Token>
+      <Token index="657">BPVC.II.D.M-2025</Token>
+      <Token index="658">(Cont'd)</Token>
+      <Token index="659">Temperatures</Token>
+      <Token index="660">25Cr–7.5Ni–3.5Mo–N–Cu–W</Token>
+      <Token index="661">25Cr–7.5Ni–3.5Mo–N–Cu–W</Token>
+      <Token index="662">25Ni–47Fe–23Cr–5.5Mo–N</Token>
+      <Token index="663">27Cr–7.5Ni–4.5Mo–Co–N</Token>
+      <Token index="664">27Cr–7.5Ni–4.5Mo–Co–N</Token>
+      <Token index="665">25Cr–7Ni–3Mo–W–Cu–N</Token>
+      <Token index="666">25Cr–7Ni–3Mo–W–Cu–N</Token>
+      <Token index="667">25Ni–20Cr–6Mo–Cu–N</Token>
+      <Token index="668">25Ni–47Fe–21Cr–5Mo</Token>
+      <Token index="669">44Fe–25Ni–21Cr–Mo</Token>
+      <Token index="670">25Cr–6.5Ni–3Mo–N</Token>
+      <Token index="671">29Cr–6.5Ni–2Mo–N</Token>
+      <Token index="672">25Cr–6.5Ni–3Mo–N</Token>
+      <Token index="673">29Cr–6.5Ni–2Mo–N</Token>
+      <Token index="674">Given</Token>
+      <Token index="675">25Cr–7Ni–4Mo–N</Token>
+      <Token index="676">25Cr–7Ni–4Mo–N</Token>
+      <Token index="677">480°C.</Token>
+      <Token index="678">18Cr–20Ni–5.5Si</Token>
+      <Token index="679">18Cr–8Ni–4Si–N</Token>
+      <Token index="680">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="681">at</Token>
+      <Token index="682">for</Token>
+      <Token index="683">aged</Token>
+      <Token index="684">TM-1</Token>
+      <Token index="685">Materials</Token>
+      <Token index="686">material</Token>
+      <Token index="687">steels:</Token>
+      <Token index="688">Licensee=BREMBANA</Token>
+      <Token index="689">Not</Token>
+      <Token index="690">steels:</Token>
+      <Token index="691">steels:</Token>
+      <Token index="692">Table</Token>
+      <Token index="693">for</Token>
+      <Token index="694">Resale,</Token>
+      <Token index="695">for</Token>
+      <Token index="696">stainless</Token>
+      <Token index="697">stainless</Token>
+      <Token index="698">stainless</Token>
+      <Token index="699">Ferrous</Token>
+      <Token index="700">are</Token>
+      <Token index="701">10/20/2025</Token>
+      <Token index="702">values</Token>
+      <Token index="703">&amp;</Token>
+      <Token index="704">steels:</Token>
+      <Token index="705">austenitic</Token>
+      <Token index="706">ROLLE</Token>
+      <Token index="707">(austenitic–ferritic)</Token>
+      <Token index="708">(austenitic–ferritic)</Token>
+      <Token index="709">03:54:29</Token>
+      <Token index="710">of</Token>
+      <Token index="711">steel.</Token>
+      <Token index="712">Modulus</Token>
+      <Token index="713">GROUP</Token>
+      <Token index="714">austenitic</Token>
+      <Token index="715">E</Token>
+      <Token index="716">MDT</Token>
+      <Token index="717">stainless</Token>
+      <Token index="718">Elasticity</Token>
+      <Token index="719">high-molybdenum</Token>
+      <Token index="720">-</Token>
+      <Token index="721">Bergamasque:</Token>
+      <Token index="722">XM‐25.</Token>
+      <Token index="723">high-silicon</Token>
+      <Token index="724">17‐4PH.</Token>
+      <Token index="725">PH13‐8Mo.</Token>
+      <Token index="726">17‐7PH.</Token>
+      <Token index="727">A‐286</Token>
+      <Token index="728">15‐5PH.</Token>
+      <Token index="729">duplex</Token>
+      <Token index="730">duplex</Token>
+      <Token index="731">or</Token>
+      <Token index="732">Albrèmb/8355778001,</Token>
+      <Token index="733">of</Token>
+      <Token index="734">450,</Token>
+      <Token index="735">or</Token>
+      <Token index="736">or</Token>
+      <Token index="737">or</Token>
+      <Token index="738">Moduli</Token>
+      <Token index="739">660,</Token>
+      <Token index="740">following</Token>
+      <Token index="741">following</Token>
+      <Token index="742">630,</Token>
+      <Token index="743">following</Token>
+      <Token index="744">following</Token>
+      <Token index="745">Custom</Token>
+      <Token index="746">or</Token>
+      <Token index="747">or</Token>
+      <Token index="748">631,</Token>
+      <Token index="749">XM‐13,</Token>
+      <Token index="750">XM‐12,</Token>
+      <Token index="751">Grade</Token>
+      <Token index="752">Grade</Token>
+      <Token index="753">Grade</Token>
+      <Token index="754">User=Tosto,</Token>
+      <Token index="755">15Cr–6Ni–Cu–Mo,</Token>
+      <Token index="756">the</Token>
+      <Token index="757">the</Token>
+      <Token index="758">the</Token>
+      <Token index="759">the</Token>
+      <Token index="760">25Ni–15Cr–2Ti,</Token>
+      <Token index="761">13Cr–8Ni–2Mo,</Token>
+      <Token index="762">15Cr–5Ni–3Mo,</Token>
+      <Token index="763">17Cr–4Ni–4Cu,</Token>
+      <Token index="764">17Cr–7Ni–1Al,</Token>
+      <Token index="765">of</Token>
+      <Token index="766">of</Token>
+      <Token index="767">of</Token>
+      <Token index="768">of</Token>
+      <Token index="769">consists</Token>
+      <Token index="770">consists</Token>
+      <Token index="771">Natale</Token>
+      <Token index="772">24Cr–22Ni–6Mo–2W–Cu–N</Token>
+      <Token index="773">consists</Token>
+      <Token index="774">consists</Token>
+      <Token index="775">46Fe–24Ni–21Cr–6Mo–N</Token>
+      <Token index="776">14Cr–16Ni–6Si–Cu–Mo</Token>
+      <Token index="777">27Ni–22Cr–7Mo–Cu–N</Token>
+      <Token index="778">31Ni–31Fe–29Cr–Mo</Token>
+      <Token index="779">17.5Cr–17.5Ni–5.3Si</Token>
+      <Token index="780">23Cr–4Ni–Mo–Cu–N</Token>
+      <Token index="781">23Cr–4Ni–Mo–Cu–N</Token>
+      <Token index="782">25Cr–5Ni–3Mo–2Cu</Token>
+      <Token index="783">25Cr–5Ni–3Mo–2Cu</Token>
+      <Token index="784">24Cr–10Ni–4Mo–N</Token>
+      <Token index="785">24Cr–10Ni–4Mo–N</Token>
+      <Token index="786">H</Token>
+      <Token index="787">H</Token>
+      <Token index="788">22Cr–5Ni–3Mo–N</Token>
+      <Token index="789">22Cr–5Ni–3Mo–N</Token>
+      <Token index="790">I</Token>
+      <Token index="791">J</Token>
+      <Token index="792">22Cr–2Ni–Mo–N</Token>
+      <Token index="793">25Cr–6Ni–Mo–N</Token>
+      <Token index="794">22Cr–2Ni–Mo–N</Token>
+      <Token index="795">25Cr–6Ni–Mo–N</Token>
+      <Token index="796">20Cr–18Ni–6Mo</Token>
+      <Token index="797">Group</Token>
+      <Token index="798">Group</Token>
+      <Token index="799">Group</Token>
+      <Token index="800">Group</Token>
+      <Token index="801">as</Token>
+      <Token index="802">as</Token>
+      <Token index="803">as</Token>
+      <Token index="804">as</Token>
+      <Token index="805">as</Token>
+      <Token index="806">as</Token>
+      <Token index="807">18Cr–5Ni–3Mo</Token>
+      <Token index="808">18Cr–5Ni–3Mo</Token>
+      <Token index="809">(CONT'D):</Token>
+      <Token index="810">known</Token>
+      <Token index="811">known</Token>
+      <Token index="812">known</Token>
+      <Token index="813">known</Token>
+      <Token index="814">known</Token>
+      <Token index="815">known</Token>
+      <Token index="816">Material</Token>
+      <Token index="817">Material</Token>
+      <Token index="818">Material</Token>
+      <Token index="819">Material</Token>
+      <Token index="820">Also</Token>
+      <Token index="821">Also</Token>
+      <Token index="822">Also</Token>
+      <Token index="823">Also</Token>
+      <Token index="824">Also</Token>
+      <Token index="825">Also</Token>
+      <Token index="826">NOTES</Token>
+      <Token index="827">(10)</Token>
+      <Token index="828">(11)</Token>
+      <Token index="829">(12)</Token>
+      <Token index="830">(13)</Token>
+      <Token index="831">(14)</Token>
+      <Token index="832">(15)</Token>
+      <Token index="833">(16)</Token>
+      <Token index="834">(17)</Token>
+      <Token index="835">(8)</Token>
+      <Token index="836">(9)</Token>
+      <Token index="837">1190</Token>
+      <Token index="838">Copy</Token>
+      <Token index="839">Provid</Token>
+      <Token index="840">No</Token>
+      <Token index="841">re</Token>
+    </Page>
+  </RawTokens>
+</PhysicalPropertyTableImport>

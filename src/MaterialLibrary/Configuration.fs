@@ -302,9 +302,9 @@ module Configuration =
         else
             Path.Combine(baseDir, fallbackFileName)
 
-    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>ASME_Material_DB.sqlite</c>).</summary>
+    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>asme_materials.db</c>).</summary>
     let resolveAsmeDatabasePath (baseDirectory: string option) : string =
-        resolveDatabasePath baseDirectory getAsmeDatabasePath "ASME_Material_DB.sqlite"
+        resolveDatabasePath baseDirectory getAsmeDatabasePath "asme_materials.db"
 
     /// <summary>Resolves the default EN database path (configuration file if present, else a sibling <c>en_materials.db</c>).</summary>
     let resolveEnDatabasePath (baseDirectory: string option) : string =

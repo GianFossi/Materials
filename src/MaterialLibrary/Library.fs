@@ -1,7 +1,9 @@
 namespace MaterialLibrary
 
 open System
+open System.Xml.Linq
 open MaterialLibrary.Domain
+open MaterialLibrary.Domain.Database.Lookup
 open MaterialLibrary.Interpolation
 
 /// CULTURE RULE: Numeric parsing and formatting for XML/JSON persistence must always use CultureInfo.InvariantCulture.
@@ -66,6 +68,44 @@ type MaterialLibrary(inputMaterials: Material list) =
             |> List.filter (fun material ->
                 not (isNull material.Name)
                 && material.Name.Contains(substring, StringComparison.OrdinalIgnoreCase))
+
+    /// <summary>
+    /// Searches materials using ASME identity fields: specification, grade, class/condition/tempering,
+    /// UNS, nominal composition, product form, and family.
+    /// </summary>
+    /// <param name="criteria">Optional identity criteria combined with AND semantics.</param>
+    /// <returns>Matching materials ordered by material ID.</returns>
+    member this.Search(criteria: MaterialSearchCriteria) : Material list =
+        MaterialFiltering.findMany criteria materials
+
+    /// <summary>
+    /// Searches materials using the same identity fields exposed by Excel <c>MatSearch</c>.
+    /// Blank or <c>None</c> values are ignored; text fields use case-insensitive contains matching.
+    /// </summary>
+    member this.SearchMaterials
+        (
+            specification: string option,
+            grade: string option,
+            classConditionTempering: string option,
+            uns: string option,
+            nominalComposition: string option,
+            productForm: string option,
+            family: AsmeMaterialFamily option
+        ) : Material list =
+        let contains value =
+            value
+            |> Option.filter (String.IsNullOrWhiteSpace >> not)
+            |> Option.map Contains
+
+        { MaterialSearchCriteria.empty with
+            Specification = contains specification
+            Grade = contains grade
+            ClassConditionTemper = contains classConditionTempering
+            Uns = contains uns
+            NominalComposition = contains nominalComposition
+            ProductForm = contains productForm
+            Family = family }
+        |> this.Search
 
     /// <summary>Returns the complete list of materials in the library.</summary>
     /// <returns>All <see cref="Material"/> records, in insertion order.</returns>
@@ -654,6 +694,28 @@ type MaterialLibrary(inputMaterials: Material list) =
 
             Ok(sb.ToString())
 
+    // ========== STAGED XML DATA ==========
+
+    /// <summary>Reads one staged XML file below a MaterialLibrary/data root.</summary>
+    member this.ReadXmlDataFile(dataRoot: string, relativePath: string) : Result<MaterialLibraryXmlDataFile, MaterialError> =
+        MaterialLibraryDataXml.readFile dataRoot relativePath
+
+    /// <summary>Reads all staged XML files in a MaterialLibrary/data subfolder.</summary>
+    member this.ReadXmlDataFolder(dataRoot: string, relativeFolder: string) : Result<MaterialLibraryXmlDataFile list, MaterialError> =
+        MaterialLibraryDataXml.readFolder dataRoot relativeFolder
+
+    /// <summary>Reads every staged XML file below a MaterialLibrary/data root.</summary>
+    member this.ReadAllXmlData(dataRoot: string) : Result<MaterialLibraryXmlDataFile list, MaterialError> =
+        MaterialLibraryDataXml.readAll dataRoot
+
+    /// <summary>Reads every staged XML file below the discovered default MaterialLibrary/data root.</summary>
+    member this.ReadDefaultXmlData() : Result<MaterialLibraryXmlDataFile list, MaterialError> =
+        MaterialLibraryDataXml.readDefaultAll()
+
+    /// <summary>Writes one staged XML file below a MaterialLibrary/data root.</summary>
+    member this.WriteXmlDataFile(dataRoot: string, relativePath: string, document: XDocument) : Result<string, MaterialError> =
+        MaterialLibraryDataXml.writeFile dataRoot relativePath document
+
 /// <summary>Functional construction helpers for <see cref="MaterialLibrary"/>.</summary>
 module MaterialLibrary =
     let private validateMaterials (materials: Material list) =
@@ -725,3 +787,23 @@ module MaterialLibrary =
     let loadFromFileComplete (filePath: string) : Result<MaterialLibrary, MaterialError> =
         MaterialLibrarySerialization.loadFromFileComplete filePath
         |> Result.bind create
+
+    /// <summary>Reads one staged XML file below a MaterialLibrary/data root.</summary>
+    let readXmlDataFile dataRoot relativePath =
+        MaterialLibraryDataXml.readFile dataRoot relativePath
+
+    /// <summary>Reads all staged XML files in a MaterialLibrary/data subfolder.</summary>
+    let readXmlDataFolder dataRoot relativeFolder =
+        MaterialLibraryDataXml.readFolder dataRoot relativeFolder
+
+    /// <summary>Reads every staged XML file below a MaterialLibrary/data root.</summary>
+    let readAllXmlData dataRoot =
+        MaterialLibraryDataXml.readAll dataRoot
+
+    /// <summary>Reads every staged XML file below the discovered default MaterialLibrary/data root.</summary>
+    let readDefaultXmlData () =
+        MaterialLibraryDataXml.readDefaultAll()
+
+    /// <summary>Writes one staged XML file below a MaterialLibrary/data root.</summary>
+    let writeXmlDataFile dataRoot relativePath document =
+        MaterialLibraryDataXml.writeFile dataRoot relativePath document

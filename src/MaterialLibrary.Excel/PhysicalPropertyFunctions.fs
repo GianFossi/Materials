@@ -22,8 +22,8 @@ module PhysicalPropertyFunctions =
                 [ "Property"; "Value" ]
                 [ [ box "ElongationPercent"; box bp.ElongationPercent ]
                   [ box "ReductionOfAreaPercent"; box bp.ReductionOfAreaPercent ]
-                  [ box "SpecifiedMinimumYieldStrength_MPa"; box bp.SpecifiedMinimumYieldStrength ]
-                  [ box "SpecifiedMinimumUltimateStrength_MPa"; box bp.SpecifiedMinimumUltimateStrength ] ])
+                  [ box "SpecifiedMinimumYieldStrength"; box bp.SpecifiedMinimumYieldStrength ]
+                  [ box "SpecifiedMinimumUltimateStrength"; box bp.SpecifiedMinimumUltimateStrength ] ])
         |> ExcelHelpers.ofGridResult
 
     // ── Density ───────────────────────────────────────────────────────────
@@ -50,7 +50,7 @@ module PhysicalPropertyFunctions =
             points
             |> List.sortBy (fun p -> p.Temperature)
             |> List.map (fun p -> [ box p.Temperature; box p.Density ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "Density_kg_m3" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "Density" ])
         |> ExcelHelpers.ofGridResult
 
     // ── Elastic modulus / Poisson's ratio / shear modulus ────────────────────
@@ -113,7 +113,7 @@ module PhysicalPropertyFunctions =
                 [ box p.Temperature
                   box p.ElasticModulus
                   p.PoissonRatio |> Option.map box |> Option.defaultValue (box "") ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "ElasticModulus_MPa"; "PoissonRatio" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "ElasticModulus"; "PoissonRatio" ])
         |> ExcelHelpers.ofGridResult
 
     // ── Specific heat ─────────────────────────────────────────────────────
@@ -143,7 +143,7 @@ module PhysicalPropertyFunctions =
             points
             |> List.sortBy (fun p -> p.Temperature)
             |> List.map (fun p -> [ box p.Temperature; box p.SpecificHeat ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "SpecificHeat_J_kgK" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "SpecificHeat" ])
         |> ExcelHelpers.ofGridResult
 
     // ── Thermal expansion ─────────────────────────────────────────────────
@@ -177,7 +177,7 @@ module PhysicalPropertyFunctions =
             points
             |> List.sortBy (fun p -> p.Temperature)
             |> List.map (fun p -> [ box p.Temperature; box p.ExpansionCoefficient ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "ExpansionCoefficient_per_degC" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "ExpansionCoefficient" ])
         |> ExcelHelpers.ofGridResult
 
     // ── Thermal conductivity ──────────────────────────────────────────────
@@ -206,5 +206,5 @@ module PhysicalPropertyFunctions =
             points
             |> List.sortBy fst
             |> List.map (fun (t, k) -> [ box t; box k ])
-            |> ExcelHelpers.gridOfRows [ "Temperature_degC"; "ThermalConductivity_W_mK" ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "ThermalConductivity" ])
         |> ExcelHelpers.ofGridResult

@@ -1,0 +1,1517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PhysicalPropertyTableImport name="PRD" sourceTable="PRD" targetTable="PoissonRatioTable" targetQuantity="PoissonRatio" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1244" sourcePageEnd="1245" status="raw-tokenized-review-required">
+  <ReferenceData>PRD</ReferenceData>
+  <Notes>Poisson ratio / Nu factor values extracted from ASME Table PRD. Density is retained in the raw source text for traceability, but this file targets Poisson ratio import. Validate wrapped rows, repeated headers, and table continuation before SQLite import.</Notes>
+  <SourceColumns>Nu=Poisson ratio=dimensionless; Density=kg/m3. Preserve ASME source units during import mapping.</SourceColumns>
+  <RawText>--- SourcePage 1244 ---
+Table TM-5
+Moduli of Elasticity E of Titanium and Zirconium for Given Temperatures
+Material Grade/UNS No.
+Modulus of Elasticity E = Value Given × 103 MPa, for Temperature, °C, of
+25
+100
+150
+200
+250
+300
+350
+400
+Titanium Alloys
+1 (R50250)
+107
+103
+101
+97
+93
+88
+84
+80
+2, 2H (R50400)
+107
+103
+101
+97
+93
+88
+84
+80
+3 (R50550)
+107
+103
+101
+97
+93
+88
+84
+80
+7, 7H (R52400)
+107
+103
+101
+97
+93
+88
+84
+80
+9 (R56320)
+110
+105
+101
+96
+92
+87
+...
+...
+11 (R52250)
+107
+103
+101
+97
+93
+88
+84
+80
+12 (R53400)
+107
+103
+101
+97
+93
+88
+84
+80
+16, 16H (R52402)
+107
+103
+101
+97
+93
+88
+84
+80
+17 (R52252)
+107
+103
+101
+97
+93
+88
+84
+80
+26, 26H (R52404)
+107
+103
+101
+97
+93
+88
+84
+80
+27 (R52254)
+107
+103
+101
+97
+93
+88
+84
+80
+28 (R56323)
+110
+105
+101
+96
+92
+87
+...
+...
+38 (R54250)
+105
+101
+95
+89
+85
+82
+79
+76
+Zirconium Alloys
+702 (R60702)
+99
+92
+87
+81
+76
+71
+66
+60
+705 (R60705)
+94
+90
+87
+84
+82
+79
+76
+73
+GENERAL NOTE: These elastic modulus values are for the longitudinal direction of wrought plate. This represents a practical minimum for
+design. The modulus in other orientations will be higher. See Nonmandatory Appendix A, A-804.
+Table PRD
+Poisson’s Ratio and Density of Materials
+Material
+Poisson’s
+Ratio
+Density,
+kg/m3
+Ferrous Materials
+Carbon steels
+0.30
+7 750
+Cast irons
+0.29
+7 200
+Low alloy steels
+C–Mo steels
+0.30
+7 750
+1/2Cr to 11/4Cr steels
+0.30
+7 750
+13/4Cr to 3Cr steels
+0.30
+7 750
+5Cr to 9Cr steels
+0.30
+7 750
+Mn, Mn–Mo, and Si steels
+0.30
+7 750
+Ni steels
+0.30
+7 750
+PH stainless: S15500, S17400,
+S17700
+0.31
+7 750
+High alloy steels (200 series)
+0.31
+7 810
+High alloy steels (300 series)
+0.31
+8 030
+High‐Si stainless: S30600, S30601,
+S32615, and S38815
+0.31
+7 600
+5–7% Mo stainless: S32050, S31254,
+S31266, S31277, and S32654
+0.31
+8 100
+S32202
+0.31
+7 770
+High alloy steels (400 series)
+0.31
+7 750
+High alloy steels (duplex/
+austenitic–ferritic)
+0.31
+7 800
+PH stainless: S66286
+0.31
+7 920
+Cast high alloy steels
+0.30
+7 830
+Material
+Poisson’s
+Ratio
+Density,
+kg/m3
+Nonferrous Materials
+Aluminum Base
+Alclad 3003
+0.33
+2 730
+Alclad 3004
+0.33
+2 720
+Alclad 6061
+0.33
+2 700
+A02040
+0.33
+2 800
+A03560
+0.33
+2 680
+A24430
+0.33
+2 700
+A91060
+0.33
+2 705
+A91100
+0.33
+2 710
+A92014
+0.33
+2 800
+A92024
+0.33
+2 780
+A93003
+0.33
+2 730
+A93004
+0.33
+2 720
+A95052
+0.33
+2 680
+A95083
+0.33
+2 660
+A95086
+0.33
+2 660
+A95154
+0.33
+2 660
+A95254
+0.33
+2 660
+A95454
+0.33
+2 690
+A95456
+0.33
+2 660
+A95652
+0.33
+2 670
+A96061
+0.33
+2 700
+A96063
+0.33
+2 700
+1194
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---
+
+--- SourcePage 1245 ---
+Table PRD
+Poisson’s Ratio and Density of Materials (Cont'd)
+Material
+Poisson’s
+Ratio
+Density,
+kg/m3
+Nonferrous Materials (Cont'd)
+Chromium Base
+R20033
+0.31
+7 950
+Cobalt Base
+R30556
+0.31
+8 200
+R31233
+0.31
+8 400
+Copper Base
+C10200, C10400, C10500, and
+C10700
+0.33
+8 940
+C11000
+0.33
+8 890
+C12000, C12200, C12300, and
+C14200
+0.33
+8 940
+C19200
+0.33
+8 860
+C19400
+0.33
+8 910
+C23000
+0.33
+8 750
+C28000
+0.33
+8 390
+C36500
+0.33
+8 420
+C37700
+0.33
+8 440
+C44300, C44400, and C44500
+0.33
+8 520
+C46400 and C46500
+0.33
+8 420
+C60800
+0.33
+8 170
+C61400
+0.33
+7 890
+C63000
+0.33
+7 580
+C64200
+0.33
+7 700
+C65100
+0.33
+8 750
+C65500 and C66100
+0.33
+8 520
+C68700
+0.33
+8 330
+C70400, C70600, C70620,
+C71000, C71500, C71520, and
+C72200
+0.33
+8 940
+C83600
+0.33
+8 800
+C99200
+0.33
+8 640
+C93700
+0.33
+8 940
+C95200
+0.31
+7 640
+C95400
+0.32
+7 450
+C95800
+0.32
+7 640
+C95820
+0.32
+7 450
+C97600
+0.33
+8 880
+Nickel Base
+N02200 and N02201
+0.31
+8 890
+N04400 and N04405
+0.31
+8 860
+N05500
+0.31
+8 300
+N06002
+0.31
+8 310
+N06022
+0.31
+8 690
+N06030
+0.31
+8 220
+Material
+Poisson’s
+Ratio
+Density,
+kg/m3
+Nonferrous Materials (Cont'd)
+Nickel Base (Cont'd)
+N06045
+0.31
+8 000
+N06059
+0.31
+8 600
+N06200
+0.31
+8 500
+N06230
+0.31
+8 970
+N06455
+0.31
+8 640
+N06600
+0.31
+8 410
+N06601
+0.31
+8 050
+N06617
+0.31
+8 360
+N06625
+0.31
+8 440
+N06686
+0.31
+8 730
+N06690
+0.31
+8 110
+N06975
+0.31
+8 170
+N06985
+0.31
+8 310
+N07718
+0.31
+8 220
+N07750
+0.31
+8 250
+N08020
+0.31
+8 050
+N08024
+0.31
+8 110
+N08026
+0.31
+8 140
+N08028
+0.31
+8 000
+N08031
+0.31
+8 110
+N08330
+0.31
+8 030
+N08354
+0.31
+8 130
+N08367 and J94651
+0.31
+8 060
+N08800, N08810, and N08811
+0.31
+8 030
+N08825
+0.31
+8 140
+N08904
+0.31
+8 060
+N08925
+0.31
+8 150
+N08926
+0.31
+8 060
+N10001
+0.31
+9 150
+N10003
+0.31
+8 860
+N10242
+0.31
+9 050
+N10276
+0.31
+8 870
+N10629
+0.31
+9 190
+N10665 and N10675
+0.31
+9 220
+N12160
+0.31
+8 080
+Titanium Base
+R50250, R50400, R50550,
+R52250, R52252, R52254,
+R52400, R52402, R52404, and
+R53400
+0.32
+4 510
+R56320 and R56323
+0.32
+4 480
+R54250
+0.32
+4 450
+Zirconium Base
+R60702, R60704, and R60705
+0.35
+6 480
+1195
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</RawText>
+  <RawTokens>
+    <Page sourcePage="1244">
+      <Token index="0">ASME</Token>
+      <Token index="1">BPVC.II.D.M-2025</Token>
+      <Token index="2">Table</Token>
+      <Token index="3">TM-5</Token>
+      <Token index="4">E</Token>
+      <Token index="5">Moduli</Token>
+      <Token index="6">of</Token>
+      <Token index="7">Elasticity</Token>
+      <Token index="8">of</Token>
+      <Token index="9">Titanium</Token>
+      <Token index="10">and</Token>
+      <Token index="11">Zirconium</Token>
+      <Token index="12">for</Token>
+      <Token index="13">Given</Token>
+      <Token index="14">Temperatures</Token>
+      <Token index="15">E</Token>
+      <Token index="16">103</Token>
+      <Token index="17">Modulus</Token>
+      <Token index="18">of</Token>
+      <Token index="19">Elasticity</Token>
+      <Token index="20">=</Token>
+      <Token index="21">Value</Token>
+      <Token index="22">Given</Token>
+      <Token index="23">×</Token>
+      <Token index="24">MPa,</Token>
+      <Token index="25">for</Token>
+      <Token index="26">Temperature,</Token>
+      <Token index="27">°C,</Token>
+      <Token index="28">of</Token>
+      <Token index="29">Material</Token>
+      <Token index="30">Grade/UNS</Token>
+      <Token index="31">No.</Token>
+      <Token index="32">25</Token>
+      <Token index="33">100</Token>
+      <Token index="34">150</Token>
+      <Token index="35">200</Token>
+      <Token index="36">250</Token>
+      <Token index="37">300</Token>
+      <Token index="38">350</Token>
+      <Token index="39">400</Token>
+      <Token index="40">Titanium</Token>
+      <Token index="41">Alloys</Token>
+      <Token index="42">1</Token>
+      <Token index="43">(R50250)</Token>
+      <Token index="44">107</Token>
+      <Token index="45">103</Token>
+      <Token index="46">101</Token>
+      <Token index="47">97</Token>
+      <Token index="48">93</Token>
+      <Token index="49">88</Token>
+      <Token index="50">84</Token>
+      <Token index="51">80</Token>
+      <Token index="52">2,</Token>
+      <Token index="53">2H</Token>
+      <Token index="54">(R50400)</Token>
+      <Token index="55">107</Token>
+      <Token index="56">103</Token>
+      <Token index="57">101</Token>
+      <Token index="58">97</Token>
+      <Token index="59">93</Token>
+      <Token index="60">88</Token>
+      <Token index="61">84</Token>
+      <Token index="62">80</Token>
+      <Token index="63">3</Token>
+      <Token index="64">(R50550)</Token>
+      <Token index="65">107</Token>
+      <Token index="66">103</Token>
+      <Token index="67">101</Token>
+      <Token index="68">97</Token>
+      <Token index="69">93</Token>
+      <Token index="70">88</Token>
+      <Token index="71">84</Token>
+      <Token index="72">80</Token>
+      <Token index="73">7,</Token>
+      <Token index="74">7H</Token>
+      <Token index="75">(R52400)</Token>
+      <Token index="76">107</Token>
+      <Token index="77">103</Token>
+      <Token index="78">101</Token>
+      <Token index="79">97</Token>
+      <Token index="80">93</Token>
+      <Token index="81">88</Token>
+      <Token index="82">84</Token>
+      <Token index="83">80</Token>
+      <Token index="84">9</Token>
+      <Token index="85">(R56320)</Token>
+      <Token index="86">110</Token>
+      <Token index="87">105</Token>
+      <Token index="88">101</Token>
+      <Token index="89">96</Token>
+      <Token index="90">92</Token>
+      <Token index="91">87</Token>
+      <Token index="92">...</Token>
+      <Token index="93">...</Token>
+      <Token index="94">11</Token>
+      <Token index="95">(R52250)</Token>
+      <Token index="96">107</Token>
+      <Token index="97">103</Token>
+      <Token index="98">101</Token>
+      <Token index="99">97</Token>
+      <Token index="100">93</Token>
+      <Token index="101">88</Token>
+      <Token index="102">84</Token>
+      <Token index="103">80</Token>
+      <Token index="104">12</Token>
+      <Token index="105">(R53400)</Token>
+      <Token index="106">107</Token>
+      <Token index="107">103</Token>
+      <Token index="108">101</Token>
+      <Token index="109">97</Token>
+      <Token index="110">93</Token>
+      <Token index="111">88</Token>
+      <Token index="112">84</Token>
+      <Token index="113">80</Token>
+      <Token index="114">16,</Token>
+      <Token index="115">16H</Token>
+      <Token index="116">(R52402)</Token>
+      <Token index="117">107</Token>
+      <Token index="118">103</Token>
+      <Token index="119">101</Token>
+      <Token index="120">97</Token>
+      <Token index="121">93</Token>
+      <Token index="122">88</Token>
+      <Token index="123">84</Token>
+      <Token index="124">80</Token>
+      <Token index="125">17</Token>
+      <Token index="126">(R52252)</Token>
+      <Token index="127">107</Token>
+      <Token index="128">103</Token>
+      <Token index="129">101</Token>
+      <Token index="130">97</Token>
+      <Token index="131">93</Token>
+      <Token index="132">88</Token>
+      <Token index="133">84</Token>
+      <Token index="134">80</Token>
+      <Token index="135">26,</Token>
+      <Token index="136">26H</Token>
+      <Token index="137">(R52404)</Token>
+      <Token index="138">107</Token>
+      <Token index="139">103</Token>
+      <Token index="140">101</Token>
+      <Token index="141">97</Token>
+      <Token index="142">93</Token>
+      <Token index="143">88</Token>
+      <Token index="144">84</Token>
+      <Token index="145">80</Token>
+      <Token index="146">27</Token>
+      <Token index="147">(R52254)</Token>
+      <Token index="148">107</Token>
+      <Token index="149">103</Token>
+      <Token index="150">101</Token>
+      <Token index="151">97</Token>
+      <Token index="152">93</Token>
+      <Token index="153">88</Token>
+      <Token index="154">84</Token>
+      <Token index="155">80</Token>
+      <Token index="156">28</Token>
+      <Token index="157">(R56323)</Token>
+      <Token index="158">110</Token>
+      <Token index="159">105</Token>
+      <Token index="160">101</Token>
+      <Token index="161">96</Token>
+      <Token index="162">92</Token>
+      <Token index="163">87</Token>
+      <Token index="164">...</Token>
+      <Token index="165">...</Token>
+      <Token index="166">38</Token>
+      <Token index="167">(R54250)</Token>
+      <Token index="168">105</Token>
+      <Token index="169">101</Token>
+      <Token index="170">95</Token>
+      <Token index="171">89</Token>
+      <Token index="172">85</Token>
+      <Token index="173">82</Token>
+      <Token index="174">79</Token>
+      <Token index="175">76</Token>
+      <Token index="176">Zirconium</Token>
+      <Token index="177">Alloys</Token>
+      <Token index="178">702</Token>
+      <Token index="179">(R60702)</Token>
+      <Token index="180">99</Token>
+      <Token index="181">92</Token>
+      <Token index="182">87</Token>
+      <Token index="183">81</Token>
+      <Token index="184">76</Token>
+      <Token index="185">71</Token>
+      <Token index="186">66</Token>
+      <Token index="187">60</Token>
+      <Token index="188">705</Token>
+      <Token index="189">(R60705)</Token>
+      <Token index="190">94</Token>
+      <Token index="191">90</Token>
+      <Token index="192">87</Token>
+      <Token index="193">84</Token>
+      <Token index="194">82</Token>
+      <Token index="195">79</Token>
+      <Token index="196">76</Token>
+      <Token index="197">73</Token>
+      <Token index="198">GENERAL</Token>
+      <Token index="199">NOTE:</Token>
+      <Token index="200">These</Token>
+      <Token index="201">elastic</Token>
+      <Token index="202">modulus</Token>
+      <Token index="203">values</Token>
+      <Token index="204">are</Token>
+      <Token index="205">for</Token>
+      <Token index="206">the</Token>
+      <Token index="207">longitudinal</Token>
+      <Token index="208">direction</Token>
+      <Token index="209">of</Token>
+      <Token index="210">wrought</Token>
+      <Token index="211">plate.</Token>
+      <Token index="212">This</Token>
+      <Token index="213">represents</Token>
+      <Token index="214">a</Token>
+      <Token index="215">practical</Token>
+      <Token index="216">minimum</Token>
+      <Token index="217">for</Token>
+      <Token index="218">design.</Token>
+      <Token index="219">The</Token>
+      <Token index="220">modulus</Token>
+      <Token index="221">in</Token>
+      <Token index="222">other</Token>
+      <Token index="223">orientations</Token>
+      <Token index="224">will</Token>
+      <Token index="225">be</Token>
+      <Token index="226">higher.</Token>
+      <Token index="227">See</Token>
+      <Token index="228">Nonmandatory</Token>
+      <Token index="229">Appendix</Token>
+      <Token index="230">A,</Token>
+      <Token index="231">A-804.</Token>
+      <Token index="232">Table</Token>
+      <Token index="233">PRD</Token>
+      <Token index="234">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="235">Poisson’s</Token>
+      <Token index="236">Ratio</Token>
+      <Token index="237">and</Token>
+      <Token index="238">Density</Token>
+      <Token index="239">of</Token>
+      <Token index="240">Materials</Token>
+      <Token index="241">Poisson’s</Token>
+      <Token index="242">Poisson’s</Token>
+      <Token index="243">Density,</Token>
+      <Token index="244">Density,</Token>
+      <Token index="245">kg/m3</Token>
+      <Token index="246">kg/m3</Token>
+      <Token index="247">Material</Token>
+      <Token index="248">Ratio</Token>
+      <Token index="249">Material</Token>
+      <Token index="250">Ratio</Token>
+      <Token index="251">Ferrous</Token>
+      <Token index="252">Materials</Token>
+      <Token index="253">Nonferrous</Token>
+      <Token index="254">Materials</Token>
+      <Token index="255">Carbon</Token>
+      <Token index="256">steels</Token>
+      <Token index="257">0.30</Token>
+      <Token index="258">7</Token>
+      <Token index="259">750</Token>
+      <Token index="260">Aluminum</Token>
+      <Token index="261">Base</Token>
+      <Token index="262">Cast</Token>
+      <Token index="263">irons</Token>
+      <Token index="264">0.29</Token>
+      <Token index="265">7</Token>
+      <Token index="266">200</Token>
+      <Token index="267">Alclad</Token>
+      <Token index="268">3003</Token>
+      <Token index="269">0.33</Token>
+      <Token index="270">2</Token>
+      <Token index="271">730</Token>
+      <Token index="272">Low</Token>
+      <Token index="273">alloy</Token>
+      <Token index="274">steels</Token>
+      <Token index="275">Alclad</Token>
+      <Token index="276">3004</Token>
+      <Token index="277">0.33</Token>
+      <Token index="278">2</Token>
+      <Token index="279">720</Token>
+      <Token index="280">C–Mo</Token>
+      <Token index="281">steels</Token>
+      <Token index="282">0.30</Token>
+      <Token index="283">7</Token>
+      <Token index="284">750</Token>
+      <Token index="285">Alclad</Token>
+      <Token index="286">6061</Token>
+      <Token index="287">0.33</Token>
+      <Token index="288">2</Token>
+      <Token index="289">700</Token>
+      <Token index="290">1/2Cr</Token>
+      <Token index="291">11/4Cr</Token>
+      <Token index="292">to</Token>
+      <Token index="293">steels</Token>
+      <Token index="294">0.30</Token>
+      <Token index="295">7</Token>
+      <Token index="296">750</Token>
+      <Token index="297">A02040</Token>
+      <Token index="298">0.33</Token>
+      <Token index="299">2</Token>
+      <Token index="300">800</Token>
+      <Token index="301">13/4Cr</Token>
+      <Token index="302">to</Token>
+      <Token index="303">3Cr</Token>
+      <Token index="304">steels</Token>
+      <Token index="305">0.30</Token>
+      <Token index="306">7</Token>
+      <Token index="307">750</Token>
+      <Token index="308">A03560</Token>
+      <Token index="309">0.33</Token>
+      <Token index="310">2</Token>
+      <Token index="311">680</Token>
+      <Token index="312">5Cr</Token>
+      <Token index="313">to</Token>
+      <Token index="314">9Cr</Token>
+      <Token index="315">steels</Token>
+      <Token index="316">0.30</Token>
+      <Token index="317">7</Token>
+      <Token index="318">750</Token>
+      <Token index="319">A24430</Token>
+      <Token index="320">0.33</Token>
+      <Token index="321">2</Token>
+      <Token index="322">700</Token>
+      <Token index="323">Mn–Mo,</Token>
+      <Token index="324">Mn,</Token>
+      <Token index="325">and</Token>
+      <Token index="326">Si</Token>
+      <Token index="327">steels</Token>
+      <Token index="328">0.30</Token>
+      <Token index="329">7</Token>
+      <Token index="330">750</Token>
+      <Token index="331">A91060</Token>
+      <Token index="332">0.33</Token>
+      <Token index="333">2</Token>
+      <Token index="334">705</Token>
+      <Token index="335">Ni</Token>
+      <Token index="336">steels</Token>
+      <Token index="337">0.30</Token>
+      <Token index="338">7</Token>
+      <Token index="339">750</Token>
+      <Token index="340">A91100</Token>
+      <Token index="341">0.33</Token>
+      <Token index="342">2</Token>
+      <Token index="343">710</Token>
+      <Token index="344">PH</Token>
+      <Token index="345">stainless:</Token>
+      <Token index="346">S15500,</Token>
+      <Token index="347">S17400,</Token>
+      <Token index="348">0.31</Token>
+      <Token index="349">7</Token>
+      <Token index="350">750</Token>
+      <Token index="351">A92014</Token>
+      <Token index="352">0.33</Token>
+      <Token index="353">2</Token>
+      <Token index="354">800</Token>
+      <Token index="355">S17700</Token>
+      <Token index="356">A92024</Token>
+      <Token index="357">0.33</Token>
+      <Token index="358">2</Token>
+      <Token index="359">780</Token>
+      <Token index="360">High</Token>
+      <Token index="361">alloy</Token>
+      <Token index="362">steels</Token>
+      <Token index="363">(200</Token>
+      <Token index="364">series)</Token>
+      <Token index="365">0.31</Token>
+      <Token index="366">7</Token>
+      <Token index="367">810</Token>
+      <Token index="368">A93003</Token>
+      <Token index="369">0.33</Token>
+      <Token index="370">2</Token>
+      <Token index="371">730</Token>
+      <Token index="372">High</Token>
+      <Token index="373">alloy</Token>
+      <Token index="374">steels</Token>
+      <Token index="375">(300</Token>
+      <Token index="376">series)</Token>
+      <Token index="377">0.31</Token>
+      <Token index="378">8</Token>
+      <Token index="379">030</Token>
+      <Token index="380">A93004</Token>
+      <Token index="381">0.33</Token>
+      <Token index="382">2</Token>
+      <Token index="383">720</Token>
+      <Token index="384">High‐Si</Token>
+      <Token index="385">stainless:</Token>
+      <Token index="386">S30600,</Token>
+      <Token index="387">S30601,</Token>
+      <Token index="388">0.31</Token>
+      <Token index="389">7</Token>
+      <Token index="390">600</Token>
+      <Token index="391">A95052</Token>
+      <Token index="392">0.33</Token>
+      <Token index="393">2</Token>
+      <Token index="394">680</Token>
+      <Token index="395">S32615,</Token>
+      <Token index="396">and</Token>
+      <Token index="397">S38815</Token>
+      <Token index="398">A95083</Token>
+      <Token index="399">0.33</Token>
+      <Token index="400">2</Token>
+      <Token index="401">660</Token>
+      <Token index="402">5–7%</Token>
+      <Token index="403">A95086</Token>
+      <Token index="404">0.33</Token>
+      <Token index="405">2</Token>
+      <Token index="406">660</Token>
+      <Token index="407">Mo</Token>
+      <Token index="408">stainless:</Token>
+      <Token index="409">S32050,</Token>
+      <Token index="410">S31254,</Token>
+      <Token index="411">0.31</Token>
+      <Token index="412">8</Token>
+      <Token index="413">100</Token>
+      <Token index="414">S31266,</Token>
+      <Token index="415">S31277,</Token>
+      <Token index="416">and</Token>
+      <Token index="417">S32654</Token>
+      <Token index="418">A95154</Token>
+      <Token index="419">0.33</Token>
+      <Token index="420">2</Token>
+      <Token index="421">660</Token>
+      <Token index="422">S32202</Token>
+      <Token index="423">0.31</Token>
+      <Token index="424">7</Token>
+      <Token index="425">770</Token>
+      <Token index="426">A95254</Token>
+      <Token index="427">0.33</Token>
+      <Token index="428">2</Token>
+      <Token index="429">660</Token>
+      <Token index="430">High</Token>
+      <Token index="431">alloy</Token>
+      <Token index="432">steels</Token>
+      <Token index="433">(400</Token>
+      <Token index="434">series)</Token>
+      <Token index="435">0.31</Token>
+      <Token index="436">7</Token>
+      <Token index="437">750</Token>
+      <Token index="438">A95454</Token>
+      <Token index="439">0.33</Token>
+      <Token index="440">2</Token>
+      <Token index="441">690</Token>
+      <Token index="442">High</Token>
+      <Token index="443">alloy</Token>
+      <Token index="444">steels</Token>
+      <Token index="445">(duplex/</Token>
+      <Token index="446">0.31</Token>
+      <Token index="447">7</Token>
+      <Token index="448">800</Token>
+      <Token index="449">A95456</Token>
+      <Token index="450">0.33</Token>
+      <Token index="451">2</Token>
+      <Token index="452">660</Token>
+      <Token index="453">austenitic–ferritic)</Token>
+      <Token index="454">A95652</Token>
+      <Token index="455">0.33</Token>
+      <Token index="456">2</Token>
+      <Token index="457">670</Token>
+      <Token index="458">PH</Token>
+      <Token index="459">stainless:</Token>
+      <Token index="460">S66286</Token>
+      <Token index="461">0.31</Token>
+      <Token index="462">7</Token>
+      <Token index="463">920</Token>
+      <Token index="464">A96061</Token>
+      <Token index="465">0.33</Token>
+      <Token index="466">2</Token>
+      <Token index="467">700</Token>
+      <Token index="468">A96063</Token>
+      <Token index="469">0.33</Token>
+      <Token index="470">2</Token>
+      <Token index="471">700</Token>
+      <Token index="472">Cast</Token>
+      <Token index="473">high</Token>
+      <Token index="474">alloy</Token>
+      <Token index="475">steels</Token>
+      <Token index="476">0.30</Token>
+      <Token index="477">7</Token>
+      <Token index="478">830</Token>
+      <Token index="479">1194</Token>
+      <Token index="480">Copyright</Token>
+      <Token index="481">ASME</Token>
+      <Token index="482">International</Token>
+      <Token index="483">(BPVC)</Token>
+      <Token index="484">Provided</Token>
+      <Token index="485">by</Token>
+      <Token index="486">Accuris</Token>
+      <Token index="487">under</Token>
+      <Token index="488">license</Token>
+      <Token index="489">with</Token>
+      <Token index="490">ASME</Token>
+      <Token index="491">Licensee=BREMBANA</Token>
+      <Token index="492">&amp;</Token>
+      <Token index="493">ROLLE</Token>
+      <Token index="494">GROUP</Token>
+      <Token index="495">-</Token>
+      <Token index="496">Bergamasque:</Token>
+      <Token index="497">Albrèmb/8355778001,</Token>
+      <Token index="498">User=Tosto,</Token>
+      <Token index="499">Natale</Token>
+      <Token index="500">No</Token>
+      <Token index="501">reproduction</Token>
+      <Token index="502">or</Token>
+      <Token index="503">networking</Token>
+      <Token index="504">permitted</Token>
+      <Token index="505">without</Token>
+      <Token index="506">license</Token>
+      <Token index="507">from</Token>
+      <Token index="508">Accuris</Token>
+      <Token index="509">Not</Token>
+      <Token index="510">for</Token>
+      <Token index="511">Resale,</Token>
+      <Token index="512">10/20/2025</Token>
+      <Token index="513">03:54:29</Token>
+      <Token index="514">MDT</Token>
+    </Page>
+    <Page sourcePage="1245">
+      <Token index="515">ASME</Token>
+      <Token index="516">BPVC.II.D.M-2025</Token>
+      <Token index="517">Table</Token>
+      <Token index="518">PRD</Token>
+      <Token index="519">Poisson’s</Token>
+      <Token index="520">Ratio</Token>
+      <Token index="521">and</Token>
+      <Token index="522">Density</Token>
+      <Token index="523">of</Token>
+      <Token index="524">Materials</Token>
+      <Token index="525">(Cont'd)</Token>
+      <Token index="526">--`,,,``,,`,````````,,,,`````,``-``,,`,,,,-``,,`,,,,---</Token>
+      <Token index="527">Poisson’s</Token>
+      <Token index="528">Poisson’s</Token>
+      <Token index="529">Density,</Token>
+      <Token index="530">Density,</Token>
+      <Token index="531">kg/m3</Token>
+      <Token index="532">kg/m3</Token>
+      <Token index="533">Material</Token>
+      <Token index="534">Ratio</Token>
+      <Token index="535">Material</Token>
+      <Token index="536">Ratio</Token>
+      <Token index="537">Nonferrous</Token>
+      <Token index="538">Materials</Token>
+      <Token index="539">(Cont'd)</Token>
+      <Token index="540">Nickel</Token>
+      <Token index="541">Base</Token>
+      <Token index="542">(Cont'd)</Token>
+      <Token index="543">Nonferrous</Token>
+      <Token index="544">Materials</Token>
+      <Token index="545">(Cont'd)</Token>
+      <Token index="546">N06045</Token>
+      <Token index="547">0.31</Token>
+      <Token index="548">8</Token>
+      <Token index="549">000</Token>
+      <Token index="550">Chromium</Token>
+      <Token index="551">Base</Token>
+      <Token index="552">N06059</Token>
+      <Token index="553">0.31</Token>
+      <Token index="554">8</Token>
+      <Token index="555">600</Token>
+      <Token index="556">R20033</Token>
+      <Token index="557">0.31</Token>
+      <Token index="558">7</Token>
+      <Token index="559">950</Token>
+      <Token index="560">N06200</Token>
+      <Token index="561">0.31</Token>
+      <Token index="562">8</Token>
+      <Token index="563">500</Token>
+      <Token index="564">N06230</Token>
+      <Token index="565">0.31</Token>
+      <Token index="566">8</Token>
+      <Token index="567">970</Token>
+      <Token index="568">Cobalt</Token>
+      <Token index="569">Base</Token>
+      <Token index="570">N06455</Token>
+      <Token index="571">0.31</Token>
+      <Token index="572">8</Token>
+      <Token index="573">640</Token>
+      <Token index="574">R30556</Token>
+      <Token index="575">0.31</Token>
+      <Token index="576">8</Token>
+      <Token index="577">200</Token>
+      <Token index="578">N06600</Token>
+      <Token index="579">0.31</Token>
+      <Token index="580">8</Token>
+      <Token index="581">410</Token>
+      <Token index="582">R31233</Token>
+      <Token index="583">0.31</Token>
+      <Token index="584">8</Token>
+      <Token index="585">400</Token>
+      <Token index="586">N06601</Token>
+      <Token index="587">0.31</Token>
+      <Token index="588">8</Token>
+      <Token index="589">050</Token>
+      <Token index="590">N06617</Token>
+      <Token index="591">0.31</Token>
+      <Token index="592">8</Token>
+      <Token index="593">360</Token>
+      <Token index="594">Copper</Token>
+      <Token index="595">Base</Token>
+      <Token index="596">N06625</Token>
+      <Token index="597">0.31</Token>
+      <Token index="598">8</Token>
+      <Token index="599">440</Token>
+      <Token index="600">C10200,</Token>
+      <Token index="601">C10400,</Token>
+      <Token index="602">C10500,</Token>
+      <Token index="603">and</Token>
+      <Token index="604">0.33</Token>
+      <Token index="605">8</Token>
+      <Token index="606">940</Token>
+      <Token index="607">N06686</Token>
+      <Token index="608">0.31</Token>
+      <Token index="609">8</Token>
+      <Token index="610">730</Token>
+      <Token index="611">C10700</Token>
+      <Token index="612">N06690</Token>
+      <Token index="613">0.31</Token>
+      <Token index="614">8</Token>
+      <Token index="615">110</Token>
+      <Token index="616">C11000</Token>
+      <Token index="617">0.33</Token>
+      <Token index="618">8</Token>
+      <Token index="619">890</Token>
+      <Token index="620">N06975</Token>
+      <Token index="621">0.31</Token>
+      <Token index="622">8</Token>
+      <Token index="623">170</Token>
+      <Token index="624">C12000,</Token>
+      <Token index="625">C12200,</Token>
+      <Token index="626">C12300,</Token>
+      <Token index="627">and</Token>
+      <Token index="628">0.33</Token>
+      <Token index="629">8</Token>
+      <Token index="630">940</Token>
+      <Token index="631">N06985</Token>
+      <Token index="632">0.31</Token>
+      <Token index="633">8</Token>
+      <Token index="634">310</Token>
+      <Token index="635">C14200</Token>
+      <Token index="636">N07718</Token>
+      <Token index="637">0.31</Token>
+      <Token index="638">8</Token>
+      <Token index="639">220</Token>
+      <Token index="640">C19200</Token>
+      <Token index="641">0.33</Token>
+      <Token index="642">8</Token>
+      <Token index="643">860</Token>
+      <Token index="644">N07750</Token>
+      <Token index="645">0.31</Token>
+      <Token index="646">8</Token>
+      <Token index="647">250</Token>
+      <Token index="648">C19400</Token>
+      <Token index="649">0.33</Token>
+      <Token index="650">8</Token>
+      <Token index="651">910</Token>
+      <Token index="652">N08020</Token>
+      <Token index="653">0.31</Token>
+      <Token index="654">8</Token>
+      <Token index="655">050</Token>
+      <Token index="656">C23000</Token>
+      <Token index="657">0.33</Token>
+      <Token index="658">8</Token>
+      <Token index="659">750</Token>
+      <Token index="660">N08024</Token>
+      <Token index="661">0.31</Token>
+      <Token index="662">8</Token>
+      <Token index="663">110</Token>
+      <Token index="664">C28000</Token>
+      <Token index="665">0.33</Token>
+      <Token index="666">8</Token>
+      <Token index="667">390</Token>
+      <Token index="668">N08026</Token>
+      <Token index="669">0.31</Token>
+      <Token index="670">8</Token>
+      <Token index="671">140</Token>
+      <Token index="672">C36500</Token>
+      <Token index="673">0.33</Token>
+      <Token index="674">8</Token>
+      <Token index="675">420</Token>
+      <Token index="676">N08028</Token>
+      <Token index="677">0.31</Token>
+      <Token index="678">8</Token>
+      <Token index="679">000</Token>
+      <Token index="680">C37700</Token>
+      <Token index="681">0.33</Token>
+      <Token index="682">8</Token>
+      <Token index="683">440</Token>
+      <Token index="684">N08031</Token>
+      <Token index="685">0.31</Token>
+      <Token index="686">8</Token>
+      <Token index="687">110</Token>
+      <Token index="688">C44300,</Token>
+      <Token index="689">C44400,</Token>
+      <Token index="690">and</Token>
+      <Token index="691">C44500</Token>
+      <Token index="692">0.33</Token>
+      <Token index="693">8</Token>
+      <Token index="694">520</Token>
+      <Token index="695">N08330</Token>
+      <Token index="696">0.31</Token>
+      <Token index="697">8</Token>
+      <Token index="698">030</Token>
+      <Token index="699">C46400</Token>
+      <Token index="700">and</Token>
+      <Token index="701">C46500</Token>
+      <Token index="702">0.33</Token>
+      <Token index="703">8</Token>
+      <Token index="704">420</Token>
+      <Token index="705">N08354</Token>
+      <Token index="706">0.31</Token>
+      <Token index="707">8</Token>
+      <Token index="708">130</Token>
+      <Token index="709">C60800</Token>
+      <Token index="710">0.33</Token>
+      <Token index="711">8</Token>
+      <Token index="712">170</Token>
+      <Token index="713">N08367</Token>
+      <Token index="714">and</Token>
+      <Token index="715">J94651</Token>
+      <Token index="716">0.31</Token>
+      <Token index="717">8</Token>
+      <Token index="718">060</Token>
+      <Token index="719">C61400</Token>
+      <Token index="720">0.33</Token>
+      <Token index="721">7</Token>
+      <Token index="722">890</Token>
+      <Token index="723">N08800,</Token>
+      <Token index="724">N08810,</Token>
+      <Token index="725">and</Token>
+      <Token index="726">N08811</Token>
+      <Token index="727">0.31</Token>
+      <Token index="728">8</Token>
+      <Token index="729">030</Token>
+      <Token index="730">C63000</Token>
+      <Token index="731">0.33</Token>
+      <Token index="732">7</Token>
+      <Token index="733">580</Token>
+      <Token index="734">N08825</Token>
+      <Token index="735">0.31</Token>
+      <Token index="736">8</Token>
+      <Token index="737">140</Token>
+      <Token index="738">C64200</Token>
+      <Token index="739">0.33</Token>
+      <Token index="740">7</Token>
+      <Token index="741">700</Token>
+      <Token index="742">N08904</Token>
+      <Token index="743">0.31</Token>
+      <Token index="744">8</Token>
+      <Token index="745">060</Token>
+      <Token index="746">C65100</Token>
+      <Token index="747">0.33</Token>
+      <Token index="748">8</Token>
+      <Token index="749">750</Token>
+      <Token index="750">N08925</Token>
+      <Token index="751">0.31</Token>
+      <Token index="752">8</Token>
+      <Token index="753">150</Token>
+      <Token index="754">C65500</Token>
+      <Token index="755">and</Token>
+      <Token index="756">C66100</Token>
+      <Token index="757">0.33</Token>
+      <Token index="758">8</Token>
+      <Token index="759">520</Token>
+      <Token index="760">N08926</Token>
+      <Token index="761">0.31</Token>
+      <Token index="762">8</Token>
+      <Token index="763">060</Token>
+      <Token index="764">C68700</Token>
+      <Token index="765">0.33</Token>
+      <Token index="766">8</Token>
+      <Token index="767">330</Token>
+      <Token index="768">N10001</Token>
+      <Token index="769">0.31</Token>
+      <Token index="770">9</Token>
+      <Token index="771">150</Token>
+      <Token index="772">C70400,</Token>
+      <Token index="773">C70600,</Token>
+      <Token index="774">C70620,</Token>
+      <Token index="775">0.33</Token>
+      <Token index="776">8</Token>
+      <Token index="777">940</Token>
+      <Token index="778">N10003</Token>
+      <Token index="779">0.31</Token>
+      <Token index="780">8</Token>
+      <Token index="781">860</Token>
+      <Token index="782">C71000,</Token>
+      <Token index="783">C71500,</Token>
+      <Token index="784">C71520,</Token>
+      <Token index="785">and</Token>
+      <Token index="786">N10242</Token>
+      <Token index="787">0.31</Token>
+      <Token index="788">9</Token>
+      <Token index="789">050</Token>
+      <Token index="790">C72200</Token>
+      <Token index="791">N10276</Token>
+      <Token index="792">0.31</Token>
+      <Token index="793">8</Token>
+      <Token index="794">870</Token>
+      <Token index="795">C83600</Token>
+      <Token index="796">0.33</Token>
+      <Token index="797">8</Token>
+      <Token index="798">800</Token>
+      <Token index="799">N10629</Token>
+      <Token index="800">0.31</Token>
+      <Token index="801">9</Token>
+      <Token index="802">190</Token>
+      <Token index="803">C99200</Token>
+      <Token index="804">0.33</Token>
+      <Token index="805">8</Token>
+      <Token index="806">640</Token>
+      <Token index="807">N10665</Token>
+      <Token index="808">and</Token>
+      <Token index="809">N10675</Token>
+      <Token index="810">0.31</Token>
+      <Token index="811">9</Token>
+      <Token index="812">220</Token>
+      <Token index="813">C93700</Token>
+      <Token index="814">0.33</Token>
+      <Token index="815">8</Token>
+      <Token index="816">940</Token>
+      <Token index="817">N12160</Token>
+      <Token index="818">0.31</Token>
+      <Token index="819">8</Token>
+      <Token index="820">080</Token>
+      <Token index="821">C95200</Token>
+      <Token index="822">0.31</Token>
+      <Token index="823">7</Token>
+      <Token index="824">640</Token>
+      <Token index="825">C95400</Token>
+      <Token index="826">0.32</Token>
+      <Token index="827">7</Token>
+      <Token index="828">450</Token>
+      <Token index="829">Titanium</Token>
+      <Token index="830">Base</Token>
+      <Token index="831">C95800</Token>
+      <Token index="832">0.32</Token>
+      <Token index="833">7</Token>
+      <Token index="834">640</Token>
+      <Token index="835">R50250,</Token>
+      <Token index="836">R50400,</Token>
+      <Token index="837">R50550,</Token>
+      <Token index="838">0.32</Token>
+      <Token index="839">4</Token>
+      <Token index="840">510</Token>
+      <Token index="841">C95820</Token>
+      <Token index="842">0.32</Token>
+      <Token index="843">7</Token>
+      <Token index="844">450</Token>
+      <Token index="845">R52250,</Token>
+      <Token index="846">R52252,</Token>
+      <Token index="847">R52254,</Token>
+      <Token index="848">C97600</Token>
+      <Token index="849">0.33</Token>
+      <Token index="850">8</Token>
+      <Token index="851">880</Token>
+      <Token index="852">R52400,</Token>
+      <Token index="853">R52402,</Token>
+      <Token index="854">R52404,</Token>
+      <Token index="855">and</Token>
+      <Token index="856">R53400</Token>
+      <Token index="857">Nickel</Token>
+      <Token index="858">Base</Token>
+      <Token index="859">R56320</Token>
+      <Token index="860">and</Token>
+      <Token index="861">R56323</Token>
+      <Token index="862">0.32</Token>
+      <Token index="863">4</Token>
+      <Token index="864">480</Token>
+      <Token index="865">N02200</Token>
+      <Token index="866">and</Token>
+      <Token index="867">N02201</Token>
+      <Token index="868">0.31</Token>
+      <Token index="869">8</Token>
+      <Token index="870">890</Token>
+      <Token index="871">R54250</Token>
+      <Token index="872">0.32</Token>
+      <Token index="873">4</Token>
+      <Token index="874">450</Token>
+      <Token index="875">N04400</Token>
+      <Token index="876">and</Token>
+      <Token index="877">N04405</Token>
+      <Token index="878">0.31</Token>
+      <Token index="879">8</Token>
+      <Token index="880">860</Token>
+      <Token index="881">N05500</Token>
+      <Token index="882">0.31</Token>
+      <Token index="883">8</Token>
+      <Token index="884">300</Token>
+      <Token index="885">Zirconium</Token>
+      <Token index="886">Base</Token>
+      <Token index="887">N06002</Token>
+      <Token index="888">0.31</Token>
+      <Token index="889">8</Token>
+      <Token index="890">310</Token>
+      <Token index="891">R60702,</Token>
+      <Token index="892">R60704,</Token>
+      <Token index="893">and</Token>
+      <Token index="894">R60705</Token>
+      <Token index="895">0.35</Token>
+      <Token index="896">6</Token>
+      <Token index="897">480</Token>
+      <Token index="898">N06022</Token>
+      <Token index="899">0.31</Token>
+      <Token index="900">8</Token>
+      <Token index="901">690</Token>
+      <Token index="902">N06030</Token>
+      <Token index="903">0.31</Token>
+      <Token index="904">8</Token>
+      <Token index="905">220</Token>
+      <Token index="906">1195</Token>
+      <Token index="907">Copyright</Token>
+      <Token index="908">ASME</Token>
+      <Token index="909">International</Token>
+      <Token index="910">(BPVC)</Token>
+      <Token index="911">Provided</Token>
+      <Token index="912">by</Token>
+      <Token index="913">Accuris</Token>
+      <Token index="914">under</Token>
+      <Token index="915">license</Token>
+      <Token index="916">with</Token>
+      <Token index="917">ASME</Token>
+      <Token index="918">Licensee=BREMBANA</Token>
+      <Token index="919">&amp;</Token>
+      <Token index="920">ROLLE</Token>
+      <Token index="921">GROUP</Token>
+      <Token index="922">-</Token>
+      <Token index="923">Bergamasque:</Token>
+      <Token index="924">Albrèmb/8355778001,</Token>
+      <Token index="925">User=Tosto,</Token>
+      <Token index="926">Natale</Token>
+      <Token index="927">No</Token>
+      <Token index="928">reproduction</Token>
+      <Token index="929">or</Token>
+      <Token index="930">networking</Token>
+      <Token index="931">permitted</Token>
+      <Token index="932">without</Token>
+      <Token index="933">license</Token>
+      <Token index="934">from</Token>
+      <Token index="935">Accuris</Token>
+      <Token index="936">Not</Token>
+      <Token index="937">for</Token>
+      <Token index="938">Resale,</Token>
+      <Token index="939">10/20/2025</Token>
+      <Token index="940">03:54:29</Token>
+      <Token index="941">MDT</Token>
+    </Page>
+  </RawTokens>
+</PhysicalPropertyTableImport>

@@ -38,27 +38,24 @@ module MaterialFiltering =
         =
         criterion |> Option.forall (fun expected -> matchesText normalizer expected actual)
 
-    let private matchesRange (range: NumericRange) value =
-        range.Minimum |> Option.forall (fun minimum -> value >= minimum)
-        && range.Maximum |> Option.forall (fun maximum -> value <= maximum)
-
     let matches (criteria: MaterialSearchCriteria) (material: Material) =
-        matchesOptional normalize criteria.ProductForm material.ProductForm
-        && matchesOptional normalizeSpecification criteria.Specification material.Specification
+        matchesOptional normalizeSpecification criteria.Specification material.Specification
         && matchesOptional normalize criteria.Grade material.Grade
         && matchesOptional normalize criteria.ClassConditionTemper material.Class_Condition_Tempering
         && matchesOptional normalize criteria.Uns material.AlloyIdentification_UNS
         && matchesOptional normalize criteria.NominalComposition material.NominalComposition
+        && matchesOptional normalize criteria.ProductForm material.ProductForm
         && (criteria.Family |> Option.forall (fun family -> material.Family = Some family))
-        && criteria.MinimumYieldStrength
-           |> Option.forall (fun range -> matchesRange range material.BasicProperties.SpecifiedMinimumYieldStrength)
-        && criteria.MinimumTensileStrength
-           |> Option.forall (fun range -> matchesRange range material.BasicProperties.SpecifiedMinimumUltimateStrength)
 
     let findMany (criteria: MaterialSearchCriteria) (materials: Material list) =
+        let idSortKey (material: Material) =
+            match Int64.TryParse material.Id with
+            | true, value -> Choice1Of2 value
+            | false, _ -> Choice2Of2 material.Id
+
         materials
         |> List.filter (matches criteria)
-        |> List.sortBy (fun material -> material.Id)
+        |> List.sortBy idSortKey
 
     let findUnique (criteria: MaterialSearchCriteria) (materials: Material list) =
         match findMany criteria materials with

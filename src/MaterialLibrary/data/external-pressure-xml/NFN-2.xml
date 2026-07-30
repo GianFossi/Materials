@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExternalPressureTableImport name="NFN-2" figure="NFN-2" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" pdfPage="1353" printedPage="1303" units="A=dimensionless; B=MPa; Temperature=degC" status="raw-tokenized-review-required">
+  <ReferenceData>NFN-2</ReferenceData>
+  <Notes>Extracted from ASME BPVC II-D Metric 2025 external-pressure tabular values. RawTokens preserve PDF text; validate continuation exponents before SQLite import.</Notes>
+  <RawText>Temp., °C
+A
+B, MPa
+40
+1.00 -05
+1.05 +00
+2.57 -04
+2.80 +01
+5.00
+3.03
+1.78 -02
+4.73
+1.00 -01
+4.73
+95
+1.00 -05
+1.02 +00
+2.65 -04
+2.79 +01
+5.00
+3.03
+1.78 -02
+4.73
+1.00 -01
+4.73
+Temp., °C
+A
+B, MPa
+205
+1.00 -05
+9.86 -01
+2.76 -04
+2.79 +01
+5.00
+3.03
+1.78 -02
+4.73
+1.00 -01
+4.73
+315
+1.01 -05
+9.51 -01
+2.91 -04
+2.79 +01
+5.00
+3.03
+1.78 -02
+4.73
+1.00 -01
+4.73</RawText>
+  <RawTokens>
+    <Token index="1">°C</Token>
+    <Token index="2">40</Token>
+    <Token index="3">1.00</Token>
+    <Token index="4">-05</Token>
+    <Token index="5">1.05</Token>
+    <Token index="6">+00</Token>
+    <Token index="7">2.57</Token>
+    <Token index="8">-04</Token>
+    <Token index="9">2.80</Token>
+    <Token index="10">+01</Token>
+    <Token index="11">5.00</Token>
+    <Token index="12">3.03</Token>
+    <Token index="13">1.78</Token>
+    <Token index="14">-02</Token>
+    <Token index="15">4.73</Token>
+    <Token index="16">1.00</Token>
+    <Token index="17">-01</Token>
+    <Token index="18">4.73</Token>
+    <Token index="19">95</Token>
+    <Token index="20">1.00</Token>
+    <Token index="21">-05</Token>
+    <Token index="22">1.02</Token>
+    <Token index="23">+00</Token>
+    <Token index="24">2.65</Token>
+    <Token index="25">-04</Token>
+    <Token index="26">2.79</Token>
+    <Token index="27">+01</Token>
+    <Token index="28">5.00</Token>
+    <Token index="29">3.03</Token>
+    <Token index="30">1.78</Token>
+    <Token index="31">-02</Token>
+    <Token index="32">4.73</Token>
+    <Token index="33">1.00</Token>
+    <Token index="34">-01</Token>
+    <Token index="35">4.73</Token>
+    <Token index="36">°C</Token>
+    <Token index="37">205</Token>
+    <Token index="38">1.00</Token>
+    <Token index="39">-05</Token>
+    <Token index="40">9.86</Token>
+    <Token index="41">-01</Token>
+    <Token index="42">2.76</Token>
+    <Token index="43">-04</Token>
+    <Token index="44">2.79</Token>
+    <Token index="45">+01</Token>
+    <Token index="46">5.00</Token>
+    <Token index="47">3.03</Token>
+    <Token index="48">1.78</Token>
+    <Token index="49">-02</Token>
+    <Token index="50">4.73</Token>
+    <Token index="51">1.00</Token>
+    <Token index="52">-01</Token>
+    <Token index="53">4.73</Token>
+    <Token index="54">315</Token>
+    <Token index="55">1.01</Token>
+    <Token index="56">-05</Token>
+    <Token index="57">9.51</Token>
+    <Token index="58">-01</Token>
+    <Token index="59">2.91</Token>
+    <Token index="60">-04</Token>
+    <Token index="61">2.79</Token>
+    <Token index="62">+01</Token>
+    <Token index="63">5.00</Token>
+    <Token index="64">3.03</Token>
+    <Token index="65">1.78</Token>
+    <Token index="66">-02</Token>
+    <Token index="67">4.73</Token>
+    <Token index="68">1.00</Token>
+    <Token index="69">-01</Token>
+    <Token index="70">4.73</Token>
+  </RawTokens>
+</ExternalPressureTableImport>

@@ -39,6 +39,7 @@
     <Compile Include="Serialization\PropertyTableSerialization.fs" />
     <Compile Include="Domain\MaterialTypes.fs" />
     <Compile Include="Serialization\MaterialSerialization.fs" />
+    <Compile Include="Serialization\MaterialLibraryDataXml.fs" />
     <Compile Include="Interpolations.fs" />
     <Compile Include="Configuration.fs" />
     <Compile Include="Database.Lookup\MaterialSearchCriteria.fs" />
@@ -64,6 +65,16 @@
 
   <ItemGroup>
     <None Include="README-NUGET.md" Pack="true" PackagePath="\" />
+    <None Include="MaterialLibrary.config.xml" Pack="true" PackagePath="\" />
+    <None Include="MaterialLibrary.config.xml" Pack="true" PackagePath="contentFiles\any\any\" PackageCopyToOutput="true" />
+    <None Include="data\external-pressure-xml\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\external-pressure-xml\" PackageCopyToOutput="true" />
+    <None Include="data\physical-properties-xml\index.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\" PackageCopyToOutput="true" />
+    <None Include="data\physical-properties-xml\ThermalExpansion\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalExpansion\" PackageCopyToOutput="true" />
+    <None Include="data\physical-properties-xml\ThermalConductivity\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalConductivity\" PackageCopyToOutput="true" />
+    <None Include="data\physical-properties-xml\ThermalDiffusivity\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalDiffusivity\" PackageCopyToOutput="true" />
+    <None Include="data\physical-properties-xml\ElasticModulus\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ElasticModulus\" PackageCopyToOutput="true" />
+    <None Include="data\physical-properties-xml\Density\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\Density\" PackageCopyToOutput="true" />
+    <None Include="data\physical-properties-xml\PoissonRatio\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\PoissonRatio\" PackageCopyToOutput="true" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExternalPressureTableImport name="NFC-1" figure="NFC-1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" pdfPage="1348" printedPage="1298" units="A=dimensionless; B=MPa; Temperature=degC" status="raw-tokenized-review-required">
+  <ReferenceData>NFC-1</ReferenceData>
+  <Notes>Extracted from ASME BPVC II-D Metric 2025 external-pressure tabular values. RawTokens preserve PDF text; validate continuation exponents before SQLite import.</Notes>
+  <RawText>Temp., °C
+A
+B, MPa
+65
+1.00 -05
+5.50 -01
+1.63 -04
+9.24 +00
+2.50
+1.04 +01
+5.00
+1.25
+1.00 -03
+1.48
+4.00
+2.01
+2.50 -02
+3.00
+1.00 -01
+3.00
+1298
+ASME BPVC.II.D.M-2025
+Copyright ASME International (BPVC) 
+Provided by Accuris under license with ASME 
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No reproduction or networking permitted without license from Accuris
+--`,,,``</RawText>
+  <RawTokens>
+    <Token index="1">°C</Token>
+    <Token index="2">65</Token>
+    <Token index="3">1.00</Token>
+    <Token index="4">-05</Token>
+    <Token index="5">5.50</Token>
+    <Token index="6">-01</Token>
+    <Token index="7">1.63</Token>
+    <Token index="8">-04</Token>
+    <Token index="9">9.24</Token>
+    <Token index="10">+00</Token>
+    <Token index="11">2.50</Token>
+    <Token index="12">1.04</Token>
+    <Token index="13">+01</Token>
+    <Token index="14">5.00</Token>
+    <Token index="15">1.25</Token>
+    <Token index="16">1.00</Token>
+    <Token index="17">-03</Token>
+    <Token index="18">1.48</Token>
+    <Token index="19">4.00</Token>
+    <Token index="20">2.01</Token>
+    <Token index="21">2.50</Token>
+    <Token index="22">-02</Token>
+    <Token index="23">3.00</Token>
+    <Token index="24">1.00</Token>
+    <Token index="25">-01</Token>
+    <Token index="26">3.00</Token>
+    <Token index="27">1298</Token>
+    <Token index="28">ASME</Token>
+    <Token index="29">BPVC.II.D.M-2025</Token>
+    <Token index="30">Copyright</Token>
+    <Token index="31">ASME</Token>
+    <Token index="32">International</Token>
+    <Token index="33">(BPVC)</Token>
+    <Token index="34">Provided</Token>
+    <Token index="35">by</Token>
+    <Token index="36">Accuris</Token>
+    <Token index="37">under</Token>
+    <Token index="38">license</Token>
+    <Token index="39">with</Token>
+    <Token index="40">ASME</Token>
+    <Token index="41">Licensee=BREMBANA</Token>
+    <Token index="42">&amp;</Token>
+    <Token index="43">ROLLE</Token>
+    <Token index="44">GROUP</Token>
+    <Token index="45">-</Token>
+    <Token index="46">Bergamasque:</Token>
+    <Token index="47">Albrèmb/8355778001</Token>
+    <Token index="48">User=Tosto</Token>
+    <Token index="49">Natale</Token>
+    <Token index="50">Not</Token>
+    <Token index="51">for</Token>
+    <Token index="52">Resale</Token>
+    <Token index="53">10/20/2025</Token>
+    <Token index="54">03:54:29</Token>
+    <Token index="55">MDT</Token>
+    <Token index="56">No</Token>
+    <Token index="57">reproduction</Token>
+    <Token index="58">or</Token>
+    <Token index="59">networking</Token>
+    <Token index="60">permitted</Token>
+    <Token index="61">without</Token>
+    <Token index="62">license</Token>
+    <Token index="63">from</Token>
+    <Token index="64">Accuris</Token>
+    <Token index="65">--```</Token>
+  </RawTokens>
+</ExternalPressureTableImport>

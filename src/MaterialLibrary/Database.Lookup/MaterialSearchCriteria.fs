@@ -15,28 +15,24 @@ type NumericRange =
 /// Optional criteria are combined with AND semantics.
 type MaterialSearchCriteria =
     {
-        ProductForm: TextCriterion option
         Specification: TextCriterion option
         Grade: TextCriterion option
         ClassConditionTemper: TextCriterion option
         Uns: TextCriterion option
         NominalComposition: TextCriterion option
+        ProductForm: TextCriterion option
         Family: AsmeMaterialFamily option
-        MinimumYieldStrength: NumericRange option
-        MinimumTensileStrength: NumericRange option
     }
 
 module MaterialSearchCriteria =
     let empty =
-        { ProductForm = None
-          Specification = None
+        { Specification = None
           Grade = None
           ClassConditionTemper = None
           Uns = None
           NominalComposition = None
-          Family = None
-          MinimumYieldStrength = None
-          MinimumTensileStrength = None }
+          ProductForm = None
+          Family = None }
 
     let identity productForm specification grade classConditionTemper =
         { empty with

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>MaterialLibrary.Crud</AssemblyName>
+    <RootNamespace>MaterialLibrary.Crud</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <Nullable>enable</Nullable>
+    <Version>1.0.1</Version>
+    <PackageVersion>1.0.1</PackageVersion>
+    <Title>Material Library CRUD</Title>
+    <Description>Create, read, update, and delete helpers for MaterialLibrary materials, stored tables, configuration, and staged XML data.</Description>
+    <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>
+    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="CrudTypes.fs" />
+    <Compile Include="ConfigurationCrud.fs" />
+    <Compile Include="XmlDataCrud.fs" />
+    <Compile Include="MaterialRepository.fs" />
+    <Compile Include="MaterialTableCrud.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaterialLibrary\MaterialLibrary.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README-NUGET.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="10.1.301" />
+  </ItemGroup>
+
+</Project>

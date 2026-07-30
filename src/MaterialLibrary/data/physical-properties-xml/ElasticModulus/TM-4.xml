@@ -1,0 +1,1849 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PhysicalPropertyTableImport name="TM-4" sourceTable="TM-4" targetTable="ElasticModulusTable" targetQuantity="ElasticYoungModulus" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1243" sourcePageEnd="1243" status="raw-tokenized-review-required">
+  <ReferenceData>TM-4</ReferenceData>
+  <Notes>Moduli of elasticity for high nickel alloys. Validate wrapped rows, repeated headers, and table continuation before SQLite import.</Notes>
+  <SourceColumns>E=Young modulus / modulus of elasticity; Temperature=degC. Preserve ASME source units during import mapping.</SourceColumns>
+  <RawText>--- SourcePage 1243 ---
+ð25Þ
+Table TM-4
+Moduli of Elasticity E of High Nickel Alloys for Given Temperatures
+Modulus of Elasticity E = Value Given × 103 MPa, for Temperature, °C, of
+Material −200 −125
+−75
+25
+100
+150
+200
+250
+300
+350
+400
+450
+500
+550
+600
+650
+700
+750
+800
+850
+900
+950
+1 000
+N02200
+222
+216
+213
+207
+202
+199
+197
+194
+191
+189
+186
+183
+180
+176
+172
+169
+164
+160
+...
+...
+...
+...
+...
+N02201
+222
+216
+213
+207
+202
+199
+197
+194
+191
+189
+186
+183
+180
+176
+172
+169
+164
+160
+...
+...
+...
+...
+...
+N04400
+192
+188
+185
+179
+175
+173
+171
+168
+166
+163
+161
+158
+155
+152
+149
+146
+142
+139
+...
+...
+...
+...
+...
+N04405
+192
+188
+185
+179
+175
+173
+171
+168
+166
+163
+161
+158
+155
+152
+149
+146
+142
+139
+...
+...
+...
+...
+...
+N06002
+211
+206
+202
+196
+192
+189
+187
+184
+182
+179
+176
+173
+170
+167
+163
+160
+156
+152
+...
+...
+...
+...
+...
+N06007
+205
+200
+197
+191
+187
+185
+182
+180
+177
+175
+172
+169
+166
+163
+160
+156
+152
+148
+...
+...
+...
+...
+...
+N06022
+221
+216
+212
+206
+201
+199
+196
+193
+191
+188
+185
+182
+179
+175
+172
+168
+164
+160
+155
+151
+...
+...
+...
+N06030
+217
+212
+208
+202
+197
+195
+192
+189
+187
+184
+181
+178
+175
+172
+168
+165
+161
+156
+152
+148
+...
+...
+...
+N06045
+207
+202
+199
+193
+189
+186
+184
+181
+179
+176
+173
+170
+167
+164
+161
+157
+153
+150
+...
+...
+...
+...
+...
+N06059
+225
+220
+216
+210
+205
+203
+200
+197
+194
+192
+189
+185
+182
+178
+175
+171
+167
+162
+158
+154
+...
+...
+...
+N06230
+226
+221
+217
+211
+206
+203
+200
+198
+195
+192
+189
+186
+183
+179
+176
+172
+168
+163
+159
+154
+...
+...
+...
+N06455
+220
+215
+212
+205
+201
+198
+195
+193
+190
+187
+184
+181
+178
+175
+171
+167
+163
+159
+...
+...
+...
+...
+...
+N06600
+229
+224
+220
+213
+209
+206
+203
+201
+198
+195
+192
+189
+186
+182
+178
+174
+170
+165
+...
+...
+...
+...
+...
+N06617
+...
+...
+...
+201
+196
+193
+191
+189
+187
+184
+181
+178
+174
+171
+167
+164
+160
+156
+152
+146
+141
+136
+130
+N06625
+222
+216
+213
+207
+202
+199
+197
+194
+191
+189
+186
+183
+180
+176
+172
+169
+164
+160
+...
+...
+...
+...
+...
+N06686
+225
+220
+216
+210
+205
+203
+200
+197
+194
+192
+189
+185
+182
+178
+175
+171
+167
+162
+158
+154
+...
+...
+...
+N06690
+225
+219
+215
+208
+204
+201
+199
+196
+193
+191
+188
+185
+181
+178
+174
+170
+166
+162
+...
+...
+...
+...
+...
+N07718
+214
+210
+206
+199
+195
+192
+190
+188
+185
+183
+180
+176
+173
+169
+...
+...
+...
+...
+...
+...
+...
+...
+...
+N07750
+229
+224
+220
+213
+208
+206
+203
+201
+198
+195
+192
+189
+185
+181
+178
+...
+...
+...
+...
+...
+...
+...
+...
+N08020
+207
+202
+199
+193
+189
+186
+184
+181
+179
+176
+173
+170
+167
+164
+161
+157
+153
+150
+...
+...
+...
+...
+...
+N08031
+212
+207
+204
+198
+193
+191
+188
+185
+183
+180
+178
+175
+172
+168
+165
+161
+157
+153
+149
+145
+...
+...
+...
+N08330
+207
+202
+199
+193
+189
+186
+184
+181
+179
+176
+173
+170
+167
+164
+161
+157
+153
+150
+...
+...
+...
+...
+...
+N08354
+207
+204
+202
+198
+194
+191
+189
+186
+183
+180
+177
+174
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+N08800
+211
+206
+202
+196
+192
+189
+187
+184
+182
+179
+176
+173
+170
+167
+164
+160
+156
+152
+...
+...
+...
+...
+...
+N08801
+211
+206
+202
+196
+192
+189
+187
+184
+182
+179
+176
+173
+170
+167
+164
+160
+156
+152
+...
+...
+...
+...
+...
+N08810
+211
+206
+202
+196
+192
+189
+187
+184
+182
+179
+176
+173
+170
+167
+164
+160
+156
+152
+...
+...
+...
+...
+...
+N08825
+207
+202
+199
+193
+189
+186
+184
+181
+179
+176
+173
+170
+167
+164
+161
+157
+153
+150
+...
+...
+...
+...
+...
+N10001
+230
+224
+221
+214
+209
+206
+204
+201
+198
+196
+193
+189
+186
+182
+178
+174
+170
+166
+...
+...
+...
+...
+...
+N10003
+234
+229
+225
+218
+213
+210
+207
+205
+202
+199
+196
+193
+190
+186
+182
+178
+173
+169
+...
+...
+...
+...
+...
+N10242
+245
+240
+236
+229
+224
+221
+217
+214
+211
+208
+205
+202
+198
+195
+191
+186
+182
+177
+172
+167
+...
+...
+...
+N10276
+220
+215
+212
+205
+201
+198
+195
+193
+190
+187
+184
+181
+178
+175
+171
+167
+163
+159
+...
+...
+...
+...
+...
+N10629
+232
+227
+223
+216
+211
+208
+206
+203
+200
+197
+194
+191
+188
+184
+180
+176
+172
+168
+...
+...
+...
+...
+...
+N10665
+232
+227
+223
+216
+211
+208
+206
+203
+200
+197
+194
+191
+188
+184
+180
+176
+172
+168
+...
+...
+...
+...
+...
+N10675
+232
+227
+223
+216
+211
+208
+206
+203
+200
+197
+194
+191
+188
+184
+180
+176
+172
+168
+...
+...
+...
+...
+...
+N12160
+226
+221
+217
+211
+206
+203
+200
+198
+195
+192
+189
+186
+183
+179
+176
+172
+168
+163
+159
+154
+...
+...
+...
+R20033
+210
+204
+201
+195
+191
+188
+186
+183
+181
+178
+175
+172
+169
+166
+162
+159
+155
+151
+147
+142
+...
+...
+...
+1193
+ASME BPVC.II.D.M-2025
+Copy
+Provid
+Licensee=BREMBANA &amp; ROLLE GROUP - Bergamasque: Albrèmb/8355778001, User=Tosto, Natale
+Not for Resale, 10/20/2025 03:54:29 MDT
+No re
+--`,,,``,,`,````````,,,,`</RawText>
+  <RawTokens>
+    <Page sourcePage="1243">
+      <Token index="0">ASME</Token>
+      <Token index="1">BPVC.II.D.M-2025</Token>
+      <Token index="2">000</Token>
+      <Token index="3">130</Token>
+      <Token index="4">...</Token>
+      <Token index="5">...</Token>
+      <Token index="6">...</Token>
+      <Token index="7">...</Token>
+      <Token index="8">...</Token>
+      <Token index="9">...</Token>
+      <Token index="10">...</Token>
+      <Token index="11">...</Token>
+      <Token index="12">...</Token>
+      <Token index="13">...</Token>
+      <Token index="14">...</Token>
+      <Token index="15">...</Token>
+      <Token index="16">...</Token>
+      <Token index="17">...</Token>
+      <Token index="18">...</Token>
+      <Token index="19">...</Token>
+      <Token index="20">...</Token>
+      <Token index="21">...</Token>
+      <Token index="22">...</Token>
+      <Token index="23">...</Token>
+      <Token index="24">...</Token>
+      <Token index="25">...</Token>
+      <Token index="26">...</Token>
+      <Token index="27">...</Token>
+      <Token index="28">...</Token>
+      <Token index="29">...</Token>
+      <Token index="30">...</Token>
+      <Token index="31">...</Token>
+      <Token index="32">...</Token>
+      <Token index="33">...</Token>
+      <Token index="34">...</Token>
+      <Token index="35">...</Token>
+      <Token index="36">...</Token>
+      <Token index="37">...</Token>
+      <Token index="38">...</Token>
+      <Token index="39">1</Token>
+      <Token index="40">950</Token>
+      <Token index="41">136</Token>
+      <Token index="42">...</Token>
+      <Token index="43">...</Token>
+      <Token index="44">...</Token>
+      <Token index="45">...</Token>
+      <Token index="46">...</Token>
+      <Token index="47">...</Token>
+      <Token index="48">...</Token>
+      <Token index="49">...</Token>
+      <Token index="50">...</Token>
+      <Token index="51">...</Token>
+      <Token index="52">...</Token>
+      <Token index="53">...</Token>
+      <Token index="54">...</Token>
+      <Token index="55">...</Token>
+      <Token index="56">...</Token>
+      <Token index="57">...</Token>
+      <Token index="58">...</Token>
+      <Token index="59">...</Token>
+      <Token index="60">...</Token>
+      <Token index="61">...</Token>
+      <Token index="62">...</Token>
+      <Token index="63">...</Token>
+      <Token index="64">...</Token>
+      <Token index="65">...</Token>
+      <Token index="66">...</Token>
+      <Token index="67">...</Token>
+      <Token index="68">...</Token>
+      <Token index="69">...</Token>
+      <Token index="70">...</Token>
+      <Token index="71">...</Token>
+      <Token index="72">...</Token>
+      <Token index="73">...</Token>
+      <Token index="74">...</Token>
+      <Token index="75">...</Token>
+      <Token index="76">...</Token>
+      <Token index="77">900</Token>
+      <Token index="78">141</Token>
+      <Token index="79">...</Token>
+      <Token index="80">...</Token>
+      <Token index="81">...</Token>
+      <Token index="82">...</Token>
+      <Token index="83">...</Token>
+      <Token index="84">...</Token>
+      <Token index="85">...</Token>
+      <Token index="86">...</Token>
+      <Token index="87">...</Token>
+      <Token index="88">...</Token>
+      <Token index="89">...</Token>
+      <Token index="90">...</Token>
+      <Token index="91">...</Token>
+      <Token index="92">...</Token>
+      <Token index="93">...</Token>
+      <Token index="94">...</Token>
+      <Token index="95">...</Token>
+      <Token index="96">...</Token>
+      <Token index="97">...</Token>
+      <Token index="98">...</Token>
+      <Token index="99">...</Token>
+      <Token index="100">...</Token>
+      <Token index="101">...</Token>
+      <Token index="102">...</Token>
+      <Token index="103">...</Token>
+      <Token index="104">...</Token>
+      <Token index="105">...</Token>
+      <Token index="106">...</Token>
+      <Token index="107">...</Token>
+      <Token index="108">...</Token>
+      <Token index="109">...</Token>
+      <Token index="110">...</Token>
+      <Token index="111">...</Token>
+      <Token index="112">...</Token>
+      <Token index="113">...</Token>
+      <Token index="114">850</Token>
+      <Token index="115">151</Token>
+      <Token index="116">148</Token>
+      <Token index="117">154</Token>
+      <Token index="118">154</Token>
+      <Token index="119">146</Token>
+      <Token index="120">154</Token>
+      <Token index="121">145</Token>
+      <Token index="122">167</Token>
+      <Token index="123">154</Token>
+      <Token index="124">142</Token>
+      <Token index="125">...</Token>
+      <Token index="126">...</Token>
+      <Token index="127">...</Token>
+      <Token index="128">...</Token>
+      <Token index="129">...</Token>
+      <Token index="130">...</Token>
+      <Token index="131">...</Token>
+      <Token index="132">...</Token>
+      <Token index="133">...</Token>
+      <Token index="134">...</Token>
+      <Token index="135">...</Token>
+      <Token index="136">...</Token>
+      <Token index="137">...</Token>
+      <Token index="138">...</Token>
+      <Token index="139">...</Token>
+      <Token index="140">...</Token>
+      <Token index="141">...</Token>
+      <Token index="142">...</Token>
+      <Token index="143">...</Token>
+      <Token index="144">...</Token>
+      <Token index="145">...</Token>
+      <Token index="146">...</Token>
+      <Token index="147">...</Token>
+      <Token index="148">...</Token>
+      <Token index="149">...</Token>
+      <Token index="150">...</Token>
+      <Token index="151">800</Token>
+      <Token index="152">155</Token>
+      <Token index="153">152</Token>
+      <Token index="154">158</Token>
+      <Token index="155">159</Token>
+      <Token index="156">152</Token>
+      <Token index="157">158</Token>
+      <Token index="158">149</Token>
+      <Token index="159">172</Token>
+      <Token index="160">159</Token>
+      <Token index="161">147</Token>
+      <Token index="162">...</Token>
+      <Token index="163">...</Token>
+      <Token index="164">...</Token>
+      <Token index="165">...</Token>
+      <Token index="166">...</Token>
+      <Token index="167">...</Token>
+      <Token index="168">...</Token>
+      <Token index="169">...</Token>
+      <Token index="170">...</Token>
+      <Token index="171">...</Token>
+      <Token index="172">...</Token>
+      <Token index="173">...</Token>
+      <Token index="174">...</Token>
+      <Token index="175">...</Token>
+      <Token index="176">...</Token>
+      <Token index="177">...</Token>
+      <Token index="178">...</Token>
+      <Token index="179">...</Token>
+      <Token index="180">...</Token>
+      <Token index="181">...</Token>
+      <Token index="182">...</Token>
+      <Token index="183">...</Token>
+      <Token index="184">...</Token>
+      <Token index="185">...</Token>
+      <Token index="186">...</Token>
+      <Token index="187">...</Token>
+      <Token index="188">750</Token>
+      <Token index="189">160</Token>
+      <Token index="190">160</Token>
+      <Token index="191">139</Token>
+      <Token index="192">139</Token>
+      <Token index="193">152</Token>
+      <Token index="194">148</Token>
+      <Token index="195">160</Token>
+      <Token index="196">156</Token>
+      <Token index="197">150</Token>
+      <Token index="198">162</Token>
+      <Token index="199">163</Token>
+      <Token index="200">159</Token>
+      <Token index="201">165</Token>
+      <Token index="202">156</Token>
+      <Token index="203">160</Token>
+      <Token index="204">162</Token>
+      <Token index="205">162</Token>
+      <Token index="206">150</Token>
+      <Token index="207">153</Token>
+      <Token index="208">150</Token>
+      <Token index="209">152</Token>
+      <Token index="210">152</Token>
+      <Token index="211">152</Token>
+      <Token index="212">150</Token>
+      <Token index="213">166</Token>
+      <Token index="214">169</Token>
+      <Token index="215">177</Token>
+      <Token index="216">159</Token>
+      <Token index="217">168</Token>
+      <Token index="218">168</Token>
+      <Token index="219">168</Token>
+      <Token index="220">163</Token>
+      <Token index="221">151</Token>
+      <Token index="222">...</Token>
+      <Token index="223">...</Token>
+      <Token index="224">...</Token>
+      <Token index="225">Temperatures</Token>
+      <Token index="226">of</Token>
+      <Token index="227">700</Token>
+      <Token index="228">164</Token>
+      <Token index="229">164</Token>
+      <Token index="230">142</Token>
+      <Token index="231">142</Token>
+      <Token index="232">156</Token>
+      <Token index="233">152</Token>
+      <Token index="234">164</Token>
+      <Token index="235">161</Token>
+      <Token index="236">153</Token>
+      <Token index="237">167</Token>
+      <Token index="238">168</Token>
+      <Token index="239">163</Token>
+      <Token index="240">170</Token>
+      <Token index="241">160</Token>
+      <Token index="242">164</Token>
+      <Token index="243">167</Token>
+      <Token index="244">166</Token>
+      <Token index="245">153</Token>
+      <Token index="246">157</Token>
+      <Token index="247">153</Token>
+      <Token index="248">156</Token>
+      <Token index="249">156</Token>
+      <Token index="250">156</Token>
+      <Token index="251">153</Token>
+      <Token index="252">170</Token>
+      <Token index="253">173</Token>
+      <Token index="254">182</Token>
+      <Token index="255">163</Token>
+      <Token index="256">172</Token>
+      <Token index="257">172</Token>
+      <Token index="258">172</Token>
+      <Token index="259">168</Token>
+      <Token index="260">155</Token>
+      <Token index="261">...</Token>
+      <Token index="262">...</Token>
+      <Token index="263">...</Token>
+      <Token index="264">°C,</Token>
+      <Token index="265">Temperature,</Token>
+      <Token index="266">650</Token>
+      <Token index="267">169</Token>
+      <Token index="268">169</Token>
+      <Token index="269">146</Token>
+      <Token index="270">146</Token>
+      <Token index="271">160</Token>
+      <Token index="272">156</Token>
+      <Token index="273">168</Token>
+      <Token index="274">165</Token>
+      <Token index="275">157</Token>
+      <Token index="276">171</Token>
+      <Token index="277">172</Token>
+      <Token index="278">167</Token>
+      <Token index="279">174</Token>
+      <Token index="280">164</Token>
+      <Token index="281">169</Token>
+      <Token index="282">171</Token>
+      <Token index="283">170</Token>
+      <Token index="284">157</Token>
+      <Token index="285">161</Token>
+      <Token index="286">157</Token>
+      <Token index="287">160</Token>
+      <Token index="288">160</Token>
+      <Token index="289">160</Token>
+      <Token index="290">157</Token>
+      <Token index="291">174</Token>
+      <Token index="292">178</Token>
+      <Token index="293">186</Token>
+      <Token index="294">167</Token>
+      <Token index="295">176</Token>
+      <Token index="296">176</Token>
+      <Token index="297">176</Token>
+      <Token index="298">172</Token>
+      <Token index="299">159</Token>
+      <Token index="300">...</Token>
+      <Token index="301">...</Token>
+      <Token index="302">...</Token>
+      <Token index="303">600</Token>
+      <Token index="304">172</Token>
+      <Token index="305">172</Token>
+      <Token index="306">149</Token>
+      <Token index="307">149</Token>
+      <Token index="308">163</Token>
+      <Token index="309">160</Token>
+      <Token index="310">172</Token>
+      <Token index="311">168</Token>
+      <Token index="312">161</Token>
+      <Token index="313">175</Token>
+      <Token index="314">176</Token>
+      <Token index="315">171</Token>
+      <Token index="316">178</Token>
+      <Token index="317">167</Token>
+      <Token index="318">172</Token>
+      <Token index="319">175</Token>
+      <Token index="320">174</Token>
+      <Token index="321">178</Token>
+      <Token index="322">161</Token>
+      <Token index="323">165</Token>
+      <Token index="324">161</Token>
+      <Token index="325">164</Token>
+      <Token index="326">164</Token>
+      <Token index="327">164</Token>
+      <Token index="328">161</Token>
+      <Token index="329">178</Token>
+      <Token index="330">182</Token>
+      <Token index="331">191</Token>
+      <Token index="332">171</Token>
+      <Token index="333">180</Token>
+      <Token index="334">180</Token>
+      <Token index="335">180</Token>
+      <Token index="336">176</Token>
+      <Token index="337">162</Token>
+      <Token index="338">Given</Token>
+      <Token index="339">...</Token>
+      <Token index="340">...</Token>
+      <Token index="341">for</Token>
+      <Token index="342">550</Token>
+      <Token index="343">176</Token>
+      <Token index="344">176</Token>
+      <Token index="345">152</Token>
+      <Token index="346">152</Token>
+      <Token index="347">167</Token>
+      <Token index="348">163</Token>
+      <Token index="349">175</Token>
+      <Token index="350">172</Token>
+      <Token index="351">164</Token>
+      <Token index="352">178</Token>
+      <Token index="353">179</Token>
+      <Token index="354">175</Token>
+      <Token index="355">182</Token>
+      <Token index="356">171</Token>
+      <Token index="357">176</Token>
+      <Token index="358">178</Token>
+      <Token index="359">178</Token>
+      <Token index="360">169</Token>
+      <Token index="361">181</Token>
+      <Token index="362">164</Token>
+      <Token index="363">168</Token>
+      <Token index="364">164</Token>
+      <Token index="365">167</Token>
+      <Token index="366">167</Token>
+      <Token index="367">167</Token>
+      <Token index="368">164</Token>
+      <Token index="369">182</Token>
+      <Token index="370">186</Token>
+      <Token index="371">195</Token>
+      <Token index="372">175</Token>
+      <Token index="373">184</Token>
+      <Token index="374">184</Token>
+      <Token index="375">184</Token>
+      <Token index="376">179</Token>
+      <Token index="377">166</Token>
+      <Token index="378">...</Token>
+      <Token index="379">for</Token>
+      <Token index="380">MPa,</Token>
+      <Token index="381">500</Token>
+      <Token index="382">180</Token>
+      <Token index="383">180</Token>
+      <Token index="384">155</Token>
+      <Token index="385">155</Token>
+      <Token index="386">170</Token>
+      <Token index="387">166</Token>
+      <Token index="388">179</Token>
+      <Token index="389">175</Token>
+      <Token index="390">167</Token>
+      <Token index="391">182</Token>
+      <Token index="392">183</Token>
+      <Token index="393">178</Token>
+      <Token index="394">186</Token>
+      <Token index="395">174</Token>
+      <Token index="396">180</Token>
+      <Token index="397">182</Token>
+      <Token index="398">181</Token>
+      <Token index="399">173</Token>
+      <Token index="400">185</Token>
+      <Token index="401">167</Token>
+      <Token index="402">172</Token>
+      <Token index="403">167</Token>
+      <Token index="404">170</Token>
+      <Token index="405">170</Token>
+      <Token index="406">170</Token>
+      <Token index="407">167</Token>
+      <Token index="408">186</Token>
+      <Token index="409">190</Token>
+      <Token index="410">198</Token>
+      <Token index="411">178</Token>
+      <Token index="412">188</Token>
+      <Token index="413">188</Token>
+      <Token index="414">188</Token>
+      <Token index="415">183</Token>
+      <Token index="416">169</Token>
+      <Token index="417">Alloys</Token>
+      <Token index="418">...</Token>
+      <Token index="419">103</Token>
+      <Token index="420">×</Token>
+      <Token index="421">TM-4</Token>
+      <Token index="422">450</Token>
+      <Token index="423">183</Token>
+      <Token index="424">183</Token>
+      <Token index="425">158</Token>
+      <Token index="426">158</Token>
+      <Token index="427">173</Token>
+      <Token index="428">169</Token>
+      <Token index="429">182</Token>
+      <Token index="430">178</Token>
+      <Token index="431">170</Token>
+      <Token index="432">185</Token>
+      <Token index="433">186</Token>
+      <Token index="434">181</Token>
+      <Token index="435">189</Token>
+      <Token index="436">178</Token>
+      <Token index="437">183</Token>
+      <Token index="438">185</Token>
+      <Token index="439">185</Token>
+      <Token index="440">176</Token>
+      <Token index="441">189</Token>
+      <Token index="442">170</Token>
+      <Token index="443">175</Token>
+      <Token index="444">170</Token>
+      <Token index="445">174</Token>
+      <Token index="446">173</Token>
+      <Token index="447">173</Token>
+      <Token index="448">173</Token>
+      <Token index="449">170</Token>
+      <Token index="450">189</Token>
+      <Token index="451">193</Token>
+      <Token index="452">202</Token>
+      <Token index="453">181</Token>
+      <Token index="454">191</Token>
+      <Token index="455">191</Token>
+      <Token index="456">191</Token>
+      <Token index="457">186</Token>
+      <Token index="458">172</Token>
+      <Token index="459">Given</Token>
+      <Token index="460">Nickel</Token>
+      <Token index="461">Licensee=BREMBANA</Token>
+      <Token index="462">Not</Token>
+      <Token index="463">400</Token>
+      <Token index="464">186</Token>
+      <Token index="465">186</Token>
+      <Token index="466">161</Token>
+      <Token index="467">161</Token>
+      <Token index="468">176</Token>
+      <Token index="469">172</Token>
+      <Token index="470">185</Token>
+      <Token index="471">181</Token>
+      <Token index="472">173</Token>
+      <Token index="473">189</Token>
+      <Token index="474">189</Token>
+      <Token index="475">184</Token>
+      <Token index="476">192</Token>
+      <Token index="477">181</Token>
+      <Token index="478">186</Token>
+      <Token index="479">189</Token>
+      <Token index="480">188</Token>
+      <Token index="481">180</Token>
+      <Token index="482">192</Token>
+      <Token index="483">173</Token>
+      <Token index="484">178</Token>
+      <Token index="485">173</Token>
+      <Token index="486">177</Token>
+      <Token index="487">176</Token>
+      <Token index="488">176</Token>
+      <Token index="489">176</Token>
+      <Token index="490">173</Token>
+      <Token index="491">193</Token>
+      <Token index="492">196</Token>
+      <Token index="493">205</Token>
+      <Token index="494">184</Token>
+      <Token index="495">194</Token>
+      <Token index="496">194</Token>
+      <Token index="497">194</Token>
+      <Token index="498">189</Token>
+      <Token index="499">175</Token>
+      <Token index="500">Value</Token>
+      <Token index="501">Table</Token>
+      <Token index="502">for</Token>
+      <Token index="503">Resale,</Token>
+      <Token index="504">High</Token>
+      <Token index="505">=</Token>
+      <Token index="506">350</Token>
+      <Token index="507">189</Token>
+      <Token index="508">189</Token>
+      <Token index="509">163</Token>
+      <Token index="510">163</Token>
+      <Token index="511">179</Token>
+      <Token index="512">175</Token>
+      <Token index="513">188</Token>
+      <Token index="514">184</Token>
+      <Token index="515">176</Token>
+      <Token index="516">192</Token>
+      <Token index="517">192</Token>
+      <Token index="518">187</Token>
+      <Token index="519">195</Token>
+      <Token index="520">184</Token>
+      <Token index="521">189</Token>
+      <Token index="522">192</Token>
+      <Token index="523">191</Token>
+      <Token index="524">183</Token>
+      <Token index="525">195</Token>
+      <Token index="526">176</Token>
+      <Token index="527">180</Token>
+      <Token index="528">176</Token>
+      <Token index="529">180</Token>
+      <Token index="530">179</Token>
+      <Token index="531">179</Token>
+      <Token index="532">179</Token>
+      <Token index="533">176</Token>
+      <Token index="534">196</Token>
+      <Token index="535">199</Token>
+      <Token index="536">208</Token>
+      <Token index="537">187</Token>
+      <Token index="538">197</Token>
+      <Token index="539">197</Token>
+      <Token index="540">197</Token>
+      <Token index="541">192</Token>
+      <Token index="542">178</Token>
+      <Token index="543">E</Token>
+      <Token index="544">10/20/2025</Token>
+      <Token index="545">Elasticity</Token>
+      <Token index="546">of</Token>
+      <Token index="547">300</Token>
+      <Token index="548">191</Token>
+      <Token index="549">191</Token>
+      <Token index="550">166</Token>
+      <Token index="551">166</Token>
+      <Token index="552">182</Token>
+      <Token index="553">177</Token>
+      <Token index="554">191</Token>
+      <Token index="555">187</Token>
+      <Token index="556">179</Token>
+      <Token index="557">194</Token>
+      <Token index="558">195</Token>
+      <Token index="559">190</Token>
+      <Token index="560">198</Token>
+      <Token index="561">187</Token>
+      <Token index="562">191</Token>
+      <Token index="563">194</Token>
+      <Token index="564">193</Token>
+      <Token index="565">185</Token>
+      <Token index="566">198</Token>
+      <Token index="567">179</Token>
+      <Token index="568">183</Token>
+      <Token index="569">179</Token>
+      <Token index="570">183</Token>
+      <Token index="571">182</Token>
+      <Token index="572">182</Token>
+      <Token index="573">182</Token>
+      <Token index="574">179</Token>
+      <Token index="575">198</Token>
+      <Token index="576">202</Token>
+      <Token index="577">211</Token>
+      <Token index="578">190</Token>
+      <Token index="579">200</Token>
+      <Token index="580">200</Token>
+      <Token index="581">200</Token>
+      <Token index="582">195</Token>
+      <Token index="583">181</Token>
+      <Token index="584">&amp;</Token>
+      <Token index="585">ROLLE</Token>
+      <Token index="586">03:54:29</Token>
+      <Token index="587">E</Token>
+      <Token index="588">Elasticity</Token>
+      <Token index="589">of</Token>
+      <Token index="590">250</Token>
+      <Token index="591">194</Token>
+      <Token index="592">194</Token>
+      <Token index="593">168</Token>
+      <Token index="594">168</Token>
+      <Token index="595">184</Token>
+      <Token index="596">180</Token>
+      <Token index="597">193</Token>
+      <Token index="598">189</Token>
+      <Token index="599">181</Token>
+      <Token index="600">197</Token>
+      <Token index="601">198</Token>
+      <Token index="602">193</Token>
+      <Token index="603">201</Token>
+      <Token index="604">189</Token>
+      <Token index="605">194</Token>
+      <Token index="606">197</Token>
+      <Token index="607">196</Token>
+      <Token index="608">188</Token>
+      <Token index="609">201</Token>
+      <Token index="610">181</Token>
+      <Token index="611">185</Token>
+      <Token index="612">181</Token>
+      <Token index="613">186</Token>
+      <Token index="614">184</Token>
+      <Token index="615">184</Token>
+      <Token index="616">184</Token>
+      <Token index="617">181</Token>
+      <Token index="618">201</Token>
+      <Token index="619">205</Token>
+      <Token index="620">214</Token>
+      <Token index="621">193</Token>
+      <Token index="622">203</Token>
+      <Token index="623">203</Token>
+      <Token index="624">203</Token>
+      <Token index="625">198</Token>
+      <Token index="626">183</Token>
+      <Token index="627">GROUP</Token>
+      <Token index="628">MDT</Token>
+      <Token index="629">Modulus</Token>
+      <Token index="630">-</Token>
+      <Token index="631">200</Token>
+      <Token index="632">Bergamasque:</Token>
+      <Token index="633">197</Token>
+      <Token index="634">197</Token>
+      <Token index="635">171</Token>
+      <Token index="636">171</Token>
+      <Token index="637">187</Token>
+      <Token index="638">182</Token>
+      <Token index="639">196</Token>
+      <Token index="640">192</Token>
+      <Token index="641">184</Token>
+      <Token index="642">200</Token>
+      <Token index="643">200</Token>
+      <Token index="644">195</Token>
+      <Token index="645">203</Token>
+      <Token index="646">191</Token>
+      <Token index="647">197</Token>
+      <Token index="648">200</Token>
+      <Token index="649">199</Token>
+      <Token index="650">190</Token>
+      <Token index="651">203</Token>
+      <Token index="652">184</Token>
+      <Token index="653">188</Token>
+      <Token index="654">184</Token>
+      <Token index="655">189</Token>
+      <Token index="656">187</Token>
+      <Token index="657">187</Token>
+      <Token index="658">187</Token>
+      <Token index="659">184</Token>
+      <Token index="660">204</Token>
+      <Token index="661">207</Token>
+      <Token index="662">217</Token>
+      <Token index="663">195</Token>
+      <Token index="664">206</Token>
+      <Token index="665">206</Token>
+      <Token index="666">206</Token>
+      <Token index="667">200</Token>
+      <Token index="668">186</Token>
+      <Token index="669">of</Token>
+      <Token index="670">150</Token>
+      <Token index="671">199</Token>
+      <Token index="672">199</Token>
+      <Token index="673">173</Token>
+      <Token index="674">173</Token>
+      <Token index="675">189</Token>
+      <Token index="676">185</Token>
+      <Token index="677">199</Token>
+      <Token index="678">195</Token>
+      <Token index="679">186</Token>
+      <Token index="680">203</Token>
+      <Token index="681">203</Token>
+      <Token index="682">198</Token>
+      <Token index="683">206</Token>
+      <Token index="684">193</Token>
+      <Token index="685">199</Token>
+      <Token index="686">203</Token>
+      <Token index="687">201</Token>
+      <Token index="688">192</Token>
+      <Token index="689">206</Token>
+      <Token index="690">186</Token>
+      <Token index="691">191</Token>
+      <Token index="692">186</Token>
+      <Token index="693">191</Token>
+      <Token index="694">189</Token>
+      <Token index="695">189</Token>
+      <Token index="696">189</Token>
+      <Token index="697">186</Token>
+      <Token index="698">206</Token>
+      <Token index="699">210</Token>
+      <Token index="700">221</Token>
+      <Token index="701">198</Token>
+      <Token index="702">208</Token>
+      <Token index="703">208</Token>
+      <Token index="704">208</Token>
+      <Token index="705">203</Token>
+      <Token index="706">188</Token>
+      <Token index="707">Moduli</Token>
+      <Token index="708">Albrèmb/8355778001,</Token>
+      <Token index="709">100</Token>
+      <Token index="710">202</Token>
+      <Token index="711">202</Token>
+      <Token index="712">175</Token>
+      <Token index="713">175</Token>
+      <Token index="714">192</Token>
+      <Token index="715">187</Token>
+      <Token index="716">201</Token>
+      <Token index="717">197</Token>
+      <Token index="718">189</Token>
+      <Token index="719">205</Token>
+      <Token index="720">206</Token>
+      <Token index="721">201</Token>
+      <Token index="722">209</Token>
+      <Token index="723">196</Token>
+      <Token index="724">202</Token>
+      <Token index="725">205</Token>
+      <Token index="726">204</Token>
+      <Token index="727">195</Token>
+      <Token index="728">208</Token>
+      <Token index="729">189</Token>
+      <Token index="730">193</Token>
+      <Token index="731">189</Token>
+      <Token index="732">194</Token>
+      <Token index="733">192</Token>
+      <Token index="734">192</Token>
+      <Token index="735">192</Token>
+      <Token index="736">189</Token>
+      <Token index="737">209</Token>
+      <Token index="738">213</Token>
+      <Token index="739">224</Token>
+      <Token index="740">201</Token>
+      <Token index="741">211</Token>
+      <Token index="742">211</Token>
+      <Token index="743">211</Token>
+      <Token index="744">206</Token>
+      <Token index="745">191</Token>
+      <Token index="746">207</Token>
+      <Token index="747">207</Token>
+      <Token index="748">179</Token>
+      <Token index="749">179</Token>
+      <Token index="750">196</Token>
+      <Token index="751">191</Token>
+      <Token index="752">206</Token>
+      <Token index="753">202</Token>
+      <Token index="754">193</Token>
+      <Token index="755">210</Token>
+      <Token index="756">211</Token>
+      <Token index="757">205</Token>
+      <Token index="758">213</Token>
+      <Token index="759">201</Token>
+      <Token index="760">207</Token>
+      <Token index="761">210</Token>
+      <Token index="762">208</Token>
+      <Token index="763">199</Token>
+      <Token index="764">213</Token>
+      <Token index="765">193</Token>
+      <Token index="766">198</Token>
+      <Token index="767">193</Token>
+      <Token index="768">198</Token>
+      <Token index="769">196</Token>
+      <Token index="770">196</Token>
+      <Token index="771">196</Token>
+      <Token index="772">193</Token>
+      <Token index="773">214</Token>
+      <Token index="774">218</Token>
+      <Token index="775">229</Token>
+      <Token index="776">205</Token>
+      <Token index="777">216</Token>
+      <Token index="778">216</Token>
+      <Token index="779">216</Token>
+      <Token index="780">211</Token>
+      <Token index="781">195</Token>
+      <Token index="782">25</Token>
+      <Token index="783">User=Tosto,</Token>
+      <Token index="784">−75</Token>
+      <Token index="785">213</Token>
+      <Token index="786">213</Token>
+      <Token index="787">185</Token>
+      <Token index="788">185</Token>
+      <Token index="789">202</Token>
+      <Token index="790">197</Token>
+      <Token index="791">212</Token>
+      <Token index="792">208</Token>
+      <Token index="793">199</Token>
+      <Token index="794">216</Token>
+      <Token index="795">217</Token>
+      <Token index="796">212</Token>
+      <Token index="797">220</Token>
+      <Token index="798">213</Token>
+      <Token index="799">216</Token>
+      <Token index="800">215</Token>
+      <Token index="801">206</Token>
+      <Token index="802">220</Token>
+      <Token index="803">199</Token>
+      <Token index="804">204</Token>
+      <Token index="805">199</Token>
+      <Token index="806">202</Token>
+      <Token index="807">202</Token>
+      <Token index="808">202</Token>
+      <Token index="809">202</Token>
+      <Token index="810">199</Token>
+      <Token index="811">221</Token>
+      <Token index="812">225</Token>
+      <Token index="813">236</Token>
+      <Token index="814">212</Token>
+      <Token index="815">223</Token>
+      <Token index="816">223</Token>
+      <Token index="817">223</Token>
+      <Token index="818">217</Token>
+      <Token index="819">201</Token>
+      <Token index="820">...</Token>
+      <Token index="821">Natale</Token>
+      <Token index="822">−125</Token>
+      <Token index="823">216</Token>
+      <Token index="824">216</Token>
+      <Token index="825">188</Token>
+      <Token index="826">188</Token>
+      <Token index="827">206</Token>
+      <Token index="828">200</Token>
+      <Token index="829">216</Token>
+      <Token index="830">212</Token>
+      <Token index="831">202</Token>
+      <Token index="832">220</Token>
+      <Token index="833">221</Token>
+      <Token index="834">215</Token>
+      <Token index="835">224</Token>
+      <Token index="836">216</Token>
+      <Token index="837">220</Token>
+      <Token index="838">219</Token>
+      <Token index="839">210</Token>
+      <Token index="840">224</Token>
+      <Token index="841">202</Token>
+      <Token index="842">207</Token>
+      <Token index="843">202</Token>
+      <Token index="844">204</Token>
+      <Token index="845">206</Token>
+      <Token index="846">206</Token>
+      <Token index="847">206</Token>
+      <Token index="848">202</Token>
+      <Token index="849">224</Token>
+      <Token index="850">229</Token>
+      <Token index="851">240</Token>
+      <Token index="852">215</Token>
+      <Token index="853">227</Token>
+      <Token index="854">227</Token>
+      <Token index="855">227</Token>
+      <Token index="856">221</Token>
+      <Token index="857">204</Token>
+      <Token index="858">...</Token>
+      <Token index="859">−200</Token>
+      <Token index="860">222</Token>
+      <Token index="861">222</Token>
+      <Token index="862">192</Token>
+      <Token index="863">192</Token>
+      <Token index="864">211</Token>
+      <Token index="865">205</Token>
+      <Token index="866">221</Token>
+      <Token index="867">217</Token>
+      <Token index="868">207</Token>
+      <Token index="869">225</Token>
+      <Token index="870">226</Token>
+      <Token index="871">220</Token>
+      <Token index="872">229</Token>
+      <Token index="873">222</Token>
+      <Token index="874">225</Token>
+      <Token index="875">225</Token>
+      <Token index="876">214</Token>
+      <Token index="877">229</Token>
+      <Token index="878">207</Token>
+      <Token index="879">212</Token>
+      <Token index="880">207</Token>
+      <Token index="881">207</Token>
+      <Token index="882">211</Token>
+      <Token index="883">211</Token>
+      <Token index="884">211</Token>
+      <Token index="885">207</Token>
+      <Token index="886">230</Token>
+      <Token index="887">234</Token>
+      <Token index="888">245</Token>
+      <Token index="889">220</Token>
+      <Token index="890">232</Token>
+      <Token index="891">232</Token>
+      <Token index="892">232</Token>
+      <Token index="893">226</Token>
+      <Token index="894">210</Token>
+      <Token index="895">...</Token>
+      <Token index="896">Material</Token>
+      <Token index="897">N02200</Token>
+      <Token index="898">N02201</Token>
+      <Token index="899">N04400</Token>
+      <Token index="900">N04405</Token>
+      <Token index="901">N06002</Token>
+      <Token index="902">N06007</Token>
+      <Token index="903">N06022</Token>
+      <Token index="904">N06030</Token>
+      <Token index="905">N06045</Token>
+      <Token index="906">N06059</Token>
+      <Token index="907">N06230</Token>
+      <Token index="908">N06455</Token>
+      <Token index="909">N06600</Token>
+      <Token index="910">N06617</Token>
+      <Token index="911">N06625</Token>
+      <Token index="912">N06686</Token>
+      <Token index="913">N06690</Token>
+      <Token index="914">N07718</Token>
+      <Token index="915">N07750</Token>
+      <Token index="916">N08020</Token>
+      <Token index="917">N08031</Token>
+      <Token index="918">N08330</Token>
+      <Token index="919">N08354</Token>
+      <Token index="920">N08800</Token>
+      <Token index="921">N08801</Token>
+      <Token index="922">N08810</Token>
+      <Token index="923">N08825</Token>
+      <Token index="924">N10001</Token>
+      <Token index="925">N10003</Token>
+      <Token index="926">N10242</Token>
+      <Token index="927">N10276</Token>
+      <Token index="928">N10629</Token>
+      <Token index="929">N10665</Token>
+      <Token index="930">N10675</Token>
+      <Token index="931">N12160</Token>
+      <Token index="932">R20033</Token>
+      <Token index="933">--`,,,``,,`,````````,,,,`</Token>
+      <Token index="934">ð25Þ</Token>
+      <Token index="935">1193</Token>
+      <Token index="936">Copy</Token>
+      <Token index="937">Provid</Token>
+      <Token index="938">No</Token>
+      <Token index="939">re</Token>
+    </Page>
+  </RawTokens>
+</PhysicalPropertyTableImport>
