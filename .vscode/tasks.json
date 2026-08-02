@@ -7,6 +7,7 @@
       "dependsOn": [
         "build: MaterialLibrary",
         "build: MaterialLibrary.Crud",
+        "build: MaterialLibrary.CrudApp",
         "build: MaterialLibrary.Excel",
         "build: MaterialLibrary.Examples",
         "build: MaterialLibrary.Tests"
@@ -46,6 +47,22 @@
       "args": [
         "build",
         "${workspaceFolder}/src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build: MaterialLibrary.CrudApp",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
@@ -109,6 +126,7 @@
       "dependsOn": [
         "build-release: MaterialLibrary",
         "build-release: MaterialLibrary.Crud",
+        "build-release: MaterialLibrary.CrudApp",
         "build-release: MaterialLibrary.Excel",
         "build-release: MaterialLibrary.Examples",
         "build-release: MaterialLibrary.Tests"
@@ -145,6 +163,24 @@
       "args": [
         "build",
         "${workspaceFolder}/src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj",
+        "-c",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build-release: MaterialLibrary.CrudApp",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj",
         "-c",
         "Release",
         "/property:GenerateFullPaths=true",
@@ -332,7 +368,7 @@
       "dependsOn": [
         "pack-with-symbols",
         "publish: MaterialLibrary dll",
-        "publish: Crud application",
+        "publish: CRUD app",
         "publish: Excel add-in"
       ],
       "problemMatcher": [],
@@ -361,16 +397,20 @@
       }
     },
     {
-      "label": "publish: Crud application",
+      "label": "publish: CRUD app",
       "command": "dotnet",
       "type": "process",
       "args": [
         "publish",
-        "${workspaceFolder}/src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj",
+        "${workspaceFolder}/src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj",
         "-c",
         "Release",
+        "-r",
+        "win-x64",
+        "--self-contained",
+        "false",
         "-o",
-        "${workspaceFolder}/publish/crud"
+        "${workspaceFolder}/publish/crud-app"
       ],
       "problemMatcher": "$msCompile",
       "presentation": {
@@ -387,7 +427,7 @@
         "-ExecutionPolicy",
         "Bypass",
         "-Command",
-        "dotnet build '${workspaceFolder}/src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj' -c Release /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; New-Item -ItemType Directory -Force -Path '${workspaceFolder}/publish/excel' | Out-Null; Copy-Item -Force '${workspaceFolder}/src/MaterialLibrary.Excel/bin/Release/net8.0-windows/publish/*packed.xll' '${workspaceFolder}/publish/excel/'"
+        "$source='${workspaceFolder}/src/MaterialLibrary.Excel/bin/Release/net8.0-windows'; $packed='${workspaceFolder}/publish/excel/packed'; $unpacked='${workspaceFolder}/publish/excel/unpacked'; dotnet build '${workspaceFolder}/src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj' -c Release /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; New-Item -ItemType Directory -Force -Path $packed,$unpacked | Out-Null; Copy-Item -Force \"$source/publish/*packed.xll\" $packed; Copy-Item -Force \"$source/*.xll\",\"$source/*.dna\",\"$source/*.dll\",\"$source/*.deps.json\",\"$source/*.runtimeconfig.json\",\"$source/*.xml\" $unpacked; Get-ChildItem $source -Directory | Where-Object { $_.Name -ne 'publish' } | ForEach-Object { Copy-Item -Force -Recurse $_.FullName $unpacked }"
       ],
       "problemMatcher": "$msCompile",
       "presentation": {

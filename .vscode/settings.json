@@ -33,7 +33,6 @@
     "editor.formatOnSave": false
   },
 
-  "dotnet.defaultSolution": "MaterialLibrary.sln",
   "dotnet.server.useOmnisharp": false,
   "omnisharp.enableRoslynAnalyzers": true,
   "omnisharp.analyzeOpenDocumentsOnly": false,

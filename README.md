@@ -44,6 +44,8 @@ Current release:
 - IT: Suite test console con validazioni end-to-end
 - EN: Excel-DNA add-in exposing material search and property lookups as worksheet functions (see [Excel Add-In](#excel-add-in--componente-aggiuntivo-excel))
 - IT: Componente aggiuntivo Excel-DNA che espone ricerca materiali e proprieta come funzioni foglio di calcolo (vedi [Excel Add-In](#excel-add-in--componente-aggiuntivo-excel))
+- EN: Windows desktop (WPF) CRUD application for browsing and editing a material library JSON file (see [Desktop CRUD App](#desktop-crud-app--applicazione-desktop-crud))
+- IT: Applicazione desktop Windows (WPF) CRUD per sfogliare e modificare un file JSON di libreria materiali (vedi [Desktop CRUD App](#desktop-crud-app--applicazione-desktop-crud))
 
 ## Project Layout | Struttura Progetto
 
@@ -51,6 +53,8 @@ Current release:
 - `src/MaterialLibrary/builders/StressStrainTableBuilder.fs` - time-independent and isochronous stress-strain builders
 - `src/MaterialLibrary/builders/CreepTableBuilder.fs` - validated creep-table construction and model generation
 - `src/MaterialLibrary/builders/ExternalPressureTableBuilder.fs` - database and Code Case 2964 table construction
+- `src/MaterialLibrary.Crud` - CRUD helpers (repository, table, configuration, and staged-XML-data operations) built on top of `src/MaterialLibrary`
+- `src/MaterialLibrary.CrudApp` - WPF desktop application (`MaterialLibrary.CrudApp.exe`) exposing `MaterialLibrary.Crud` through a UI (see [Desktop CRUD App](#desktop-crud-app--applicazione-desktop-crud) below)
 - `src/MaterialLibrary.Excel` - Excel-DNA add-in exposing material search and property lookups as worksheet functions (see [Excel Add-In](#excel-add-in--componente-aggiuntivo-excel) below)
 - `tests/MaterialLibrary.Tests` - xUnit test project
 - `tests/MaterialLibrary.Examples` - compiled usage examples
@@ -413,6 +417,130 @@ IT: Non ancora verificato automaticamente: il passo di packaging sopra riesce e 
 validi, ma questo ambiente non puo aprire Excel, quindi la registrazione effettiva delle funzioni e il
 comportamento in Excel non sono stati testati interattivamente. Verificare caricando il componente
 aggiuntivo e richiamando alcune funzioni prima di farvi affidamento.
+
+## Desktop CRUD App | Applicazione Desktop CRUD
+
+EN: `src/MaterialLibrary.CrudApp` is a Windows-only WPF desktop application (`net8.0-windows`) that wraps
+`src/MaterialLibrary.Crud`'s `MaterialCrudRepository` in a UI. It is written in **C# with XAML and MVVM**,
+because WPF's data binding, commands, and code-behind model are designed around C# and around mutable,
+change-notifying view models that F# records cannot provide. It supports:
+
+- Creating a new, empty in-memory library, or opening/saving a material library JSON file (the same
+  format produced by `MaterialLibrary.saveToFile`/`loadFromFileComplete`).
+- Listing every material's identification in the library: Id, Specification, Grade, Class/Condition/Tempering,
+  UNS, Form, Product analysis (the domain's `NominalComposition`), Family (ASME code), and the composed Full name.
+- Creating, editing (identity fields, ASME `Family`, `BasicProperties`, and notes), and deleting a material.
+- Editing the property tables of a material ("Edit Tables..."). Twelve tables: thermal expansion, elastic
+  modulus, density, specific heat, thermal conductivity, tensile properties, allowable stresses, compression
+  properties, Norton power-law creep, Garofalo creep, Kachanov omega creep, and Code Case 2964 Appendix III.
+  Column headers carry the fixed unit of measure; optional columns are marked `*` and a blank cell is stored
+  as the F# `None`. Writes go through `MaterialLibrary.Crud`'s own helpers, so domain rules (sort by
+  temperature, refresh `LastModified`) are applied by the library, not reimplemented in the UI.
+- Reading and writing both a single material and a whole library as **XML**, alongside the JSON format.
+- Importing a staged XML data file into the selected material ("Import XML data file...").
+- A **database manager** ("Database...") over an ASME `asme_materials.db`: see below.
+
+IT: `src/MaterialLibrary.CrudApp` e un'applicazione desktop WPF solo Windows (`net8.0-windows`) che
+espone `MaterialCrudRepository` di `src/MaterialLibrary.Crud` tramite un'interfaccia utente. E scritta
+in **C# con XAML e MVVM**, perche il data binding, i comandi e il modello code-behind di WPF sono
+progettati attorno a C# e a view model mutabili con notifica di modifica, che i record F# non possono
+fornire. Supporta:
+
+- Creazione di una nuova libreria vuota in memoria, oppure apertura/salvataggio di un file JSON di
+  libreria materiali (lo stesso formato prodotto da `MaterialLibrary.saveToFile`/`loadFromFileComplete`).
+- Elenco dell'identificazione di ogni materiale nella libreria: Id, Specification, Grade, Class/Condition/Tempering,
+  UNS, Form, Product analysis (il campo `NominalComposition` del dominio), Family (codice ASME) e Full name composto.
+- Creazione, modifica (campi identita, `Family` ASME, `BasicProperties` e note) ed eliminazione di un materiale.
+- Modifica delle tabelle numeriche di un materiale ("Edit Tables..."): dilatazione termica, modulo elastico,
+  densita, calore specifico, conducibilita termica, proprieta a trazione, tensioni ammissibili e proprieta a
+  compressione. Le intestazioni riportano l'unita di misura fissa; le colonne opzionali sono marcate `*` e una
+  cella vuota viene salvata come `None` di F#.
+
+Build and run | Compilazione ed esecuzione:
+
+```powershell
+dotnet build src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj
+dotnet publish src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj -c Release -r win-x64 --self-contained false -o publish/crud-app
+# then run publish/crud-app/MaterialLibrary.CrudApp.exe
+```
+
+### Database manager | Gestione database
+
+EN: The manager opens an ASME SQLite database and provisions it. A stock `asme_materials.db` has no home for
+most of the `Material` object - no density rows, tensile rows, compression properties, ASME family, welding
+numbers, maximum allowable temperatures, creep models, or Code Case 2964 data - so the application **creates
+the missing tables** and links them to the existing `Materials` table:
+
+- 11 tables are created on demand (`CREATE TABLE IF NOT EXISTS`, so provisioning is idempotent), each with
+  `MaterialID INTEGER NOT NULL REFERENCES Materials(ID) ON DELETE CASCADE` and a covering index.
+- Rows are stored in normalized long form, one row per temperature, rather than the legacy pivoted
+  `T_40 ... T_900` layout, because the domain models these tables as `(temperature, value)` lists and the
+  legacy temperature grids differ per table.
+- Each material is persisted twice on purpose: the scalar identity into the ASME `Materials` row and the
+  tabular data into the extension tables, so the values stay queryable with ordinary SQL; and the complete
+  material into `MaterialDocumentStore` as its canonical JSON, which is the source of truth on read. That
+  document is what guarantees tables with no dedicated schema - creep models, stress-strain curves, fatigue
+  curves - survive a round trip without loss.
+- **The file you pick is never written to.** Opening a database copies it to a `.working.db` beside the
+  original and every operation targets the copy; "Save Working Copy As..." is the only route back to a
+  permanent file.
+- Materials that exist only in the shipped ASME rows show as `ASME reference`; ones written by the
+  application show as `Application` and can be read back in full.
+
+IT: Il gestore apre un database SQLite ASME e lo predispone. Un `asme_materials.db` originale non ha tabelle
+per gran parte dell'oggetto `Material`, quindi l'applicazione **crea le tabelle mancanti** e le collega alla
+tabella `Materials` esistente tramite chiavi esterne con `ON DELETE CASCADE`. Il file selezionato non viene
+mai modificato: si lavora sempre su una copia `.working.db`.
+
+### F#/C# interop notes | Note di interoperabilita F#/C\#
+
+EN: The app consumes an F# domain from C#, so all F#-specific representations are confined to
+`src/MaterialLibrary.CrudApp/Interop/`. The constraints that shaped the design:
+
+| F# construct | How C# sees it | How the app handles it |
+| --- | --- | --- |
+| `Material` record (immutable, get-only) | Class with a 23-argument positional constructor, no setters | `MaterialFactory` emulates `{ record with ... }` via that constructor, in one file so a new field breaks the build instead of silently mis-assigning |
+| `'T option` | `FSharpOption<T>`, where **`None` is a null reference** | `FSharpInterop` maps `None` <-> `null`; option-typed values are nullable-annotated so the compiler flags unchecked access. Never use `?? fallback` on an option: `None` is null, so the fallback fires when clearing a field |
+| `Result<'T, 'TError>` | `FSharpResult<T, TError>`; reading the wrong branch throws | `FSharpInterop.TryUnwrap` exposes it as a try-pattern |
+| `'T list` | `FSharpList<T>`: `IEnumerable<T>`, but O(n) indexing and no change notification | Projected into `ObservableCollection<MaterialRowViewModel>` for binding |
+| Discriminated unions (`MaterialError`) | Nested subclasses; payloads named `Item`, `Item1`, `Item2`; nullary cases only via `IsX` | `MaterialErrorFormat` uses a C# type-pattern `switch` with explicit default arms (C# cannot check exhaustiveness) |
+| Module `Material` beside type `Material` | Compiled class is renamed **`MaterialModule`** | Called as `MaterialModule.create(...)`; the record argument comes **last**, mirroring F# pipeline order |
+| Type `MaterialLibrary.MaterialLibrary` | Shadows the `MaterialLibrary` namespace in nested namespaces | App CLR namespace is `MaterialLibraryCrudApp`, not `MaterialLibrary.CrudApp`, otherwise WPF-generated code fails with CS0426 (assembly name is unchanged) |
+
+IT: L'applicazione consuma un dominio F# da C#, quindi tutte le rappresentazioni specifiche di F# sono
+confinate in `src/MaterialLibrary.CrudApp/Interop/`. I vincoli principali: i record F# sono immutabili e
+senza setter (nessun equivalente di `{ record with ... }` in C#), `None` e un riferimento null, i moduli
+F# omonimi di un tipo vengono rinominati con il suffisso `Module`, e il tipo `MaterialLibrary.MaterialLibrary`
+oscura il namespace `MaterialLibrary`: per questo il namespace CLR dell'app e `MaterialLibraryCrudApp`.
+
+EN: The CRUD app includes master/detail editors for stress-strain, creep, stress-rupture, fatigue,
+cyclic strain, external pressure, and Larson-Miller curves. The remaining physical/strength/special
+tables continue to use the typed `MaterialLibrary.Crud` API.
+
+IT: L'app CRUD include editor master/detail per curve stress-strain, creep, stress-rupture, fatica,
+deformazione ciclica, pressione esterna e Larson-Miller. Le restanti tabelle fisiche/di resistenza/
+speciali continuano a usare l'API tipizzata di `MaterialLibrary.Crud`.
+
+## Release and safety notes | Note di rilascio e sicurezza
+
+- The repository test fixture `tests/Fixtures/asme_materials.working.db` is a read-only copy of the
+  supplied working database. Tests must copy it to a temporary path before any mutation; never edit
+  the fixture in place.
+
+- Opening `reference.db` creates `reference.working.db`; the selected reference file is never written.
+- Modified working databases are persisted/exported only through **Save Working Copy As...**.
+- Automatic backups are created beside the working database before destructive SQL/schema operations.
+- The backup manager retains the newest generated backups; backup files should be included in release
+  support instructions, not copied into source control.
+- Raw-table undo/redo is transaction-based and persisted for supported rowid and primary-key tables.
+- SQL/schema undo is restricted to recognized `CREATE TABLE`, `CREATE INDEX`, and table-rename forms;
+  arbitrary SQL remains audited but is not automatically reversible.
+- Foreign-key checks run before raw-table commits and before publishing.
+- Excel publishing produces packed `.xll` add-ins for both 32-bit and 64-bit Excel targets. The
+  packaged add-in contains managed dependencies and the SQLite native runtime; it must be tested on
+  the installed Excel bitness before deployment.
+- Native cancellation of an already-running SQLite command remains dependent on provider support;
+  cancellation is guaranteed for pending application operations.
 
 ## Dependencies | Dipendenze
 

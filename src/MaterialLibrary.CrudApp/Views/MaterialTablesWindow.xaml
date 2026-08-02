@@ -1,0 +1,307 @@
+<Window x:Class="MaterialLibraryCrudApp.Views.MaterialTablesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MaterialLibraryCrudApp.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:MaterialTablesViewModel}"
+        Title="{Binding Title}"
+        Width="880"
+        Height="560"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+
+    <DockPanel Margin="8">
+
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,8,0,0">
+            <Button Content="OK"
+                    IsDefault="True"
+                    Click="OnConfirm"
+                    Style="{StaticResource DialogButtonStyle}" />
+            <Button Content="Cancel"
+                    IsCancel="True"
+                    Style="{StaticResource DialogButtonStyle}" />
+        </StackPanel>
+
+        <TextBlock DockPanel.Dock="Bottom"
+                   Text="{Binding StatusMessage}"
+                   Margin="4,6"
+                   TextWrapping="Wrap"
+                   Foreground="#555" />
+
+        <TabControl>
+            <TabItem Header="Flat Tables">
+                <DockPanel Margin="0,6,0,0">
+                    <!-- Table picker. Selecting a different table commits the current grid first. -->
+                    <ListBox DockPanel.Dock="Left"
+                             Width="200"
+                             Margin="0,0,8,0"
+                             ItemsSource="{Binding Tables}"
+                             SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
+                             DisplayMemberPath="Title" />
+
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
+                            <Button Content="Add row"
+                                    Command="{Binding AddRowCommand}"
+                                    Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete row"
+                                    Command="{Binding DeleteRowCommand}"
+                                    Style="{StaticResource DialogButtonStyle}" />
+                        </StackPanel>
+
+                        <!--
+                            Columns are built in code-behind from the selected table's MaterialTableSpec:
+                            the count and headers are runtime data, so they cannot be declared in XAML.
+                        -->
+                        <DataGrid x:Name="RowsGrid"
+                                  ItemsSource="{Binding Rows}"
+                                  SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  GridLinesVisibility="All"
+                                  HeadersVisibility="All"
+                                  AlternatingRowBackground="#F7F7F7" />
+                    </DockPanel>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="Creep">
+                <DockPanel DataContext="{Binding CreepEditor}" Margin="0,6,0,0">
+                    <StackPanel DockPanel.Dock="Left" Width="230" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" />
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}" DisplayMemberPath="DisplayName" />
+                    </StackPanel>
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="120" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="120" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Text="Temperature C" Margin="0,0,4,0" VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1" Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+                            <TextBlock Grid.Column="2" Text="Stress MPa" Margin="0,0,4,0" VerticalAlignment="Center" />
+                            <TextBox Grid.Column="3" Text="{Binding SelectedTable.AppliedStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+                            <TextBlock Grid.Column="4" Text="Description" Margin="0,0,4,0" VerticalAlignment="Center" />
+                            <TextBox Grid.Column="5" Text="{Binding SelectedTable.Description, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
+                            <Button Content="Add point" Command="{Binding AddPointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete point" Command="{Binding DeletePointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                        </StackPanel>
+                        <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Time (h)" Binding="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" />
+                                <DataGridTextColumn Header="Strain (%)" Binding="{Binding Strain, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="Stress-Strain">
+                <DockPanel DataContext="{Binding StressStrainEditor}" Margin="0,6,0,0">
+                    <TextBlock DockPanel.Dock="Bottom"
+                               Text="{Binding StatusMessage}"
+                               Margin="4,6"
+                               TextWrapping="Wrap"
+                               Foreground="#555" />
+
+                    <DockPanel DockPanel.Dock="Left" Width="230" Margin="0,0,8,0">
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
+                            <Button Content="Add table"
+                                    Command="{Binding AddTableCommand}"
+                                    Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete"
+                                    Command="{Binding DeleteTableCommand}"
+                                    Style="{StaticResource DialogButtonStyle}" />
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Tables}"
+                                 SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
+                                 DisplayMemberPath="DisplayName" />
+                    </DockPanel>
+
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="120" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Temperature" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <TextBox Grid.Column="1" Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" />
+                            <TextBlock Grid.Column="2" Text="Duration h" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <TextBox Grid.Column="3" Text="{Binding SelectedTable.DurationHours, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" />
+                            <TextBlock Grid.Column="4" Text="Yield MPa" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <TextBox Grid.Column="5" Text="{Binding SelectedTable.YieldStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" />
+                            <TextBlock Grid.Column="6" Text="Ultimate MPa" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <TextBox Grid.Column="7" Text="{Binding SelectedTable.UltimateStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" />
+
+                            <TextBlock Grid.Row="1" Text="Strain basis" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <ComboBox Grid.Row="1" Grid.Column="1"
+                                      ItemsSource="{Binding SelectedTable.BasisOptions}"
+                                      SelectedItem="{Binding SelectedTable.StrainBasis, Mode=TwoWay}"
+                                      Margin="0,0,10,4" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Stress basis" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <ComboBox Grid.Row="1" Grid.Column="3"
+                                      ItemsSource="{Binding SelectedTable.BasisOptions}"
+                                      SelectedItem="{Binding SelectedTable.StressBasis, Mode=TwoWay}"
+                                      Margin="0,0,10,4" />
+                            <TextBlock Grid.Row="1" Grid.Column="4" Text="Description" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <TextBox Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="3"
+                                     Text="{Binding SelectedTable.Description, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,4" />
+
+                            <StackPanel Grid.Row="2" Grid.ColumnSpan="8" Orientation="Horizontal" Margin="0,2,0,0">
+                                <Button Content="Add point"
+                                        Command="{Binding AddPointCommand}"
+                                        Style="{StaticResource DialogButtonStyle}" />
+                                <Button Content="Delete point"
+                                        Command="{Binding DeletePointCommand}"
+                                        Style="{StaticResource DialogButtonStyle}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <DataGrid x:Name="StressStrainPointsGrid"
+                                  ItemsSource="{Binding SelectedTable.Points}"
+                                  SelectedItem="{Binding SelectedPoint, Mode=TwoWay}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  GridLinesVisibility="All"
+                                  AlternatingRowBackground="#F7F7F7">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Strain (%)"
+                                                    Binding="{Binding Strain, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                                    Width="*" />
+                                <DataGridTextColumn Header="Stress (MPa)"
+                                                    Binding="{Binding Stress, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                                    Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="Stress-Rupture">
+                <DockPanel DataContext="{Binding StressRuptureEditor}" Margin="0,6,0,0">
+                    <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" />
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}" DisplayMemberPath="DisplayName" />
+                    </StackPanel>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBox Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="0,0,8,0" />
+                            <Button Content="Add point" Command="{Binding AddPointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete point" Command="{Binding DeletePointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                        </StackPanel>
+                        <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Rupture time (h)" Binding="{Binding TimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" />
+                                <DataGridTextColumn Header="Stress (MPa)" Binding="{Binding StressMpa, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="Fatigue">
+                <DockPanel DataContext="{Binding FatigueEditor}" Margin="0,6,0,0">
+                    <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}" DisplayMemberPath="DisplayName" />
+                    </StackPanel>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,5,0" /><TextBox Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="100" Margin="0,0,8,0" />
+                            <Button Content="Add point" Command="{Binding AddPointCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete point" Command="{Binding DeletePointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                        </StackPanel>
+                        <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False">
+                            <DataGrid.Columns><DataGridTextColumn Header="Cycles" Binding="{Binding Cycles, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" /><DataGridTextColumn Header="Stress amplitude (MPa)" Binding="{Binding StressMpa, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" /></DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="Cyclic Strain">
+                <DockPanel DataContext="{Binding CyclicEditor}" Margin="0,6,0,0">
+                    <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding Selected}" />
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <WrapPanel Margin="0,0,0,8">
+                                <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0,0,8,0" />
+                                <TextBlock Text="Kcss" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Kcss, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="0,0,8,0" />
+                                <TextBlock Text="Ncss" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Ncss, UpdateSourceTrigger=PropertyChanged}" Width="80" />
+                            </WrapPanel>
+                            <TextBlock Text="Stress amplitude / strain amplitude" FontWeight="Bold" Margin="0,0,0,4" />
+                            <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True" Height="150" Margin="0,0,0,8"><DataGrid.Columns><DataGridTextColumn Header="Stress amplitude" Binding="{Binding X, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Strain amplitude" Binding="{Binding Y, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                            <TextBlock Text="Stress range / strain range" FontWeight="Bold" Margin="0,0,0,4" />
+                            <DataGrid ItemsSource="{Binding Selected.HysteresisPoints}" AutoGenerateColumns="False" CanUserAddRows="True" Height="150"><DataGrid.Columns><DataGridTextColumn Header="Stress range" Binding="{Binding X, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Strain range" Binding="{Binding Y, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="External Pressure">
+                <DockPanel DataContext="{Binding ExternalPressureEditor}" Margin="0,6,0,0">
+                    <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding Selected}" />
+                    </StackPanel>
+                    <DockPanel>
+                        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="85" Margin="0,0,8,0" />
+                            <TextBlock Text="Duration h" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.DurationHours, UpdateSourceTrigger=PropertyChanged}" Width="85" Margin="0,0,8,0" />
+                            <TextBlock Text="Reduction" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.ReductionFactor, UpdateSourceTrigger=PropertyChanged}" Width="85" />
+                        </WrapPanel>
+                        <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True"><DataGrid.Columns><DataGridTextColumn Header="Factor A" Binding="{Binding FactorA, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Factor B / stress MPa" Binding="{Binding CompressiveStress, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                    </DockPanel>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="Larson-Miller">
+                <DockPanel DataContext="{Binding LarsonMillerEditor}" Margin="0,6,0,0">
+                    <StackPanel DockPanel.Dock="Left" Width="210" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add curve" Command="{Binding AddCurveCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteCurveCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <ListBox ItemsSource="{Binding Curves}" SelectedItem="{Binding Selected}" DisplayMemberPath="Description" />
+                    </StackPanel>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <TextBlock Text="Material" Margin="0,0,0,2" /><TextBox Text="{Binding Selected.Material, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5" />
+                            <TextBlock Text="Description" Margin="0,0,0,2" /><TextBox Text="{Binding Selected.Description, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True"><DataGrid.Columns><DataGridTextColumn Header="Larson-Miller parameter" Binding="{Binding Parameter, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Stress (MPa)" Binding="{Binding Stress, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                    </DockPanel>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+
+    </DockPanel>
+</Window>

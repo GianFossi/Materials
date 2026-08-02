@@ -39,6 +39,7 @@
     <Compile Include="Serialization\PropertyTableSerialization.fs" />
     <Compile Include="Domain\MaterialTypes.fs" />
     <Compile Include="Serialization\MaterialSerialization.fs" />
+    <Compile Include="Serialization\MaterialXmlSerialization.fs" />
     <Compile Include="Serialization\MaterialLibraryDataXml.fs" />
     <Compile Include="Interpolations.fs" />
     <Compile Include="Configuration.fs" />

@@ -1,0 +1,27 @@
+<Window x:Class="MaterialLibraryCrudApp.Views.MaterialDiffWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Material Comparison" Width="820" Height="520" WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="10">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="Left material" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding Left}" DisplayMemberPath="Name" Width="260" Margin="0,0,12,0" />
+            <TextBlock Text="Right material" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding Right}" DisplayMemberPath="Name" Width="260" />
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding Differences}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" GridLinesVisibility="Horizontal">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsChanged}" Value="True"><Setter Property="Background" Value="#FFF1F0" /></DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Field" Binding="{Binding Field}" Width="220" />
+                <DataGridTextColumn Header="Left" Binding="{Binding LeftValue}" Width="*" />
+                <DataGridTextColumn Header="Right" Binding="{Binding RightValue}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

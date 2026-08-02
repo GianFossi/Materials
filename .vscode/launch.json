@@ -2,6 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch MaterialLibrary CRUD App",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: MaterialLibrary.CrudApp",
+      "program": "${workspaceFolder}/src/MaterialLibrary.CrudApp/bin/Debug/net8.0-windows/MaterialLibrary.CrudApp.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    },
+    {
       "name": ".NET Core Launch (console)",
       "type": "coreclr",
       "request": "launch",

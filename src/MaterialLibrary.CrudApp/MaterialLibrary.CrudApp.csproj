@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>MaterialLibrary.CrudApp</AssemblyName>
+
+    <!--
+      The CLR namespace deliberately does NOT nest under "MaterialLibrary". The F# library
+      declares a type named MaterialLibrary.MaterialLibrary, so inside any namespace under
+      "MaterialLibrary" the C# compiler binds the identifier "MaterialLibrary" to that type
+      rather than to the namespace. Fully qualified references such as
+      "MaterialLibrary.CrudApp.App" then fail with CS0426 - including the ones emitted by the
+      WPF XAML code generator, which does not prefix names with "global::".
+      The assembly name is unaffected and keeps the dotted project naming convention.
+    -->
+    <RootNamespace>MaterialLibraryCrudApp</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Version>1.0.1</Version>
+    <IsPackable>false</IsPackable>
+    <Title>Material Library CRUD App</Title>
+    <Description>Windows desktop (WPF, C#/MVVM) application for creating, browsing, editing, and deleting MaterialLibrary materials and saving/loading material library JSON files.</Description>
+    <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaterialLibrary.Crud\MaterialLibrary.Crud.fsproj" />
+  </ItemGroup>
+
+  <!--
+    FSharp.Core is required at runtime because the F# domain surfaces FSharpOption,
+    FSharpList, and FSharpResult on its public API. Pinned to the same version the
+    F# projects use so no assembly binding redirect is needed.
+  -->
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="10.1.301" />
+  </ItemGroup>
+
+</Project>

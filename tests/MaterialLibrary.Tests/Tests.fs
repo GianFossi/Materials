@@ -9,6 +9,7 @@ open MaterialLibrary.Crud
 open MaterialLibrary.Domain
 open MaterialLibrary.Domain.Database.Lookup
 open MaterialLibrary.Interpolation
+open Microsoft.Data.Sqlite
 
 let private createTestMaterial () =
     let basicProps = BasicProperties.create 21.0 55.0 240.0 420.0
@@ -436,6 +437,105 @@ let ``material JSON round trip preserves advanced properties`` () =
         Assert.Equal(expected.PhysicalProperties, actual.PhysicalProperties)
         Assert.Equal(expected.StrengthProperties, actual.StrengthProperties)
         Assert.Equal(expected.SpecialProperties, actual.SpecialProperties)
+
+[<Fact>]
+let ``database document store preserves nested table structures`` () =
+    let stressStrain =
+        StressStrainTableBuilder.createIsochronous
+            500.0
+            100000.0
+            Engineering
+            Engineering
+            "Isochronous stress-strain"
+            [ { Strain = 0.1; Stress = 110.0 }
+              { Strain = 0.2; Stress = 160.0 } ]
+            (Some 200.0)
+            (Some 450.0)
+        |> expectOk
+
+    let creep =
+        CreepTableBuilder.create
+            500.0
+            120.0
+            "Creep strain"
+            [ { Time = 0.0; Strain = 0.0 }
+              { Time = 1000.0; Strain = 0.05 } ]
+        |> expectOk
+
+    let fatigueTable =
+        PropertyTable.create1D
+            "Fatigue"
+            "Cycles"
+            ""
+            "Stress Amplitude"
+            "MPa"
+            XBoundaryPolicy.FlatExtrapolate
+            [ { X = 1000.0; Value = 250.0 }
+              { X = 10000.0; Value = 180.0 } ]
+        |> expectOk
+        |> fun table -> FatigueTable.create table 425.0 (Some 100000.0)
+
+    let material =
+        let baseMaterial = createTestMaterial ()
+        { baseMaterial with
+            StrengthProperties =
+                { baseMaterial.StrengthProperties with
+                    StressStrainTables = [ stressStrain ]
+                    CreepTables = [ creep ]
+                    FatigueCurves = [ fatigueTable ]
+                    LarsonMillerCurves =
+                        [ { Material = baseMaterial.Id
+                            Description = "LMP"
+                            Points =
+                                [ { LarsonMillerParameter = 20000.0; Stress = 150.0 }
+                                  { LarsonMillerParameter = 21000.0; Stress = 120.0 } ] } ] } }
+
+    let databasePath = Path.Combine(Path.GetTempPath(), $"material-library-document-store-{System.Guid.NewGuid():N}.db")
+
+    try
+        do
+            use connection = new SqliteConnection($"Data Source={databasePath}")
+            connection.Open()
+            use command = connection.CreateCommand()
+            command.CommandText <-
+                """
+                CREATE TABLE Materials (
+                    ID INTEGER PRIMARY KEY,
+                    NominalComposition TEXT,
+                    ProductForm TEXT,
+                    Specification TEXT,
+                    TypeGrade TEXT,
+                    ClassConditionTemper TEXT,
+                    AlloyDesignationNumber TEXT,
+                    SMTS REAL,
+                    SMYS REAL,
+                    RuptureElongationLong REAL,
+                    Notes TEXT
+                )
+                """
+            command.ExecuteNonQuery() |> ignore
+
+        MaterialDatabaseCrud.ensureSchema databasePath |> expectOk |> ignore
+        MaterialDatabaseCrud.upsertMaterial databasePath material |> expectOk |> ignore
+
+        let actual = MaterialDatabaseCrud.readMaterial databasePath material.Id |> expectOk
+
+        Assert.Equal<StressStrainTable list>(
+            material.StrengthProperties.StressStrainTables,
+            actual.StrengthProperties.StressStrainTables
+        )
+
+        Assert.Equal<CreepTable list>(material.StrengthProperties.CreepTables, actual.StrengthProperties.CreepTables)
+        Assert.Equal<FatigueTable list>(material.StrengthProperties.FatigueCurves, actual.StrengthProperties.FatigueCurves)
+
+        Assert.Equal<LarsonMillerCurve list>(
+            material.StrengthProperties.LarsonMillerCurves,
+            actual.StrengthProperties.LarsonMillerCurves
+        )
+    finally
+        if File.Exists(databasePath) then
+            SqliteConnection.ClearAllPools()
+            File.Delete(databasePath)
 
 [<Fact>]
 let ``stress strain replacement key includes time dependence and duration`` () =
