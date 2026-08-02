@@ -8,12 +8,15 @@
     <LangVersion>latest</LangVersion>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <Nullable>enable</Nullable>
-    <Version>1.0.1</Version>
-    <PackageVersion>1.0.1</PackageVersion>
-    <Title>Material Library - ASME Section II Part D - v1.0.1 (Creep Models)</Title>
+    <Version>1.0.2</Version>
+    <PackageVersion>1.0.2</PackageVersion>
+    <Title>Material Library - ASME Section II Part D - v1.0.2 (Creep Models)</Title>
     <Description>Type-safe F# library for ASME Section II Part D material properties with unified stress-strain tables, creep modeling, external-pressure tables, and stress-rupture analysis</Description>
     <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>
     <PackageTags>ASME;Material-Properties;Creep;FSharp;Engineering;Section-II-Part-D</PackageTags>
+    <PackageProjectUrl>https://github.com/GianFossi/Materials</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GianFossi/Materials.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
@@ -68,6 +71,7 @@
     <None Include="README-NUGET.md" Pack="true" PackagePath="\" />
     <None Include="MaterialLibrary.config.xml" Pack="true" PackagePath="\" />
     <None Include="MaterialLibrary.config.xml" Pack="true" PackagePath="contentFiles\any\any\" PackageCopyToOutput="true" />
+    <None Include="data\ASME_Materials.db" Pack="true" PackagePath="contentFiles\any\any\data\" PackageCopyToOutput="true" />
     <None Include="data\external-pressure-xml\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\external-pressure-xml\" PackageCopyToOutput="true" />
     <None Include="data\physical-properties-xml\index.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\" PackageCopyToOutput="true" />
     <None Include="data\physical-properties-xml\ThermalExpansion\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalExpansion\" PackageCopyToOutput="true" />
@@ -78,6 +82,20 @@
     <None Include="data\physical-properties-xml\PoissonRatio\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\PoissonRatio\" PackageCopyToOutput="true" />
   </ItemGroup>
 
+  <!--
+    Guard for the packaged data files.
+
+    ASME_Materials.db is shipped inside the NuGet package as a content file. It is a binary that is
+    easy to leave untracked, and when it is absent `dotnet pack` still succeeds - it simply produces
+    a package with no database in it, which only fails much later at the consumer. This target turns
+    that silent hole into a build error, so a fresh clone or a CI agent cannot publish a broken
+    package. It runs before pack rather than before build so ordinary local builds stay fast.
+  -->
+  <Target Name="VerifyPackagedDataFiles" BeforeTargets="GenerateNuspec">
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\data\ASME_Materials.db')"
+           Text="Packaged data file 'data\ASME_Materials.db' is missing. It is referenced with Pack=&quot;true&quot; and must be present (and committed to source control) before packing." />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="FSharp.Core" Version="10.1.301" />
     <PackageReference Include="Ganfoss.ROP" Version="1.0.2" />
@@ -86,3 +104,4 @@
   </ItemGroup>
 
 </Project>
+
