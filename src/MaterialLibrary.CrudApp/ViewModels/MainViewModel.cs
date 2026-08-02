@@ -18,7 +18,7 @@ namespace MaterialLibraryCrudApp.ViewModels;
 public sealed class MainViewModel : ObservableObject
 {
     /// <summary>Library format version written into saved JSON files.</summary>
-    private const string DefaultLibraryVersion = "1.0.1";
+    private const string DefaultLibraryVersion = "1.0.2";
 
     private readonly IDialogService _dialogService;
 
@@ -126,6 +126,7 @@ public sealed class MainViewModel : ObservableObject
 
     /// <summary>Deletes the selected material after confirmation.</summary>
     public RelayCommand DeleteMaterialCommand { get; }
+    /// <summary>Opens the side-by-side comparison window for the loaded materials.</summary>
     public RelayCommand CompareMaterialsCommand { get; }
 
     /// <summary>Whether a grid row is currently selected.</summary>
@@ -536,3 +537,4 @@ public sealed class MainViewModel : ObservableObject
         StatusMessage = message;
     }
 }
+

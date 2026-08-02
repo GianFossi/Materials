@@ -57,11 +57,17 @@ public sealed class MaterialTablesViewModel : ObservableObject
 
     /// <summary>Master/detail editor for nested stress-strain tables.</summary>
     public StressStrainTableEditorViewModel StressStrainEditor { get; }
+    /// <summary>Editor for creep tables, which carry per-table metadata plus a nested point list.</summary>
     public CreepTableEditorViewModel CreepEditor { get; }
+    /// <summary>Editor for stress-rupture tables.</summary>
     public StressRuptureTableEditorViewModel StressRuptureEditor { get; }
+    /// <summary>Editor for fatigue curves.</summary>
     public FatigueTableEditorViewModel FatigueEditor { get; }
+    /// <summary>Editor for cyclic-strain tables.</summary>
     public CyclicStrainTableEditorViewModel CyclicEditor { get; }
+    /// <summary>Editor for external-pressure tables.</summary>
     public ExternalPressureTableEditorViewModel ExternalPressureEditor { get; }
+    /// <summary>Editor for Larson-Miller curves.</summary>
     public LarsonMillerEditorViewModel LarsonMillerEditor { get; }
 
     /// <summary>Identifier of the material being edited, shown in the window title.</summary>

@@ -19,8 +19,13 @@ public static class FileFilters
 
     /// <summary>SQLite material databases.</summary>
     public const string Database = "SQLite material database (*.db;*.sqlite)|*.db;*.sqlite|All files (*.*)|*.*";
+    /// <summary>Comma-separated exports of query or table results.</summary>
     public const string Csv = "Comma-separated values (*.csv)|*.csv|All files (*.*)|*.*";
+
+    /// <summary>JSON exports of query or table results.</summary>
     public const string Json = "JSON (*.json)|*.json|All files (*.*)|*.*";
+
+    /// <summary>Excel workbook exports of query or table results.</summary>
     public const string ExcelXml = "Excel workbook (*.xlsx)|*.xlsx|All files (*.*)|*.*";
 }
 
@@ -60,7 +65,25 @@ public interface IDialogService
     /// <param name="materialId">Identifier shown in the prompt.</param>
     /// <returns><c>true</c> when the user confirmed.</returns>
     bool ConfirmDelete(string materialId);
+    /// <summary>Asks the user to confirm a statement that can modify or drop data.</summary>
+    /// <param name="sql">Statement shown in the prompt so the user sees exactly what will run.</param>
+    /// <returns><c>true</c> when the user confirmed.</returns>
     bool ConfirmDestructiveSql(string sql);
+
+    /// <summary>
+    /// Asks the user to confirm overwriting the original reference database.
+    /// </summary>
+    /// <param name="path">Path that would be overwritten.</param>
+    /// <returns><c>true</c> when the user confirmed.</returns>
+    /// <remarks>
+    /// The working-copy design exists so the shipped reference data cannot be damaged by accident.
+    /// Writing over it is still allowed, but only as a deliberate, separately confirmed act.
+    /// </remarks>
+    bool ConfirmOverwriteReference(string path);
+
+    /// <summary>Asks the user whether to abandon unsaved edits before another action.</summary>
+    /// <param name="context">Short description of the action that would discard the edits.</param>
+    /// <returns><c>true</c> when the user agreed to discard.</returns>
     bool ConfirmDiscardChanges(string context);
 
     /// <summary>Shows the modal create/edit dialog.</summary>

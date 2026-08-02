@@ -743,7 +743,7 @@ let ``ASME database fallback file name is asme materials db`` () =
         Directory.CreateDirectory(baseDirectory) |> ignore
         let resolved = Configuration.resolveAsmeDatabasePath (Some baseDirectory)
 
-        Assert.Equal(Path.Combine(baseDirectory, "asme_materials.db"), resolved)
+        Assert.Equal(Path.Combine(baseDirectory, "ASME_Materials.db"), resolved)
     finally
         if Directory.Exists(baseDirectory) then
             Directory.Delete(baseDirectory, true)
@@ -1091,7 +1091,7 @@ let ``CRUD configuration can save read and delete XML config`` () =
     try
         let config = ConfigurationCrud.createDefault ()
         Assert.True(ConfigurationCrud.save path config |> Result.isOk)
-        Assert.Equal("asme_materials.db", (ConfigurationCrud.read path |> expectOk).Io.AsmeMaterialDatabaseFile)
+        Assert.Equal("ASME_Materials.db", (ConfigurationCrud.read path |> expectOk).Io.AsmeMaterialDatabaseFile)
         Assert.True(ConfigurationCrud.delete path |> Result.isOk)
         Assert.False(File.Exists(path))
     finally

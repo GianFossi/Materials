@@ -12,11 +12,12 @@ CRUD helpers for `MaterialLibrary` on .NET 8.
 - Import/export staged XML files from `MaterialLibrary/data` into a specific material reference
 - Uses the core `MaterialLibrary` domain model and validation types
 - XML data writes use temp-file replacement and path checks to reduce side effects
+- Works with the packaged `ASME_Materials.db` content file from the core package
 
 ## Install
 
 ```bash
-dotnet add package MaterialLibrary.Crud --version 1.0.1
+dotnet add package MaterialLibrary.Crud --version 1.0.2
 ```
 
 ## Quick Example (F#)
@@ -50,4 +51,13 @@ let config =
 `MaterialLibrary.Crud` does not duplicate the engineering domain model. It wraps
 the core `MaterialLibrary` types and serialization APIs so CRUD workflows remain
 consistent with the main library.
+
+## Repository Documentation
+
+- Source: https://github.com/GianFossi/Materials
+- Documentation index: https://github.com/GianFossi/Materials#documentation
+- CRUD app and database manager: https://github.com/GianFossi/Materials/blob/main/docs/desktop-app.md
+- ASME_Materials.db schema: https://github.com/GianFossi/Materials/blob/main/docs/asme-materials-db.md
+- Library API and persistence: https://github.com/GianFossi/Materials/blob/main/docs/library-api.md
+- Installation, build, and removal: https://github.com/GianFossi/Materials/blob/main/docs/installation.md
 

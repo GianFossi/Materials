@@ -58,10 +58,24 @@ public sealed class DialogService : IDialogService
             MessageBoxButton.YesNo,
             MessageBoxImage.Question) == MessageBoxResult.Yes;
 
+    /// <inheritdoc />
     public bool ConfirmDestructiveSql(string sql) =>
         MessageBox.Show(_owner, $"Execute this potentially destructive SQL?\n\n{sql}",
             "Confirm SQL", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
 
+    /// <inheritdoc />
+    public bool ConfirmOverwriteReference(string path) =>
+        MessageBox.Show(
+            _owner,
+            $"This will overwrite the ORIGINAL database:{Environment.NewLine}{Environment.NewLine}"
+            + $"{path}{Environment.NewLine}{Environment.NewLine}"
+            + "That is the reference file the working copy exists to protect. Overwrite it?",
+            "Overwrite original database",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning,
+            MessageBoxResult.No) == MessageBoxResult.Yes;
+
+    /// <inheritdoc />
     public bool ConfirmDiscardChanges(string context) =>
         MessageBox.Show(_owner, $"Discard unsaved changes before {context}?", "Unsaved changes",
             MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;

@@ -9,7 +9,7 @@ open MaterialLibrary.Domain
 /// </summary>
 /// <remarks>
 /// <para>
-/// The shipped <c>asme_materials.db</c> covers only part of the <see cref="Material"/> object: it has
+/// The shipped <c>ASME_Materials.db</c> covers only part of the <see cref="Material"/> object: it has
 /// no home for density rows, tensile rows, compression properties, per-material physical-property
 /// rows, the ASME family classification, welding numbers, maximum allowable temperatures, or any of
 /// the creep, stress-strain, fatigue, and Code Case 2964 data. Rather than reshaping the reference

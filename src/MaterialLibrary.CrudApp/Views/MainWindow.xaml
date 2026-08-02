@@ -11,6 +11,41 @@
         Height="600"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <Style x:Key="SchemaNodeStyle" TargetType="Border">
+            <Setter Property="Width" Value="245" />
+            <Setter Property="MinHeight" Value="58" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#9AA7B2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+
+        <Style x:Key="SchemaRootNodeStyle" TargetType="Border" BasedOn="{StaticResource SchemaNodeStyle}">
+            <Setter Property="Background" Value="#EAF3FF" />
+            <Setter Property="BorderBrush" Value="#3F78B5" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+
+        <Style x:Key="SchemaNodeTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="SchemaNodeDetailStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,3,0,0" />
+            <Setter Property="Foreground" Value="#52616F" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="SchemaLineStyle" TargetType="Line">
+            <Setter Property="Stroke" Value="#8C98A4" />
+            <Setter Property="StrokeThickness" Value="1.4" />
+        </Style>
+    </Window.Resources>
+
     <DockPanel>
 
         <!--
@@ -46,9 +81,13 @@
             </MenuItem>
         </Menu>
 
-        <!-- Toolbar: every button is bound to a command, so enablement follows the view model. -->
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
+        <!-- Top commands wrap onto extra rows when the window is narrow. -->
+        <Border DockPanel.Dock="Top"
+                BorderBrush="#D5DCE3"
+                BorderThickness="0,0,0,1"
+                Background="#F6F8FA"
+                Padding="4">
+            <WrapPanel Orientation="Horizontal">
                 <Button Content="New Library"
                         Command="{Binding NewLibraryCommand}"
                         Style="{StaticResource ToolbarButtonStyle}" />
@@ -58,7 +97,10 @@
                 <Button Content="Save"
                         Command="{Binding SaveLibraryCommand}"
                         Style="{StaticResource ToolbarButtonStyle}" />
-                <Separator />
+                <Separator Width="1"
+                           Height="28"
+                           Margin="8,4"
+                           Background="#CBD3DA" />
                 <Button Content="New Material..."
                         Command="{Binding NewMaterialCommand}"
                         Style="{StaticResource ToolbarButtonStyle}" />
@@ -74,12 +116,15 @@
                 <Button Content="Compare Materials"
                         Command="{Binding CompareMaterialsCommand}"
                         Style="{StaticResource ToolbarButtonStyle}" />
-                <Separator />
+                <Separator Width="1"
+                           Height="28"
+                           Margin="8,4"
+                           Background="#CBD3DA" />
                 <Button Content="Database..."
                         Command="{Binding ManageDatabaseCommand}"
                         Style="{StaticResource ToolbarButtonStyle}" />
-            </ToolBar>
-        </ToolBarTray>
+            </WrapPanel>
+        </Border>
 
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
@@ -87,66 +132,199 @@
             </StatusBarItem>
         </StatusBar>
 
-        <!--
-            Bound to an ObservableCollection of row projections rather than to the F# material
-            records, so column paths are checked against C# properties and options are already
-            flattened to displayable values.
-        -->
-        <DataGrid ItemsSource="{Binding Materials}"
-                  SelectedItem="{Binding SelectedMaterial, Mode=TwoWay}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  SelectionMode="Single"
-                  SelectionUnit="FullRow"
-                  GridLinesVisibility="Horizontal"
-                  HeadersVisibility="Column"
-                  AlternatingRowBackground="#F5F5F5">
-            <!--
-                Material identification columns, in the order the identity is read:
-                Id, then the four parts the domain composes the full name from
-                (Specification + Grade + Class/Condition/Tempering + UNS), then form,
-                product analysis, and family, then the composed full name itself.
-            -->
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Id"
-                                    Binding="{Binding Id}"
-                                    Width="110" />
-                <DataGridTextColumn Header="Specification"
-                                    Binding="{Binding Specification}"
-                                    Width="120" />
-                <DataGridTextColumn Header="Grade"
-                                    Binding="{Binding Grade}"
-                                    Width="80" />
-                <DataGridTextColumn Header="Class/Condition/Tempering"
-                                    Binding="{Binding ClassConditionTempering}"
-                                    Width="160" />
-                <DataGridTextColumn Header="UNS"
-                                    Binding="{Binding AlloyIdentificationUns}"
-                                    Width="90" />
-                <DataGridTextColumn Header="Form"
-                                    Binding="{Binding ProductForm}"
-                                    Width="110" />
-                <DataGridTextColumn Header="Product analysis"
-                                    Binding="{Binding ProductAnalysis}"
-                                    Width="140" />
-                <DataGridTextColumn Header="Family"
-                                    Binding="{Binding Family}"
-                                    Width="90" />
-                <DataGridTextColumn Header="Full name"
-                                    Binding="{Binding Name}"
-                                    Width="*"
-                                    MinWidth="180" />
-            </DataGrid.Columns>
+        <TabControl>
+            <TabItem Header="Materials">
+                <!--
+                    Bound to an ObservableCollection of row projections rather than to the F# material
+                    records, so column paths are checked against C# properties and options are already
+                    flattened to displayable values.
+                -->
+                <DataGrid ItemsSource="{Binding Materials}"
+                          SelectedItem="{Binding SelectedMaterial, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          AlternatingRowBackground="#F5F5F5">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id"
+                                            Binding="{Binding Id}"
+                                            Width="110" />
+                        <DataGridTextColumn Header="Specification"
+                                            Binding="{Binding Specification}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="Grade"
+                                            Binding="{Binding Grade}"
+                                            Width="80" />
+                        <DataGridTextColumn Header="Class/Condition/Tempering"
+                                            Binding="{Binding ClassConditionTempering}"
+                                            Width="160" />
+                        <DataGridTextColumn Header="UNS"
+                                            Binding="{Binding AlloyIdentificationUns}"
+                                            Width="90" />
+                        <DataGridTextColumn Header="Form"
+                                            Binding="{Binding ProductForm}"
+                                            Width="110" />
+                        <DataGridTextColumn Header="Product analysis"
+                                            Binding="{Binding ProductAnalysis}"
+                                            Width="140" />
+                        <DataGridTextColumn Header="Family"
+                                            Binding="{Binding Family}"
+                                            Width="90" />
+                        <DataGridTextColumn Header="Full name"
+                                            Binding="{Binding Name}"
+                                            Width="*"
+                                            MinWidth="180" />
+                    </DataGrid.Columns>
 
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <!-- Notes are long free text, so they are surfaced as a tooltip, not a column. -->
-                    <Setter Property="ToolTip" Value="{Binding Notes}" />
-                </Style>
-            </DataGrid.RowStyle>
-        </DataGrid>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <!-- Notes are long free text, so they are surfaced as a tooltip, not a column. -->
+                            <Setter Property="ToolTip" Value="{Binding Notes}" />
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Database Structure">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Auto"
+                              Background="#F9FAFB">
+                    <Canvas Width="1120"
+                            Height="720"
+                            Margin="24">
+                        <Line X1="190" Y1="130" X2="190" Y2="640" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="190" Y1="170" X2="375" Y2="170" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="190" Y1="260" X2="375" Y2="260" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="190" Y1="350" X2="375" Y2="350" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="190" Y1="440" X2="375" Y2="440" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="190" Y1="530" X2="375" Y2="530" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="190" Y1="620" X2="375" Y2="620" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="620" Y1="130" X2="620" Y2="640" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="190" Y1="130" X2="620" Y2="130" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="620" Y1="170" X2="765" Y2="170" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="620" Y1="260" X2="765" Y2="260" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="620" Y1="350" X2="765" Y2="350" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="620" Y1="440" X2="765" Y2="440" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="620" Y1="530" X2="765" Y2="530" Style="{StaticResource SchemaLineStyle}" />
+                        <Line X1="620" Y1="620" X2="765" Y2="620" Style="{StaticResource SchemaLineStyle}" />
+
+                        <Border Canvas.Left="65"
+                                Canvas.Top="74"
+                                Style="{StaticResource SchemaRootNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Materials"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Base ASME material row. ID is the parent key for every app extension table."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Canvas.Left="375" Canvas.Top="135" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialLibraryExtension"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="One metadata row: MaterialKey, family, ASME temperatures, welding numbers."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="375" Canvas.Top="225" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialDocumentStore"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Lossless serialized material payload for round-tripping."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="375" Canvas.Top="315" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialTensileRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for yield, tensile strength, elongation, reduction of area."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="375" Canvas.Top="405" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialAllowableStressRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for ASME service levels and weld stress values."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="375" Canvas.Top="495" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialCompressionRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for compressive strength and yield."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="375" Canvas.Top="585" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialAsmeCodeRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="One row per linked ASME code designation."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Canvas.Left="765" Canvas.Top="135" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialThermalExpansionRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for thermal expansion coefficients."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="765" Canvas.Top="225" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialElasticModulusRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for elastic modulus and optional Poisson ratio."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="765" Canvas.Top="315" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialDensityRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for density."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="765" Canvas.Top="405" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialSpecificHeatRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for specific heat."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="765" Canvas.Top="495" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="MaterialThermalConductivityRows"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Temperature rows for thermal conductivity."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Canvas.Left="765" Canvas.Top="585" Style="{StaticResource SchemaNodeStyle}">
+                            <StackPanel>
+                                <TextBlock Text="IX_*_MaterialID"
+                                           Style="{StaticResource SchemaNodeTitleStyle}" />
+                                <TextBlock Text="Indexes speed up loading all rows for a selected material."
+                                           Style="{StaticResource SchemaNodeDetailStyle}" />
+                            </StackPanel>
+                        </Border>
+                    </Canvas>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
 
     </DockPanel>
 </Window>

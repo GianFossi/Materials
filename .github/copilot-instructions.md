@@ -17,7 +17,7 @@
 - Minimize potential crash sources and optimize hot paths.
 
 ## Documentation and Examples
-- Update README.md after relevant feature or design changes.
+- Update the relevant topic file under `docs/` after feature or design changes, and update the root README.md only when the documentation index or project summary changes.
 - Update tests/examples for new public capabilities.
 - Update AI_HISTORY.md with a short, structured entry for each meaningful modification.
 - When implementing Material serialization/deserialization, document units in XML comments for each serialized property and table.

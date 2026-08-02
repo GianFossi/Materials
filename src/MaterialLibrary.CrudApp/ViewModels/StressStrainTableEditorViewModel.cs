@@ -13,6 +13,8 @@ public sealed class StressStrainTableEditorViewModel : ObservableObject
     private StressStrainPointViewModel? _selectedPoint;
     private string _statusMessage = string.Empty;
 
+    /// <summary>Creates the editor over a material's stress-strain tables.</summary>
+    /// <param name="material">Material to read the tables from; never mutated.</param>
     public StressStrainTableEditorViewModel(Material material)
     {
         ArgumentNullException.ThrowIfNull(material);
@@ -31,8 +33,10 @@ public sealed class StressStrainTableEditorViewModel : ObservableObject
         StatusMessage = $"{Tables.Count} stress-strain table(s).";
     }
 
+    /// <summary>Tables being edited, one entry per stored table.</summary>
     public ObservableCollection<StressStrainTableViewModel> Tables { get; } = [];
 
+    /// <summary>Table whose points are shown in the detail pane.</summary>
     public StressStrainTableViewModel? SelectedTable
     {
         get => _selectedTable;
@@ -48,6 +52,7 @@ public sealed class StressStrainTableEditorViewModel : ObservableObject
         }
     }
 
+    /// <summary>Point selected within the current table.</summary>
     public StressStrainPointViewModel? SelectedPoint
     {
         get => _selectedPoint;
@@ -60,19 +65,35 @@ public sealed class StressStrainTableEditorViewModel : ObservableObject
         }
     }
 
+    /// <summary>Whether a table is selected, used to enable the detail pane.</summary>
     public bool HasSelectedTable => SelectedTable is not null;
 
+    /// <summary>Validation or progress message shown under the editor.</summary>
     public string StatusMessage
     {
         get => _statusMessage;
         private set => SetProperty(ref _statusMessage, value);
     }
 
+    /// <summary>Appends an empty table and selects it.</summary>
     public RelayCommand AddTableCommand { get; }
+    /// <summary>Removes the selected table.</summary>
     public RelayCommand DeleteTableCommand { get; }
+    /// <summary>Appends an empty point to the selected table.</summary>
     public RelayCommand AddPointCommand { get; }
+    /// <summary>Removes the selected point.</summary>
     public RelayCommand DeletePointCommand { get; }
 
+    /// <summary>Writes the edited tables back into a material.</summary>
+    /// <param name="material">Source material; left unchanged.</param>
+    /// <param name="updated">Receives a new material carrying the edited tables.</param>
+    /// <param name="error">Receives a validation message on failure; <c>null</c> on success.</param>
+    /// <returns><c>true</c> when every table was valid and the edits were applied.</returns>
+    /// <remarks>
+    /// Rebuilds <c>StrengthProperties</c> positionally because F# records offer no copy-and-update
+    /// expression from C#; every sibling collection is carried through so nothing outside this
+    /// editor is lost.
+    /// </remarks>
     public bool TryApply(Material material, out Material updated, out string? error)
     {
         var built = new List<StressStrainTable>();
@@ -200,6 +221,13 @@ public sealed class StressStrainTableEditorViewModel : ObservableObject
     private static string? Num(FSharpOption<double>? value) => value is null ? null : Num(value.Value);
 }
 
+/// <summary>
+/// One editable stress-strain table: its conditions and basis metadata plus its curve points.
+/// </summary>
+/// <remarks>
+/// Numeric fields are held as text so a partially typed value does not fail binding; they are
+/// parsed once in <see cref="TryBuild"/> using the invariant culture.
+/// </remarks>
 public sealed class StressStrainTableViewModel : ObservableObject
 {
     private string _temperature = "20";
@@ -210,12 +238,15 @@ public sealed class StressStrainTableViewModel : ObservableObject
     private string? _ultimateStress;
     private string _description = "User stress-strain";
 
+    /// <summary>Creates a new table with default metadata.</summary>
     public StressStrainTableViewModel()
     {
         Points.Add(new StressStrainPointViewModel("0", "0"));
         Points.Add(new StressStrainPointViewModel("0.2", "200"));
     }
 
+    /// <summary>Creates an editable copy of an existing table.</summary>
+    /// <param name="table">Table to mirror.</param>
     public StressStrainTableViewModel(StressStrainTable table)
     {
         Temperature = Num(table.ReferenceTemperature);
@@ -232,9 +263,12 @@ public sealed class StressStrainTableViewModel : ObservableObject
         }
     }
 
+    /// <summary>Curve points of this table.</summary>
     public ObservableCollection<StressStrainPointViewModel> Points { get; } = [];
+    /// <summary>Selectable values for the strain and stress basis dropdowns (engineering or true).</summary>
     public IReadOnlyList<string> BasisOptions { get; } = ["Engineering", "True"];
 
+    /// <summary>Temperature the table applies at (degC), as entered text.</summary>
     public string Temperature
     {
         get => _temperature;
@@ -244,6 +278,7 @@ public sealed class StressStrainTableViewModel : ObservableObject
         }
     }
 
+    /// <summary>Reference duration (hours) for an isochronous table, blank when time-independent.</summary>
     public string? DurationHours
     {
         get => _durationHours;
@@ -253,41 +288,51 @@ public sealed class StressStrainTableViewModel : ObservableObject
         }
     }
 
+    /// <summary>Whether strain values are engineering or true strain.</summary>
     public string StrainBasis
     {
         get => _strainBasis;
         set => SetProperty(ref _strainBasis, value);
     }
 
+    /// <summary>Whether stress values are engineering or true stress.</summary>
     public string StressBasis
     {
         get => _stressBasis;
         set => SetProperty(ref _stressBasis, value);
     }
 
+    /// <summary>Optional yield stress recorded with the table (MPa), as entered text.</summary>
     public string? YieldStress
     {
         get => _yieldStress;
         set => SetProperty(ref _yieldStress, value);
     }
 
+    /// <summary>Optional ultimate stress recorded with the table (MPa), as entered text.</summary>
     public string? UltimateStress
     {
         get => _ultimateStress;
         set => SetProperty(ref _ultimateStress, value);
     }
 
+    /// <summary>Free-text description of the table.</summary>
     public string Description
     {
         get => _description;
         set => SetProperty(ref _description, value);
     }
 
+    /// <summary>Label shown in the table list.</summary>
     public string DisplayName =>
         string.IsNullOrWhiteSpace(DurationHours)
             ? $"{Temperature} degC"
             : $"{Temperature} degC / {DurationHours} h";
 
+    /// <summary>Validates the buffer and converts it into the immutable domain record.</summary>
+    /// <param name="table">Receives the built table on success; <c>null</c> on failure.</param>
+    /// <param name="error">Receives a user-facing validation message on failure.</param>
+    /// <returns><c>true</c> when the table was valid.</returns>
     public bool TryBuild(out StressStrainTable? table, out string? error)
     {
         table = null;
@@ -377,17 +422,22 @@ public sealed class StressStrainTableViewModel : ObservableObject
     }
 }
 
+/// <summary>One editable point of a stress-strain curve, held as text.</summary>
+/// <param name="strain">Strain value, as entered text.</param>
+/// <param name="stress">Stress value (MPa), as entered text.</param>
 public sealed class StressStrainPointViewModel(string strain = "", string stress = "") : ObservableObject
 {
     private string _strain = strain;
     private string _stress = stress;
 
+    /// <summary>Strain at this point, as entered text (dimensionless).</summary>
     public string Strain
     {
         get => _strain;
         set => SetProperty(ref _strain, value);
     }
 
+    /// <summary>Stress at this point, as entered text (MPa).</summary>
     public string Stress
     {
         get => _stress;

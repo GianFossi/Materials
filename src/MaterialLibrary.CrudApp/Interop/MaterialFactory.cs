@@ -143,8 +143,8 @@ internal static class MaterialFactory
     /// <param name="notes">Notes option for the copy (<c>null</c> means <c>None</c>); pass the source's own value to keep it.</param>
     /// <returns>A new material with <c>LastModified</c> set to the current UTC time.</returns>
     /// <remarks>
-    /// Every replaceable field is a required parameter on purpose. The tempting alternative &mdash;
-    /// optional parameters defaulting to <c>null</c> to mean "unchanged" &mdash; is silently wrong
+    /// Every replaceable field is a required parameter on purpose. The tempting alternative -
+    /// optional parameters defaulting to <c>null</c> to mean "unchanged" - is silently wrong
     /// for option-typed fields, because F# represents <c>None</c> as a null reference: a caller
     /// clearing <c>Notes</c> would pass <c>None</c>, the null-coalescing fallback would fire, and
     /// the old notes would be retained instead of cleared.

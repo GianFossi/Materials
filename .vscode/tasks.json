@@ -449,6 +449,66 @@
         "reveal": "always",
         "panel": "shared"
       }
+    },
+    {
+      "label": "test-excel-demo: x86",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "publish: Excel add-in"
+      ],
+      "command": "powershell",
+      "type": "process",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/tools/Test-ExcelAddIn.ps1",
+        "-Bitness",
+        "x86",
+        "-WorkbookPath",
+        "${workspaceFolder}/tests/MaterialLibrary.Examples/Demo.xlsx",
+        "-AddInPath",
+        "${workspaceFolder}/publish/excel/packed/MaterialLibrary.Excel-AddIn-packed.xll",
+        "-DatabasePath",
+        "${workspaceFolder}/src/MaterialLibrary/data/ASME_Materials.db"
+      ],
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "test-excel-demo: x64",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "publish: Excel add-in"
+      ],
+      "command": "powershell",
+      "type": "process",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/tools/Test-ExcelAddIn.ps1",
+        "-Bitness",
+        "x64",
+        "-WorkbookPath",
+        "${workspaceFolder}/tests/MaterialLibrary.Examples/Demo.xlsx",
+        "-AddInPath",
+        "${workspaceFolder}/publish/excel/packed/MaterialLibrary.Excel-AddIn64-packed.xll",
+        "-DatabasePath",
+        "${workspaceFolder}/src/MaterialLibrary/data/ASME_Materials.db"
+      ],
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     }
   ]
 }

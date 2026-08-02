@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LibraryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <ConfigurationVersion>1.0.0</ConfigurationVersion>
+  <ConfigurationVersion>1.0.2</ConfigurationVersion>
   <General>
     <EnableDiagnostics>false</EnableDiagnostics>
     <StrictValidation>true</StrictValidation>
@@ -55,7 +55,7 @@
     <ExportFolder>./export</ExportFolder>
     <AutoCreateFolders>true</AutoCreateFolders>
     <MaterialDatabaseFolder>C:\Users\ganfossi\Documents\DataBase\data</MaterialDatabaseFolder>
-    <AsmeMaterialDatabaseFile>asme_materials.db</AsmeMaterialDatabaseFile>
+    <AsmeMaterialDatabaseFile>ASME_Materials.db</AsmeMaterialDatabaseFile>
     <EnMaterialDatabaseFile>en_materials.db</EnMaterialDatabaseFile>
   </Io>
 </LibraryConfiguration>

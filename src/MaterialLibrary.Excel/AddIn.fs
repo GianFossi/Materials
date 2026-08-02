@@ -1,6 +1,7 @@
 namespace MaterialLibrary.Excel
 
 open ExcelDna.Integration
+open SQLitePCL
 
 /// <summary>
 /// Excel-DNA add-in lifecycle hooks. Excel-DNA discovers any type implementing
@@ -17,6 +18,7 @@ type AddIn() =
         /// </summary>
         member _.AutoOpen() =
             try
+                Batteries_V2.Init()
                 LibraryCache.ensureLoaded ()
             with _ ->
                 ()

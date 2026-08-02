@@ -123,6 +123,7 @@ public sealed class WpfSmokeTests
         public void ShowInformation(string message) { }
         public bool ConfirmDelete(string materialId) => false;
         public bool ConfirmDestructiveSql(string sql) => false;
+        public bool ConfirmOverwriteReference(string path) => false;
         public bool ConfirmDiscardChanges(string context) => true;
         public Material? EditMaterial(Material? existing) => null;
         public Material? EditMaterialTables(Material material) => null;

@@ -18,8 +18,10 @@
     <RootNamespace>MaterialLibraryCrudApp</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <!-- Surfaces CS1591 for any undocumented public member, per the project documentation rules. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <IsPackable>false</IsPackable>
     <Title>Material Library CRUD App</Title>
     <Description>Windows desktop (WPF, C#/MVVM) application for creating, browsing, editing, and deleting MaterialLibrary materials and saving/loading material library JSON files.</Description>
@@ -40,3 +42,4 @@
   </ItemGroup>
 
 </Project>
+

@@ -24,6 +24,11 @@ public sealed class TransactionJournal
     private readonly string _redoPath;
     private readonly JsonSerializerOptions _options = new() { WriteIndented = true };
 
+    /// <summary>Creates a journal.</summary>
+    /// <param name="path">
+    /// Journal file path; defaults to <c>crud-transactions.json</c> under the user's local
+    /// application data. The redo stack is kept beside it.
+    /// </param>
     public TransactionJournal(string? path = null)
     {
         _path = path ?? Path.Combine(
@@ -32,6 +37,12 @@ public sealed class TransactionJournal
         _redoPath = Path.Combine(Path.GetDirectoryName(_path)!, "crud-redo.json");
     }
 
+    /// <summary>Reads the undo stack.</summary>
+    /// <returns>Entries oldest first; empty when the file is absent or unreadable.</returns>
+    /// <remarks>
+    /// A corrupt or partially written journal returns empty rather than throwing: losing undo
+    /// history is an acceptable outcome, blocking the application over it is not.
+    /// </remarks>
     public IReadOnlyList<TransactionJournalEntry> Load()
     {
         try
@@ -45,6 +56,9 @@ public sealed class TransactionJournal
         }
     }
 
+    /// <summary>Records a committed transaction on the undo stack.</summary>
+    /// <param name="entry">Transaction to record.</param>
+    /// <param name="maximumEntries">Cap on retained entries; the oldest are dropped past this.</param>
     public void Append(TransactionJournalEntry entry, int maximumEntries = 100)
     {
         try
@@ -62,6 +76,8 @@ public sealed class TransactionJournal
         }
     }
 
+    /// <summary>Removes an entry from the undo stack, typically after it has been reverted.</summary>
+    /// <param name="entry">Entry to remove, matched on timestamp, database path, and table.</param>
     public void Remove(TransactionJournalEntry entry)
     {
         try
@@ -73,6 +89,8 @@ public sealed class TransactionJournal
         catch { }
     }
 
+    /// <summary>Reads the redo stack.</summary>
+    /// <returns>Entries oldest first; empty when the file is absent or unreadable.</returns>
     public IReadOnlyList<TransactionJournalEntry> LoadRedo()
     {
         try
@@ -83,6 +101,8 @@ public sealed class TransactionJournal
         catch { return []; }
     }
 
+    /// <summary>Pushes a reverted transaction onto the redo stack.</summary>
+    /// <param name="entry">Transaction that was just undone.</param>
     public void PushRedo(TransactionJournalEntry entry)
     {
         try
@@ -95,11 +115,15 @@ public sealed class TransactionJournal
         catch { }
     }
 
+    /// <summary>Empties the redo stack.</summary>
+    /// <remarks>Called when a new edit is committed, which invalidates any pending redo.</remarks>
     public void ClearRedo()
     {
         try { if (File.Exists(_redoPath)) File.Delete(_redoPath); } catch { }
     }
 
+    /// <summary>Removes an entry from the redo stack, typically after it has been reapplied.</summary>
+    /// <param name="entry">Entry to remove, matched on timestamp, database path, and table.</param>
     public void RemoveRedo(TransactionJournalEntry entry)
     {
         try

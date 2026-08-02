@@ -8,6 +8,13 @@ namespace MaterialLibraryCrudApp.Services;
 /// <summary>Applies the inverse of one committed journal transaction atomically.</summary>
 public static class TransactionReverter
 {
+    /// <summary>Reapplies a previously reverted transaction (redo).</summary>
+    /// <param name="databasePath">Database to write; always the working copy.</param>
+    /// <param name="entry">Journal entry whose recorded "after" values are restored.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when a statement affects a number of rows other than one, which means the database no
+    /// longer matches the journal. The surrounding transaction is then rolled back whole.
+    /// </exception>
     public static void Apply(string databasePath, TransactionJournalEntry entry)
     {
         using var connection = new SqliteConnection($"Data Source={databasePath}"); connection.Open();
@@ -35,6 +42,13 @@ public static class TransactionReverter
         transaction.Commit();
     }
 
+    /// <summary>Undoes a committed transaction by applying its inverse.</summary>
+    /// <param name="databasePath">Database to write; always the working copy.</param>
+    /// <param name="entry">Journal entry whose recorded "before" values are restored.</param>
+    /// <remarks>
+    /// Changes are replayed in reverse order inside one transaction, so a partially applied undo
+    /// can never be committed.
+    /// </remarks>
     public static void Revert(string databasePath, TransactionJournalEntry entry)
     {
         using var connection = new SqliteConnection($"Data Source={databasePath}");

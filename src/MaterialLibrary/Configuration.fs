@@ -145,7 +145,7 @@ module Configuration =
           ExtrapolateFlat = false }
 
     let createDefault () : LibraryConfiguration =
-        { ConfigurationVersion = "1.0.1"
+        { ConfigurationVersion = "1.0.2"
           General =
             { EnableDiagnostics = false
               StrictValidation = true
@@ -177,7 +177,7 @@ module Configuration =
               ExportFolder = "./export"
               AutoCreateFolders = true
               MaterialDatabaseFolder = @"C:\Users\ganfossi\Documents\DataBase\data"
-              AsmeMaterialDatabaseFile = "asme_materials.db"
+              AsmeMaterialDatabaseFile = "ASME_Materials.db"
               EnMaterialDatabaseFile = "en_materials.db" } }
 
     /// <summary>
@@ -302,9 +302,9 @@ module Configuration =
         else
             Path.Combine(baseDir, fallbackFileName)
 
-    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>asme_materials.db</c>).</summary>
+    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>ASME_Materials.db</c>).</summary>
     let resolveAsmeDatabasePath (baseDirectory: string option) : string =
-        resolveDatabasePath baseDirectory getAsmeDatabasePath "asme_materials.db"
+        resolveDatabasePath baseDirectory getAsmeDatabasePath "ASME_Materials.db"
 
     /// <summary>Resolves the default EN database path (configuration file if present, else a sibling <c>en_materials.db</c>).</summary>
     let resolveEnDatabasePath (baseDirectory: string option) : string =
@@ -406,3 +406,4 @@ module Configuration =
         loadOrCreateDefault path
         |> Result.map update
         |> Result.bind (fun updated -> save path updated |> Result.map (fun () -> updated))
+

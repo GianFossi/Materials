@@ -8,11 +8,14 @@
     <LangVersion>latest</LangVersion>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <Nullable>enable</Nullable>
-    <Version>1.0.1</Version>
-    <PackageVersion>1.0.1</PackageVersion>
+    <Version>1.0.2</Version>
+    <PackageVersion>1.0.2</PackageVersion>
     <Title>Material Library CRUD</Title>
     <Description>Create, read, update, and delete helpers for MaterialLibrary materials, stored tables, configuration, and staged XML data.</Description>
     <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>
+    <PackageProjectUrl>https://github.com/GianFossi/Materials</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GianFossi/Materials.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
   </PropertyGroup>
 
@@ -40,3 +43,4 @@
   </ItemGroup>
 
 </Project>
+

@@ -8,7 +8,7 @@
     <LangVersion>latest</LangVersion>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <Nullable>enable</Nullable>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Title>Material Library - Excel Add-In</Title>
     <Description>Excel-DNA add-in exposing MaterialLibrary material search, complete property tables, and temperature/size-interpolated property lookups as Excel worksheet functions.</Description>
     <Authors>Gian-Luca Brembana (Brembana &amp; Rolle S.p.A.)</Authors>
@@ -27,7 +27,14 @@
     <Compile Include="MaterialSearchFunctions.fs" />
     <Compile Include="MaterialPersistenceFunctions.fs" />
     <Compile Include="PhysicalPropertyFunctions.fs" />
-    <Compile Include="StrengthPropertyFunctions.fs" />
+    <Compile Include="Strength\StrengthHelpers.fs" />
+    <Compile Include="Strength\TensileFunctions.fs" />
+    <Compile Include="Strength\AllowableStressFunctions.fs" />
+    <Compile Include="Strength\StressStrainFunctions.fs" />
+    <Compile Include="Strength\CyclicStrainFunctions.fs" />
+    <Compile Include="Strength\ExternalPressureFunctions.fs" />
+    <Compile Include="Strength\CreepModelFunctions.fs" />
+    <Compile Include="Strength\CreepRuptureFunctions.fs" />
     <Compile Include="AddIn.fs" />
   </ItemGroup>
 
@@ -41,3 +48,4 @@
   </ItemGroup>
 
 </Project>
+
