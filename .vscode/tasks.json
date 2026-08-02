@@ -73,6 +73,21 @@
       }
     },
     {
+      "label": "run: MaterialLibrary.App",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
       "label": "build: MaterialLibrary.Excel",
       "command": "dotnet",
       "type": "process",
