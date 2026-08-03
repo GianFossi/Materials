@@ -100,6 +100,9 @@ the missing tables** and links them to the existing `Materials` table:
   material into `MaterialDocumentStore` as its canonical JSON, which is the source of truth on read. That
   document is what guarantees tables with no dedicated schema - creep models, stress-strain curves, fatigue
   curves - survive a round trip without loss.
+- The **Raw Tables** workspace now lists every SQLite table/view exposed by `sqlite_master`, including
+  SQLite-managed internal tables (for example `sqlite_sequence`) so maintenance queries and direct CRUD
+  operations can be performed from the same workflow.
 - **The file you pick is never written to.** Opening a database copies it to a `.working.db` beside the
   original and every operation targets the copy; "Save Working Copy As..." is the only route back to a
   permanent file.
