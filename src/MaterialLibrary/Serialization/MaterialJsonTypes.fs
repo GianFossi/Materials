@@ -65,12 +65,12 @@ type StrengthPropertiesJson =
       StressRuptureCurves: StressRuptureTableJson list
       [<JsonPropertyName("fatigueCurves")>]
       FatigueCurves: FatigueTableJson list
-      [<JsonPropertyName("allowableStresses")>]
-      AllowableStresses: AllowableStress list option
       [<JsonPropertyName("allowableStressDatasets")>]
       AllowableStressDatasets: AllowableStressDatasetJson list
-      [<JsonPropertyName("tensileProperties")>]
-      TensileProperties: TensileProperties list option
+      [<JsonPropertyName("syTable")>]
+      SyTable: PropertyTableJson option
+      [<JsonPropertyName("suTable")>]
+      SuTable: PropertyTableJson option
       [<JsonPropertyName("compressionProperties")>]
       CompressionProperties: CompressionPropertiesJson list option
       [<JsonPropertyName("nortonModels")>]

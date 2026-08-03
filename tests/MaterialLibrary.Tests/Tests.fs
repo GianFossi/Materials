@@ -226,12 +226,15 @@ let ``requested database library loads six materials and classifies allowable st
         materials
         |> List.find (fun material -> material.Specification = "SA-193" && material.Grade = "B7")
 
-    let b7TensileAt400 =
-        b7.StrengthProperties.TensileProperties
-        |> List.find (fun properties -> properties.Temperature = 400.0)
+    let b7SyAt400 =
+        match b7.StrengthProperties.SyTable with
+        | None -> failwith "Expected SyTable to be populated for SA-193 B7"
+        | Some table ->
+            table.Columns
+            |> List.collect (fun col -> col.Entries)
+            |> List.find (fun e -> e.X = 400.0)
 
-    Assert.Equal(381.0, b7TensileAt400.YieldStrength, 12)
-    Assert.Equal(629.0, b7TensileAt400.TensileStrength, 12)
+    Assert.Equal(381.0, b7SyAt400.Value, 12)
     Assert.Equal(3, b7.StrengthProperties.AllowableStressDatasets.Length)
     Assert.Equal<float option list>(
         [ Some 64.0; Some 100.0; Some 180.0 ],
@@ -333,12 +336,29 @@ let ``library handles null values at public boundaries`` () =
 let ``material JSON round trip preserves advanced properties`` () =
     let material = createTestMaterial ()
 
-    let tensile =
-        { Temperature = 400.0
-          YieldStrength = 180.0
-          TensileStrength = 390.0
-          ElongationPercent = 20.0
-          ReductionOfAreaPercent = 45.0 }
+    let syTable =
+        PropertyTable.create1D
+            "Sy"
+            "Temperature"
+            "°C"
+            "Sy"
+            "MPa"
+            XBoundaryPolicy.FlatExtrapolate
+            [ { X = 400.0; Value = 180.0 }
+              { X = 450.0; Value = 165.0 } ]
+        |> expectOk
+
+    let suTable =
+        PropertyTable.create1D
+            "Su"
+            "Temperature"
+            "°C"
+            "Su"
+            "MPa"
+            XBoundaryPolicy.FlatExtrapolate
+            [ { X = 400.0; Value = 390.0 }
+              { X = 450.0; Value = 370.0 } ]
+        |> expectOk
 
     let compression =
         { Temperature = 400.0
@@ -360,14 +380,8 @@ let ``material JSON round trip preserves advanced properties`` () =
 
     let strengthProperties =
         { material.StrengthProperties with
-            AllowableStresses =
-                [ { Temperature = 400.0
-                    Section_I_ServiceLevel_A = Some 120.0
-                    Section_I_ServiceLevel_B = None
-                    Section_I_ServiceLevel_C = None
-                    Section_I_ServiceLevel_D = None
-                    Section_II_Weld = Some 100.0 } ]
-            TensileProperties = [ tensile ]
+            SyTable = Some syTable
+            SuTable = Some suTable
             CompressionProperties = Some [ compression ]
             ExternalPressureTables = [ externalPressureTable ]
             NortonModels = [ { Temperature = 400.0; A = 1.0e-8; N = 4.0; M = 0.3 } ]
@@ -760,7 +774,7 @@ let ``material JSON strictly enforces current schema`` () =
 
     let json = material |> MaterialSerialization.toJsonString
     let replaceVersion version =
-        Regex("\"schemaVersion\"\\s*:\\s*14").Replace(json, $"\"schemaVersion\": {version}", 1)
+        Regex("\"schemaVersion\"\\s*:\\s*15").Replace(json, $"\"schemaVersion\": {version}", 1)
 
     Assert.Contains("\"schemaVersion\"", json)
     Assert.Contains("\"family\":\"LAS2.25\"", json)

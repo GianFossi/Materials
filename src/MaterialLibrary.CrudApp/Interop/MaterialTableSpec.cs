@@ -107,8 +107,6 @@ public static class MaterialTableSpecs
         Density(),
         SpecificHeat(),
         ThermalConductivity(),
-        TensileProperties(),
-        AllowableStresses(),
         CompressionProperties(),
         NortonModels(),
         GarofaloModels(),
@@ -250,54 +248,6 @@ public static class MaterialTableSpecs
             material));
 
     // ── Strength property tables ──────────────────────────────────────────────
-
-    /// <summary>Measured tensile properties vs temperature.</summary>
-    private static MaterialTableSpec TensileProperties() => new(
-        "Tensile properties",
-        [
-            Temperature,
-            new MaterialTableColumn("Yield strength", "MPa"),
-            new MaterialTableColumn("Tensile strength", "MPa"),
-            new MaterialTableColumn("Elongation", "%"),
-            new MaterialTableColumn("Reduction of area", "%"),
-        ],
-        material => material.StrengthProperties.TensileProperties
-            .ToReadOnlyList()
-            .Select(row => new string?[]
-            {
-                Num(row.Temperature), Num(row.YieldStrength), Num(row.TensileStrength),
-                Num(row.ElongationPercent), Num(row.ReductionOfAreaPercent),
-            })
-            .ToList(),
-        (material, rows) => StrengthPropertyCrud.setTensileProperties(
-            rows.Select(r => new TensileProperties(D(r, 0), D(r, 1), D(r, 2), D(r, 3), D(r, 4))).ToFSharpList(),
-            material));
-
-    /// <summary>Allowable stress by ASME service level. Every stress column is optional.</summary>
-    private static MaterialTableSpec AllowableStresses() => new(
-        "Allowable stresses",
-        [
-            Temperature,
-            new MaterialTableColumn("Sec. I level A", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. I level B", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. I level C", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. I level D", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. II weld", "MPa", IsOptional: true),
-        ],
-        material => material.StrengthProperties.AllowableStresses
-            .ToReadOnlyList()
-            .Select(row => new string?[]
-            {
-                Num(row.Temperature),
-                Num(row.Section_I_ServiceLevel_A), Num(row.Section_I_ServiceLevel_B),
-                Num(row.Section_I_ServiceLevel_C), Num(row.Section_I_ServiceLevel_D),
-                Num(row.Section_II_Weld),
-            })
-            .ToList(),
-        (material, rows) => StrengthPropertyCrud.setAllowableStresses(
-            rows.Select(r => new AllowableStress(
-                D(r, 0), DOpt(r, 1), DOpt(r, 2), DOpt(r, 3), DOpt(r, 4), DOpt(r, 5))).ToFSharpList(),
-            material));
 
     /// <summary>Compressive strength and yield vs temperature. Optional in the domain.</summary>
     private static MaterialTableSpec CompressionProperties() => new(

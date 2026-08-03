@@ -14,7 +14,7 @@ open ROP
 module MaterialSerialization =
 
     [<Literal>]
-    let CurrentSchemaVersion = 14
+    let CurrentSchemaVersion = 15
 
     let private validateSchemaVersion version =
         match version with
@@ -182,7 +182,6 @@ module MaterialSerialization =
             sp.StressRuptureCurves
             |> List.map SpecializedTableSerialization.stressRuptureTableToJson
           FatigueCurves = sp.FatigueCurves |> List.map SpecializedTableSerialization.fatigueTableToJson
-          AllowableStresses = Some sp.AllowableStresses
           AllowableStressDatasets =
             sp.AllowableStressDatasets
             |> List.map (fun dataset ->
@@ -204,7 +203,8 @@ module MaterialSerialization =
                   CreepTemperature = dataset.CreepTemperature
                   AsmeNoteReferences = dataset.AsmeNoteReferences |> List.map asmeNoteReferenceToJson
                   Notes = dataset.Notes })
-          TensileProperties = Some sp.TensileProperties
+          SyTable = sp.SyTable |> Option.map PropertyTableSerialization.toJson
+          SuTable = sp.SuTable |> Option.map PropertyTableSerialization.toJson
           CompressionProperties =
             sp.CompressionProperties
             |> Option.map (List.map compressionPropertiesToJson)
@@ -327,10 +327,20 @@ module MaterialSerialization =
                     })
                 |> sequenceResultList
 
+            let! syTable =
+                match json.SyTable with
+                | None -> Ok None
+                | Some t -> PropertyTableSerialization.fromJson t |> Result.map Some
+
+            let! suTable =
+                match json.SuTable with
+                | None -> Ok None
+                | Some t -> PropertyTableSerialization.fromJson t |> Result.map Some
+
             return
-                { AllowableStresses = defaultArg json.AllowableStresses []
+                { SyTable = syTable
+                  SuTable = suTable
                   AllowableStressDatasets = allowableStressDatasets
-                  TensileProperties = defaultArg json.TensileProperties []
                   CompressionProperties = compressionProperties
                   StressStrainTables = stressStrainTables
                   CyclicStrainTables = cyclicCurves

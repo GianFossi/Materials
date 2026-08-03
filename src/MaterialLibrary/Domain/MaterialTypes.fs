@@ -13,12 +13,14 @@ namespace MaterialLibrary.Domain
 /// </remarks>
 type StrengthProperties =
     {
-        /// ASME allowable stresses at one or more temperatures (degC → MPa, DIV 1 or DIV 2).
-        AllowableStresses: AllowableStress list
+        /// Yield strength Sy vs temperature (2D PropertyTable: X=temperature degC, Y=Sy MPa,
+        /// columns keyed by thickness/size range mm). None when no data is available.
+        SyTable: PropertyTable option
+        /// Ultimate tensile strength Su vs temperature (2D PropertyTable: X=temperature degC, Y=Su MPa,
+        /// columns keyed by thickness/size range mm). None when no data is available.
+        SuTable: PropertyTable option
         /// Database allowable-stress rows with source table, case, and size-range identity preserved.
         AllowableStressDatasets: AllowableStressDataset list
-        /// Tensile property sets at one or more temperatures (strengths: Sy, Su in MPa).
-        TensileProperties: TensileProperties list
         /// Optional compressive property sets at one or more temperatures (strengths in MPa).
         CompressionProperties: CompressionProperties list option
         /// Stress-strain curves (X=strain %, Y=stress MPa) at one or more temperatures.
@@ -283,9 +285,9 @@ module Material =
           BasicProperties = basicProps
           PhysicalProperties = physicalTable
           StrengthProperties =
-            { AllowableStresses = []
+            { SyTable = None
+              SuTable = None
               AllowableStressDatasets = []
-              TensileProperties = []
               CompressionProperties = None
               StressStrainTables = []
               CyclicStrainTables = []
@@ -454,17 +456,6 @@ module Material =
         let smuts = mat.BasicProperties.SpecifiedMinimumUltimateStrength
 
         if smuts > 0.0 then Some(smys / smuts) else None
-
-    /// <summary>Returns a new material with the tensile properties list replaced.</summary>
-    /// <param name="props">List of <see cref="TensileProperties"/> records (one per temperature).</param>
-    /// <param name="mat">The source material to update.</param>
-    /// <returns>Updated <see cref="Material"/> with refreshed <c>LastModified</c>.</returns>
-    let addTensileProperties props mat =
-        { mat with
-            StrengthProperties =
-                { mat.StrengthProperties with
-                    TensileProperties = props |> List.sortBy (fun p -> p.Temperature) }
-            LastModified = System.DateTime.UtcNow }
 
     /// <summary>Returns a new material with the stress-strain table list replaced.</summary>
     /// <param name="tables">Stress-strain tables keyed by temperature and optional duration.</param>

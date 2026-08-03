@@ -1,12 +1,15 @@
 using System.Collections.ObjectModel;
+using MaterialLibrary.Crud;
 using MaterialLibrary.Domain;
 using MaterialLibraryCrudApp.Interop;
+using Microsoft.FSharp.Core;
 
 namespace MaterialLibraryCrudApp.ViewModels;
 
 /// <summary>
 /// Drives the material-tables editor: a list of editable tables on the left, the rows of the
-/// selected table on the right.
+/// selected table on the right, plus dedicated size-ranged editors for Sy, Su, and allowable
+/// stress tables.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -36,7 +39,7 @@ public sealed class MaterialTablesViewModel : ObservableObject
         _working = material;
         _selectedTable = Tables[0];
 
-        AddRowCommand = new RelayCommand(AddRow);
+        AddRowCommand    = new RelayCommand(AddRow);
         DeleteRowCommand = new RelayCommand(DeleteRow, () => SelectedRow is not null);
         StressStrainEditor = new StressStrainTableEditorViewModel(material);
         CreepEditor = new CreepTableEditorViewModel(material);
@@ -46,6 +49,17 @@ public sealed class MaterialTablesViewModel : ObservableObject
         ExternalPressureEditor = new ExternalPressureTableEditorViewModel(material);
         LarsonMillerEditor = new LarsonMillerEditorViewModel(material);
 
+        // Strength size-ranged editors.
+        SyEditor = new SyTableEditorViewModel();
+        SuEditor = new SuTableEditorViewModel();
+        AllowableDiv1Editor = new AllowableStressTableEditorViewModel(
+            AllowableStressSource.Division1AllowableStress);
+        AllowableDiv1HighEditor = new AllowableStressTableEditorViewModel(
+            AllowableStressSource.Division1HighAllowableStress);
+        AllowableDiv2Editor = new AllowableStressTableEditorViewModel(
+            AllowableStressSource.Division2AllowableStress);
+
+        LoadStrengthEditors(material);
         LoadRows();
     }
 
@@ -69,6 +83,17 @@ public sealed class MaterialTablesViewModel : ObservableObject
     public ExternalPressureTableEditorViewModel ExternalPressureEditor { get; }
     /// <summary>Editor for Larson-Miller curves.</summary>
     public LarsonMillerEditorViewModel LarsonMillerEditor { get; }
+
+    /// <summary>Size-ranged editor for the Sy (yield strength, MPa) table.</summary>
+    public SyTableEditorViewModel SyEditor { get; }
+    /// <summary>Size-ranged editor for the Su (ultimate tensile strength, MPa) table.</summary>
+    public SuTableEditorViewModel SuEditor { get; }
+    /// <summary>Size-ranged editor for the Allowable Stress Division 1 Normal (MPa) table.</summary>
+    public AllowableStressTableEditorViewModel AllowableDiv1Editor { get; }
+    /// <summary>Size-ranged editor for the Allowable Stress Division 1 High (MPa) table.</summary>
+    public AllowableStressTableEditorViewModel AllowableDiv1HighEditor { get; }
+    /// <summary>Size-ranged editor for the Allowable Stress Division 2 (MPa) table.</summary>
+    public AllowableStressTableEditorViewModel AllowableDiv2Editor { get; }
 
     /// <summary>Identifier of the material being edited, shown in the window title.</summary>
     public string Title => $"Tables - {_original.Id}";
@@ -123,11 +148,12 @@ public sealed class MaterialTablesViewModel : ObservableObject
     public RelayCommand DeleteRowCommand { get; }
 
     /// <summary>
-    /// Commits the visible grid and returns the material carrying every table edit.
+    /// Commits the visible grid and all size-ranged strength editors, then returns the updated
+    /// material.
     /// </summary>
     /// <param name="material">Receives the updated material on success; <c>null</c> on failure.</param>
     /// <param name="error">Receives a user-facing validation message on failure; <c>null</c> on success.</param>
-    /// <returns><c>true</c> when the current table was valid and the result was produced.</returns>
+    /// <returns><c>true</c> when every editor was valid and the result was produced.</returns>
     public bool TryBuildMaterial(out Material? material, out string? error)
     {
         if (!TryCommitCurrentTable(out error))
@@ -179,8 +205,70 @@ public sealed class MaterialTablesViewModel : ObservableObject
             return false;
         }
 
-        material = withLarsonMiller;
+        // Apply size-ranged Sy / Su tables.
+        if (!SyEditor.TryBuildTable(out var syTable, out error))
+        {
+            material = null;
+            error = $"Sy table: {error}";
+            return false;
+        }
+
+        var withSy = StrengthPropertyCrud.setSyTable(
+            syTable != null ? FSharpOption<PropertyTable>.Some(syTable) : FSharpOption<PropertyTable>.None,
+            withLarsonMiller);
+
+        if (!SuEditor.TryBuildTable(out var suTable, out error))
+        {
+            material = null;
+            error = $"Su table: {error}";
+            return false;
+        }
+
+        var withSu = StrengthPropertyCrud.setSuTable(
+            suTable != null ? FSharpOption<PropertyTable>.Some(suTable) : FSharpOption<PropertyTable>.None,
+            withSy);
+
+        // Apply allowable stress tables (each editor only replaces its own source).
+        var existing = withSu.StrengthProperties.AllowableStressDatasets.ToReadOnlyList();
+
+        if (!AllowableDiv1Editor.TryBuildDatasets(existing, out var afterDiv1, out error))
+        {
+            material = null;
+            error = $"Allowable Div.1: {error}";
+            return false;
+        }
+
+        if (!AllowableDiv1HighEditor.TryBuildDatasets(afterDiv1!, out var afterDiv1H, out error))
+        {
+            material = null;
+            error = $"Allowable Div.1 High: {error}";
+            return false;
+        }
+
+        if (!AllowableDiv2Editor.TryBuildDatasets(afterDiv1H!, out var afterDiv2, out error))
+        {
+            material = null;
+            error = $"Allowable Div.2: {error}";
+            return false;
+        }
+
+        material = StrengthPropertyCrud.setAllowableStressDatasets(
+            afterDiv2!.ToFSharpList(), withSu);
         return true;
+    }
+
+    // ── Internal helpers ─────────────────────────────────────────────────────
+
+    /// <summary>Loads all five size-ranged strength editors from a material snapshot.</summary>
+    private void LoadStrengthEditors(Material m)
+    {
+        var sp = m.StrengthProperties;
+
+        SyEditor.LoadFromTable(sp.SyTable != null ? sp.SyTable.Value : null);
+        SuEditor.LoadFromTable(sp.SuTable != null ? sp.SuTable.Value : null);
+        AllowableDiv1Editor.LoadFromMaterial(m);
+        AllowableDiv1HighEditor.LoadFromMaterial(m);
+        AllowableDiv2Editor.LoadFromMaterial(m);
     }
 
     /// <summary>Loads the selected table's rows from the working material into the grid.</summary>
