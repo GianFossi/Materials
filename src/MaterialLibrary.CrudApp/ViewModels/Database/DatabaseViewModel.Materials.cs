@@ -206,9 +206,13 @@ public sealed partial class DatabaseViewModel
         _imported.RemoveAll(m => string.Equals(m.Id, material.Id, StringComparison.Ordinal));
         _imported.Add(material);
 
+        // Sy and Su are 2D tables keyed by size range, so the useful count is how many size
+        // columns were published, not a flat row count.
+        var syColumns = material.StrengthProperties.SyTable.AsNullableRef()?.Columns.Length ?? 0;
+
         var source = fromDocument
             ? "stored document"
-            : $"ASME reference tables ({material.StrengthProperties.TensileProperties.Length} tensile row(s), "
+            : $"ASME reference tables ({syColumns} Sy size group(s), "
               + $"{material.StrengthProperties.AllowableStressDatasets.Length} allowable-stress set(s))";
 
         AppLog.Current.Information($"Imported '{material.Id}' from the {source}.");

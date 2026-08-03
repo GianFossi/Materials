@@ -70,8 +70,8 @@ type AllowableStressDataset =
         Source: AllowableStressSource
         Case: AllowableStressCase
         Table: PropertyTable
-        /// Size, diameter, or thickness band this curve applies to (mm).
-        SizeRange: SizeThicknessRange
+        SizeMinimum: float option
+        SizeMaximum: float option
         MaximumTemperature: float option
         CreepTemperature: float option
         /// Structured ASME Section II-D references imported from the source row.
@@ -80,20 +80,28 @@ type AllowableStressDataset =
         Notes: string option
     }
 
-/// <summary>Validation, lookup, and display helpers for <see cref="AllowableStressDataset"/>.</summary>
 module AllowableStressDataset =
-    /// <summary>Checks the row identity, the size band, and the underlying curve.</summary>
-    /// <param name="dataset">Dataset to validate.</param>
-    /// <returns><c>Ok dataset</c> when usable, otherwise a describing error.</returns>
-    let validate (dataset: AllowableStressDataset) : Result<AllowableStressDataset, MaterialError> =
+    let private isFinite value =
+        not (Double.IsNaN value || Double.IsInfinity value)
+
+    let validate dataset =
         if dataset.DatabaseRowId <= 0L then
             Error(MaterialError.InvalidOperation "Allowable-stress database row ID must be positive")
+        elif dataset.SizeMinimum |> Option.exists (isFinite >> not) then
+            Error(MaterialError.InvalidOperation "Allowable-stress minimum size must be finite")
+        elif dataset.SizeMaximum |> Option.exists (isFinite >> not) then
+            Error(MaterialError.InvalidOperation "Allowable-stress maximum size must be finite")
+        elif
+            match dataset.SizeMinimum, dataset.SizeMaximum with
+            | Some lower, Some upper -> lower >= upper
+            | _ -> false
+        then
+            Error(MaterialError.InvalidOperation "Allowable-stress size range must be ascending")
         else
-            SizeThicknessRange.validate "Allowable-stress" dataset.SizeRange
-            |> Result.bind (fun _ -> PropertyTable.validate dataset.Table)
+            PropertyTable.validate dataset.Table
             |> Result.map (fun _ -> dataset)
 
-    /// <summary>Name of the Code section a source belongs to, for display.</summary>
+    /// <summary>Name of the Code section a source belongs to, for display and for SQL projections.</summary>
     /// <param name="source">Source table the dataset was read from.</param>
     /// <returns>Short label such as <c>"VIII-1"</c>.</returns>
     let divisionLabel source =
@@ -103,35 +111,10 @@ module AllowableStressDataset =
         | Division2AllowableStress -> "VIII-2"
         | BoltingAllowableStress -> "Bolting"
 
-    /// <summary>Name of the allowable-stress case, for display.</summary>
+    /// <summary>Name of the allowable-stress case, for display and for SQL projections.</summary>
     /// <param name="case">Case carried by the dataset.</param>
     /// <returns><c>"Normal"</c> or <c>"High"</c>.</returns>
     let caseLabel case =
         match case with
         | StandardStrengthAllowableStress -> "Normal"
         | HighStrengthAllowableStress -> "High"
-
-    /// <summary>Selects the datasets of one source that cover a given section size.</summary>
-    /// <param name="source">Source table wanted.</param>
-    /// <param name="size">Governing size, diameter, or thickness (mm).</param>
-    /// <param name="datasets">Datasets to search.</param>
-    /// <returns>The matching datasets, lightest band first.</returns>
-    let forSize source (size: float) (datasets: AllowableStressDataset list) =
-        datasets
-        |> List.filter (fun dataset ->
-            dataset.Source = source && SizeThicknessRange.contains size dataset.SizeRange)
-        |> List.sortBy (fun dataset -> SizeThicknessRange.sortKey dataset.SizeRange, dataset.DatabaseRowId)
-
-    /// <summary>Sort key grouping datasets by source, then from the lightest band to the heaviest.</summary>
-    /// <param name="dataset">Dataset to rank.</param>
-    /// <returns>A tuple usable directly with <c>List.sortBy</c>.</returns>
-    let sortKey (dataset: AllowableStressDataset) =
-        let sourceOrder =
-            match dataset.Source with
-            | Division1AllowableStress -> 0
-            | Division1HighAllowableStress -> 1
-            | Division2AllowableStress -> 2
-            | BoltingAllowableStress -> 3
-
-        let lower, upper = SizeThicknessRange.sortKey dataset.SizeRange
-        sourceOrder, lower, upper, dataset.DatabaseRowId

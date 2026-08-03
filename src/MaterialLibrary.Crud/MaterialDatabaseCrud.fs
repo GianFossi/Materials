@@ -230,8 +230,8 @@ module MaterialDatabaseCrud =
     /// is the value column; the ones before it are text.
     /// </param>
     /// <param name="datasets">
-    /// For each dataset: its size band, the text values of the leading discriminator columns, the
-    /// optional numeric metadata columns, and the curve to flatten.
+    /// For each dataset: its size bounds in mm, the text values of the leading discriminator
+    /// columns, the optional numeric metadata columns, and the curve to flatten.
     /// </param>
     /// <remarks>
     /// Every row repeats its band and discriminators. That denormalization is deliberate: a single
@@ -243,15 +243,15 @@ module MaterialDatabaseCrud =
         (databaseId: int64)
         (table: string)
         (extraColumns: string list)
-        (datasets: (SizeThicknessRange * string list * (string * float option) list * PropertyTable) list)
+        (datasets: ((float option * float option) * string list * (string * float option) list * PropertyTable) list)
         =
-        for sizeRange, discriminators, metadata, curve in datasets do
+        for (sizeMinimum, sizeMaximum), discriminators, metadata, curve in datasets do
             let valueColumn = List.last extraColumns
             let discriminatorColumns = extraColumns |> List.take (extraColumns.Length - 1)
 
             let columns =
                 discriminatorColumns
-                @ [ "SizeMinimum"; "SizeMinimumIncluded"; "SizeMaximum"; "SizeMaximumIncluded" ]
+                @ [ "SizeMinimum"; "SizeMaximum" ]
                 @ (metadata |> List.map fst)
                 @ [ "Temperature"; valueColumn ]
 
@@ -271,12 +271,8 @@ module MaterialDatabaseCrud =
                         discriminatorColumns
                         discriminators
 
-                    addOptional command "$SizeMinimum" sizeRange.Minimum
-                    command.Parameters.AddWithValue("$SizeMinimumIncluded", (if sizeRange.MinimumIncluded then 1 else 0))
-                    |> ignore
-                    addOptional command "$SizeMaximum" sizeRange.Maximum
-                    command.Parameters.AddWithValue("$SizeMaximumIncluded", (if sizeRange.MaximumIncluded then 1 else 0))
-                    |> ignore
+                    addOptional command "$SizeMinimum" sizeMinimum
+                    addOptional command "$SizeMaximum" sizeMaximum
 
                     for name, value in metadata do
                         addOptional command ("$" + name) value
@@ -440,48 +436,11 @@ module MaterialDatabaseCrud =
             |> List.map (fun (temperature, diffusivity) -> [ Some temperature; Some diffusivity ])
         )
 
-        // Elongation and reduction of area are room-temperature scalars, so they belong to the
-        // Materials row and the extension row, not to a per-temperature strength row.
-        insertRows
-            connection
-            databaseId
-            "MaterialTensileRows"
-            [ "Temperature"; "YieldStrength"; "TensileStrength" ]
-            (strength.TensileProperties
-             |> List.map (fun row -> [ Some row.Temperature; Some row.YieldStrength; Some row.TensileStrength ]))
-
-        // One row per (size band, temperature) point, with the band repeated on every row so a
-        // single row is meaningful on its own in SQL.
-        writeSizeBandedRows
-            connection
-            databaseId
-            "MaterialTensileStrengthDatasetRows"
-            [ "Kind"; "Strength" ]
-            (strength.TensileStrengthDatasets
-             |> List.map (fun dataset ->
-                 dataset.SizeRange,
-                 [ TensileStrengthDataset.kindSymbol dataset.Kind ],
-                 [],
-                 dataset.Table))
-
-        insertRows
-            connection
-            databaseId
-            "MaterialAllowableStressRows"
-            [ "Temperature"
-              "SectionIServiceLevelA"
-              "SectionIServiceLevelB"
-              "SectionIServiceLevelC"
-              "SectionIServiceLevelD"
-              "SectionIIWeld" ]
-            (strength.AllowableStresses
-             |> List.map (fun row ->
-                 [ Some row.Temperature
-                   row.Section_I_ServiceLevel_A
-                   row.Section_I_ServiceLevel_B
-                   row.Section_I_ServiceLevel_C
-                   row.Section_I_ServiceLevel_D
-                   row.Section_II_Weld ]))
+        // MaterialTensileRows and MaterialAllowableStressRows are legacy projection tables of the
+        // flat TensileProperties and AllowableStresses lists, which no longer exist: Sy and Su are
+        // now 2D tables keyed by size range, and the ASME allowables live in AllowableStressDatasets.
+        // Their definitions are kept for schema compatibility but nothing writes them; the JSON
+        // document in MaterialDocumentStore is the source of truth for those curves.
 
         // The ASME allowable stresses, one row per (division, case, size band, temperature). This is
         // the table that answers "what may this material carry", so the division and the normal/high
@@ -493,7 +452,7 @@ module MaterialDatabaseCrud =
             [ "Division"; "StressCase"; "AllowableStress" ]
             (strength.AllowableStressDatasets
              |> List.map (fun dataset ->
-                 dataset.SizeRange,
+                 (dataset.SizeMinimum, dataset.SizeMaximum),
                  [ AllowableStressDataset.divisionLabel dataset.Source
                    AllowableStressDataset.caseLabel dataset.Case ],
                  [ "MaximumTemperature", dataset.MaximumTemperature

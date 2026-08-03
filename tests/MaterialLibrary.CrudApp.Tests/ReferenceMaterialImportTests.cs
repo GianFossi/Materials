@@ -160,10 +160,11 @@ public sealed class ReferenceMaterialImportTests : IDisposable
         Assert.Equal(SampleName, material.Name);
         Assert.Equal(SampleSpecification, material.Specification);
 
-        // Assembled from the pivoted reference tables rather than from a stored document.
+        // Assembled from the pivoted reference tables rather than from a stored document. Sy is a
+        // 2D table keyed by size range, so presence is what matters, not a flat row count.
         Assert.True(
-            material.StrengthProperties.TensileProperties.Length > 0,
-            "the hydrated material carried no tensile rows");
+            !Microsoft.FSharp.Core.FSharpOption<PropertyTable>.get_IsNone(material.StrengthProperties.SyTable),
+            "the hydrated material carried no yield-strength table");
 
         // The status names the source, because a hydrated reference material is not the full object.
         Assert.Contains("ASME reference tables", viewModel.StatusMessage, StringComparison.Ordinal);

@@ -83,13 +83,9 @@ public sealed class MaterialTableSpec
 /// <remarks>
 /// <para>
 /// Covers every table in <see cref="Material"/> whose rows are flat, meaning one row of scalar
-/// values, plus the two size-grouped strength tables, which are flattened to one row per point with
-/// their group tags repeated and regrouped on commit.
-/// </para>
-/// <para>
-/// The remaining tables wrap a nested <c>Points</c> list plus per-table metadata - stress-strain,
-/// creep, stress-rupture, external pressure, cyclic strain, fatigue, Larson-Miller. They have their
-/// own master/detail editors and are not registered here; they are preserved untouched through
+/// values. The tables that wrap a nested <c>Points</c> list plus per-table metadata - stress-strain,
+/// creep, stress-rupture, external pressure, cyclic strain, fatigue, Larson-Miller - do not fit this
+/// one-grid shape and are not registered here; they are preserved untouched through
 /// <see cref="MaterialDraft"/> and the serializers.
 /// </para>
 /// <para>
@@ -103,23 +99,6 @@ public static class MaterialTableSpecs
     /// <summary>Standard temperature column shared by every table.</summary>
     private static readonly MaterialTableColumn Temperature = new("Temperature", "degC");
 
-    /// <summary>
-    /// The four columns that carry a Size/Diameter/Thickness band, shared by every size-grouped table.
-    /// </summary>
-    /// <remarks>
-    /// Both bounds are optional, meaning the band is open on that side. The inclusive flags are what
-    /// keep adjacent ASME bands disjoint - "up to 5 incl." and "over 5" share a boundary - so they
-    /// are editable rather than assumed. A blank flag reads as inclusive, which is how ASME prints an
-    /// unqualified limit.
-    /// </remarks>
-    private static readonly IReadOnlyList<MaterialTableColumn> SizeBandColumns =
-    [
-        new MaterialTableColumn("Size/thk min", "mm", IsOptional: true),
-        new MaterialTableColumn("Min incl.", "", IsOptional: true, IsText: true),
-        new MaterialTableColumn("Size/thk max", "mm", IsOptional: true),
-        new MaterialTableColumn("Max incl.", "", IsOptional: true, IsText: true),
-    ];
-
     /// <summary>Every table exposed by the generic editor.</summary>
     public static IReadOnlyList<MaterialTableSpec> All { get; } =
     [
@@ -129,10 +108,6 @@ public static class MaterialTableSpecs
         SpecificHeat(),
         ThermalConductivity(),
         ThermalDiffusivity(),
-        TensileProperties(),
-        TensileStrengthDatasets(),
-        AllowableStressDatasets(),
-        AllowableStresses(),
         CompressionProperties(),
         NortonModels(),
         GarofaloModels(),
@@ -205,196 +180,6 @@ public static class MaterialTableSpecs
             : FSharpOption<FSharpList<T>>.Some(list.ToFSharpList());
     }
 
-    // ── Size-grouped dataset helpers ──────────────────────────────────────────
-    //
-    // The generic editor shows one flat grid, but a size-grouped table is a list of curves, each
-    // tagged with the band it applies to. The two are bridged by flattening every curve to one row
-    // per point with its tag repeated, then regrouping on those tags when the grid is committed.
-    // Editing a tag on every row of a group therefore moves that whole group, and editing it on one
-    // row splits that point off into a group of its own - which is the behaviour a flat grid can
-    // express without a nested editor.
-
-    /// <summary>One temperature/value point of a flattened curve.</summary>
-    /// <param name="Temperature">Temperature (degC).</param>
-    /// <param name="Value">Value at that temperature, in the curve's own unit.</param>
-    private readonly record struct CurvePoint(double Temperature, double Value);
-
-    /// <summary>Rows sharing one set of grouping cells, with the points they carry.</summary>
-    /// <param name="Key">The grouping cells, taken from the first row of the group.</param>
-    /// <param name="Points">Points belonging to the group, in grid order.</param>
-    private sealed record DatasetGroup(string?[] Key, IReadOnlyList<CurvePoint> Points);
-
-    /// <summary>Flattens a curve to its points, ordered by temperature.</summary>
-    /// <param name="table">Curve to flatten.</param>
-    /// <returns>The points of every column, merged and sorted.</returns>
-    private static IEnumerable<CurvePoint> FlattenCurve(PropertyTable table) =>
-        table.Columns
-            .ToReadOnlyList()
-            .SelectMany(column => column.Entries.ToReadOnlyList())
-            .Select(entry => new CurvePoint(entry.X, entry.Value))
-            .OrderBy(point => point.Temperature);
-
-    /// <summary>Renders a size band as the four grid cells that describe it.</summary>
-    /// <param name="range">Band to render.</param>
-    /// <returns>Minimum, its inclusive flag, maximum, and its inclusive flag.</returns>
-    private static string?[] SizeBandCells(SizeThicknessRange range) =>
-    [
-        Num(range.Minimum),
-        range.MinimumIncluded ? "yes" : "no",
-        Num(range.Maximum),
-        range.MaximumIncluded ? "yes" : "no",
-    ];
-
-    /// <summary>Reads a size band back from four consecutive grid cells.</summary>
-    /// <param name="row">Row cells.</param>
-    /// <param name="index">Index of the minimum-bound cell.</param>
-    /// <returns>The band those cells describe.</returns>
-    private static SizeThicknessRange ParseSizeBand(string?[] row, int index) =>
-        new(
-            DOpt(row, index),
-            ParseInclusive(row[index + 1]),
-            DOpt(row, index + 2),
-            ParseInclusive(row[index + 3]));
-
-    /// <summary>Interprets an inclusive-flag cell.</summary>
-    /// <param name="cell">Cell text.</param>
-    /// <returns><c>false</c> only for an explicit negative; blank means inclusive.</returns>
-    /// <remarks>
-    /// Blank defaults to inclusive because that is how ASME prints an unqualified size limit, so a
-    /// user who leaves the cell empty gets the common case rather than an exclusive bound.
-    /// </remarks>
-    private static bool ParseInclusive(string? cell) =>
-        string.IsNullOrWhiteSpace(cell)
-        || !(cell.Trim().StartsWith('n') || cell.Trim().StartsWith('N') || cell.Trim() == "0");
-
-    /// <summary>Maps a strength-kind cell back to the domain case.</summary>
-    /// <param name="cell">Cell text, normally <c>"Sy"</c> or <c>"Su"</c>.</param>
-    /// <returns>The matching kind; anything unrecognised falls back to yield strength.</returns>
-    private static TensileStrengthKind ParseStrengthKind(string cell) =>
-        cell.Trim().Equals("Su", StringComparison.OrdinalIgnoreCase)
-            ? TensileStrengthKind.UltimateTensileStrengthSu
-            : TensileStrengthKind.YieldStrengthSy;
-
-    /// <summary>Maps the division and case cells back to the domain source and case.</summary>
-    /// <param name="division">Division cell, normally <c>"VIII-1"</c>, <c>"VIII-2"</c> or <c>"Bolting"</c>.</param>
-    /// <param name="stressCase">Case cell, normally <c>"Normal"</c> or <c>"High"</c>.</param>
-    /// <returns>The source table and the allowable-stress case they name.</returns>
-    /// <remarks>
-    /// The two cells are not independent: the higher alternative allowable stress only exists in
-    /// Division 1, so a "High" case is what selects the Division 1 high source. Marking a Division 2
-    /// or bolting row as high is meaningless and is normalised back to the standard case rather than
-    /// silently producing a source that has no such table.
-    /// </remarks>
-    private static (AllowableStressSource Source, AllowableStressCase Case) ParseDivisionAndCase(
-        string division,
-        string stressCase)
-    {
-        var text = division.Trim();
-        var isHigh = stressCase.Trim().StartsWith("H", StringComparison.OrdinalIgnoreCase);
-
-        if (text.Contains("2", StringComparison.Ordinal))
-        {
-            return (AllowableStressSource.Division2AllowableStress,
-                AllowableStressCase.StandardStrengthAllowableStress);
-        }
-
-        if (text.StartsWith("B", StringComparison.OrdinalIgnoreCase))
-        {
-            return (AllowableStressSource.BoltingAllowableStress,
-                AllowableStressCase.StandardStrengthAllowableStress);
-        }
-
-        return isHigh
-            ? (AllowableStressSource.Division1HighAllowableStress,
-                AllowableStressCase.HighStrengthAllowableStress)
-            : (AllowableStressSource.Division1AllowableStress,
-                AllowableStressCase.StandardStrengthAllowableStress);
-    }
-
-    /// <summary>Rebuilds size-grouped datasets from the flattened grid rows.</summary>
-    /// <typeparam name="T">Dataset type being rebuilt.</typeparam>
-    /// <param name="rows">Grid rows, already validated cell by cell.</param>
-    /// <param name="keyWidth">Number of leading cells that identify a group.</param>
-    /// <param name="temperatureIndex">Column index of the temperature cell.</param>
-    /// <param name="valueIndex">Column index of the value cell.</param>
-    /// <param name="build">Creates one dataset from its group, assigned row identity, and curve.</param>
-    /// <param name="curveName">Names the curve, from the group's key cells.</param>
-    /// <param name="valueLabel">Names the value axis, from the group's key cells.</param>
-    /// <param name="unit">Unit of the value axis.</param>
-    /// <returns>One dataset per group, in first-appearance order.</returns>
-    /// <remarks>
-    /// Duplicate temperatures inside a group are collapsed to the last one entered, because the
-    /// underlying curve rejects a repeated X and the write path has no way to report a validation
-    /// error back to the grid. Taking the last value matches what a user editing a row expects.
-    /// Groups are keyed on the exact text of their cells, so trailing whitespace makes a new group.
-    /// </remarks>
-    private static List<T> RegroupDatasets<T>(
-        IReadOnlyList<string?[]> rows,
-        int keyWidth,
-        int temperatureIndex,
-        int valueIndex,
-        Func<DatasetGroup, long, PropertyTable, T> build,
-        Func<string?[], string> curveName,
-        Func<string?[], string> valueLabel,
-        string unit)
-    {
-        var keys = new List<string?[]>();
-        var points = new List<List<CurvePoint>>();
-        var index = new Dictionary<string, int>(StringComparer.Ordinal);
-
-        foreach (var row in rows)
-        {
-            // The unit separator cannot occur in a grid cell, so joining on it keeps the composite
-            // key unambiguous even when a cell itself contains punctuation.
-            var key = string.Join('', Enumerable.Range(0, keyWidth).Select(i => row[i] ?? string.Empty));
-
-            if (!index.TryGetValue(key, out var position))
-            {
-                position = keys.Count;
-                index[key] = position;
-                keys.Add(row[..keyWidth]);
-                points.Add([]);
-            }
-
-            points[position].Add(new CurvePoint(D(row, temperatureIndex), D(row, valueIndex)));
-        }
-
-        var datasets = new List<T>(keys.Count);
-
-        for (var i = 0; i < keys.Count; i++)
-        {
-            var group = new DatasetGroup(keys[i], points[i]);
-
-            var entries = group.Points
-                .GroupBy(point => point.Temperature)
-                .Select(byTemperature => PropertyTableModule.entry(
-                    byTemperature.Key,
-                    byTemperature.Last().Value))
-                .OrderBy(entry => entry.X)
-                .ToFSharpList();
-
-            var table = PropertyTableModule.create1D(
-                curveName(group.Key),
-                "Temperature",
-                "degC",
-                valueLabel(group.Key),
-                unit,
-                XBoundaryPolicy.ReturnError,
-                entries);
-
-            // Row identity is renumbered from one on every commit: an edited curve no longer
-            // corresponds to the reference-database row it came from, so keeping the old key would
-            // claim a traceability that no longer holds. The value only has to be positive and
-            // unique within the material.
-            if (table.IsOk)
-            {
-                datasets.Add(build(group, i + 1, table.ResultValue));
-            }
-        }
-
-        return datasets;
-    }
-
     // ── Physical property tables ──────────────────────────────────────────────
 
     /// <summary>Mean coefficient of linear thermal expansion vs temperature.</summary>
@@ -463,10 +248,11 @@ public static class MaterialTableSpecs
             OptionalList(rows.Select(r => Tuple.Create(D(r, 0), D(r, 1)))),
             material));
 
-    /// <summary>Thermal diffusivity vs temperature, stored as plain pairs. Optional in the domain.</summary>
+    /// <summary>Thermal diffusivity vs temperature.</summary>
     /// <remarks>
-    /// Sits beside specific heat and thermal conductivity: the three describe the same heat-transfer
-    /// behaviour and ASME publishes them together per material group.
+    /// Grouped with specific heat and thermal conductivity: the three describe the same heat-transfer
+    /// behaviour and ASME publishes them together per material group. Stored in coherent SI (m^2/s),
+    /// while the reference database publishes mm^2/s.
     /// </remarks>
     private static MaterialTableSpec ThermalDiffusivity() => new(
         "Thermal diffusivity",
@@ -481,166 +267,6 @@ public static class MaterialTableSpecs
             material));
 
     // ── Strength property tables ──────────────────────────────────────────────
-
-    /// <summary>Governing minimum strengths Sy and Su vs temperature, with no size dependence.</summary>
-    /// <remarks>
-    /// Elongation and reduction of area are absent by design: they come from the room-temperature
-    /// tensile coupon test and are edited as scalars in the material editor, not per temperature.
-    /// </remarks>
-    private static MaterialTableSpec TensileProperties() => new(
-        "Minimum strengths Sy / Su (governing)",
-        [
-            Temperature,
-            new MaterialTableColumn("Yield strength Sy", "MPa"),
-            new MaterialTableColumn("Tensile strength Su", "MPa"),
-        ],
-        material => material.StrengthProperties.TensileProperties
-            .ToReadOnlyList()
-            .Select(row => new string?[]
-            {
-                Num(row.Temperature), Num(row.YieldStrength), Num(row.TensileStrength),
-            })
-            .ToList(),
-        (material, rows) => StrengthPropertyCrud.setTensileProperties(
-            rows.Select(r => new TensileProperties(D(r, 0), D(r, 1), D(r, 2))).ToFSharpList(),
-            material));
-
-    /// <summary>Sy and Su vs temperature, one curve per Size/Diameter/Thickness band.</summary>
-    /// <remarks>
-    /// Rows are flattened to one point per line, with the band repeated on each, because a single
-    /// grid cannot nest a curve inside a group. Committing regroups the lines back into datasets by
-    /// (kind, band), so editing the band on every line of a group moves that whole group.
-    /// </remarks>
-    private static MaterialTableSpec TensileStrengthDatasets() => new(
-        "Minimum strengths Sy / Su by size group",
-        [
-            new MaterialTableColumn("Sy / Su", "", IsText: true),
-            .. SizeBandColumns,
-            Temperature,
-            new MaterialTableColumn("Strength", "MPa"),
-        ],
-        material => material.StrengthProperties.TensileStrengthDatasets
-            .ToReadOnlyList()
-            .SelectMany(dataset => FlattenCurve(dataset.Table).Select<CurvePoint, string?[]>(point =>
-            [
-                TensileStrengthDatasetModule.kindSymbol(dataset.Kind),
-                .. SizeBandCells(dataset.SizeRange),
-                Num(point.Temperature), Num(point.Value),
-            ]))
-            .ToList(),
-        (material, rows) => StrengthPropertyCrud.setTensileStrengthDatasets(
-            RegroupDatasets(
-                rows,
-                keyWidth: 1 + SizeBandColumns.Count,
-                temperatureIndex: 1 + SizeBandColumns.Count,
-                valueIndex: 2 + SizeBandColumns.Count,
-                build: (group, rowId, table) => new TensileStrengthDataset(
-                    rowId,
-                    ParseStrengthKind(S(group.Key, 0)),
-                    table,
-                    ParseSizeBand(group.Key, 1),
-                    FSharpList<AsmeNoteReference>.Empty,
-                    FSharpOption<string>.None),
-                curveName: group => $"{S(group, 0)} vs temperature",
-                valueLabel: group => S(group, 0),
-                unit: "MPa")
-                .ToFSharpList(),
-            material));
-
-    /// <summary>
-    /// ASME allowable stresses, one curve per division, case, and Size/Diameter/Thickness band.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// This is the table that answers what the material may actually carry. Division 1 publishes two
-    /// cases: the normal allowable stress, and the higher alternative one that exceeds two thirds of
-    /// the yield strength - permitted only where slightly greater permanent deformation is
-    /// acceptable, and never for flanges of gasketed joints. Division 2 and bolting publish one case
-    /// each.
-    /// </para>
-    /// <para>
-    /// Flattened and regrouped the same way as the strength datasets; see
-    /// <see cref="TensileStrengthDatasets"/>.
-    /// </para>
-    /// </remarks>
-    private static MaterialTableSpec AllowableStressDatasets() => new(
-        "Allowable stresses by size group (Div 1 / Div 2)",
-        [
-            new MaterialTableColumn("Division", "", IsText: true),
-            new MaterialTableColumn("Case", "", IsText: true),
-            .. SizeBandColumns,
-            new MaterialTableColumn("Max. temperature", "degC", IsOptional: true),
-            new MaterialTableColumn("Creep onset", "degC", IsOptional: true),
-            Temperature,
-            new MaterialTableColumn("Allowable stress S", "MPa"),
-        ],
-        material => material.StrengthProperties.AllowableStressDatasets
-            .ToReadOnlyList()
-            .SelectMany(dataset => FlattenCurve(dataset.Table).Select<CurvePoint, string?[]>(point =>
-            [
-                AllowableStressDatasetModule.divisionLabel(dataset.Source),
-                AllowableStressDatasetModule.caseLabel(dataset.Case),
-                .. SizeBandCells(dataset.SizeRange),
-                Num(dataset.MaximumTemperature), Num(dataset.CreepTemperature),
-                Num(point.Temperature), Num(point.Value),
-            ]))
-            .ToList(),
-        (material, rows) => StrengthPropertyCrud.setAllowableStressDatasets(
-            RegroupDatasets(
-                rows,
-                keyWidth: 4 + SizeBandColumns.Count,
-                temperatureIndex: 4 + SizeBandColumns.Count,
-                valueIndex: 5 + SizeBandColumns.Count,
-                build: (group, rowId, table) =>
-                {
-                    var (source, stressCase) = ParseDivisionAndCase(S(group.Key, 0), S(group.Key, 1));
-                    return new AllowableStressDataset(
-                        rowId,
-                        source,
-                        stressCase,
-                        table,
-                        ParseSizeBand(group.Key, 2),
-                        DOpt(group.Key, 2 + SizeBandColumns.Count),
-                        DOpt(group.Key, 3 + SizeBandColumns.Count),
-                        FSharpList<AsmeNoteReference>.Empty,
-                        FSharpOption<string>.None);
-                },
-                curveName: group => $"{S(group, 0)} {S(group, 1)} allowable stress",
-                valueLabel: _ => "Allowable Stress",
-                unit: "MPa")
-                .ToFSharpList(),
-            material));
-
-    /// <summary>Allowable stress by ASME service level. Every stress column is optional.</summary>
-    /// <remarks>
-    /// A hand-entered table kept for materials whose allowable stresses are supplied per Section III
-    /// service level rather than imported from the ASME database. Reference materials populate
-    /// <see cref="AllowableStressDatasets"/> instead, so this grid is normally empty for them.
-    /// </remarks>
-    private static MaterialTableSpec AllowableStresses() => new(
-        "Allowable stresses by service level",
-        [
-            Temperature,
-            new MaterialTableColumn("Sec. I level A", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. I level B", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. I level C", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. I level D", "MPa", IsOptional: true),
-            new MaterialTableColumn("Sec. II weld", "MPa", IsOptional: true),
-        ],
-        material => material.StrengthProperties.AllowableStresses
-            .ToReadOnlyList()
-            .Select(row => new string?[]
-            {
-                Num(row.Temperature),
-                Num(row.Section_I_ServiceLevel_A), Num(row.Section_I_ServiceLevel_B),
-                Num(row.Section_I_ServiceLevel_C), Num(row.Section_I_ServiceLevel_D),
-                Num(row.Section_II_Weld),
-            })
-            .ToList(),
-        (material, rows) => StrengthPropertyCrud.setAllowableStresses(
-            rows.Select(r => new AllowableStress(
-                D(r, 0), DOpt(r, 1), DOpt(r, 2), DOpt(r, 3), DOpt(r, 4), DOpt(r, 5))).ToFSharpList(),
-            material));
 
     /// <summary>Compressive strength and yield vs temperature. Optional in the domain.</summary>
     private static MaterialTableSpec CompressionProperties() => new(

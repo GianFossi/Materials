@@ -154,23 +154,9 @@ module MaterialDatabaseSchema =
                 TensileStrength REAL NOT NULL
             )"""
 
-          // Sy and Su kept one curve per published Size/Diameter/Thickness band. The band bounds
-          // are in mm and each carries its own inclusive flag, so adjacent ASME bands such as
-          // "up to 5 incl." and "over 5" stay disjoint at the boundary.
-          "MaterialTensileStrengthDatasetRows",
-          """
-            CREATE TABLE IF NOT EXISTS MaterialTensileStrengthDatasetRows (
-                ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                MaterialID INTEGER NOT NULL REFERENCES Materials(ID) ON DELETE CASCADE,
-                Kind TEXT NOT NULL,
-                SizeMinimum REAL,
-                SizeMinimumIncluded INTEGER NOT NULL,
-                SizeMaximum REAL,
-                SizeMaximumIncluded INTEGER NOT NULL,
-                Temperature REAL NOT NULL,
-                Strength REAL NOT NULL
-            )"""
-
+          // Legacy projection of the flat AllowableStresses list. Nothing writes it since the ASME
+          // allowables moved to AllowableStressDatasets, but the definition is kept so an existing
+          // working copy keeps a stable shape.
           "MaterialAllowableStressRows",
           """
             CREATE TABLE IF NOT EXISTS MaterialAllowableStressRows (
@@ -195,9 +181,7 @@ module MaterialDatabaseSchema =
                 Division TEXT NOT NULL,
                 StressCase TEXT NOT NULL,
                 SizeMinimum REAL,
-                SizeMinimumIncluded INTEGER NOT NULL,
                 SizeMaximum REAL,
-                SizeMaximumIncluded INTEGER NOT NULL,
                 MaximumTemperature REAL,
                 CreepTemperature REAL,
                 Temperature REAL NOT NULL,
@@ -264,7 +248,6 @@ module MaterialDatabaseSchema =
                 "MaterialThermalConductivityRows"
                 "MaterialThermalDiffusivityRows"
                 "MaterialTensileRows"
-                "MaterialTensileStrengthDatasetRows"
                 "MaterialAllowableStressRows"
                 "MaterialAllowableStressDatasetRows"
                 "MaterialCompressionRows"

@@ -13,14 +13,9 @@ open ROP
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// <summary>
-/// JSON representation of <see cref="BasicProperties"/>, the room-temperature tensile coupon test.
-/// Units: SMYS and SMUTS in MPa; elongation and reduction of area in %.
+/// JSON representation of <see cref="BasicProperties"/>.
+/// Units: All stresses/strengths in MPa, elongation and reduction of area in %.
 /// </summary>
-/// <remarks>
-/// <c>elongationPercent</c> is retained only to read documents written before elongation was split
-/// by rolling direction. It is never written; on read it seeds the longitudinal value when that
-/// field is absent, because the reference importer used to fill it from the longitudinal column.
-/// </remarks>
 [<JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)>]
 type BasicPropertiesJson =
     { [<JsonPropertyName("elongationPercent")>]
@@ -45,51 +40,15 @@ type AsmeNoteReferenceJson =
     { Table: int
       Code: string }
 
-/// <summary>
-/// JSON representation of <see cref="SizeThicknessRange"/>. Units: millimetres.
-/// </summary>
-/// <remarks>
-/// The two inclusivity flags are optional so that documents written before they existed still read
-/// back: an absent flag means inclusive, which is how ASME prints an unqualified size limit and how
-/// the reference database stores it.
-/// </remarks>
-type SizeThicknessRangeJson =
-    { Minimum: float option
-      MinimumIncluded: bool option
-      Maximum: float option
-      MaximumIncluded: bool option }
-
-/// <summary>
-/// JSON representation of <see cref="AllowableStressDataset"/>.
-/// Units: allowable stress in MPa, temperatures in degC, size bounds in mm.
-/// </summary>
-/// <remarks>
-/// <c>SizeMinimum</c> and <c>SizeMaximum</c> are retained only to read documents written before the
-/// band gained its inclusivity flags; they are never written, and on read they seed
-/// <c>SizeRange</c> when it is absent.
-/// </remarks>
 type AllowableStressDatasetJson =
     { DatabaseRowId: int64
       Source: int
       Case: int
       Table: PropertyTableJson
-      SizeRange: SizeThicknessRangeJson option
       SizeMinimum: float option
       SizeMaximum: float option
       MaximumTemperature: float option
       CreepTemperature: float option
-      AsmeNoteReferences: AsmeNoteReferenceJson list
-      Notes: string option }
-
-/// <summary>
-/// JSON representation of <see cref="TensileStrengthDataset"/>.
-/// Units: strength in MPa, temperature in degC, size bounds in mm.
-/// </summary>
-type TensileStrengthDatasetJson =
-    { DatabaseRowId: int64
-      Kind: int
-      Table: PropertyTableJson
-      SizeRange: SizeThicknessRangeJson option
       AsmeNoteReferences: AsmeNoteReferenceJson list
       Notes: string option }
 
@@ -110,14 +69,12 @@ type StrengthPropertiesJson =
       StressRuptureCurves: StressRuptureTableJson list
       [<JsonPropertyName("fatigueCurves")>]
       FatigueCurves: FatigueTableJson list
-      [<JsonPropertyName("allowableStresses")>]
-      AllowableStresses: AllowableStress list option
       [<JsonPropertyName("allowableStressDatasets")>]
       AllowableStressDatasets: AllowableStressDatasetJson list
-      [<JsonPropertyName("tensileProperties")>]
-      TensileProperties: TensileProperties list option
-      [<JsonPropertyName("tensileStrengthDatasets")>]
-      TensileStrengthDatasets: TensileStrengthDatasetJson list
+      [<JsonPropertyName("syTable")>]
+      SyTable: PropertyTableJson option
+      [<JsonPropertyName("suTable")>]
+      SuTable: PropertyTableJson option
       [<JsonPropertyName("compressionProperties")>]
       CompressionProperties: CompressionPropertiesJson list option
       [<JsonPropertyName("nortonModels")>]

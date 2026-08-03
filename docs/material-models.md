@@ -23,14 +23,34 @@ These are separate things and are stored separately:
 
 - `BasicProperties` holds only what the **room-temperature** tensile coupon test produces:
   `ElongationLongitudinalPercent`, `ElongationTransversePercent` (both optional; the ASME reference
-  tables do not report them), `ReductionOfAreaPercent`, `SpecifiedMinimumYieldStrength` (SMYS), and
-  `SpecifiedMinimumUltimateStrength` (SMUTS). `BasicProperties.governingElongationPercent` returns
-  the weaker of the two directions when a single value is needed.
-- `StrengthProperties.TensileProperties` holds the governing Sy(T) and Su(T) curve, with no size
-  dependence and no elongation.
-- `StrengthProperties.TensileStrengthDatasets` holds Sy(T) and Su(T) **per Size/Diameter/Thickness
-  band**, one dataset per published ASME row, because the guaranteed minimum strength falls as the
-  section gets heavier.
+  tables leave both NULL for every material), `ReductionOfAreaPercent`,
+  `SpecifiedMinimumYieldStrength` (SMYS), and `SpecifiedMinimumUltimateStrength` (SMUTS).
+  `BasicProperties.governingElongationPercent` returns the weaker of the two directions when a
+  single value is needed.
+- `StrengthProperties.SyTable` and `StrengthProperties.SuTable` hold the temperature-dependent
+  minimum strengths as **2D `PropertyTable`s**: X is temperature in degC, the value is strength in
+  MPa, and each column is one Size/Diameter/Thickness band in mm. They are `None` when the material
+  publishes no such table.
+
+A 2D table is the right shape here because ASME derates heavier sections: the same specification and
+grade carries several curves, one per band. Selecting the wrong band silently overstates the
+strength, so the band is part of the table rather than something the caller applies afterwards.
+
+## Size/Thickness Bands
+
+A band is a `SizeColumnRange`: an optional `Lower` and `Upper` `SizeRangeBound`, each carrying its
+own `Inclusive` or `Exclusive` marker, plus an optional label. Bounds are in millimetres.
+
+The inclusivity is what keeps adjacent ASME bands disjoint - "up to 25 mm incl." and "over 25 mm"
+share a boundary, and treating both ends as inclusive would make a 25 mm section match two columns
+at once. The importer follows the printed ASME convention: lower bounds exclusive, upper bounds
+inclusive. Use `SizeColumnRange.contains` to pick the column for a given section; never index by
+position.
+
+Which dimension the limit refers to depends on the product form, per the note printed under
+Table 1A: wall thickness for tubing, pipe, pipe fittings and hollow forgings; thickness for plate,
+flat bar, polygonal bar and forgings; diameter for solid bar and bolting; and the thickest
+cross-section for other pressure parts such as castings.
 
 ## Allowable Stresses
 
@@ -43,12 +63,9 @@ These are separate things and are stored separately:
 | `Division2AllowableStress` | 5A / 5B | Section VIII Division 2 allowable stress S |
 | `BoltingAllowableStress` | 3 | Bolting materials |
 
-Each dataset carries a `SizeThicknessRange` in mm whose two ends are independently inclusive or
-exclusive, so adjacent bands partition the range instead of overlapping at the boundary.
-`SizeThicknessRange.contains` is the only correct way to select a band for a given section.
-
-`StrengthProperties.AllowableStresses` is a separate, hand-entered table indexed by Section III
-service level. Reference materials populate the datasets, not this list.
+Each dataset carries `SizeMinimum` and `SizeMaximum` in mm alongside its own curve.
+`AllowableStressDataset.divisionLabel` and `caseLabel` give the short display names (`VIII-1`,
+`Normal`, `High`) used by the editors and by the SQL projection table.
 
 Stress/strain datasets also carry explicit basis metadata:
 
@@ -81,7 +98,7 @@ Code Case 2964 can generate either time-dependent or time-independent external-p
 
 Stored Code Case 2964 factor evaluation:
 
-- EN: `R = σ_y / σ_ult` is resolved from `TensileProperties` at the assessment temperature when available.
+- EN: `R = σ_y / σ_ult` is resolved from `SyTable` and `SuTable` at the assessment temperature when available.
 - EN: if no tensile row exists at that temperature, the library falls back to `BasicProperties` using `SMYS / SMUTS`.
 
 Evaluation rule for Code Case 2964 charts:

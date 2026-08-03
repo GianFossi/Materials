@@ -757,3 +757,68 @@ Verification: all 7 projects build in Release with **0 warnings, 0 errors**. `Ma
 Verification against the live 2129-material database: **1513** materials carry a Division 1 normal allowable, **159** also carry the Division 1 high case, **590** carry Division 2, **117** bolting, **403** have at least one bounded size band, and **1810** have Sy/Su datasets. SA-325 (ID 260) hydrates two diameter bands - 13-25 mm incl. at Sy 634 MPa / S 159 MPa, and 29-38 mm incl. at Sy 558 MPa / S 139 MPa - and both survive a save and read-back through the new tables. SA-334 7 (ID 736) hydrates Division 1 normal at 109 MPa and high at 128 MPa at 40 degC. **Elongation is `None` for all 2129 materials**: `RuptureElongationLong` and `RuptureElongationTransv` are entirely NULL in the shipped database, so the fields are modelled and editable but the reference data supplies nothing - which is why they had to be optional rather than defaulting to zero.
 
 Verification: all 7 projects build in Release with **0 warnings, 0 errors**. `MaterialLibrary.Tests` **50/50** and `MaterialLibrary.CrudApp.Tests` **49/49** pass. Eleven new tests cover the boundary behaviour of an exclusive band, that SA-325 keeps four Sy/Su datasets across two bands with the heavier band weaker, that Division 2 always allows more than Division 1 for the same material, that the normal and high Division 1 cases are both present and ordered correctly, that elongation stays optional and round-trips as `None`, that datasets and their inclusivity flags survive JSON, that both new grids populate for an imported reference material, that a flattened grid regroups cell for cell, and that editing one group's bound leaves the others alone. Also generalised the schema-window test so it exercises every version in the read window instead of naming one.
+
+## 2026-08-03 - Raw tables include SQLite internal objects
+
+- Date: 2026-08-03
+- Area: `src/MaterialLibrary.CrudApp` raw-table browser, `tests/MaterialLibrary.CrudApp.Tests`, `docs/desktop-app.md`
+- Change: Removed the `sqlite_%` exclusion from the raw-table discovery query so the table picker now includes SQLite-managed internal tables (for example `sqlite_sequence`), and added an integration-style test that opens a working copy, selects `sqlite_sequence`, edits `seq`, saves, and verifies the persisted value.
+- Why: Fix the reported CRUD-app limitation where internal tables in `asme_materials.db` were not accessible in the raw-table workflow and therefore could not be edited there.
+- Impact: Raw Tables now exposes all entries returned by `sqlite_master` for `table`/`view`; direct maintenance CRUD on internal tables is available from the same UI flow, while working-copy safety remains unchanged.
+- Files: src/MaterialLibrary.CrudApp/ViewModels/Database/DatabaseViewModel.RawTables.cs, tests/MaterialLibrary.CrudApp.Tests/InternalTablesCrudTests.cs, docs/desktop-app.md, AI_HISTORY.md
+- Follow-up: If users should optionally hide internal SQLite objects, add a UI toggle instead of hard-filtering them out.
+
+## 2026-08-03 - Size-ranged Sy/Su tables and separate allowable-stress editors
+
+- Date: 2026-08-03
+- Area: Domain, CRUD, Serialization, ASME repo, Excel, CrudApp ViewModels/Views
+- Change: Replaced flat `TensileProperties list` and `AllowableStresses list` in `StrengthProperties` with `SyTable: PropertyTable option` and `SuTable: PropertyTable option` (2D PropertyTable supporting size-range columns). Allowable stress data already lived in `AllowableStressDatasets: AllowableStressDataset list` and is unchanged at domain level. Added five dedicated CrudApp editor tabs (Sy, Su, Allowable Div.1, Div.1 High, Div.2), each a temperature × size-range 2D grid. Column headers carry editable SizeMin/SizeMax bounds (mm); rows are temperatures independent per table.
+- Why: User request: edit Sy/Su/allowable tables as temperature × size-range matrices with column headers showing the range, one table per stress type.
+- Impact: Breaking domain change (schema version 14 → 15, no backward compatibility). Excel Sy/Su functions now use PropertyTable lookup. ASME DB loading builds 2D PropertyTable from per-row size ranges.
+- Files:
+  - src/MaterialLibrary/Domain/MechanicalProperties.fs (removed TensileProperties, AllowableStress types)
+  - src/MaterialLibrary/Domain/MaterialTypes.fs (StrengthProperties: replaced TensileProperties/AllowableStresses with SyTable/SuTable)
+  - src/MaterialLibrary/Serialization/MaterialJsonTypes.fs (StrengthPropertiesJson updated)
+  - src/MaterialLibrary/Serialization/MaterialSerialization.fs (version 14→15, strengthProperties round-trip)
+  - src/MaterialLibrary/builders/ExternalPressureTableBuilder.fs (tryResolveStrengthRatioR updated)
+  - src/MaterialLibrary/Database.Lookup/AsmeMaterialRepository.fs (loadStrengthTable2D, hydrate returns Result)
+  - src/MaterialLibrary.Crud/CrudTypes.fs (StoredMaterialTableKind updated)
+  - src/MaterialLibrary.Crud/MaterialTableCrud.fs (setSyTable, setSuTable added)
+  - src/MaterialLibrary.Crud/MaterialDatabaseCrud.fs (removed MaterialTensileRows / MaterialAllowableStressRows inserts)
+  - src/MaterialLibrary.Excel/Strength/TensileFunctions.fs (Sy/Su Excel functions updated)
+  - src/MaterialLibrary.CrudApp/Interop/MaterialTableSpec.cs (removed TensileProperties/AllowableStresses specs)
+  - src/MaterialLibrary.CrudApp/ViewModels/RelayCommand.cs (added generic RelayCommand<T>)
+  - src/MaterialLibrary.CrudApp/ViewModels/SizeRangedColumnViewModel.cs (new)
+  - src/MaterialLibrary.CrudApp/ViewModels/SizeRangedTableEditorViewModel.cs (new abstract base)
+  - src/MaterialLibrary.CrudApp/ViewModels/StrengthTableEditors.cs (new: Sy/Su concrete editors)
+  - src/MaterialLibrary.CrudApp/ViewModels/AllowableStressTableEditorViewModel.cs (new: handles AllowableStressDataset list per source)
+  - src/MaterialLibrary.CrudApp/ViewModels/MaterialTablesViewModel.cs (added 5 strength editors + TryBuildMaterial wiring)
+  - Various existing CrudApp ViewModels (StrengthProperties constructor updated)
+  - tests/MaterialLibrary.Tests/Tests.fs (round-trip test uses SyTable/SuTable; schema version regex updated)
+- Follow-up: Add MaterialTablesWindow.xaml tabs and XAML code-behind for the 5 new editors; add XAML data-grid with dynamic columns per size range.
+
+## 2026-08-03 - Merged GitHub main: adopted its size-ranged Sy/Su model, kept this branch's additions
+
+- Date: 2026-08-03
+- Area: whole solution
+- Change: Resolved the merge of `origin/main` (7d33c86) into local `main` (b1089de). Both branches had implemented "Sy, Su and allowable stresses grouped by Size/Diameter/Thickness" independently and incompatibly. GitHub main's design was adopted.
+- Why: User instruction to update the project from the GitHub main repository, plus one decisive technical fact - `PropertyTable` already carried `SizeColumnRange` with `Inclusive`/`Exclusive` bounds in the merge base, before either branch started. GitHub main reuses it through 2D tables; this branch had introduced a parallel `SizeThicknessRange` type that duplicated it. Reusing the existing abstraction wins.
+- Impact: `TensileStrengthDataset` and `SizeThicknessRange` are gone. `StrengthProperties` now exposes `SyTable`/`SuTable` as 2D `PropertyTable option`, one column per size band. Editing moved from the flat generic grids to five dedicated tabs (Sy, Su, S Div.1, S Div.1H, S Div.2). JSON schema is **16**, readable back to **15**.
+- Files: every conflicted file plus docs; see the resolution notes below.
+- Follow-up: `MaterialTensileRows` and `MaterialAllowableStressRows` are now defined but never written - the material document is the source of truth for those curves. If SQL-side querying of Sy/Su matters, a projection of the 2D tables would have to be added deliberately.
+
+**Resolution was not a side-picking exercise.** Taking `--theirs` wholesale would have silently discarded work that has nothing to do with the Sy/Su question, because this branch's versions of several files are supersets: `AsmeMaterialRepository.fs` alone carried `findById`, `loadPhysicalProperties`, `loadWeldingInfo`, `unpivotTemperatureRow`, `loadWideTable` and `materialScalar` - 351 added lines against the base, of which GitHub main touched only the strength loader. Those files were rebuilt as *this branch's version with the remote's specific change applied*, rather than replaced.
+
+**Carried forward from this branch** (GitHub main branched before all three): the room-temperature elongation split into `ElongationLongitudinalPercent`/`ElongationTransversePercent`, both optional; the `ThermalDiffusivityTable` with its hydration, its CRUD setter, its editor grid and its mm^2/s to m^2/s conversion; the enriched physical-property and welding hydration; and the schema migration that adds a missing reference column with `ALTER TABLE` and rebuilds an application-owned table left in a superseded shape.
+
+**Adopted from GitHub main**: the 2D `SyTable`/`SuTable` model, the removal of the `TensileProperties` and `AllowableStress` types, the five size-ranged editor tabs with editable column bounds, `RelayCommand<T>`, the raw-table browser including SQLite internal objects, and `InternalTablesCrudTests`.
+
+**Two bugs found while merging, both fixed.**
+
+The first was already red on GitHub main: `requested database library loads six materials...` asserted Sy(400 degC) = 381 MPa for SA-193 B7 while reading "the first entry of the first column". SA-193 B7 publishes three diameter bands - 534, 483 and 381 MPa at 400 degC for up to 64, over 64 to 100, and over 100 to 180 mm - so the assertion only held if the columns happened to sort with the heaviest band first, and after `create2D` they do not. Verified pre-existing by running the suite on a pristine `origin/main` worktree, which failed identically. The test now selects the column by diameter through `SizeColumnRange.contains` and asserts all three bands, plus that 64 mm belongs to the light band only.
+
+The second was a repeat of one fixed earlier on this branch and reintroduced by the remote's file: the schema-enforcement test hardcoded `"schemaVersion"\s*:\s*15` in its substitution regex. After the bump to 16 the pattern matched nothing, so every "this version must be refused" assertion ran against unmodified valid JSON and passed vacuously. The pattern is now built from `MaterialSerialization.CurrentSchemaVersion`, with an assertion that the substitution actually changed the document, and the test walks the whole supported window.
+
+**Schema window narrowed deliberately.** Version 14 is now refused rather than read. Its tensile data lived in a `tensileProperties` array that no longer has any field to deserialize into, so accepting it would appear to succeed while dropping the strength curves - worse than a clear error naming the version. Version 15 still loads in full: the legacy single `elongationPercent` seeds the longitudinal value, and the absent diffusivity table reads as `None`.
+
+Verification: all 7 projects build in Release with **0 warnings, 0 errors**. `MaterialLibrary.Tests` **48/48** and `MaterialLibrary.CrudApp.Tests` **45/45** pass, including six tests added to cover the combination neither branch tested alone: elongation optionality and its `None` round trip, a pre-split document still loading, thermal diffusivity round-tripping, physical-property and welding hydration in physically sensible SI ranges, the division and case labels with Division 2 allowing more than Division 1, and SA-325 keeping one Sy/Su column per diameter band with the heavier band weaker.

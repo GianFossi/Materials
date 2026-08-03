@@ -30,9 +30,7 @@
     <Compile Include="Domain\CyclicStressStrainTypes.fs" />
     <Compile Include="Domain\StressRuptureTypes.fs" />
     <Compile Include="Tables\PropertyTable.Core.fs" />
-    <Compile Include="Tables\SizeThicknessRange.fs" />
     <Compile Include="Tables\AllowableStressTable.fs" />
-    <Compile Include="Tables\TensileStrengthDataset.fs" />
     <Compile Include="Tables\StressStrainTable.fs" />
     <Compile Include="Tables\CreepTable.fs" />
     <Compile Include="Tables\StressRuptureTable.fs" />

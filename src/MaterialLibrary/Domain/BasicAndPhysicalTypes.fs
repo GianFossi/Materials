@@ -33,8 +33,8 @@ type MaterialError =
 /// fracture in each rolling direction, reduction of area, and the two specified minimum strengths.
 /// They are single scalars, not curves, and they must not be confused with the temperature-dependent
 /// minimum strengths Sy(T) and Su(T) — those live in
-/// <see cref="StrengthProperties.TensileStrengthDatasets"/>, where each size/thickness group carries
-/// its own curve.
+/// <see cref="StrengthProperties.SyTable"/> and <see cref="StrengthProperties.SuTable"/>, where each
+/// Size/Diameter/Thickness band is its own column.
 /// </para>
 /// <para>
 /// Units: elongation and reduction of area in percent; SMYS and SMUTS in MPa.

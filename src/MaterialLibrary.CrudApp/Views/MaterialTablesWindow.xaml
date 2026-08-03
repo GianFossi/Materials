@@ -12,6 +12,127 @@
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False">
 
+    <Window.Resources>
+        <!--
+            Reusable template for a size-ranged temperature × size-range table editor.
+            DataContext must be a SizeRangedTableEditorViewModel (or subclass).
+
+            Layout:
+              Top strip   — Add temperature row input + unit label
+              Body        — Horizontal scroll area:
+                              Fixed left column = temperature labels
+                              One panel per size range (header + value cells)
+              Right strip — Add / Remove column buttons
+        -->
+        <DataTemplate x:Key="SizeRangedTableTemplate" DataType="{x:Type vm:SizeRangedTableEditorViewModel}">
+            <DockPanel>
+                <!-- Top: add-temperature controls -->
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                    <TextBlock DockPanel.Dock="Left" Text="Temperature (°C):"
+                               VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <Button DockPanel.Dock="Right" Content="Add"
+                            Command="{Binding AddRowCommand}"
+                            MinWidth="50" Margin="4,0,0,0" />
+                    <TextBox Text="{Binding NewTemperature, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center" />
+                </DockPanel>
+
+                <!-- Right: add column button -->
+                <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0" VerticalAlignment="Top">
+                    <Button Content="+ Column"
+                            Command="{Binding AddColumnCommand}"
+                            MinWidth="80" Margin="0,0,0,4" />
+                </StackPanel>
+
+                <!-- Unit label at bottom -->
+                <TextBlock DockPanel.Dock="Bottom"
+                           Text="{Binding ValueUnit, StringFormat='Values in {0}'}"
+                           Foreground="#777" Margin="0,4,0,0" />
+
+                <!-- Scrollable body: fixed temperature column + variable size-range columns -->
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Horizontal">
+
+                        <!-- Fixed left column: temperature labels -->
+                        <StackPanel Margin="0,0,4,0">
+                            <!-- Spacer aligns with column header height -->
+                            <Border Height="68" />
+                            <ItemsControl ItemsSource="{Binding Temperatures}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Width="60"
+                                                   Height="24" Margin="0,1"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Padding="0,3,4,0" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- One panel per size-range column -->
+                        <ItemsControl ItemsSource="{Binding Columns}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:SizeRangedColumnViewModel}">
+                                    <StackPanel Margin="2,0">
+                                        <!-- Column header: editable size bounds -->
+                                        <Border BorderBrush="#CCC" BorderThickness="1"
+                                                Background="#F8F8F8" Padding="4,3" Margin="0,0,0,2"
+                                                Height="68">
+                                            <StackPanel>
+                                                <DockPanel>
+                                                    <TextBlock DockPanel.Dock="Left" Text="≥"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,3,0"
+                                                               ToolTip="Size minimum (mm), exclusive lower bound" />
+                                                    <TextBox Text="{Binding SizeMin, UpdateSourceTrigger=PropertyChanged}"
+                                                             Width="55"
+                                                             ToolTip="Minimum size (mm). Leave blank for no lower bound." />
+                                                </DockPanel>
+                                                <DockPanel Margin="0,2,0,0">
+                                                    <TextBlock DockPanel.Dock="Left" Text="≤"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,3,0"
+                                                               ToolTip="Size maximum (mm), inclusive upper bound" />
+                                                    <TextBox Text="{Binding SizeMax, UpdateSourceTrigger=PropertyChanged}"
+                                                             Width="55"
+                                                             ToolTip="Maximum size (mm). Leave blank for no upper bound." />
+                                                </DockPanel>
+                                                <TextBlock Text="{Binding DisplayLabel}"
+                                                           FontStyle="Italic" FontSize="10"
+                                                           HorizontalAlignment="Center"
+                                                           Margin="0,2,0,0" Foreground="#555" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Cell values (one per temperature row, 24px height matches label) -->
+                                        <ItemsControl ItemsSource="{Binding Values}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{Binding ., Mode=TwoWay,
+                                                                            UpdateSourceTrigger=PropertyChanged}"
+                                                             Width="75" Height="24" Margin="0,1"
+                                                             HorizontalContentAlignment="Right" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </DataTemplate>
+    </Window.Resources>
+
     <DockPanel Margin="8">
 
         <StackPanel DockPanel.Dock="Bottom"
@@ -300,6 +421,36 @@
                         <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True"><DataGrid.Columns><DataGridTextColumn Header="Larson-Miller parameter" Binding="{Binding Parameter, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Stress (MPa)" Binding="{Binding Stress, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
                     </DockPanel>
                 </DockPanel>
+            </TabItem>
+
+            <!-- ── Sy — Yield Strength ──────────────────────────────────────────── -->
+            <TabItem Header="Sy">
+                <ContentControl ContentTemplate="{StaticResource SizeRangedTableTemplate}"
+                                Content="{Binding SyEditor}" Margin="0,6,0,0" />
+            </TabItem>
+
+            <!-- ── Su — Ultimate Tensile Strength ───────────────────────────────── -->
+            <TabItem Header="Su">
+                <ContentControl ContentTemplate="{StaticResource SizeRangedTableTemplate}"
+                                Content="{Binding SuEditor}" Margin="0,6,0,0" />
+            </TabItem>
+
+            <!-- ── Allowable Stress — Div. 1 Normal ─────────────────────────────── -->
+            <TabItem Header="S Div.1">
+                <ContentControl ContentTemplate="{StaticResource SizeRangedTableTemplate}"
+                                Content="{Binding AllowableDiv1Editor}" Margin="0,6,0,0" />
+            </TabItem>
+
+            <!-- ── Allowable Stress — Div. 1 High ───────────────────────────────── -->
+            <TabItem Header="S Div.1H">
+                <ContentControl ContentTemplate="{StaticResource SizeRangedTableTemplate}"
+                                Content="{Binding AllowableDiv1HighEditor}" Margin="0,6,0,0" />
+            </TabItem>
+
+            <!-- ── Allowable Stress — Div. 2 ────────────────────────────────────── -->
+            <TabItem Header="S Div.2">
+                <ContentControl ContentTemplate="{StaticResource SizeRangedTableTemplate}"
+                                Content="{Binding AllowableDiv2Editor}" Margin="0,6,0,0" />
             </TabItem>
         </TabControl>
 

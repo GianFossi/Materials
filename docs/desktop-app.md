@@ -12,11 +12,12 @@ change-notifying view models that F# records cannot provide. It supports:
 - Listing every material's identification in the library: Id, Specification, Grade, Class/Condition/Tempering,
   UNS, Form, Product analysis (the domain's `NominalComposition`), Family (ASME code), and the composed Full name.
 - Creating, editing (identity fields, ASME `Family`, `BasicProperties`, and notes), and deleting a material.
-- Editing the property tables of a material ("Edit Tables..."). Fifteen tables: thermal expansion, elastic
-  modulus, density, specific heat, thermal conductivity, thermal diffusivity, governing minimum strengths
-  Sy/Su, minimum strengths Sy/Su by size group, allowable stresses by size group (Div 1 / Div 2), allowable
-  stresses by service level, compression properties, Norton power-law creep, Garofalo creep, Kachanov omega
-  creep, and Code Case 2964 Appendix III.
+- Editing the property tables of a material ("Edit Tables..."). The **Flat Tables** tab holds the ten
+  one-row-per-temperature tables: thermal expansion, elastic modulus, density, specific heat, thermal
+  conductivity, thermal diffusivity, compression properties, Norton power-law creep, Garofalo creep,
+  Kachanov omega creep, and Code Case 2964 Appendix III. Five further tabs - **Sy**, **Su**,
+  **S Div.1**, **S Div.1H**, **S Div.2** - are temperature x size-range grids, one column per
+  Size/Diameter/Thickness band with the bounds editable in the column header.
   Column headers carry the fixed unit of measure; optional columns are marked `*` and a blank cell is stored
   as the F# `None`. Writes go through `MaterialLibrary.Crud`'s own helpers, so domain rules (sort by
   temperature, refresh `LastModified`) are applied by the library, not reimplemented in the UI.
@@ -63,11 +64,12 @@ Example 1 - modify material data:
      with **OK**.
    - To modify one external pressure row, open the **External pressure** page, select the table and point,
      change the selected Factor A / Factor B values, then confirm with **OK**.
-   - To add, delete, or modify allowable stress data, open the **Allowable stresses by size group
-     (Div 1 / Div 2)** page. Each line carries its own division, case, and Size/Diameter/Thickness band, so
-     one line reads as "this stress, for this division, at this size, at this temperature". Editing a band
-     on every line of a group moves that whole group; editing it on one line splits that point into a group
-     of its own.
+   - To add, delete, or modify allowable stress data, open the tab for the division you are designing
+     to - **S Div.1**, **S Div.1H** (the higher alternative stress, not for gasketed-joint flanges), or
+     **S Div.2**. Each column is one Size/Diameter/Thickness band, with its bounds in the header;
+     each row is a temperature. Add a column for a new band, or a row for a new temperature.
+   - **Sy** and **Su** work the same way, and are separate from the room-temperature elongation and
+     reduction of area, which are edited as scalars in **Edit Material...**.
 5. Save the result with **Save** or **Save JSON As...**. If the data came from a database working copy,
    use the database manager's save/export command for the working database.
 
@@ -105,6 +107,9 @@ the missing tables** and links them to the existing `Materials` table:
   material into `MaterialDocumentStore` as its canonical JSON, which is the source of truth on read. That
   document is what guarantees tables with no dedicated schema - creep models, stress-strain curves, fatigue
   curves - survive a round trip without loss.
+- The **Raw Tables** workspace now lists every SQLite table/view exposed by `sqlite_master`, including
+  SQLite-managed internal tables (for example `sqlite_sequence`) so maintenance queries and direct CRUD
+  operations can be performed from the same workflow.
 - **The file you pick is never written to.** Opening a database copies it to a `.working.db` beside the
   original and every operation targets the copy; "Save Working Copy As..." is the only route back to a
   permanent file.

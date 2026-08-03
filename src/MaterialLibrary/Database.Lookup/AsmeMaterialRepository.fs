@@ -110,26 +110,6 @@ module AsmeMaterialRepository =
         | BoltingAllowableStress, "Table_3" -> Some TableSBolting
         | _ -> None
 
-    /// <summary>Reads the Size/Thickness band from the four columns every strength table carries.</summary>
-    /// <param name="reader">Reader positioned on the row.</param>
-    /// <returns>The band the row applies to (mm).</returns>
-    /// <remarks>
-    /// The <c>_Included</c> columns are stored as 0/1 and matter: adjacent ASME bands such as
-    /// "up to 5 incl." and "over 5" share a boundary, and treating both ends as inclusive would make
-    /// a 5 mm section match two bands at once. A missing column defaults to inclusive, which is how
-    /// ASME prints an unqualified limit.
-    /// </remarks>
-    let private sizeRangeFromReader (reader: SqliteDataReader) : SizeThicknessRange =
-        let included name =
-            let ordinal = reader.GetOrdinal name
-            reader.IsDBNull ordinal || reader.GetInt64 ordinal <> 0L
-
-        SizeThicknessRange.create
-            (optionalNumber reader "SizeThkMIN")
-            (included "SizeThkMIN_Included")
-            (optionalNumber reader "SizeThkMAX")
-            (included "SizeThkMAX_Included")
-
     let private loadSourceRows
         (connection: SqliteConnection)
         materialId
@@ -174,7 +154,8 @@ module AsmeMaterialRepository =
                             else
                                 StandardStrengthAllowableStress
                         Table = table
-                        SizeRange = sizeRangeFromReader reader
+                        SizeMinimum = optionalNumber reader "SizeThkMIN"
+                        SizeMaximum = optionalNumber reader "SizeThkMAX"
                         MaximumTemperature = optionalNumber reader maximumTemperatureColumn
                         CreepTemperature = optionalNumber reader "CreepTemperature"
                         AsmeNoteReferences =
@@ -217,7 +198,7 @@ module AsmeMaterialRepository =
 
             datasets
             |> Seq.toList
-            |> List.groupBy (fun (dataset, _) -> dataset.SizeRange)
+            |> List.groupBy (fun (dataset, _) -> dataset.SizeMinimum, dataset.SizeMaximum)
             |> List.collect (snd >> classifyGroup)
             |> List.map AllowableStressDataset.validate
             |> List.fold
@@ -244,121 +225,87 @@ module AsmeMaterialRepository =
         | "UltimateStrengthTable" -> TableSu
         | _ -> TableSy
 
-    /// <summary>One row of a pivoted strength table, before it becomes a dataset.</summary>
-    type private StrengthRow =
-        { RowId: int64
-          Values: Map<int, float>
-          SizeRange: SizeThicknessRange
-          NoteReferences: AsmeNoteReference list }
+    let private loadStrengthTable2D
+        (connection: SqliteConnection)
+        (materialId: int64)
+        (tableName: string)
+        (yAxisName: string)
+        : Result<PropertyTable option * AsmeNoteReference list, MaterialError> =
 
-    /// <summary>Reads every published row of one minimum-strength table.</summary>
-    /// <param name="connection">Open connection to the reference database.</param>
-    /// <param name="materialId">Value of <c>Materials.ID</c>.</param>
-    /// <param name="tableName">Either <c>YieldStrengthTable</c> or <c>UltimateStrengthTable</c>.</param>
-    /// <returns>Rows carrying values in MPa keyed by temperature in degC, empty ones dropped.</returns>
-    let private loadStrengthRows (connection: SqliteConnection) materialId tableName =
         use command = connection.CreateCommand()
         command.CommandText <- $"SELECT * FROM {tableName} WHERE MaterialID = $materialId ORDER BY ID"
         command.Parameters.AddWithValue("$materialId", materialId) |> ignore
         use reader = command.ExecuteReader()
-        let rows = ResizeArray<StrengthRow>()
 
-        while reader.Read() do
-            let values =
+        let columnAccumulator = ResizeArray<TableColumn * AsmeNoteReference list>()
+        let mutable error: MaterialError option = None
+
+        while error.IsNone && reader.Read() do
+            let entries =
                 temperatures
                 |> List.choose (fun temperature ->
                     optionalNumber reader $"T_{temperature}"
-                    |> Option.map (fun value -> temperature, value))
-                |> Map.ofList
+                    |> Option.map (fun value -> PropertyTable.entry (float temperature) value))
 
-            // A row with no populated temperature column carries no curve at all; keeping it would
-            // add an empty size band the caller could select and get nothing from.
-            if not values.IsEmpty then
-                rows.Add
-                    { RowId = reader.GetInt64(reader.GetOrdinal "ID")
-                      Values = values
-                      SizeRange = sizeRangeFromReader reader
-                      NoteReferences =
-                        optionalText reader "Notes"
-                        |> AsmeNoteReference.parse (strengthTableReference tableName) }
+            if not entries.IsEmpty then
+                let sizeMin = optionalNumber reader "SizeThkMIN"
+                let sizeMax = optionalNumber reader "SizeThkMAX"
 
-        rows |> Seq.toList
+                // Explicitly typed to avoid resolution ambiguity with SizeRangeBoundJson.
+                let lower: SizeRangeBound option =
+                    sizeMin
+                    |> Option.map (fun v -> { Value = v; Inclusion = Exclusive })
 
-    /// <summary>Turns one pivoted strength row into a size-banded dataset.</summary>
-    /// <param name="kind">Whether the row is Sy or Su.</param>
-    /// <param name="row">Row read from the reference table.</param>
-    /// <returns><c>Ok dataset</c>, or the curve-construction error.</returns>
-    let private strengthDataset kind (row: StrengthRow) : Result<TensileStrengthDataset, MaterialError> =
-        let entries =
-            row.Values
-            |> Map.toList
-            |> List.map (fun (temperature, value) -> PropertyTable.entry (float temperature) value)
+                let upper: SizeRangeBound option =
+                    sizeMax
+                    |> Option.map (fun v -> { Value = v; Inclusion = Inclusive })
 
-        PropertyTable.create1D
-            $"{TensileStrengthDataset.kindSymbol kind} vs temperature"
-            "Temperature"
-            "degC"
-            (TensileStrengthDataset.kindSymbol kind)
-            "MPa"
-            ReturnError
-            entries
-        |> Result.map (fun table ->
-            { DatabaseRowId = row.RowId
-              Kind = kind
-              Table = table
-              SizeRange = row.SizeRange
-              AsmeNoteReferences = row.NoteReferences
-              Notes = None })
+                let sizeRange: SizeColumnRange = { Lower = lower; Upper = upper; Label = None }
 
-    /// <summary>Picks the governing row of a strength table.</summary>
-    /// <param name="rows">Rows of one table.</param>
-    /// <returns>The lowest-valued row, or <c>None</c> when the table has none.</returns>
-    /// <remarks>
-    /// The lowest curve is the conservative choice when no section size has been supplied, and it
-    /// keeps the flat <c>TensileProperties</c> list safe to use without consulting the size bands.
-    /// Ties break on row identity so the result does not depend on read order.
-    /// </remarks>
-    let private governingStrengthRow (rows: StrengthRow list) =
-        rows
-        |> List.sortBy (fun row -> row.Values |> Map.toList |> List.sumBy snd, row.RowId)
-        |> List.tryHead
+                let noteReferences =
+                    optionalText reader "Notes"
+                    |> AsmeNoteReference.parse (strengthTableReference tableName)
 
-    /// <summary>Loads the governing Sy/Su pairing plus one dataset per published size band.</summary>
-    /// <param name="connection">Open connection to the reference database.</param>
-    /// <param name="materialId">Value of <c>Materials.ID</c>.</param>
-    /// <returns>The governing curve, the size-banded datasets, and the notes both tables carry.</returns>
-    let private loadTensileProperties (connection: SqliteConnection) materialId =
-        let yieldRows = loadStrengthRows connection materialId "YieldStrengthTable"
-        let ultimateRows = loadStrengthRows connection materialId "UltimateStrengthTable"
+                columnAccumulator.Add({ SizeRange = sizeRange; Entries = entries }, noteReferences)
 
-        let datasets =
-            (yieldRows |> List.map (strengthDataset YieldStrengthSy))
-            @ (ultimateRows |> List.map (strengthDataset UltimateTensileStrengthSu))
-            |> List.choose (function
-                | Ok dataset -> Some dataset
-                | Error _ -> None)
-            |> List.sortBy TensileStrengthDataset.sortKey
+        match error with
+        | Some e -> Error e
+        | None ->
+            let columns = columnAccumulator |> Seq.toList
 
-        let governing =
-            match governingStrengthRow yieldRows, governingStrengthRow ultimateRows with
-            | Some yieldRow, Some ultimateRow ->
-                temperatures
-                |> List.choose (fun temperature ->
-                    match Map.tryFind temperature yieldRow.Values, Map.tryFind temperature ultimateRow.Values with
-                    | Some yieldStrength, Some tensileStrength ->
-                        Some
-                            { Temperature = float temperature
-                              YieldStrength = yieldStrength
-                              TensileStrength = tensileStrength }
-                    | _ -> None)
-            | _ -> []
+            if columns.IsEmpty then
+                Ok(None, [])
+            else
+                let allNotes = columns |> List.collect snd |> List.distinct
+                let tableColumns = columns |> List.map fst
+                let dimensionType =
+                    if tableColumns |> List.forall (fun c -> c.SizeRange.Lower.IsNone && c.SizeRange.Upper.IsNone) then
+                        NoDimension
+                    else
+                        Thickness
 
-        let notes =
-            (yieldRows @ ultimateRows)
-            |> List.collect (fun row -> row.NoteReferences)
-            |> List.distinct
+                let tableResult =
+                    if dimensionType = NoDimension then
+                        match tableColumns with
+                        | [ single ] ->
+                            PropertyTable.create1D tableName "Temperature" "degC" yAxisName "MPa" FlatExtrapolate single.Entries
+                        | _ ->
+                            // Multiple rows with no size range: pick the highest-sum row.
+                            let best = tableColumns |> List.maxBy (fun c -> c.Entries |> List.sumBy (fun e -> e.Value))
+                            PropertyTable.create1D tableName "Temperature" "degC" yAxisName "MPa" FlatExtrapolate best.Entries
+                    else
+                        PropertyTable.create2D tableName "Temperature" "degC" yAxisName "MPa" Thickness "mm" FlatExtrapolate tableColumns
 
-        governing, datasets, notes
+                tableResult
+                |> Result.map (fun table -> Some table, allNotes)
+
+    /// <summary>Orders datasets by source, then from the lightest size band to the heaviest.</summary>
+    /// <param name="dataset">Dataset to rank.</param>
+    /// <returns>A tuple usable directly with <c>List.sortBy</c>.</returns>
+    let private allowableDatasetSortKey (dataset: AllowableStressDataset) =
+        let lower = dataset.SizeMinimum |> Option.defaultValue Double.NegativeInfinity
+        let upper = dataset.SizeMaximum |> Option.defaultValue Double.PositiveInfinity
+        dataset.Source, lower, upper, dataset.DatabaseRowId
 
     // -- Physical properties from the reference schema -------------------------
     //
@@ -539,9 +486,6 @@ module AsmeMaterialRepository =
     let private hydrate (connection: SqliteConnection) (material: Material) =
         let databaseId = Int64.Parse(material.Id)
 
-        let tensileProperties, tensileDatasets, tensileNotes =
-            loadTensileProperties connection databaseId
-
         let sources =
             [ Division1AllowableStress
               if tableExists connection "AllowableStress1HTable" then
@@ -549,34 +493,41 @@ module AsmeMaterialRepository =
               Division2AllowableStress
               BoltingAllowableStress ]
 
-        sources
-        |> List.map (loadSourceRows connection databaseId)
-        |> List.fold
-            (fun state item ->
-                state
-                |> Result.bind (fun datasets -> item |> Result.map (fun values -> values @ datasets)))
-            (Ok [])
-        |> Result.map (fun datasets ->
-            let applicableCodes =
-                datasets
-                |> List.collect (fun dataset ->
-                    match dataset.Source with
-                    | Division1AllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
-                    | Division1HighAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
-                    | Division2AllowableStress -> [ AsmeSectionVIII2 ]
-                    | BoltingAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1; AsmeSectionVIII2 ])
-                |> List.distinct
+        loadStrengthTable2D connection databaseId "YieldStrengthTable" "Sy"
+        |> Result.bind (fun (syTable, syNotes) ->
+            loadStrengthTable2D connection databaseId "UltimateStrengthTable" "Su"
+            |> Result.bind (fun (suTable, suNotes) ->
+                let tensileNotes = List.distinct (syNotes @ suNotes)
 
-            { material with
-                AsmeNoteReferences = List.distinct (material.AsmeNoteReferences @ tensileNotes)
-                ApplicableAsmeCodes = applicableCodes
-                PhysicalProperties = loadPhysicalProperties connection databaseId material.PhysicalProperties
-                WeldingInfo = loadWeldingInfo connection databaseId
-                StrengthProperties =
-                    { material.StrengthProperties with
-                        TensileProperties = tensileProperties
-                        TensileStrengthDatasets = tensileDatasets
-                        AllowableStressDatasets = datasets |> List.sortBy AllowableStressDataset.sortKey } })
+                sources
+                |> List.map (loadSourceRows connection databaseId)
+                |> List.fold
+                    (fun state item ->
+                        state
+                        |> Result.bind (fun datasets -> item |> Result.map (fun values -> values @ datasets)))
+                    (Ok [])
+                |> Result.map (fun allowableDatasets ->
+                    let applicableCodes =
+                        allowableDatasets
+                        |> List.collect (fun dataset ->
+                            match dataset.Source with
+                            | Division1AllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
+                            | Division1HighAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
+                            | Division2AllowableStress -> [ AsmeSectionVIII2 ]
+                            | BoltingAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1; AsmeSectionVIII2 ])
+                        |> List.distinct
+
+                    { material with
+                        AsmeNoteReferences = List.distinct (material.AsmeNoteReferences @ tensileNotes)
+                        ApplicableAsmeCodes = applicableCodes
+                        PhysicalProperties = loadPhysicalProperties connection databaseId material.PhysicalProperties
+                        WeldingInfo = loadWeldingInfo connection databaseId
+                        StrengthProperties =
+                            { material.StrengthProperties with
+                                SyTable = syTable
+                                SuTable = suTable
+                                AllowableStressDatasets =
+                                    allowableDatasets |> List.sortBy allowableDatasetSortKey } })))
 
     let findMany databasePath criteria =
         if String.IsNullOrWhiteSpace databasePath || not (File.Exists databasePath) then

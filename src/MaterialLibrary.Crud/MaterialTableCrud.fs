@@ -77,36 +77,20 @@ module StrengthPropertyCrud =
             StrengthProperties = strengthProperties
             LastModified = System.DateTime.UtcNow }
 
-    let setAllowableStresses rows material =
-        touch { material.StrengthProperties with AllowableStresses = rows } material
+    let setAllowableStressDatasets rows material =
+        touch { material.StrengthProperties with AllowableStressDatasets = rows } material
 
-    let setAllowableStressDatasets (rows: AllowableStressDataset list) material =
-        touch
-            { material.StrengthProperties with
-                AllowableStressDatasets = rows |> List.sortBy AllowableStressDataset.sortKey }
-            material
+    /// <summary>Replaces the Sy table (yield strength vs temperature, by size range).</summary>
+    /// <param name="table">New 2D PropertyTable, or None to clear.</param>
+    /// <param name="material">Source material.</param>
+    let setSyTable (table: PropertyTable option) (material: Material) =
+        touch { material.StrengthProperties with SyTable = table } material
 
-    let setTensileStrengthDatasets (rows: TensileStrengthDataset list) material =
-        touch
-            { material.StrengthProperties with
-                TensileStrengthDatasets = rows |> List.sortBy TensileStrengthDataset.sortKey }
-            material
-
-    let setTensileProperties (rows: TensileProperties list) (material: Material) =
-        touch { material.StrengthProperties with TensileProperties = rows |> List.sortBy (fun row -> row.Temperature) } material
-
-    let addOrReplaceTensileProperties (row: TensileProperties) material =
-        let rows =
-            material.StrengthProperties.TensileProperties
-            |> List.filter (fun existing -> existing.Temperature <> row.Temperature)
-            |> fun existing -> row :: existing
-
-        setTensileProperties rows material
-
-    let deleteTensileProperties temperature material =
-        material.StrengthProperties.TensileProperties
-        |> List.filter (fun row -> row.Temperature <> temperature)
-        |> fun rows -> setTensileProperties rows material
+    /// <summary>Replaces the Su table (ultimate tensile strength vs temperature, by size range).</summary>
+    /// <param name="table">New 2D PropertyTable, or None to clear.</param>
+    /// <param name="material">Source material.</param>
+    let setSuTable (table: PropertyTable option) (material: Material) =
+        touch { material.StrengthProperties with SuTable = table } material
 
     let setCompressionProperties (rows: CompressionProperties list option) (material: Material) =
         touch { material.StrengthProperties with CompressionProperties = rows |> Option.map (List.sortBy (fun row -> row.Temperature)) } material

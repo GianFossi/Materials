@@ -226,17 +226,27 @@ let ``requested database library loads six materials and classifies allowable st
         materials
         |> List.find (fun material -> material.Specification = "SA-193" && material.Grade = "B7")
 
-    let b7TensileAt400 =
-        b7.StrengthProperties.TensileProperties
-        |> List.find (fun properties -> properties.Temperature = 400.0)
+    // SA-193 B7 is published in three diameter bands and is derated as the bolt gets bigger, so
+    // "Sy at 400 degC" is only meaningful once a diameter is named. Reading the first entry of the
+    // first column instead would silently return whichever band happened to sort first.
+    let b7SyAt400 diameter =
+        match b7.StrengthProperties.SyTable with
+        | None -> failwith "Expected SyTable to be populated for SA-193 B7"
+        | Some table ->
+            table.Columns
+            |> List.find (fun column -> SizeColumnRange.contains diameter column.SizeRange)
+            |> fun column -> (column.Entries |> List.find (fun entry -> entry.X = 400.0)).Value
 
-    Assert.Equal(381.0, b7TensileAt400.YieldStrength, 12)
-    Assert.Equal(629.0, b7TensileAt400.TensileStrength, 12)
+    Assert.Equal(534.0, b7SyAt400 50.0, 12)
+    Assert.Equal(483.0, b7SyAt400 80.0, 12)
+    Assert.Equal(381.0, b7SyAt400 150.0, 12)
+
+    // The bands must not overlap at a boundary: 64 mm belongs to the light band only.
+    Assert.Equal(534.0, b7SyAt400 64.0, 12)
     Assert.Equal(3, b7.StrengthProperties.AllowableStressDatasets.Length)
     Assert.Equal<float option list>(
         [ Some 64.0; Some 100.0; Some 180.0 ],
-        b7.StrengthProperties.AllowableStressDatasets
-        |> List.map (fun dataset -> dataset.SizeRange.Maximum)
+        b7.StrengthProperties.AllowableStressDatasets |> List.map (fun dataset -> dataset.SizeMaximum)
     )
     Assert.All(
         b7.StrengthProperties.AllowableStressDatasets,
@@ -334,10 +344,29 @@ let ``library handles null values at public boundaries`` () =
 let ``material JSON round trip preserves advanced properties`` () =
     let material = createTestMaterial ()
 
-    let tensile =
-        { Temperature = 400.0
-          YieldStrength = 180.0
-          TensileStrength = 390.0 }
+    let syTable =
+        PropertyTable.create1D
+            "Sy"
+            "Temperature"
+            "°C"
+            "Sy"
+            "MPa"
+            XBoundaryPolicy.FlatExtrapolate
+            [ { X = 400.0; Value = 180.0 }
+              { X = 450.0; Value = 165.0 } ]
+        |> expectOk
+
+    let suTable =
+        PropertyTable.create1D
+            "Su"
+            "Temperature"
+            "°C"
+            "Su"
+            "MPa"
+            XBoundaryPolicy.FlatExtrapolate
+            [ { X = 400.0; Value = 390.0 }
+              { X = 450.0; Value = 370.0 } ]
+        |> expectOk
 
     let compression =
         { Temperature = 400.0
@@ -359,14 +388,8 @@ let ``material JSON round trip preserves advanced properties`` () =
 
     let strengthProperties =
         { material.StrengthProperties with
-            AllowableStresses =
-                [ { Temperature = 400.0
-                    Section_I_ServiceLevel_A = Some 120.0
-                    Section_I_ServiceLevel_B = None
-                    Section_I_ServiceLevel_C = None
-                    Section_I_ServiceLevel_D = None
-                    Section_II_Weld = Some 100.0 } ]
-            TensileProperties = [ tensile ]
+            SyTable = Some syTable
+            SuTable = Some suTable
             CompressionProperties = Some [ compression ]
             ExternalPressureTables = [ externalPressureTable ]
             NortonModels = [ { Temperature = 400.0; A = 1.0e-8; N = 4.0; M = 0.3 } ]
@@ -758,10 +781,12 @@ let ``material JSON strictly enforces current schema`` () =
             Notes = Some "User-defined material note" }
 
     let json = material |> MaterialSerialization.toJsonString
-    // Matches whatever version the serializer currently writes, so a version bump cannot silently
-    // turn this into a no-op substitution that then asserts against unmodified JSON.
+    // Hardcoding the current version here has bitten twice: after a bump the pattern matches
+    // nothing, the substitution silently returns valid JSON, and the assertions below pass while
+    // testing nothing. Build the pattern from the serializer instead.
     let replaceVersion version =
-        Regex("\"schemaVersion\"\\s*:\\s*\\d+").Replace(json, $"\"schemaVersion\": {version}", 1)
+        Regex($"\"schemaVersion\"\s*:\s*{MaterialSerialization.CurrentSchemaVersion}")
+            .Replace(json, $"\"schemaVersion\": {version}", 1)
 
     Assert.Contains("\"schemaVersion\"", json)
     Assert.Contains("\"family\":\"LAS2.25\"", json)
@@ -769,19 +794,22 @@ let ``material JSON strictly enforces current schema`` () =
     Assert.Equal(Some LAS2_25, roundTrip.Family)
     Assert.Equal<AsmeNoteReference list>(material.AsmeNoteReferences, roundTrip.AsmeNoteReferences)
     Assert.Equal(material.Notes, roundTrip.Notes)
+    Assert.NotEqual<string>(json, replaceVersion 0)
     Assert.True(replaceVersion 0 |> MaterialSerialization.fromJsonStringComplete |> Result.isError)
     Assert.True(replaceVersion 99 |> MaterialSerialization.fromJsonStringComplete |> Result.isError)
 
-    // Versions inside the supported window are accepted; anything below it is not.
-    Assert.True(
-        replaceVersion MaterialSerialization.MinimumReadableSchemaVersion
-        |> MaterialSerialization.fromJsonStringComplete
-        |> Result.isOk)
+    // Every version inside the supported window still loads; the one below it does not.
+    for version in MaterialSerialization.MinimumReadableSchemaVersion .. MaterialSerialization.CurrentSchemaVersion do
+        Assert.True(
+            replaceVersion version |> MaterialSerialization.fromJsonStringComplete |> Result.isOk,
+            $"schema version {version} is inside the read window but was refused"
+        )
 
     Assert.True(
         replaceVersion (MaterialSerialization.MinimumReadableSchemaVersion - 1)
         |> MaterialSerialization.fromJsonStringComplete
-        |> Result.isError)
+        |> Result.isError
+    )
 
 [<Fact>]
 let ``adaptive Kachanov integration reports accepted grid`` () =
@@ -1176,161 +1204,11 @@ let ``CRUD XML batch import preserves source order`` () =
         if Directory.Exists(dataRoot) then
             Directory.Delete(dataRoot, true)
 
-[<Fact>]
-let ``Schema reads every version in its supported window and refuses older ones`` () =
-    // The physical-properties record is serialized directly, so a new optional table appears in
-    // JSON automatically. A document written before one existed must still load, with the field None.
-    let material = createTestMaterial ()
-    let current = MaterialSerialization.toJsonString material
-    let currentVersion = MaterialSerialization.CurrentSchemaVersion
-    let oldestReadable = MaterialSerialization.MinimumReadableSchemaVersion
-
-    Assert.Contains("ThermalDiffusivityTable", current)
-    Assert.True(oldestReadable <= currentVersion, "the read window must not be empty")
-
-    // Written with the current version; substituting is how each older version is exercised.
-    let stamp version =
-        current.Replace($"\"schemaVersion\":{currentVersion}", $"\"schemaVersion\":{version}")
-
-    Assert.NotEqual<string>(current, stamp (currentVersion - 1))
-
-    for version in oldestReadable .. currentVersion do
-        match MaterialSerialization.fromJsonStringComplete (stamp version) with
-        | Ok reloaded -> Assert.Equal(material.Id, reloaded.Id)
-        | Error error -> failwithf "version %d is inside the read window but failed: %A" version error
-
-    // Anything genuinely older than the supported window is still refused.
-    Assert.True(
-        MaterialSerialization.fromJsonStringComplete (stamp (oldestReadable - 1))
-        |> Result.isError
-    )
-
-[<Fact>]
-let ``Thermal diffusivity round-trips through JSON`` () =
-    let material = createTestMaterial ()
-
-    let withDiffusivity =
-        PhysicalPropertyCrud.setThermalDiffusivity (Some [ 20.0, 1.81e-5; 300.0, 1.42e-5 ]) material
-
-    match MaterialSerialization.fromJsonStringComplete (MaterialSerialization.toJsonString withDiffusivity) with
-    | Ok reloaded ->
-        match reloaded.PhysicalProperties.ThermalDiffusivityTable with
-        | Some rows ->
-            Assert.Equal(2, rows.Length)
-            Assert.Equal(1.81e-5, snd rows.Head, 12)
-        | None -> failwith "thermal diffusivity was lost in the round trip"
-    | Error error -> failwithf "reload failed: %A" error
-
-// ── Room-temperature tensile test, and the size-grouped strength curves ──────
-
-[<Fact>]
-let ``size band honours its inclusive flags at the boundary`` () =
-    // "up to 5 incl." and "over 5" are adjacent ASME bands. If both ends were treated as inclusive,
-    // a 5 mm section would match both and the caller would silently get whichever came first.
-    let upTo5 = SizeThicknessRange.create None true (Some 5.0) true
-    let over5 = SizeThicknessRange.create (Some 5.0) false None true
-
-    Assert.True(SizeThicknessRange.contains 5.0 upTo5)
-    Assert.False(SizeThicknessRange.contains 5.0 over5)
-    Assert.False(SizeThicknessRange.contains 5.1 upTo5)
-    Assert.True(SizeThicknessRange.contains 5.1 over5)
-
-    Assert.True(SizeThicknessRange.isUnbounded SizeThicknessRange.all)
-    Assert.Equal("All sizes", SizeThicknessRange.describe SizeThicknessRange.all)
-    Assert.Equal("up to 5 mm incl.", SizeThicknessRange.describe upTo5)
-    Assert.Equal("over 5 mm", SizeThicknessRange.describe over5)
-
-[<Fact>]
-let ``reference materials keep every published Sy and Su size group`` () =
-    let databasePath =
-        Configuration.createDefault ()
-        |> Configuration.getAsmeDatabasePath
-
-    // SA-325 bolting publishes two diameter bands, and derates the heavier one.
-    let material = AsmeMaterialRepository.findById databasePath 260L |> expectOk
-    let datasets = material.StrengthProperties.TensileStrengthDatasets
-
-    Assert.Equal(4, datasets.Length)
-
-    let yieldBands =
-        datasets
-        |> List.filter (fun dataset -> dataset.Kind = YieldStrengthSy)
-        |> List.map (fun dataset -> SizeThicknessRange.describe dataset.SizeRange)
-
-    Assert.Equal<string list>([ "13 to 25 mm incl."; "29 to 38 mm incl." ], yieldBands)
-
-    let strengthAt40 kind band =
-        datasets
-        |> List.find (fun dataset ->
-            dataset.Kind = kind && SizeThicknessRange.contains band dataset.SizeRange)
-        |> fun dataset -> (PropertyTable.lookup1D 40.0 dataset.Table |> expectOk).Value
-
-    // The heavier band is the weaker one; that is the whole reason the grouping has to survive.
-    Assert.True(strengthAt40 YieldStrengthSy 30.0 < strengthAt40 YieldStrengthSy 20.0)
-    Assert.True(strengthAt40 UltimateTensileStrengthSu 30.0 < strengthAt40 UltimateTensileStrengthSu 20.0)
-
-    // The governing flat curve stays available for callers that name no size.
-    Assert.NotEmpty(material.StrengthProperties.TensileProperties)
-
-[<Fact>]
-let ``allowable stresses carry their division, case, and size band`` () =
-    let databasePath =
-        Configuration.createDefault ()
-        |> Configuration.getAsmeDatabasePath
-
-    // SA-516 70 is tabulated under both Division 1 and Division 2.
-    let plate = AsmeMaterialRepository.findById databasePath 177L |> expectOk
-
-    let sources =
-        plate.StrengthProperties.AllowableStressDatasets
-        |> List.map (fun dataset -> dataset.Source)
-        |> List.distinct
-
-    Assert.Contains(Division1AllowableStress, sources)
-    Assert.Contains(Division2AllowableStress, sources)
-
-    let stressAt40 source =
-        plate.StrengthProperties.AllowableStressDatasets
-        |> List.find (fun dataset -> dataset.Source = source)
-        |> fun dataset -> (PropertyTable.lookup1D 40.0 dataset.Table |> expectOk).Value
-
-    // Division 2 divides the ultimate strength by a smaller factor, so it always allows more.
-    Assert.True(stressAt40 Division1AllowableStress < stressAt40 Division2AllowableStress)
-
-    // Bolting is banded by diameter, and each band keeps its own curve.
-    let bolt = AsmeMaterialRepository.findById databasePath 260L |> expectOk
-    let boltDatasets = bolt.StrengthProperties.AllowableStressDatasets
-
-    Assert.Equal(2, boltDatasets.Length)
-    Assert.All(boltDatasets, fun dataset -> Assert.Equal(BoltingAllowableStress, dataset.Source))
-    Assert.All(boltDatasets, fun dataset -> Assert.False(SizeThicknessRange.isUnbounded dataset.SizeRange))
-
-[<Fact>]
-let ``division 1 publishes both the normal and the higher alternative allowable stress`` () =
-    let databasePath =
-        Configuration.createDefault ()
-        |> Configuration.getAsmeDatabasePath
-
-    // SA-334 7 carries note G5, which is what marks the higher alternative stress values.
-    let material = AsmeMaterialRepository.findById databasePath 736L |> expectOk
-
-    let atSource source =
-        material.StrengthProperties.AllowableStressDatasets
-        |> List.find (fun dataset -> dataset.Source = source)
-
-    let normal = atSource Division1AllowableStress
-    let higher = atSource Division1HighAllowableStress
-
-    Assert.Equal(StandardStrengthAllowableStress, normal.Case)
-    Assert.Equal(HighStrengthAllowableStress, higher.Case)
-    Assert.Equal("Normal", AllowableStressDataset.caseLabel normal.Case)
-    Assert.Equal("High", AllowableStressDataset.caseLabel higher.Case)
-    Assert.Equal("VIII-1", AllowableStressDataset.divisionLabel higher.Source)
-
-    let stressAt200 dataset =
-        (PropertyTable.lookup1D 200.0 dataset.Table |> expectOk).Value
-
-    Assert.True(stressAt200 normal < stressAt200 higher)
+// ── Carried forward across the merge with GitHub main ────────────────────────
+//
+// The 2D SyTable/SuTable model came from origin/main; the room-temperature elongation split and
+// the thermal-diffusivity table came from this branch. These tests pin the parts of that
+// combination that neither side tested on its own.
 
 [<Fact>]
 let ``room-temperature elongation is stored per rolling direction and stays optional`` () =
@@ -1349,8 +1227,8 @@ let ``room-temperature elongation is stored per rolling direction and stays opti
     let neither = BasicProperties.create None None 55.0 240.0 420.0
     Assert.Equal(None, BasicProperties.governingElongationPercent neither)
 
-    // The ASME reference tables do not report elongation, so None has to survive a round trip
-    // rather than collapsing to zero.
+    // The ASME reference tables leave both elongation columns NULL for every material, so None has
+    // to survive a round trip rather than collapsing to zero.
     let reloaded =
         { material with BasicProperties = neither }
         |> MaterialSerialization.toJsonString
@@ -1361,49 +1239,128 @@ let ``room-temperature elongation is stored per rolling direction and stays opti
     Assert.Equal(None, reloaded.BasicProperties.ElongationTransversePercent)
 
 [<Fact>]
-let ``size-grouped strength and allowable datasets survive a JSON round trip`` () =
+let ``a document written before elongation was split still loads`` () =
+    // Version 15 wrote a single elongationPercent, which the reference importer filled from the
+    // longitudinal column. Dropping it on read would lose data from every previously saved library.
+    let material = createTestMaterial ()
+
+    let legacy =
+        material
+        |> MaterialSerialization.toJsonString
+        |> fun json ->
+            json
+                .Replace("\"elongationLongitudinalPercent\"", "\"unusedLongitudinal\"")
+                .Replace("\"elongationTransversePercent\"", "\"unusedTransverse\"")
+                .Replace("\"reductionOfAreaPercent\"", "\"elongationPercent\":17.5,\"reductionOfAreaPercent\"")
+
+    let reloaded = MaterialSerialization.fromJsonStringComplete legacy |> expectOk
+
+    Assert.Equal(Some 17.5, reloaded.BasicProperties.ElongationLongitudinalPercent)
+    Assert.Equal(None, reloaded.BasicProperties.ElongationTransversePercent)
+
+[<Fact>]
+let ``thermal diffusivity round-trips through JSON`` () =
+    let material = createTestMaterial ()
+
+    let withDiffusivity =
+        PhysicalPropertyCrud.setThermalDiffusivity (Some [ 20.0, 1.81e-5; 300.0, 1.42e-5 ]) material
+
+    let reloaded =
+        withDiffusivity
+        |> MaterialSerialization.toJsonString
+        |> MaterialSerialization.fromJsonStringComplete
+        |> expectOk
+
+    match reloaded.PhysicalProperties.ThermalDiffusivityTable with
+    | Some rows ->
+        Assert.Equal(2, rows.Length)
+        Assert.Equal(1.81e-5, snd rows.Head, 12)
+    | None -> failwith "thermal diffusivity was lost in the round trip"
+
+[<Fact>]
+let ``reference hydration fills the physical properties and welding info`` () =
     let databasePath =
         Configuration.createDefault ()
         |> Configuration.getAsmeDatabasePath
 
+    let material = AsmeMaterialRepository.findById databasePath 1L |> expectOk
+    let physical = material.PhysicalProperties
+
+    // Each quantity is checked against a physically sensible band for steel in the domain's own
+    // unit, which is what proves the unit conversions rather than just the row counts.
+    Assert.NotEmpty(physical.ThermalExpansionTable)
+    Assert.InRange(physical.ThermalExpansionTable.Head.ExpansionCoefficient, 5e-6, 2.5e-5)
+    Assert.NotEmpty(physical.ElasticModulusTable)
+    Assert.InRange(physical.ElasticModulusTable.Head.ElasticModulus, 150_000.0, 250_000.0)
+
+    match physical.ThermalDiffusivityTable with
+    | Some rows -> Assert.InRange(snd rows.Head, 1e-6, 1e-4)
+    | None -> failwith "thermal diffusivity was not hydrated"
+
+    Assert.True(material.WeldingInfo.IsSome, "welding P/G numbers were not hydrated")
+
+[<Fact>]
+let ``allowable-stress datasets expose their division and case as labels`` () =
+    let databasePath =
+        Configuration.createDefault ()
+        |> Configuration.getAsmeDatabasePath
+
+    // SA-334 7 carries note G5, which is what marks the higher alternative stress values.
+    let material = AsmeMaterialRepository.findById databasePath 736L |> expectOk
+
+    let atSource source =
+        material.StrengthProperties.AllowableStressDatasets
+        |> List.find (fun dataset -> dataset.Source = source)
+
+    let normal = atSource Division1AllowableStress
+    let higher = atSource Division1HighAllowableStress
+
+    Assert.Equal("VIII-1", AllowableStressDataset.divisionLabel normal.Source)
+    Assert.Equal("VIII-1", AllowableStressDataset.divisionLabel higher.Source)
+    Assert.Equal("Normal", AllowableStressDataset.caseLabel normal.Case)
+    Assert.Equal("High", AllowableStressDataset.caseLabel higher.Case)
+
+    let stressAt200 dataset =
+        (PropertyTable.lookup1D 200.0 dataset.Table |> expectOk).Value
+
+    // The higher alternative stress is by definition above the normal one.
+    Assert.True(stressAt200 normal < stressAt200 higher)
+
+    // SA-516 70 is tabulated under both Divisions, and Division 2 always allows more.
+    let plate = AsmeMaterialRepository.findById databasePath 177L |> expectOk
+
+    let plateStressAt40 source =
+        plate.StrengthProperties.AllowableStressDatasets
+        |> List.find (fun dataset -> dataset.Source = source)
+        |> fun dataset -> (PropertyTable.lookup1D 40.0 dataset.Table |> expectOk).Value
+
+    Assert.True(plateStressAt40 Division1AllowableStress < plateStressAt40 Division2AllowableStress)
+
+[<Fact>]
+let ``Sy and Su keep one column per published size band`` () =
+    let databasePath =
+        Configuration.createDefault ()
+        |> Configuration.getAsmeDatabasePath
+
+    // SA-325 bolting publishes two diameter bands and derates the heavier one.
     let material = AsmeMaterialRepository.findById databasePath 260L |> expectOk
 
-    let reloaded =
-        material
-        |> MaterialSerialization.toJsonString
-        |> MaterialSerialization.fromJsonStringComplete
-        |> expectOk
+    let columnsOf table =
+        match table with
+        | Some (t: PropertyTable) -> t.Columns
+        | None -> failwith "expected a populated strength table"
 
-    Assert.Equal<TensileStrengthDataset list>(
-        material.StrengthProperties.TensileStrengthDatasets,
-        reloaded.StrengthProperties.TensileStrengthDatasets
-    )
+    let syColumns = columnsOf material.StrengthProperties.SyTable
+    let suColumns = columnsOf material.StrengthProperties.SuTable
 
-    Assert.Equal<AllowableStressDataset list>(
-        material.StrengthProperties.AllowableStressDatasets,
-        reloaded.StrengthProperties.AllowableStressDatasets
-    )
+    Assert.Equal(2, syColumns.Length)
+    Assert.Equal(2, suColumns.Length)
 
-    // Exclusive bounds are the fragile part: a lost flag would silently widen a band.
-    let banded =
-        { SizeThicknessRange.all with
-            Minimum = Some 5.0
-            MinimumIncluded = false }
+    let valueAt diameter columns =
+        columns
+        |> List.find (fun column -> SizeColumnRange.contains diameter column.SizeRange)
+        |> fun column -> (column.Entries |> List.find (fun entry -> entry.X = 40.0)).Value
 
-    let withExclusiveBand =
-        { material with
-            StrengthProperties =
-                { material.StrengthProperties with
-                    TensileStrengthDatasets =
-                        material.StrengthProperties.TensileStrengthDatasets
-                        |> List.map (fun dataset -> { dataset with SizeRange = banded }) } }
-
-    let reloadedBands =
-        withExclusiveBand
-        |> MaterialSerialization.toJsonString
-        |> MaterialSerialization.fromJsonStringComplete
-        |> expectOk
-        |> fun m -> m.StrengthProperties.TensileStrengthDatasets
-
-    Assert.NotEmpty(reloadedBands)
-    Assert.All(reloadedBands, fun dataset -> Assert.False(dataset.SizeRange.MinimumIncluded))
+    // The heavier band is the weaker one; that is the whole reason the grouping has to survive.
+    Assert.True(valueAt 30.0 syColumns < valueAt 20.0 syColumns)
+    Assert.True(valueAt 30.0 suColumns < valueAt 20.0 suColumns)
