@@ -57,7 +57,7 @@
                         <!-- Fixed left column: temperature labels -->
                         <StackPanel Margin="0,0,4,0">
                             <!-- Spacer aligns with column header height -->
-                            <Border Height="68" />
+                            <Border Height="104" />
                             <ItemsControl ItemsSource="{Binding Temperatures}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -84,10 +84,28 @@
                                         <!-- Column header: editable size bounds -->
                                         <Border BorderBrush="#CCC" BorderThickness="1"
                                                 Background="#F8F8F8" Padding="4,3" Margin="0,0,0,2"
-                                                Height="68">
+                                                Height="104">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="BorderBrush" Value="#CCC" />
+                                                    <Setter Property="Background" Value="#F8F8F8" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasRangeValidationError}" Value="True">
+                                                            <Setter Property="BorderBrush" Value="#C62828" />
+                                                            <Setter Property="Background" Value="#FFF4F4" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
                                             <StackPanel>
+                                                <TextBlock Text="Applicable size range (mm)"
+                                                           FontSize="10"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#555"
+                                                           HorizontalAlignment="Center"
+                                                           Margin="0,0,0,2" />
                                                 <DockPanel>
-                                                    <TextBlock DockPanel.Dock="Left" Text="≥"
+                                                    <TextBlock DockPanel.Dock="Left" Text="Min (&gt;)"
                                                                VerticalAlignment="Center"
                                                                Margin="0,0,3,0"
                                                                ToolTip="Size minimum (mm), exclusive lower bound" />
@@ -96,7 +114,7 @@
                                                              ToolTip="Minimum size (mm). Leave blank for no lower bound." />
                                                 </DockPanel>
                                                 <DockPanel Margin="0,2,0,0">
-                                                    <TextBlock DockPanel.Dock="Left" Text="≤"
+                                                    <TextBlock DockPanel.Dock="Left" Text="Max (&lt;=)"
                                                                VerticalAlignment="Center"
                                                                Margin="0,0,3,0"
                                                                ToolTip="Size maximum (mm), inclusive upper bound" />
@@ -108,6 +126,12 @@
                                                            FontStyle="Italic" FontSize="10"
                                                            HorizontalAlignment="Center"
                                                            Margin="0,2,0,0" Foreground="#555" />
+                                                <TextBlock Text="{Binding RangeValidationMessage}"
+                                                           FontSize="9"
+                                                           Foreground="#C62828"
+                                                           Margin="0,1,0,0"
+                                                           TextAlignment="Center"
+                                                           TextWrapping="Wrap" />
                                             </StackPanel>
                                         </Border>
 

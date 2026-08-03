@@ -90,6 +90,14 @@ The application creates these tables with `CREATE TABLE IF NOT EXISTS`. They are
 
 `MaterialDocumentStore` is the canonical full-fidelity read-back source for application-written materials. The scalar and row tables keep common fields queryable from ordinary SQL.
 
+For reference-material hydration, the physical-property loader now follows this order:
+
+1. Use `MaterialGroupMap` group IDs when present (compiled/shared group rows).
+2. If the grouped row is missing or empty, fall back to a material-linked row (`MaterialID`) when the table supports it.
+3. If needed, fall back to `ID = MaterialID` for legacy variants.
+
+Room-temperature values are preserved explicitly: density and Poisson ratio at `20 degC` are carried forward when available (from grouped room-temperature tables when present, otherwise from scalar reference fields).
+
 `MaterialAllowableStressDatasetRows` repeats its division, case, and size bounds on every row on purpose: one row then answers "which allowable stress applies to this size at this temperature" without a join. Size bounds are in millimetres. Elongation and reduction of area are room-temperature scalars and live on the `Materials` row (`RuptureElongationLong`, `RuptureElongationTransv`) and in `MaterialLibraryExtension` (`ReductionOfAreaPercent`); Sy and Su are 2D tables and live only in the material document.
 
 Schema provisioning also repairs older working copies: a reference column this build writes but the file lacks is added with `ALTER TABLE`, and an application-owned row table left in a superseded shape is dropped so the current definition recreates it. Only application-owned tables are ever dropped, and they are a projection of `MaterialDocumentStore`, which is never touched.

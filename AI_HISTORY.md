@@ -18,6 +18,54 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 
 ## History
 
+- Date: 2026-08-03
+- Area: CRUD app size-range validation UX
+- Change: Added inline header validation for size-ranged Sy/Su/allowable columns: invalid Min/Max numbers and Min >= Max now show immediate red warnings and header highlight.
+- Why: Surface range-entry errors earlier, directly where bounds are edited, instead of only at final commit.
+- Impact: UI validation feedback improved; commit-time validation remains unchanged.
+- Files: src/MaterialLibrary.CrudApp/ViewModels/SizeRangedColumnViewModel.cs, src/MaterialLibrary.CrudApp/Views/MaterialTablesWindow.xaml, docs/desktop-app.md, AI_HISTORY.md
+- Follow-up: Optionally disable dialog confirmation while any size-range header reports an active validation error.
+
+- Date: 2026-08-03
+- Area: CRUD app size-ranged table editor
+- Change: Clarified the Sy/Su/Allowable column headers with an explicit "Applicable size range (mm)" section and Min/Max bound labels, and made the computed size-band label update live while typing bounds.
+- Why: Make applicable size ranges easier to understand/edit directly at the top of each column and avoid stale header labels during edits.
+- Impact: UI-only behavior improvement in Material Tables editor; no domain/API changes.
+- Files: src/MaterialLibrary.CrudApp/Views/MaterialTablesWindow.xaml, src/MaterialLibrary.CrudApp/ViewModels/SizeRangedColumnViewModel.cs, docs/desktop-app.md, AI_HISTORY.md
+- Follow-up: Consider adding a small validation hint when Min >= Max in a column header.
+
+- Date: 2026-08-03
+- Area: ASME reference hydration tests
+- Change: Added regression tests for grouped-first physical-property lookup, material-linked fallback when grouped rows are missing, and grouped room-temperature density/Poisson sourcing.
+- Why: Lock the new lookup policy in automated tests and prevent regressions across mixed ASME database variants.
+- Impact: Test coverage now validates specific-heat precedence, elastic-modulus fallback, and 20 degC density/Poisson hydration behavior.
+- Files: tests/MaterialLibrary.Tests/Tests.fs, AI_HISTORY.md
+- Follow-up: If new group-mapped physical-property columns are introduced, add one fixture per column to keep fallback behavior explicit.
+
+- Date: 2026-08-03
+- Area: ASME reference hydration
+- Change: Added group-first physical-property fallback logic for reference materials: grouped rows via `MaterialGroupMap` are used first, then material-linked rows are used when grouped rows are missing/empty; added optional support for grouped specific-heat/density/Poisson columns when present.
+- Why: Support mixed database variants and ensure a material still hydrates physical properties when group mappings are partial or absent.
+- Impact: More robust physical-property resolution for elastic modulus, thermal expansion, conductivity, diffusivity, and specific heat; room-temperature density/Poisson can now be sourced from dedicated grouped tables when available.
+- Files: src/MaterialLibrary/Database.Lookup/AsmeMaterialRepository.fs, docs/asme-materials-db.md, AI_HISTORY.md
+- Follow-up: Add tests that cover (a) full group mapping, (b) missing group row with material fallback, and (c) optional grouped density/Poisson tables.
+
+- Date: 2026-08-03
+- Area: CRUD app raw-table browser
+- Change: Fixed Raw Tables view to keep row data visible (schema moved to a collapsible panel) and restored schema/foreign-key refresh during async table loads.
+- Why: Rows were loaded (non-zero row count) but the fixed-height schema block could consume the visible area, and async refresh skipped schema metadata updates.
+- Impact: Raw rows are visible by default, schema/PK/FK metadata stays in sync with selected table, and edit capability checks use fresh key metadata.
+- Files: src/MaterialLibrary.CrudApp/Views/DatabaseWindow.xaml, src/MaterialLibrary.CrudApp/ViewModels/Database/DatabaseViewModel.RawTables.cs, AI_HISTORY.md
+- Follow-up: Add UI tests for Raw Tables layout at common DPI scales and unit tests for async refresh parity with sync refresh.
+
+- Date: 2026-08-03
+- Area: CRUD app database manager
+- Change: Normalized database-open path resolution so selecting a `.working.db` file reuses the base source when present and avoids generating nested `.working.working.db` files.
+- Why: Prevent opening stale/intermediate working files by mistake and keep the ASME source/working-copy workflow deterministic.
+- Impact: Opening a database now resolves to a canonical source + canonical sibling working copy path; no public API changes.
+- Files: src/MaterialLibrary.CrudApp/ViewModels/Database/DatabaseViewModel.Lifecycle.cs, docs/desktop-app.md, AI_HISTORY.md
+- Follow-up: Add focused CRUD app view-model tests around source/working path resolution edge cases.
+
 - Date: 2026-07-28
 - Area: Project governance
 - Change: Added instruction files and persistent AI history process in this repository.

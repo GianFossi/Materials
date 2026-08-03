@@ -114,6 +114,10 @@ public sealed partial class DatabaseViewModel
             result.table.AcceptChanges();
             _currentTable = result.table;
             TableRows = result.table.DefaultView;
+            using (var schemaConnection = OpenRawConnection())
+            {
+                LoadSchema(schemaConnection, tableName);
+            }
             RefreshColumnList(result.table);
             RefreshTableCommands();
             StatusMessage = $"Browsing {tableName}: {TablePageDisplay}";
@@ -574,6 +578,8 @@ public sealed partial class DatabaseViewModel
     private void LoadSchema(SqliteConnection connection, string tableName)
     {
         TableSchema.Clear();
+        TableForeignKeys.Clear();
+        _currentPrimaryKeyColumns.Clear();
         using var command = connection.CreateCommand();
         command.CommandText = $"PRAGMA table_info({QuoteIdentifier(tableName)})";
         using var reader = command.ExecuteReader();

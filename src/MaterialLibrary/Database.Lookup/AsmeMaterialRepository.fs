@@ -8,13 +8,49 @@ open MaterialLibrary.Domain
 
 module AsmeMaterialRepository =
     let private temperatures =
-        [ 40; 65; 100; 125; 150; 175; 200; 225; 250; 275; 300; 325; 350; 375; 400; 425
-          450; 475; 500; 525; 550; 575; 600; 625; 650; 675; 700; 725; 750; 775; 800; 825
-          850; 875; 900 ]
+        [ 40
+          65
+          100
+          125
+          150
+          175
+          200
+          225
+          250
+          275
+          300
+          325
+          350
+          375
+          400
+          425
+          450
+          475
+          500
+          525
+          550
+          575
+          600
+          625
+          650
+          675
+          700
+          725
+          750
+          775
+          800
+          825
+          850
+          875
+          900 ]
 
     let private text (reader: SqliteDataReader) name =
         let ordinal = reader.GetOrdinal name
-        if reader.IsDBNull ordinal then "" else reader.GetString ordinal
+
+        if reader.IsDBNull ordinal then
+            ""
+        else
+            reader.GetString ordinal
 
     let private optionalText (reader: SqliteDataReader) name =
         let value = text reader name
@@ -22,11 +58,19 @@ module AsmeMaterialRepository =
 
     let private number (reader: SqliteDataReader) name =
         let ordinal = reader.GetOrdinal name
-        if reader.IsDBNull ordinal then 0.0 else reader.GetDouble ordinal
+
+        if reader.IsDBNull ordinal then
+            0.0
+        else
+            reader.GetDouble ordinal
 
     let private optionalNumber (reader: SqliteDataReader) name =
         let ordinal = reader.GetOrdinal name
-        if reader.IsDBNull ordinal then None else Some(reader.GetDouble ordinal)
+
+        if reader.IsDBNull ordinal then
+            None
+        else
+            Some(reader.GetDouble ordinal)
 
     let private materialFromReader (reader: SqliteDataReader) =
         let databaseId = reader.GetInt64(reader.GetOrdinal "ID")
@@ -56,27 +100,16 @@ module AsmeMaterialRepository =
                 []
                 []
                 None
-                [ { Temperature = 20.0; Density = density } ]
+                [ { Temperature = 20.0
+                    Density = density } ]
                 None
                 None
 
-        Material.create
-            $"{databaseId}"
-            $"{specification} {grade}"
-            specification
-            grade
-            basic
-            physical
+        Material.create $"{databaseId}" $"{specification} {grade}" specification grade basic physical
         |> Material.setIdentity productForm composition specification grade classCondition uns
         |> fun material ->
             { material with
-                Family =
-                    AsmeMaterialFamilyClassification.classify
-                        specification
-                        grade
-                        classCondition
-                        composition
-                        uns
+                Family = AsmeMaterialFamilyClassification.classify specification grade classCondition composition uns
                 Notes = optionalText reader "Notes" }
 
     let private loadCandidates (connection: SqliteConnection) =
@@ -84,8 +117,10 @@ module AsmeMaterialRepository =
         command.CommandText <- "SELECT * FROM Materials ORDER BY ID"
         use reader = command.ExecuteReader()
         let materials = ResizeArray<Material>()
+
         while reader.Read() do
             materials.Add(materialFromReader reader)
+
         materials |> Seq.toList
 
     let private sourceDefinition =
@@ -100,6 +135,30 @@ module AsmeMaterialRepository =
         command.CommandText <- "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = $tableName"
         command.Parameters.AddWithValue("$tableName", tableName) |> ignore
         Convert.ToInt64(command.ExecuteScalar()) > 0L
+
+    /// <summary>Reports whether a table exposes a given column name.</summary>
+    /// <param name="connection">Open connection.</param>
+    /// <param name="tableName">Table to inspect.</param>
+    /// <param name="columnName">Column name to look for (case-insensitive).</param>
+    /// <returns><c>true</c> when the column exists.</returns>
+    let private tableHasColumn (connection: SqliteConnection) (tableName: string) (columnName: string) : bool =
+        if not (tableExists connection tableName) then
+            false
+        else
+            use command = connection.CreateCommand()
+            command.CommandText <- $"PRAGMA table_info({tableName})"
+            use reader = command.ExecuteReader()
+            let mutable found = false
+
+            while not found && reader.Read() do
+                found <-
+                    String.Equals(
+                        reader.GetString(reader.GetOrdinal "name"),
+                        columnName,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+
+            found
 
     let private noteTable source referenceData =
         match source, referenceData with
@@ -145,24 +204,26 @@ module AsmeMaterialRepository =
                 let score = entries |> List.sumBy (fun entry -> entry.Value)
                 let referenceData = text reader "ReferenceData"
                 let sourceNotes = optionalText reader "Notes"
+
                 datasets.Add(
                     (({ DatabaseRowId = reader.GetInt64(reader.GetOrdinal "ID")
                         Source = source
                         Case =
-                            if source = Division1HighAllowableStress then
-                                HighStrengthAllowableStress
-                            else
-                                StandardStrengthAllowableStress
+                          if source = Division1HighAllowableStress then
+                              HighStrengthAllowableStress
+                          else
+                              StandardStrengthAllowableStress
                         Table = table
                         SizeMinimum = optionalNumber reader "SizeThkMIN"
                         SizeMaximum = optionalNumber reader "SizeThkMAX"
                         MaximumTemperature = optionalNumber reader maximumTemperatureColumn
                         CreepTemperature = optionalNumber reader "CreepTemperature"
                         AsmeNoteReferences =
-                            noteTable source referenceData
-                            |> Option.map (fun noteSource -> AsmeNoteReference.parse noteSource sourceNotes)
-                            |> Option.defaultValue []
-                        Notes = None }: AllowableStressDataset),
+                          noteTable source referenceData
+                          |> Option.map (fun noteSource -> AsmeNoteReference.parse noteSource sourceNotes)
+                          |> Option.defaultValue []
+                        Notes = None }
+                     : AllowableStressDataset),
                      score)
                 )
 
@@ -176,13 +237,15 @@ module AsmeMaterialRepository =
                 | multiple when
                     source = Division1AllowableStress
                     && multiple
-                    |> List.forall (fun (dataset, _) ->
-                        dataset.AsmeNoteReferences
-                        |> List.exists (fun note ->
-                            note.Code.Equals("G5", StringComparison.OrdinalIgnoreCase)))
+                       |> List.forall (fun (dataset, _) ->
+                           dataset.AsmeNoteReferences
+                           |> List.exists (fun note -> note.Code.Equals("G5", StringComparison.OrdinalIgnoreCase)))
                     ->
-                    let lowRowId = multiple |> List.minBy snd |> fst |> fun dataset -> dataset.DatabaseRowId
-                    let highRowId = multiple |> List.maxBy snd |> fst |> fun dataset -> dataset.DatabaseRowId
+                    let lowRowId =
+                        multiple |> List.minBy snd |> fst |> (fun dataset -> dataset.DatabaseRowId)
+
+                    let highRowId =
+                        multiple |> List.maxBy snd |> fst |> (fun dataset -> dataset.DatabaseRowId)
 
                     multiple
                     |> List.map (fun (dataset, _) ->
@@ -191,7 +254,8 @@ module AsmeMaterialRepository =
                                 Source = Division1HighAllowableStress
                                 Case = HighStrengthAllowableStress }
                         elif dataset.DatabaseRowId = lowRowId then
-                            { dataset with Case = StandardStrengthAllowableStress }
+                            { dataset with
+                                Case = StandardStrengthAllowableStress }
                         else
                             dataset)
                 | multiple -> multiple |> List.map fst
@@ -253,20 +317,25 @@ module AsmeMaterialRepository =
 
                 // Explicitly typed to avoid resolution ambiguity with SizeRangeBoundJson.
                 let lower: SizeRangeBound option =
-                    sizeMin
-                    |> Option.map (fun v -> { Value = v; Inclusion = Exclusive })
+                    sizeMin |> Option.map (fun v -> { Value = v; Inclusion = Exclusive })
 
                 let upper: SizeRangeBound option =
-                    sizeMax
-                    |> Option.map (fun v -> { Value = v; Inclusion = Inclusive })
+                    sizeMax |> Option.map (fun v -> { Value = v; Inclusion = Inclusive })
 
-                let sizeRange: SizeColumnRange = { Lower = lower; Upper = upper; Label = None }
+                let sizeRange: SizeColumnRange =
+                    { Lower = lower
+                      Upper = upper
+                      Label = None }
 
                 let noteReferences =
                     optionalText reader "Notes"
                     |> AsmeNoteReference.parse (strengthTableReference tableName)
 
-                columnAccumulator.Add({ SizeRange = sizeRange; Entries = entries }, noteReferences)
+                columnAccumulator.Add(
+                    { SizeRange = sizeRange
+                      Entries = entries },
+                    noteReferences
+                )
 
         match error with
         | Some e -> Error e
@@ -278,8 +347,12 @@ module AsmeMaterialRepository =
             else
                 let allNotes = columns |> List.collect snd |> List.distinct
                 let tableColumns = columns |> List.map fst
+
                 let dimensionType =
-                    if tableColumns |> List.forall (fun c -> c.SizeRange.Lower.IsNone && c.SizeRange.Upper.IsNone) then
+                    if
+                        tableColumns
+                        |> List.forall (fun c -> c.SizeRange.Lower.IsNone && c.SizeRange.Upper.IsNone)
+                    then
                         NoDimension
                     else
                         Thickness
@@ -288,16 +361,40 @@ module AsmeMaterialRepository =
                     if dimensionType = NoDimension then
                         match tableColumns with
                         | [ single ] ->
-                            PropertyTable.create1D tableName "Temperature" "degC" yAxisName "MPa" FlatExtrapolate single.Entries
+                            PropertyTable.create1D
+                                tableName
+                                "Temperature"
+                                "degC"
+                                yAxisName
+                                "MPa"
+                                FlatExtrapolate
+                                single.Entries
                         | _ ->
                             // Multiple rows with no size range: pick the highest-sum row.
-                            let best = tableColumns |> List.maxBy (fun c -> c.Entries |> List.sumBy (fun e -> e.Value))
-                            PropertyTable.create1D tableName "Temperature" "degC" yAxisName "MPa" FlatExtrapolate best.Entries
-                    else
-                        PropertyTable.create2D tableName "Temperature" "degC" yAxisName "MPa" Thickness "mm" FlatExtrapolate tableColumns
+                            let best =
+                                tableColumns |> List.maxBy (fun c -> c.Entries |> List.sumBy (fun e -> e.Value))
 
-                tableResult
-                |> Result.map (fun table -> Some table, allNotes)
+                            PropertyTable.create1D
+                                tableName
+                                "Temperature"
+                                "degC"
+                                yAxisName
+                                "MPa"
+                                FlatExtrapolate
+                                best.Entries
+                    else
+                        PropertyTable.create2D
+                            tableName
+                            "Temperature"
+                            "degC"
+                            yAxisName
+                            "MPa"
+                            Thickness
+                            "mm"
+                            FlatExtrapolate
+                            tableColumns
+
+                tableResult |> Result.map (fun table -> Some table, allNotes)
 
     /// <summary>Orders datasets by source, then from the lightest size band to the heaviest.</summary>
     /// <param name="dataset">Dataset to rank.</param>
@@ -354,7 +451,11 @@ module AsmeMaterialRepository =
             command.CommandText <- $"SELECT * FROM {tableName} WHERE {keyColumn} = $key LIMIT 1"
             command.Parameters.AddWithValue("$key", keyValue) |> ignore
             use reader = command.ExecuteReader()
-            if reader.Read() then unpivotTemperatureRow reader scale else []
+
+            if reader.Read() then
+                unpivotTemperatureRow reader scale
+            else
+                []
 
     /// <summary>Reads a single numeric column from the material's <c>Materials</c> row.</summary>
     /// <param name="connection">Open connection.</param>
@@ -371,37 +472,104 @@ module AsmeMaterialRepository =
         | value when value.Equals(box DBNull.Value) -> None
         | value -> Some(Convert.ToDouble(value, CultureInfo.InvariantCulture))
 
+    type private PropertyGroups =
+        { ElasticModulusGroupID: int64 option
+          ThermalExpansionGroupID: int64 option
+          ThermalConductivityGroupID: int64 option
+          ThermalDiffusivityGroupID: int64 option
+          SpecificHeatGroupID: int64 option
+          DensityGroupID: int64 option
+          PoissonRatioGroupID: int64 option }
+
     /// <summary>Resolves the property-group identifiers a material belongs to.</summary>
     /// <param name="connection">Open connection.</param>
     /// <param name="materialId">Value of <c>Materials.ID</c>.</param>
     /// <returns>
-    /// Elastic-modulus, thermal-expansion, thermal-conductivity, and thermal-diffusivity group
-    /// identifiers, each <c>None</c> when the mapping row or column is absent.
+    /// Group identifiers for physical-property tables; each field is <c>None</c> when the mapping row
+    /// or column is absent.
     /// </returns>
-    let private propertyGroups
-        (connection: SqliteConnection)
-        (materialId: int64)
-        : int64 option * int64 option * int64 option * int64 option =
+    let private propertyGroups (connection: SqliteConnection) (materialId: int64) : PropertyGroups =
+        let empty =
+            { ElasticModulusGroupID = None
+              ThermalExpansionGroupID = None
+              ThermalConductivityGroupID = None
+              ThermalDiffusivityGroupID = None
+              SpecificHeatGroupID = None
+              DensityGroupID = None
+              PoissonRatioGroupID = None }
+
         if not (tableExists connection "MaterialGroupMap") then
-            None, None, None, None
+            empty
         else
-            use command = connection.CreateCommand()
+            let selectColumns =
+                [ "ElasticModulusGroupID"
+                  "ThermalExpansionGroupID"
+                  "ThermalConductivityGroupID"
+                  "ThermalDiffusivityGroupID"
+                  // Optional columns for databases that also group these properties.
+                  "SpecificHeatGroupID"
+                  "DensityGroupID"
+                  "PoissonRatioGroupID" ]
+                |> List.filter (tableHasColumn connection "MaterialGroupMap")
 
-            command.CommandText <-
-                "SELECT ElasticModulusGroupID, ThermalExpansionGroupID, ThermalConductivityGroupID,
-                        ThermalDiffusivityGroupID
-                 FROM MaterialGroupMap WHERE MaterialID = $id"
-
-            command.Parameters.AddWithValue("$id", materialId) |> ignore
-            use reader = command.ExecuteReader()
-
-            if reader.Read() then
-                let get index =
-                    if reader.IsDBNull index then None else Some(reader.GetInt64 index)
-
-                get 0, get 1, get 2, get 3
+            if selectColumns.IsEmpty then
+                empty
             else
-                None, None, None, None
+                let getInt64 (reader: SqliteDataReader) (name: string) =
+                    let ordinal = reader.GetOrdinal name
+
+                    if reader.IsDBNull ordinal then
+                        None
+                    else
+                        Some(reader.GetInt64 ordinal)
+
+                let selected = String.Join(", ", selectColumns)
+
+                use command = connection.CreateCommand()
+
+                command.CommandText <- $"SELECT {selected} FROM MaterialGroupMap WHERE MaterialID = $id"
+
+                command.Parameters.AddWithValue("$id", materialId) |> ignore
+                use reader = command.ExecuteReader()
+
+                if reader.Read() then
+                    { ElasticModulusGroupID =
+                        if selectColumns |> List.contains "ElasticModulusGroupID" then
+                            getInt64 reader "ElasticModulusGroupID"
+                        else
+                            None
+                      ThermalExpansionGroupID =
+                        if selectColumns |> List.contains "ThermalExpansionGroupID" then
+                            getInt64 reader "ThermalExpansionGroupID"
+                        else
+                            None
+                      ThermalConductivityGroupID =
+                        if selectColumns |> List.contains "ThermalConductivityGroupID" then
+                            getInt64 reader "ThermalConductivityGroupID"
+                        else
+                            None
+                      ThermalDiffusivityGroupID =
+                        if selectColumns |> List.contains "ThermalDiffusivityGroupID" then
+                            getInt64 reader "ThermalDiffusivityGroupID"
+                        else
+                            None
+                      SpecificHeatGroupID =
+                        if selectColumns |> List.contains "SpecificHeatGroupID" then
+                            getInt64 reader "SpecificHeatGroupID"
+                        else
+                            None
+                      DensityGroupID =
+                        if selectColumns |> List.contains "DensityGroupID" then
+                            getInt64 reader "DensityGroupID"
+                        else
+                            None
+                      PoissonRatioGroupID =
+                        if selectColumns |> List.contains "PoissonRatioGroupID" then
+                            getInt64 reader "PoissonRatioGroupID"
+                        else
+                            None }
+                else
+                    empty
 
     /// <summary>Builds the physical-properties table for a reference material.</summary>
     /// <param name="connection">Open connection.</param>
@@ -413,48 +581,89 @@ module AsmeMaterialRepository =
         (materialId: int64)
         (existing: PhysicalPropertiesTable)
         : PhysicalPropertiesTable =
-        let elasticGroup, expansionGroup, conductivityGroup, diffusivityGroup =
-            propertyGroups connection materialId
-        let poissonRatio = materialScalar connection "PoissonFactor" materialId
+        let groups = propertyGroups connection materialId
 
-        let byGroup tableName group scale =
-            match group with
-            | Some id -> loadWideTable connection tableName "ID" id scale
-            | None -> []
+        let byGroupOrMaterial tableName group scale =
+            // Prefer compiled group rows first (shared ASME groups), then fallback to the material
+            // keyed row when that exists in a database variant.
+            let byGroupRows =
+                match group with
+                | Some id when tableHasColumn connection tableName "ID" ->
+                    loadWideTable connection tableName "ID" id scale
+                | _ -> []
+
+            if not byGroupRows.IsEmpty then
+                byGroupRows
+            elif tableHasColumn connection tableName "MaterialID" then
+                loadWideTable connection tableName "MaterialID" materialId scale
+            elif tableHasColumn connection tableName "ID" then
+                // Last fallback: some datasets use ID as the material key directly.
+                loadWideTable connection tableName "ID" materialId scale
+            else
+                []
+
+        let scalarPoisson = materialScalar connection "PoissonFactor" materialId
+
+        let poissionReference20C =
+            byGroupOrMaterial "PoissonRatioTable" groups.PoissonRatioGroupID 1.0
+            |> List.tryFind (fun (temperature, _) -> abs (temperature - 20.0) < 0.0001)
+            |> Option.map snd
+
+        let poissonRatio = poissionReference20C |> Option.orElse scalarPoisson
+
+        let densityAt20C =
+            byGroupOrMaterial "DensityTable" groups.DensityGroupID 1.0
+            |> List.tryFind (fun (temperature, _) -> abs (temperature - 20.0) < 0.0001)
+            |> Option.map snd
 
         let thermalExpansion =
-            byGroup "ThermalExpansionTable" expansionGroup 1e-6
+            byGroupOrMaterial "ThermalExpansionTable" groups.ThermalExpansionGroupID 1e-6
             |> List.map (fun (temperature, coefficient) ->
                 { Temperature = temperature
                   ExpansionCoefficient = coefficient })
 
         let elasticModulus =
-            byGroup "ElasticModulusTable" elasticGroup 1000.0
-            |> List.map (fun (temperature, modulus) ->
-                ElasticModulusTablePoint.create temperature modulus poissonRatio)
+            byGroupOrMaterial "ElasticModulusTable" groups.ElasticModulusGroupID 1000.0
+            |> List.map (fun (temperature, modulus) -> ElasticModulusTablePoint.create temperature modulus poissonRatio)
 
-        let thermalConductivity = byGroup "ThermalConductivityTable" conductivityGroup 1.0
+        let thermalConductivity =
+            byGroupOrMaterial "ThermalConductivityTable" groups.ThermalConductivityGroupID 1.0
 
         // The database publishes diffusivity in mm^2/s; the domain uses coherent SI, matching how
         // thermal expansion is converted from um/m/degC.
-        let thermalDiffusivity = byGroup "ThermalDiffusivityTable" diffusivityGroup 1e-6
+        let thermalDiffusivity =
+            byGroupOrMaterial "ThermalDiffusivityTable" groups.ThermalDiffusivityGroupID 1e-6
 
         let specificHeat =
-            loadWideTable connection "SpecificHeatTable" "MaterialID" materialId 1.0
+            byGroupOrMaterial "SpecificHeatTable" groups.SpecificHeatGroupID 1.0
             |> List.map (fun (temperature, value) ->
                 { Temperature = temperature
                   SpecificHeat = value })
 
+        let densityTable =
+            match densityAt20C with
+            | Some density ->
+                [ { Temperature = 20.0
+                    Density = density } ]
+            | None -> existing.DensityTable
+
         { existing with
             ThermalExpansionTable = thermalExpansion
             ElasticModulusTable = elasticModulus
+            DensityTable = densityTable
             // Absent data stays None rather than becoming an empty list, so callers can tell
             // "not recorded" from "recorded as empty".
             SpecificHeatTable = (if specificHeat.IsEmpty then None else Some specificHeat)
             ThermalConductivityTable =
-                (if thermalConductivity.IsEmpty then None else Some thermalConductivity)
+                (if thermalConductivity.IsEmpty then
+                     None
+                 else
+                     Some thermalConductivity)
             ThermalDiffusivityTable =
-                (if thermalDiffusivity.IsEmpty then None else Some thermalDiffusivity) }
+                (if thermalDiffusivity.IsEmpty then
+                     None
+                 else
+                     Some thermalDiffusivity) }
 
     /// <summary>Reads the ASME P-Number and Group-Number classification for a material.</summary>
     /// <param name="connection">Open connection.</param>
@@ -526,8 +735,7 @@ module AsmeMaterialRepository =
                             { material.StrengthProperties with
                                 SyTable = syTable
                                 SuTable = suTable
-                                AllowableStressDatasets =
-                                    allowableDatasets |> List.sortBy allowableDatasetSortKey } })))
+                                AllowableStressDatasets = allowableDatasets |> List.sortBy allowableDatasetSortKey } })))
 
     let findMany databasePath criteria =
         if String.IsNullOrWhiteSpace databasePath || not (File.Exists databasePath) then
@@ -576,12 +784,14 @@ module AsmeMaterialRepository =
                     command.Parameters.AddWithValue("$id", databaseId) |> ignore
                     use reader = command.ExecuteReader()
 
-                    if reader.Read() then Some(materialFromReader reader) else None
+                    if reader.Read() then
+                        Some(materialFromReader reader)
+                    else
+                        None
 
                 match candidate with
                 | Some material -> hydrate connection material
-                | None ->
-                    Error(MaterialError.NotFound $"Material not found in the ASME reference tables: {databaseId}")
+                | None -> Error(MaterialError.NotFound $"Material not found in the ASME reference tables: {databaseId}")
             with ex ->
                 Error(MaterialError.InvalidOperation $"ASME database lookup failed: {ex.Message}")
 
@@ -610,7 +820,10 @@ module AsmeMaterialRepository =
                 command.ExecuteScalar() |> ignore
                 Ok()
             with ex ->
-                Error(MaterialError.InvalidOperation $"ASME database at '{databasePath}' could not be opened: {ex.Message}")
+                Error(
+                    MaterialError.InvalidOperation
+                        $"ASME database at '{databasePath}' could not be opened: {ex.Message}"
+                )
 
     /// <summary>
     /// Resolves several search criteria against one open connection and one load of the Materials
@@ -642,7 +855,8 @@ module AsmeMaterialRepository =
                     |> List.fold
                         (fun state item ->
                             state
-                            |> Result.bind (fun materials -> item |> Result.map (fun material -> material :: materials)))
+                            |> Result.bind (fun materials ->
+                                item |> Result.map (fun material -> material :: materials)))
                         (Ok [])
                     |> Result.map List.rev
                     |> Result.bind (MaterialFiltering.findUnique criteria)

@@ -33,9 +33,9 @@ public sealed partial class DatabaseViewModel
         _operationCancellation = cancellation;
         try
         {
-        var path = _dialogService.AskOpenPath("Open material database", FileFilters.Database);
-        if (path is null) return;
-        await OpenDatabasePathAsync(path, cancellation.Token);
+            var path = _dialogService.AskOpenPath("Open material database", FileFilters.Database);
+            if (path is null) return;
+            await OpenDatabasePathAsync(path, cancellation.Token);
         }
         catch (Exception ex)
         {
@@ -50,15 +50,18 @@ public sealed partial class DatabaseViewModel
 
     private async Task OpenDatabasePathAsync(string path, CancellationToken cancellationToken)
     {
-        var working = Path.Combine(
-            Path.GetDirectoryName(Path.GetFullPath(path)) ?? Path.GetTempPath(),
-            Path.GetFileNameWithoutExtension(path) + ".working" + Path.GetExtension(path));
+        var source = ResolveSourcePath(path);
+        var working = BuildWorkingCopyPath(source);
 
-        var copyResult = await Task.Run(() => MaterialDatabaseCrud.createWorkingCopy(path, working), cancellationToken);
-        if (!copyResult.TryUnwrap(out var workingPath, out var copyError))
+        var workingPath = working;
+        if (!string.Equals(source, working, StringComparison.OrdinalIgnoreCase))
         {
-            ShowError(copyError);
-            return;
+            var copyResult = await Task.Run(() => MaterialDatabaseCrud.createWorkingCopy(source, working), cancellationToken);
+            if (!copyResult.TryUnwrap(out workingPath, out var copyError))
+            {
+                ShowError(copyError);
+                return;
+            }
         }
 
         var schemaResult = await Task.Run(() => MaterialDatabaseCrud.ensureSchema(workingPath), cancellationToken);
@@ -68,8 +71,8 @@ public sealed partial class DatabaseViewModel
             return;
         }
 
-        _sourcePath = path;
-        _lastSourcePath = path;
+        _sourcePath = source;
+        _lastSourcePath = source;
         _workingPath = workingPath;
         SaveSessionStore();
         CaptureWorkingFingerprint();
@@ -82,8 +85,47 @@ public sealed partial class DatabaseViewModel
 
         var created = createdTables.ToReadOnlyList();
         StatusMessage = created.Count == 0
-            ? $"Opened working copy of {Path.GetFileName(path)}; schema already complete."
-            : $"Opened working copy of {Path.GetFileName(path)}; created {created.Count} missing table(s): {string.Join(", ", created)}.";
+            ? $"Opened working copy of {Path.GetFileName(source)}; schema already complete."
+            : $"Opened working copy of {Path.GetFileName(source)}; created {created.Count} missing table(s): {string.Join(", ", created)}.";
+    }
+
+    /// <summary>
+    /// Resolves the source database path selected by the user.
+    /// </summary>
+    /// <param name="requestedPath">Path picked in the open-file dialog.</param>
+    /// <returns>
+    /// The best source path: when a <c>.working.db</c> file is picked and its sibling source exists,
+    /// the sibling source is returned to avoid chaining into <c>.working.working.db</c> files.
+    /// </returns>
+    private static string ResolveSourcePath(string requestedPath)
+    {
+        var fullPath = Path.GetFullPath(requestedPath);
+        var directory = Path.GetDirectoryName(fullPath) ?? Path.GetTempPath();
+        var extension = Path.GetExtension(fullPath);
+        var stem = Path.GetFileNameWithoutExtension(fullPath);
+
+        // If the user picks an existing working copy, prefer its base source when present.
+        while (stem.EndsWith(".working", StringComparison.OrdinalIgnoreCase))
+        {
+            stem = stem[..^".working".Length];
+        }
+
+        var candidate = Path.Combine(directory, stem + extension);
+        return File.Exists(candidate) ? candidate : fullPath;
+    }
+
+    /// <summary>
+    /// Builds the deterministic working-copy path beside a source database.
+    /// </summary>
+    /// <param name="sourcePath">Resolved source database path.</param>
+    /// <returns>A sibling path ending in <c>.working</c> before the extension.</returns>
+    private static string BuildWorkingCopyPath(string sourcePath)
+    {
+        var fullPath = Path.GetFullPath(sourcePath);
+        var directory = Path.GetDirectoryName(fullPath) ?? Path.GetTempPath();
+        var extension = Path.GetExtension(fullPath);
+        var stem = Path.GetFileNameWithoutExtension(fullPath);
+        return Path.Combine(directory, stem + ".working" + extension);
     }
 
     private async Task ReopenLastDatabaseAsync()

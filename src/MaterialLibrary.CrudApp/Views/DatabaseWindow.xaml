@@ -245,28 +245,34 @@
                                    Foreground="#555" />
                     </StackPanel>
 
-                    <Grid DockPanel.Dock="Bottom" Height="270" Margin="0,6,0,0">
-                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Filter rows" VerticalAlignment="Center" Margin="0,0,4,0" />
-                            <TextBox Text="{Binding RowFilter, UpdateSourceTrigger=PropertyChanged}" Width="180" Margin="0,0,8,0" />
-                            <TextBlock Text="Sort" VerticalAlignment="Center" Margin="0,0,4,0" />
-                            <ComboBox ItemsSource="{Binding TableColumns}" SelectedItem="{Binding SortColumn}" Width="140" Margin="0,0,4,0" />
-                            <CheckBox Content="Descending" IsChecked="{Binding SortDescending}" VerticalAlignment="Center" />
-                        </StackPanel>
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding TableSchema}" AutoGenerateColumns="False" IsReadOnly="True">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Column" Binding="{Binding Name}" />
-                                <DataGridTextColumn Header="Type" Binding="{Binding DataType}" />
-                                <DataGridTextColumn Header="Nullable" Binding="{Binding NullableDisplay}" />
-                                <DataGridTextColumn Header="Primary key" Binding="{Binding PrimaryKeyDisplay}" />
-                                <DataGridTextColumn Header="Default" Binding="{Binding DefaultValue}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        <ListBox Grid.Row="2" ItemsSource="{Binding TableForeignKeys}" Height="55" Margin="0,4,0,0">
-                            <ListBox.ItemTemplate><DataTemplate><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding FromColumn}" /><TextBlock Text=" -> " /><TextBlock Text="{Binding ReferencedTable}" /><TextBlock Text="." /><TextBlock Text="{Binding ToColumn}" /></StackPanel></DataTemplate></ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
+                    <Expander DockPanel.Dock="Bottom"
+                              Header="Table schema and foreign keys"
+                              IsExpanded="False"
+                              Margin="0,6,0,0">
+                        <Grid Height="210">
+                            <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                            <DataGrid Grid.Row="0" ItemsSource="{Binding TableSchema}" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Column" Binding="{Binding Name}" />
+                                    <DataGridTextColumn Header="Type" Binding="{Binding DataType}" />
+                                    <DataGridTextColumn Header="Nullable" Binding="{Binding NullableDisplay}" />
+                                    <DataGridTextColumn Header="Primary key" Binding="{Binding PrimaryKeyDisplay}" />
+                                    <DataGridTextColumn Header="Default" Binding="{Binding DefaultValue}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <ListBox Grid.Row="1" ItemsSource="{Binding TableForeignKeys}" Height="55" Margin="0,4,0,0">
+                                <ListBox.ItemTemplate><DataTemplate><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding FromColumn}" /><TextBlock Text=" -> " /><TextBlock Text="{Binding ReferencedTable}" /><TextBlock Text="." /><TextBlock Text="{Binding ToColumn}" /></StackPanel></DataTemplate></ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Expander>
+
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="Filter rows" VerticalAlignment="Center" Margin="0,0,4,0" />
+                        <TextBox Text="{Binding RowFilter, UpdateSourceTrigger=PropertyChanged}" Width="180" Margin="0,0,8,0" />
+                        <TextBlock Text="Sort" VerticalAlignment="Center" Margin="0,0,4,0" />
+                        <ComboBox ItemsSource="{Binding TableColumns}" SelectedItem="{Binding SortColumn}" Width="140" Margin="0,0,4,0" />
+                        <CheckBox Content="Descending" IsChecked="{Binding SortDescending}" VerticalAlignment="Center" />
+                    </StackPanel>
 
                     <DataGrid ItemsSource="{Binding TableRows}"
                               AutoGenerateColumns="True"

@@ -68,6 +68,10 @@ Example 1 - modify material data:
      to - **S Div.1**, **S Div.1H** (the higher alternative stress, not for gasketed-joint flanges), or
      **S Div.2**. Each column is one Size/Diameter/Thickness band, with its bounds in the header;
      each row is a temperature. Add a column for a new band, or a row for a new temperature.
+   - In **Sy**, **Su**, and all **S Div.*** tabs, the top of each value column now exposes an explicit
+     **Applicable size range (mm)** header with editable **Min (>)** and **Max (<=)** bounds.
+   - If a bound is invalid or `Min >= Max`, the column header shows an inline red warning immediately,
+     so size-range issues are visible before confirming the dialog.
    - **Sy** and **Su** work the same way, and are separate from the room-temperature elongation and
      reduction of area, which are edited as scalars in **Edit Material...**.
 5. Save the result with **Save** or **Save JSON As...**. If the data came from a database working copy,
@@ -110,9 +114,15 @@ the missing tables** and links them to the existing `Materials` table:
 - The **Raw Tables** workspace now lists every SQLite table/view exposed by `sqlite_master`, including
   SQLite-managed internal tables (for example `sqlite_sequence`) so maintenance queries and direct CRUD
   operations can be performed from the same workflow.
+- In **Raw Tables**, data rows are prioritized in the main grid. Schema columns and foreign keys are shown
+  in a dedicated collapsible panel, so row browsing remains visible even on smaller windows or high-DPI
+  displays.
 - **The file you pick is never written to.** Opening a database copies it to a `.working.db` beside the
   original and every operation targets the copy; "Save Working Copy As..." is the only route back to a
   permanent file.
+- If a previously generated `.working.db` is selected by mistake and the base source exists beside it,
+  the manager reattaches to the base source automatically and reuses the canonical `.working.db` path
+  instead of creating nested names such as `.working.working.db`.
 - Materials that exist only in the shipped ASME rows show as `ASME reference`; ones written by the
   application show as `Application` and can be read back in full.
 

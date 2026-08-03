@@ -25,8 +25,7 @@ let private createTestMaterial () =
           ElasticModulusTablePoint.create 400.0 170000.0 (Some 0.29) ]
 
     let densityTable =
-        [ { Temperature = 20.0
-            Density = 7850.0 }
+        [ { Temperature = 20.0; Density = 7850.0 }
           { Temperature = 400.0
             Density = 7700.0 } ]
 
@@ -39,6 +38,293 @@ let private expectOk result =
     match result with
     | Ok value -> value
     | Error error -> failwithf "Expected Ok, got %A" error
+
+let private referenceTemperatures =
+    [ 40
+      65
+      100
+      125
+      150
+      175
+      200
+      225
+      250
+      275
+      300
+      325
+      350
+      375
+      400
+      425
+      450
+      475
+      500
+      525
+      550
+      575
+      600
+      625
+      650
+      675
+      700
+      725
+      750
+      775
+      800
+      825
+      850
+      875
+      900 ]
+
+let private withReferenceLookupDatabase (seed: SqliteConnection -> unit) (assertion: string -> unit) =
+    let databasePath =
+        Path.Combine(Path.GetTempPath(), $"material-library-reference-{System.Guid.NewGuid():N}.db")
+
+    let executeSql (connection: SqliteConnection) (sql: string) =
+        use command = connection.CreateCommand()
+        command.CommandText <- sql
+        command.ExecuteNonQuery() |> ignore
+
+    let pivotColumns =
+        referenceTemperatures
+        |> List.map (fun temperature -> $"T_{temperature} REAL")
+        |> String.concat ",\n                    "
+
+    try
+        use connection = new SqliteConnection($"Data Source={databasePath}")
+        connection.Open()
+
+        executeSql
+            connection
+            """
+            CREATE TABLE Materials (
+                ID INTEGER PRIMARY KEY,
+                Specification TEXT,
+                TypeGrade TEXT,
+                ProductForm TEXT,
+                NominalComposition TEXT,
+                ClassConditionTemper TEXT,
+                AlloyDesignationNumber TEXT,
+                Density REAL,
+                SMYS REAL,
+                SMTS REAL,
+                RuptureElongationLong REAL,
+                RuptureElongationTransv REAL,
+                PoissonFactor REAL,
+                Notes TEXT
+            )
+            """
+
+        executeSql
+            connection
+            $"""
+            CREATE TABLE YieldStrengthTable (
+                ID INTEGER PRIMARY KEY,
+                MaterialID INTEGER,
+                SizeThkMIN REAL,
+                SizeThkMAX REAL,
+                Notes TEXT,
+                {pivotColumns}
+            )
+            """
+
+        executeSql
+            connection
+            $"""
+            CREATE TABLE UltimateStrengthTable (
+                ID INTEGER PRIMARY KEY,
+                MaterialID INTEGER,
+                SizeThkMIN REAL,
+                SizeThkMAX REAL,
+                Notes TEXT,
+                {pivotColumns}
+            )
+            """
+
+        executeSql
+            connection
+            $"""
+            CREATE TABLE AllowableStress1Table (
+                ID INTEGER PRIMARY KEY,
+                MaterialID INTEGER,
+                SizeThkMIN REAL,
+                SizeThkMAX REAL,
+                MaximumTemperature REAL,
+                CreepTemperature REAL,
+                ReferenceData TEXT,
+                Notes TEXT,
+                {pivotColumns}
+            )
+            """
+
+        executeSql
+            connection
+            $"""
+            CREATE TABLE AllowableStress2Table (
+                ID INTEGER PRIMARY KEY,
+                MaterialID INTEGER,
+                SizeThkMIN REAL,
+                SizeThkMAX REAL,
+                MaximumTemperature REAL,
+                CreepTemperature REAL,
+                ReferenceData TEXT,
+                Notes TEXT,
+                {pivotColumns}
+            )
+            """
+
+        executeSql
+            connection
+            $"""
+            CREATE TABLE AllowableStress3Table (
+                ID INTEGER PRIMARY KEY,
+                MaterialID INTEGER,
+                SizeThkMIN REAL,
+                SizeThkMAX REAL,
+                MaxTemp_VIII1 REAL,
+                CreepTemperature REAL,
+                ReferenceData TEXT,
+                Notes TEXT,
+                {pivotColumns}
+            )
+            """
+
+        executeSql
+            connection
+            """
+            CREATE TABLE MaterialGroupMap (
+                MaterialID INTEGER PRIMARY KEY,
+                ElasticModulusGroupID INTEGER,
+                ThermalExpansionGroupID INTEGER,
+                ThermalConductivityGroupID INTEGER,
+                ThermalDiffusivityGroupID INTEGER,
+                SpecificHeatGroupID INTEGER,
+                DensityGroupID INTEGER,
+                PoissonRatioGroupID INTEGER
+            )
+            """
+
+        executeSql connection "CREATE TABLE ElasticModulusTable (ID INTEGER PRIMARY KEY, MaterialID INTEGER, T_20 REAL)"
+
+        executeSql
+            connection
+            "CREATE TABLE ThermalExpansionTable (ID INTEGER PRIMARY KEY, MaterialID INTEGER, T_20 REAL)"
+
+        executeSql
+            connection
+            "CREATE TABLE ThermalConductivityTable (ID INTEGER PRIMARY KEY, MaterialID INTEGER, T_20 REAL)"
+
+        executeSql
+            connection
+            "CREATE TABLE ThermalDiffusivityTable (ID INTEGER PRIMARY KEY, MaterialID INTEGER, T_20 REAL)"
+
+        executeSql connection "CREATE TABLE SpecificHeatTable (ID INTEGER PRIMARY KEY, MaterialID INTEGER, T_20 REAL)"
+        executeSql connection "CREATE TABLE DensityTable (ID INTEGER PRIMARY KEY, MaterialID INTEGER, T_20 REAL)"
+        executeSql connection "CREATE TABLE PoissonRatioTable (ID INTEGER PRIMARY KEY, MaterialID INTEGER, T_20 REAL)"
+
+        executeSql
+            connection
+            """
+            INSERT INTO Materials
+                (ID, Specification, TypeGrade, ProductForm, NominalComposition, ClassConditionTemper,
+                 AlloyDesignationNumber, Density, SMYS, SMTS, RuptureElongationLong, RuptureElongationTransv,
+                 PoissonFactor, Notes)
+            VALUES
+                (1, 'SA-TEST', 'A', 'Plate', 'Carbon steel', '', 'K00001',
+                 7900.0, 240.0, 420.0, NULL, NULL, 0.28, 'test material')
+            """
+
+        executeSql connection "INSERT INTO YieldStrengthTable (ID, MaterialID, T_40) VALUES (1, 1, 250.0)"
+        executeSql connection "INSERT INTO UltimateStrengthTable (ID, MaterialID, T_40) VALUES (1, 1, 430.0)"
+
+        seed connection
+        assertion databasePath
+    finally
+        if File.Exists(databasePath) then
+            SqliteConnection.ClearAllPools()
+            File.Delete(databasePath)
+
+[<Fact>]
+let ``reference hydration prefers grouped specific heat over material-linked row`` () =
+    withReferenceLookupDatabase
+        (fun connection ->
+            use map = connection.CreateCommand()
+            map.CommandText <- "INSERT INTO MaterialGroupMap (MaterialID, SpecificHeatGroupID) VALUES (1, 10)"
+            map.ExecuteNonQuery() |> ignore
+
+            use grouped = connection.CreateCommand()
+            grouped.CommandText <- "INSERT INTO SpecificHeatTable (ID, T_20) VALUES (10, 555.0)"
+            grouped.ExecuteNonQuery() |> ignore
+
+            use material = connection.CreateCommand()
+            material.CommandText <- "INSERT INTO SpecificHeatTable (MaterialID, T_20) VALUES (1, 444.0)"
+            material.ExecuteNonQuery() |> ignore)
+        (fun databasePath ->
+            let hydrated = AsmeMaterialRepository.findById databasePath 1L |> expectOk
+
+            match hydrated.PhysicalProperties.SpecificHeatTable with
+            | Some rows ->
+                let at20 = rows |> List.find (fun row -> row.Temperature = 20.0)
+                Assert.Equal(555.0, at20.SpecificHeat, 10)
+            | None -> failwith "specific heat table was not hydrated")
+
+[<Fact>]
+let ``reference hydration falls back to material-linked elastic modulus when grouped row is missing`` () =
+    withReferenceLookupDatabase
+        (fun connection ->
+            use map = connection.CreateCommand()
+            map.CommandText <- "INSERT INTO MaterialGroupMap (MaterialID, ElasticModulusGroupID) VALUES (1, 99)"
+            map.ExecuteNonQuery() |> ignore
+
+            use material = connection.CreateCommand()
+            material.CommandText <- "INSERT INTO ElasticModulusTable (MaterialID, T_20) VALUES (1, 201.0)"
+            material.ExecuteNonQuery() |> ignore)
+        (fun databasePath ->
+            let hydrated = AsmeMaterialRepository.findById databasePath 1L |> expectOk
+
+            let row20 =
+                hydrated.PhysicalProperties.ElasticModulusTable
+                |> List.find (fun row -> row.Temperature = 20.0)
+
+            // The reference table stores E in GPa; hydration converts it to MPa.
+            Assert.Equal(201000.0, row20.ElasticModulus, 10))
+
+[<Fact>]
+let ``reference hydration reads room-temperature density and Poisson ratio from grouped tables`` () =
+    withReferenceLookupDatabase
+        (fun connection ->
+            use map = connection.CreateCommand()
+
+            map.CommandText <-
+                "INSERT INTO MaterialGroupMap (MaterialID, ElasticModulusGroupID, DensityGroupID, PoissonRatioGroupID) VALUES (1, 1, 2, 3)"
+
+            map.ExecuteNonQuery() |> ignore
+
+            use elastic = connection.CreateCommand()
+            elastic.CommandText <- "INSERT INTO ElasticModulusTable (ID, T_20) VALUES (1, 200.0)"
+            elastic.ExecuteNonQuery() |> ignore
+
+            use density = connection.CreateCommand()
+            density.CommandText <- "INSERT INTO DensityTable (ID, T_20) VALUES (2, 8123.0)"
+            density.ExecuteNonQuery() |> ignore
+
+            use poisson = connection.CreateCommand()
+            poisson.CommandText <- "INSERT INTO PoissonRatioTable (ID, T_20) VALUES (3, 0.33)"
+            poisson.ExecuteNonQuery() |> ignore)
+        (fun databasePath ->
+            let hydrated = AsmeMaterialRepository.findById databasePath 1L |> expectOk
+
+            let density20 =
+                hydrated.PhysicalProperties.DensityTable
+                |> List.find (fun row -> row.Temperature = 20.0)
+
+            Assert.Equal(8123.0, density20.Density, 10)
+
+            let elastic20 =
+                hydrated.PhysicalProperties.ElasticModulusTable
+                |> List.find (fun row -> row.Temperature = 20.0)
+
+            Assert.Equal(Some 0.33, elastic20.PoissonRatio))
 
 [<Fact>]
 let ``material filtering combines criteria and rejects ambiguous unique matches`` () =
@@ -66,7 +352,9 @@ let ``material filtering orders numeric database IDs numerically`` () =
         |> Material.setIdentity "Plate" "Carbon steel" "SA-516" "70" "" "K02700"
 
     let criteria = MaterialSearchCriteria.identity "Plate" "SA-516" "70" None
-    let matches = MaterialFiltering.findMany criteria [ materialWithId "10"; materialWithId "2"; materialWithId "1" ]
+
+    let matches =
+        MaterialFiltering.findMany criteria [ materialWithId "10"; materialWithId "2"; materialWithId "1" ]
 
     Assert.Equal<string list>([ "1"; "2"; "10" ], matches |> List.map (fun material -> material.Id))
 
@@ -92,11 +380,22 @@ let ``ASME family classification covers supported steel families`` () =
 
 [<Fact>]
 let ``material filtering can select an ASME family`` () =
-    let carbon = { createTestMaterial () with Family = Some CS }
-    let stainless = { carbon with Id = "stainless"; Family = Some SSA }
-    let criteria = { MaterialSearchCriteria.empty with Family = Some SSA }
+    let carbon =
+        { createTestMaterial () with
+            Family = Some CS }
 
-    let matchResult = Assert.Single(MaterialFiltering.findMany criteria [ carbon; stainless ])
+    let stainless =
+        { carbon with
+            Id = "stainless"
+            Family = Some SSA }
+
+    let criteria =
+        { MaterialSearchCriteria.empty with
+            Family = Some SSA }
+
+    let matchResult =
+        Assert.Single(MaterialFiltering.findMany criteria [ carbon; stainless ])
+
     Assert.Equal<Material>(stainless, matchResult)
 
 [<Fact>]
@@ -141,14 +440,14 @@ let ``material library search uses ASME identity criteria`` () =
 [<Fact>]
 let ``requested database library loads six materials and classifies allowable stress sources`` () =
     let databasePath =
-        Configuration.createDefault ()
-        |> Configuration.getAsmeDatabasePath
+        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
 
     let materials = RequestedMaterialLibrary.loadMaterials databasePath |> expectOk
 
     Assert.Equal(6, materials.Length)
     Assert.All(materials, fun material -> Assert.False(material.Id.StartsWith("ASME-")))
     Assert.Contains(materials, fun material -> material.Specification = "SA-516" && material.Grade = "70")
+
     Assert.Contains(
         materials,
         fun material ->
@@ -156,12 +455,28 @@ let ``requested database library loads six materials and classifies allowable st
             && material.Grade = "11"
             && material.Class_Condition_Tempering = "2"
     )
+
     Assert.Contains(materials, fun material -> material.Specification = "SA-213" && material.Grade = "T11")
     Assert.Contains(materials, fun material -> material.Specification = "SA-193" && material.Grade = "B7")
     Assert.Contains(materials, fun material -> material.Specification = "SA-516" && material.Family = Some CS)
     Assert.Contains(materials, fun material -> material.Specification = "SA-387" && material.Family = Some LAS1_25)
-    Assert.Contains(materials, fun material -> material.Specification = "SA-213" && material.Grade = "TP304" && material.Family = Some SSA)
-    Assert.Contains(materials, fun material -> material.Specification = "SA-213" && material.Grade = "T11" && material.Family = Some LAS1_25)
+
+    Assert.Contains(
+        materials,
+        fun material ->
+            material.Specification = "SA-213"
+            && material.Grade = "TP304"
+            && material.Family = Some SSA
+    )
+
+    Assert.Contains(
+        materials,
+        fun material ->
+            material.Specification = "SA-213"
+            && material.Grade = "T11"
+            && material.Family = Some LAS1_25
+    )
+
     Assert.Contains(materials, fun material -> material.Specification = "SA-193" && material.Family = Some LAS1_00)
 
     let tp304Standard =
@@ -198,14 +513,17 @@ let ``requested database library loads six materials and classifies allowable st
     Assert.Contains({ Table = Table1A; Code = "G5" }, high.AsmeNoteReferences)
     Assert.Equal(None, standard.Notes)
     Assert.Equal(None, high.Notes)
+
     Assert.DoesNotContain(
         tp304Standard.StrengthProperties.AllowableStressDatasets,
         fun dataset -> dataset.Source = Division1HighAllowableStress
     )
+
     Assert.DoesNotContain(
         tp304High.StrengthProperties.AllowableStressDatasets,
         fun dataset -> dataset.Source = Division1AllowableStress
     )
+
     Assert.Contains(AsmeSectionI, tp304Standard.ApplicableAsmeCodes)
     Assert.Contains(AsmeSectionVIII1, tp304Standard.ApplicableAsmeCodes)
     Assert.Contains(AsmeSectionVIII2, tp304Standard.ApplicableAsmeCodes)
@@ -244,10 +562,13 @@ let ``requested database library loads six materials and classifies allowable st
     // The bands must not overlap at a boundary: 64 mm belongs to the light band only.
     Assert.Equal(534.0, b7SyAt400 64.0, 12)
     Assert.Equal(3, b7.StrengthProperties.AllowableStressDatasets.Length)
+
     Assert.Equal<float option list>(
         [ Some 64.0; Some 100.0; Some 180.0 ],
-        b7.StrengthProperties.AllowableStressDatasets |> List.map (fun dataset -> dataset.SizeMaximum)
+        b7.StrengthProperties.AllowableStressDatasets
+        |> List.map (fun dataset -> dataset.SizeMaximum)
     )
+
     Assert.All(
         b7.StrengthProperties.AllowableStressDatasets,
         fun dataset -> Assert.Equal(BoltingAllowableStress, dataset.Source)
@@ -260,6 +581,7 @@ let ``requested database library loads six materials and classifies allowable st
         |> expectOk
 
     Assert.Equal(HighAllowableStress, roundTrip.AllowableStressLevel)
+
     Assert.True(
         List.forall2
             (=)
@@ -295,7 +617,9 @@ let ``material builder preserves identity and properties`` () =
 [<Fact>]
 let ``Kachanov integration returns one value per time boundary`` () =
     let timeSteps = 10
-    let damage = KachanovOmega.omegaEvolution 1.0e-8 2.0 1.0 100.0 timeSteps 1000.0 |> expectOk
+
+    let damage =
+        KachanovOmega.omegaEvolution 1.0e-8 2.0 1.0 100.0 timeSteps 1000.0 |> expectOk
 
     let strain =
         KachanovOmega.creepStrainWithDamage 1.0e-10 3.0 1.0 1.0e-8 2.0 1.0 100.0 timeSteps 1000.0
@@ -312,7 +636,8 @@ let ``Kachanov integration returns one value per time boundary`` () =
 
 [<Fact>]
 let ``Kachanov damage starts undamaged and grows monotonically`` () =
-    let damage = KachanovOmega.omegaEvolution 1.0e-9 2.0 1.0 100.0 100 1000.0 |> expectOk
+    let damage =
+        KachanovOmega.omegaEvolution 1.0e-9 2.0 1.0 100.0 100 1000.0 |> expectOk
 
     Assert.Equal(0.0, damage.Head)
     Assert.True(damage |> List.pairwise |> List.forall (fun (left, right) -> right >= left))
@@ -325,7 +650,11 @@ let ``Norton creep rate is the time derivative of creep strain`` () =
 
     Assert.Equal(expected, NortonPowerLaw.creepRate a n m stress time |> expectOk, 12)
     Assert.True(NortonPowerLaw.creepRate a n m stress 0.0 |> Result.isError)
-    Assert.True(GarofaloModel.creepStrain 1.0 1.0 1.0 1.0 System.Double.MaxValue 1.0 |> Result.isError)
+
+    Assert.True(
+        GarofaloModel.creepStrain 1.0 1.0 1.0 1.0 System.Double.MaxValue 1.0
+        |> Result.isError
+    )
 
 [<Fact>]
 let ``builder rejects malformed creep point input`` () =
@@ -352,8 +681,7 @@ let ``material JSON round trip preserves advanced properties`` () =
             "Sy"
             "MPa"
             XBoundaryPolicy.FlatExtrapolate
-            [ { X = 400.0; Value = 180.0 }
-              { X = 450.0; Value = 165.0 } ]
+            [ { X = 400.0; Value = 180.0 }; { X = 450.0; Value = 165.0 } ]
         |> expectOk
 
     let suTable =
@@ -364,8 +692,7 @@ let ``material JSON round trip preserves advanced properties`` () =
             "Su"
             "MPa"
             XBoundaryPolicy.FlatExtrapolate
-            [ { X = 400.0; Value = 390.0 }
-              { X = 450.0; Value = 370.0 } ]
+            [ { X = 400.0; Value = 390.0 }; { X = 450.0; Value = 370.0 } ]
         |> expectOk
 
     let compression =
@@ -392,7 +719,11 @@ let ``material JSON round trip preserves advanced properties`` () =
             SuTable = Some suTable
             CompressionProperties = Some [ compression ]
             ExternalPressureTables = [ externalPressureTable ]
-            NortonModels = [ { Temperature = 400.0; A = 1.0e-8; N = 4.0; M = 0.3 } ]
+            NortonModels =
+                [ { Temperature = 400.0
+                    A = 1.0e-8
+                    N = 4.0
+                    M = 0.3 } ]
             GarofaloModels =
                 [ { Temperature = 400.0
                     A = 2.0e-9
@@ -424,7 +755,9 @@ let ``material JSON round trip preserves advanced properties`` () =
             LarsonMillerCurves =
                 [ { Material = material.Id
                     Description = "LMP"
-                    Points = [ { LarsonMillerParameter = 20000.0; Stress = 150.0 } ] } ] }
+                    Points =
+                      [ { LarsonMillerParameter = 20000.0
+                          Stress = 150.0 } ] } ] }
 
     let expected =
         { material with
@@ -469,8 +802,7 @@ let ``database document store preserves nested table structures`` () =
             Engineering
             Engineering
             "Isochronous stress-strain"
-            [ { Strain = 0.1; Stress = 110.0 }
-              { Strain = 0.2; Stress = 160.0 } ]
+            [ { Strain = 0.1; Stress = 110.0 }; { Strain = 0.2; Stress = 160.0 } ]
             (Some 200.0)
             (Some 450.0)
         |> expectOk
@@ -480,8 +812,7 @@ let ``database document store preserves nested table structures`` () =
             500.0
             120.0
             "Creep strain"
-            [ { Time = 0.0; Strain = 0.0 }
-              { Time = 1000.0; Strain = 0.05 } ]
+            [ { Time = 0.0; Strain = 0.0 }; { Time = 1000.0; Strain = 0.05 } ]
         |> expectOk
 
     let fatigueTable =
@@ -492,13 +823,13 @@ let ``database document store preserves nested table structures`` () =
             "Stress Amplitude"
             "MPa"
             XBoundaryPolicy.FlatExtrapolate
-            [ { X = 1000.0; Value = 250.0 }
-              { X = 10000.0; Value = 180.0 } ]
+            [ { X = 1000.0; Value = 250.0 }; { X = 10000.0; Value = 180.0 } ]
         |> expectOk
         |> fun table -> FatigueTable.create table 425.0 (Some 100000.0)
 
     let material =
         let baseMaterial = createTestMaterial ()
+
         { baseMaterial with
             StrengthProperties =
                 { baseMaterial.StrengthProperties with
@@ -509,16 +840,20 @@ let ``database document store preserves nested table structures`` () =
                         [ { Material = baseMaterial.Id
                             Description = "LMP"
                             Points =
-                                [ { LarsonMillerParameter = 20000.0; Stress = 150.0 }
-                                  { LarsonMillerParameter = 21000.0; Stress = 120.0 } ] } ] } }
+                              [ { LarsonMillerParameter = 20000.0
+                                  Stress = 150.0 }
+                                { LarsonMillerParameter = 21000.0
+                                  Stress = 120.0 } ] } ] } }
 
-    let databasePath = Path.Combine(Path.GetTempPath(), $"material-library-document-store-{System.Guid.NewGuid():N}.db")
+    let databasePath =
+        Path.Combine(Path.GetTempPath(), $"material-library-document-store-{System.Guid.NewGuid():N}.db")
 
     try
         do
             use connection = new SqliteConnection($"Data Source={databasePath}")
             connection.Open()
             use command = connection.CreateCommand()
+
             command.CommandText <-
                 """
                 CREATE TABLE Materials (
@@ -535,6 +870,7 @@ let ``database document store preserves nested table structures`` () =
                     Notes TEXT
                 )
                 """
+
             command.ExecuteNonQuery() |> ignore
 
         MaterialDatabaseCrud.ensureSchema databasePath |> expectOk |> ignore
@@ -548,7 +884,11 @@ let ``database document store preserves nested table structures`` () =
         )
 
         Assert.Equal<CreepTable list>(material.StrengthProperties.CreepTables, actual.StrengthProperties.CreepTables)
-        Assert.Equal<FatigueTable list>(material.StrengthProperties.FatigueCurves, actual.StrengthProperties.FatigueCurves)
+
+        Assert.Equal<FatigueTable list>(
+            material.StrengthProperties.FatigueCurves,
+            actual.StrengthProperties.FatigueCurves
+        )
 
         Assert.Equal<LarsonMillerCurve list>(
             material.StrengthProperties.LarsonMillerCurves,
@@ -561,24 +901,14 @@ let ``database document store preserves nested table structures`` () =
 
 [<Fact>]
 let ``stress strain replacement key includes time dependence and duration`` () =
-    let points =
-        [ { Strain = 0.1; Stress = 100.0 }
-          { Strain = 0.2; Stress = 150.0 } ]
+    let points = [ { Strain = 0.1; Stress = 100.0 }; { Strain = 0.2; Stress = 150.0 } ]
 
     let independent =
         StressStrainTableBuilder.createTimeIndependent 500.0 Engineering Engineering "Independent" points None None
         |> expectOk
 
     let dependent =
-        StressStrainTableBuilder.createIsochronous
-            500.0
-            100000.0
-            Engineering
-            Engineering
-            "Dependent"
-            points
-            None
-            None
+        StressStrainTableBuilder.createIsochronous 500.0 100000.0 Engineering Engineering "Dependent" points None None
         |> expectOk
 
     let material =
@@ -589,6 +919,7 @@ let ``stress strain replacement key includes time dependence and duration`` () =
         |> expectOk
 
     Assert.Equal(2, material.StrengthProperties.StressStrainTables.Length)
+
     Assert.All(
         material.StrengthProperties.StressStrainTables,
         fun table -> Assert.Equal(StressStrainDatabase, table.Source)
@@ -629,6 +960,7 @@ let ``time-independent and isochronous stress-strain lookups share one table col
     let library = MaterialLibrary.create [ material ] |> expectOk
 
     Assert.Equal(100.0, library.GetStressFromStrain(material.Id, 500.0, 0.1) |> expectOk, 12)
+
     Assert.Equal(
         80.0,
         library.GetStressFromStrainAtDuration(material.Id, 500.0, 100000.0, 0.1)
@@ -651,21 +983,22 @@ let ``stress-strain serialization preserves isochronous duration and provenance`
         |> expectOk
 
     let table =
-        { table with Source = GeneratedAsmeVIII2Annex3D }
+        { table with
+            Source = GeneratedAsmeVIII2Annex3D }
         |> StressStrainTable.validate
         |> expectOk
 
     let json = SpecializedTableSerialization.stressStrainTableToJsonString table
-    let actual = SpecializedTableSerialization.stressStrainTableFromJsonString json |> expectOk
+
+    let actual =
+        SpecializedTableSerialization.stressStrainTableFromJsonString json |> expectOk
 
     Assert.Equal(Some 200000.0, actual.ReferenceDurationHours)
     Assert.Equal(GeneratedAsmeVIII2Annex3D, actual.Source)
 
 [<Fact>]
 let ``creep replacement key uses exact structured applied stress`` () =
-    let points =
-        [ { Time = 1.0; Strain = 0.01 }
-          { Time = 10.0; Strain = 0.05 } ]
+    let points = [ { Time = 1.0; Strain = 0.01 }; { Time = 10.0; Strain = 0.05 } ]
 
     let create stress =
         CreepTableBuilder.create 500.0 stress "Creep" points |> expectOk
@@ -688,14 +1021,20 @@ let ``cyclic table serialization preserves amplitude and hysteresis range data``
             0.12
             "Carbon steel"
             "Cyclic dataset"
-            [ { StressAmplitude = 100.0; StrainAmplitude = 0.001 }
-              { StressAmplitude = 200.0; StrainAmplitude = 0.003 } ]
-            [ { StressRange = 200.0; StrainRange = 0.002 }
-              { StressRange = 400.0; StrainRange = 0.006 } ]
+            [ { StressAmplitude = 100.0
+                StrainAmplitude = 0.001 }
+              { StressAmplitude = 200.0
+                StrainAmplitude = 0.003 } ]
+            [ { StressRange = 200.0
+                StrainRange = 0.002 }
+              { StressRange = 400.0
+                StrainRange = 0.006 } ]
         |> expectOk
 
     let json = SpecializedTableSerialization.cyclicStrainTableToJsonString table
-    let actual = SpecializedTableSerialization.cyclicStrainTableFromJsonString json |> expectOk
+
+    let actual =
+        SpecializedTableSerialization.cyclicStrainTableFromJsonString json |> expectOk
 
     Assert.Equal(2, actual.Table.Columns.Head.Entries.Length)
     Assert.Equal(2, actual.HysteresisRangeTable.Columns.Head.Entries.Length)
@@ -719,7 +1058,10 @@ let ``property table lookups reject malformed public records`` () =
     let duplicateEntries =
         { malformed with
             Columns =
-                [ { SizeRange = { Lower = None; Upper = None; Label = None }
+                [ { SizeRange =
+                      { Lower = None
+                        Upper = None
+                        Label = None }
                     Entries = [ { X = 100.0; Value = 10.0 }; { X = 100.0; Value = 20.0 } ] } ] }
 
     Assert.True(PropertyTable.lookup1D 100.0 malformed |> Result.isError)
@@ -728,7 +1070,10 @@ let ``property table lookups reject malformed public records`` () =
 
 [<Fact>]
 let ``duplicate material IDs use last value consistently`` () =
-    let first = { createTestMaterial () with Name = "First" }
+    let first =
+        { createTestMaterial () with
+            Name = "First" }
+
     let second = { first with Name = "Replacement" }
     let library = MaterialLibrary([ first; second ])
 
@@ -752,14 +1097,20 @@ let ``checked library construction rejects duplicate IDs and supports replacemen
 [<Fact>]
 let ``configuration validation rejects unsafe numerical defaults`` () =
     let valid = Configuration.createDefault ()
-    let invalid = { valid with Creep = { valid.Creep with KachanovTimeSteps = 0 } }
+
+    let invalid =
+        { valid with
+            Creep =
+                { valid.Creep with
+                    KachanovTimeSteps = 0 } }
 
     Assert.True(Configuration.validate valid |> Result.isOk)
     Assert.True(Configuration.validate invalid |> Result.isError)
 
 [<Fact>]
 let ``ASME database fallback file name is asme materials db`` () =
-    let baseDirectory = Path.Combine(Path.GetTempPath(), $"material-library-empty-{System.Guid.NewGuid():N}")
+    let baseDirectory =
+        Path.Combine(Path.GetTempPath(), $"material-library-empty-{System.Guid.NewGuid():N}")
 
     try
         Directory.CreateDirectory(baseDirectory) |> ignore
@@ -775,9 +1126,7 @@ let ``material JSON strictly enforces current schema`` () =
     let material =
         { createTestMaterial () with
             Family = Some LAS2_25
-            AsmeNoteReferences =
-                [ { Table = TableSy; Code = "Y1" }
-                  { Table = TableSu; Code = "U2" } ]
+            AsmeNoteReferences = [ { Table = TableSy; Code = "Y1" }; { Table = TableSu; Code = "U2" } ]
             Notes = Some "User-defined material note" }
 
     let json = material |> MaterialSerialization.toJsonString
@@ -795,13 +1144,25 @@ let ``material JSON strictly enforces current schema`` () =
     Assert.Equal<AsmeNoteReference list>(material.AsmeNoteReferences, roundTrip.AsmeNoteReferences)
     Assert.Equal(material.Notes, roundTrip.Notes)
     Assert.NotEqual<string>(json, replaceVersion 0)
-    Assert.True(replaceVersion 0 |> MaterialSerialization.fromJsonStringComplete |> Result.isError)
-    Assert.True(replaceVersion 99 |> MaterialSerialization.fromJsonStringComplete |> Result.isError)
+
+    Assert.True(
+        replaceVersion 0
+        |> MaterialSerialization.fromJsonStringComplete
+        |> Result.isError
+    )
+
+    Assert.True(
+        replaceVersion 99
+        |> MaterialSerialization.fromJsonStringComplete
+        |> Result.isError
+    )
 
     // Every version inside the supported window still loads; the one below it does not.
     for version in MaterialSerialization.MinimumReadableSchemaVersion .. MaterialSerialization.CurrentSchemaVersion do
         Assert.True(
-            replaceVersion version |> MaterialSerialization.fromJsonStringComplete |> Result.isOk,
+            replaceVersion version
+            |> MaterialSerialization.fromJsonStringComplete
+            |> Result.isOk,
             $"schema version {version} is inside the read window but was refused"
         )
 
@@ -902,13 +1263,7 @@ let ``external-pressure tables distinguish time-independent and isochronous data
         |> expectOk
 
     let isochronousValue =
-        library.GetExternalPressureAllowableCompressiveStress(
-            material.Id,
-            500.0,
-            Some 100000.0,
-            1.0e-4,
-            Linear
-        )
+        library.GetExternalPressureAllowableCompressiveStress(material.Id, 500.0, Some 100000.0, 1.0e-4, Linear)
         |> expectOk
 
     Assert.Equal(2, material.StrengthProperties.ExternalPressureTables.Length)
@@ -929,14 +1284,7 @@ let ``API 579 Annex 10B5 guard prevents unimplemented calculations`` () =
 [<Fact>]
 let ``creep generation requires explicit model and preserves applicability warning`` () =
     let norton =
-        CreepTableBuilder.generateWithNorton
-            500.0
-            100.0
-            "Norton selected by user"
-            [ 0.0; 10.0; 100.0 ]
-            1.0e-10
-            3.0
-            1.0
+        CreepTableBuilder.generateWithNorton 500.0 100.0 "Norton selected by user" [ 0.0; 10.0; 100.0 ] 1.0e-10 3.0 1.0
         |> expectOk
 
     let kachanov =
@@ -991,6 +1339,7 @@ let ``Garofalo activation-energy form applies temperature correction`` () =
 
     let expected = calibrated * exp (-q / (8.31446261815324 * (temperature + 273.15)))
     Assert.Equal(expected, corrected, 15)
+
     Assert.True(
         GarofaloModel.creepStrainWithActivationEnergy A n m alpha q -273.15 stress time
         |> Result.isError
@@ -1032,9 +1381,16 @@ let ``specialized table validators reject invalid domain values`` () =
 
 [<Fact>]
 let ``configuration save validates before touching destination`` () =
-    let path = Path.Combine(Path.GetTempPath(), $"material-library-{System.Guid.NewGuid():N}.xml")
+    let path =
+        Path.Combine(Path.GetTempPath(), $"material-library-{System.Guid.NewGuid():N}.xml")
+
     let valid = Configuration.createDefault ()
-    let invalid = { valid with Creep = { valid.Creep with KachanovTimeSteps = 0 } }
+
+    let invalid =
+        { valid with
+            Creep =
+                { valid.Creep with
+                    KachanovTimeSteps = 0 } }
 
     try
         Assert.True(Configuration.save path invalid |> Result.isError)
@@ -1047,8 +1403,11 @@ let ``configuration save validates before touching destination`` () =
 
 [<Fact>]
 let ``XML data helpers read and write staged files`` () =
-    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-data-{System.Guid.NewGuid():N}")
-    let document = XDocument(XElement("PhysicalPropertyTableImport", XAttribute("targetTable", "DensityTable")))
+    let dataRoot =
+        Path.Combine(Path.GetTempPath(), $"material-library-data-{System.Guid.NewGuid():N}")
+
+    let document =
+        XDocument(XElement("PhysicalPropertyTableImport", XAttribute("targetTable", "DensityTable")))
 
     try
         let written =
@@ -1076,8 +1435,7 @@ let ``XML data helpers read and write staged files`` () =
         Assert.Equal(file.RelativePath, fileFromLibrary.RelativePath)
 
         let folder =
-            MaterialLibraryDataXml.readFolder dataRoot "physical-properties-xml"
-            |> expectOk
+            MaterialLibraryDataXml.readFolder dataRoot "physical-properties-xml" |> expectOk
 
         Assert.Single(folder) |> ignore
     finally
@@ -1090,16 +1448,25 @@ let ``XML data helpers read repository physical-property staging folder`` () =
     | None -> Assert.True(true)
     | Some dataRoot ->
         let files =
-            MaterialLibraryDataXml.readFolder dataRoot "physical-properties-xml"
-            |> expectOk
+            MaterialLibraryDataXml.readFolder dataRoot "physical-properties-xml" |> expectOk
 
         Assert.Contains(files, fun file -> file.RelativePath = "physical-properties-xml/ThermalExpansion/TE-1.xml")
-        Assert.Contains(files, fun file -> file.RelativePath = "physical-properties-xml/ThermalDiffusivity/TCD-ThermalDiffusivity.xml")
-        Assert.Contains(files, fun file -> file.RelativePath = "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml")
+
+        Assert.Contains(
+            files,
+            fun file -> file.RelativePath = "physical-properties-xml/ThermalDiffusivity/TCD-ThermalDiffusivity.xml"
+        )
+
+        Assert.Contains(
+            files,
+            fun file -> file.RelativePath = "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml"
+        )
 
 [<Fact>]
 let ``CRUD repository creates reads updates deletes and persists materials`` () =
-    let path = Path.Combine(Path.GetTempPath(), $"material-library-crud-{System.Guid.NewGuid():N}.json")
+    let path =
+        Path.Combine(Path.GetTempPath(), $"material-library-crud-{System.Guid.NewGuid():N}.json")
+
     let repo = MaterialCrudRepository()
     let material = createTestMaterial ()
 
@@ -1126,7 +1493,8 @@ let ``CRUD repository creates reads updates deletes and persists materials`` () 
 
 [<Fact>]
 let ``CRUD configuration can save read and delete XML config`` () =
-    let path = Path.Combine(Path.GetTempPath(), $"material-library-crud-{System.Guid.NewGuid():N}.xml")
+    let path =
+        Path.Combine(Path.GetTempPath(), $"material-library-crud-{System.Guid.NewGuid():N}.xml")
 
     try
         let config = ConfigurationCrud.createDefault ()
@@ -1140,13 +1508,20 @@ let ``CRUD configuration can save read and delete XML config`` () =
 
 [<Fact>]
 let ``CRUD XML import stores staged XML inside specific material`` () =
-    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-crud-data-{System.Guid.NewGuid():N}")
+    let dataRoot =
+        Path.Combine(Path.GetTempPath(), $"material-library-crud-data-{System.Guid.NewGuid():N}")
+
     let sourceRelativePath = "physical-properties-xml/Density/PRD-Density.xml"
-    let source = XDocument(XElement("PhysicalPropertyTableImport", XAttribute("targetTable", "DensityTable")))
+
+    let source =
+        XDocument(XElement("PhysicalPropertyTableImport", XAttribute("targetTable", "DensityTable")))
+
     let repo = MaterialCrudRepository([ createTestMaterial () ])
 
     try
-        MaterialLibraryDataXml.writeFile dataRoot sourceRelativePath source |> expectOk |> ignore
+        MaterialLibraryDataXml.writeFile dataRoot sourceRelativePath source
+        |> expectOk
+        |> ignore
 
         Assert.True(
             repo.ImportXmlDataIntoMaterial(dataRoot, "SA-516-70", sourceRelativePath)
@@ -1157,7 +1532,9 @@ let ``CRUD XML import stores staged XML inside specific material`` () =
         Assert.Contains("materials/SA-516-70/PRD-Density.xml", defaultArg updated.Notes "")
 
         let exportFolder = Path.Combine(dataRoot, "export")
-        let exported = repo.ExportMaterialXmlData(dataRoot, "SA-516-70", exportFolder) |> expectOk
+
+        let exported =
+            repo.ExportMaterialXmlData(dataRoot, "SA-516-70", exportFolder) |> expectOk
 
         Assert.Single(exported) |> ignore
         Assert.True(File.Exists(exported.Head))
@@ -1167,12 +1544,18 @@ let ``CRUD XML import stores staged XML inside specific material`` () =
 
 [<Fact>]
 let ``XML data helpers reject paths outside data root`` () =
-    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-safe-data-{System.Guid.NewGuid():N}")
+    let dataRoot =
+        Path.Combine(Path.GetTempPath(), $"material-library-safe-data-{System.Guid.NewGuid():N}")
 
     try
         Directory.CreateDirectory(dataRoot) |> ignore
         let document = XDocument(XElement("PhysicalPropertyTableImport"))
-        Assert.True(MaterialLibraryDataXml.writeFile dataRoot "../escape.xml" document |> Result.isError)
+
+        Assert.True(
+            MaterialLibraryDataXml.writeFile dataRoot "../escape.xml" document
+            |> Result.isError
+        )
+
         Assert.True(MaterialLibraryDataXml.readFile dataRoot "../escape.xml" |> Result.isError)
     finally
         if Directory.Exists(dataRoot) then
@@ -1180,11 +1563,14 @@ let ``XML data helpers reject paths outside data root`` () =
 
 [<Fact>]
 let ``CRUD XML batch import preserves source order`` () =
-    let dataRoot = Path.Combine(Path.GetTempPath(), $"material-library-crud-batch-{System.Guid.NewGuid():N}")
+    let dataRoot =
+        Path.Combine(Path.GetTempPath(), $"material-library-crud-batch-{System.Guid.NewGuid():N}")
+
     let material = createTestMaterial ()
 
     try
-        [ "physical-properties-xml/Density/PRD-Density.xml"; "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml" ]
+        [ "physical-properties-xml/Density/PRD-Density.xml"
+          "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml" ]
         |> List.iter (fun path ->
             MaterialLibraryDataXml.writeFile dataRoot path (XDocument(XElement("PhysicalPropertyTableImport")))
             |> expectOk
@@ -1230,7 +1616,8 @@ let ``room-temperature elongation is stored per rolling direction and stays opti
     // The ASME reference tables leave both elongation columns NULL for every material, so None has
     // to survive a round trip rather than collapsing to zero.
     let reloaded =
-        { material with BasicProperties = neither }
+        { material with
+            BasicProperties = neither }
         |> MaterialSerialization.toJsonString
         |> MaterialSerialization.fromJsonStringComplete
         |> expectOk
@@ -1280,8 +1667,7 @@ let ``thermal diffusivity round-trips through JSON`` () =
 [<Fact>]
 let ``reference hydration fills the physical properties and welding info`` () =
     let databasePath =
-        Configuration.createDefault ()
-        |> Configuration.getAsmeDatabasePath
+        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
 
     let material = AsmeMaterialRepository.findById databasePath 1L |> expectOk
     let physical = material.PhysicalProperties
@@ -1302,8 +1688,7 @@ let ``reference hydration fills the physical properties and welding info`` () =
 [<Fact>]
 let ``allowable-stress datasets expose their division and case as labels`` () =
     let databasePath =
-        Configuration.createDefault ()
-        |> Configuration.getAsmeDatabasePath
+        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
 
     // SA-334 7 carries note G5, which is what marks the higher alternative stress values.
     let material = AsmeMaterialRepository.findById databasePath 736L |> expectOk
@@ -1339,15 +1724,14 @@ let ``allowable-stress datasets expose their division and case as labels`` () =
 [<Fact>]
 let ``Sy and Su keep one column per published size band`` () =
     let databasePath =
-        Configuration.createDefault ()
-        |> Configuration.getAsmeDatabasePath
+        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
 
     // SA-325 bolting publishes two diameter bands and derates the heavier one.
     let material = AsmeMaterialRepository.findById databasePath 260L |> expectOk
 
     let columnsOf table =
         match table with
-        | Some (t: PropertyTable) -> t.Columns
+        | Some(t: PropertyTable) -> t.Columns
         | None -> failwith "expected a populated strength table"
 
     let syColumns = columnsOf material.StrengthProperties.SyTable

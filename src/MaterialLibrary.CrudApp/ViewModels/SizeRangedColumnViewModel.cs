@@ -55,14 +55,30 @@ public sealed class SizeRangedColumnViewModel : ObservableObject
     public string SizeMin
     {
         get => _sizeMin;
-        set => SetProperty(ref _sizeMin, value ?? string.Empty);
+        set
+        {
+            if (SetProperty(ref _sizeMin, value ?? string.Empty))
+            {
+                RaisePropertyChanged(nameof(DisplayLabel));
+                RaisePropertyChanged(nameof(RangeValidationMessage));
+                RaisePropertyChanged(nameof(HasRangeValidationError));
+            }
+        }
     }
 
     /// <summary>Upper size bound (mm), blank for unbounded (+∞).</summary>
     public string SizeMax
     {
         get => _sizeMax;
-        set => SetProperty(ref _sizeMax, value ?? string.Empty);
+        set
+        {
+            if (SetProperty(ref _sizeMax, value ?? string.Empty))
+            {
+                RaisePropertyChanged(nameof(DisplayLabel));
+                RaisePropertyChanged(nameof(RangeValidationMessage));
+                RaisePropertyChanged(nameof(HasRangeValidationError));
+            }
+        }
     }
 
     /// <summary>Cell values; one entry per temperature row, parallel to the parent's temperature list.</summary>
@@ -78,12 +94,50 @@ public sealed class SizeRangedColumnViewModel : ObservableObject
             return (hasMin, hasMax) switch
             {
                 (false, false) => "all",
-                (false, true)  => $"≤ {SizeMax} mm",
-                (true, false)  => $"> {SizeMin} mm",
-                (true, true)   => $"{SizeMin}–{SizeMax} mm",
+                (false, true) => $"≤ {SizeMax} mm",
+                (true, false) => $"> {SizeMin} mm",
+                (true, true) => $"{SizeMin}–{SizeMax} mm",
             };
         }
     }
+
+    /// <summary>
+    /// Inline validation message shown in the column header when the range is invalid.
+    /// </summary>
+    public string RangeValidationMessage
+    {
+        get
+        {
+            var hasMin = !string.IsNullOrWhiteSpace(SizeMin);
+            var hasMax = !string.IsNullOrWhiteSpace(SizeMax);
+
+            if (hasMin
+                && !double.TryParse(SizeMin, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
+            {
+                return "Min is not a valid number.";
+            }
+
+            if (hasMax
+                && !double.TryParse(SizeMax, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
+            {
+                return "Max is not a valid number.";
+            }
+
+            if (hasMin
+                && hasMax
+                && double.TryParse(SizeMin, NumberStyles.Float, CultureInfo.InvariantCulture, out var min)
+                && double.TryParse(SizeMax, NumberStyles.Float, CultureInfo.InvariantCulture, out var max)
+                && min >= max)
+            {
+                return "Min must be less than Max.";
+            }
+
+            return string.Empty;
+        }
+    }
+
+    /// <summary><c>true</c> when the size-range inputs currently contain an error.</summary>
+    public bool HasRangeValidationError => !string.IsNullOrWhiteSpace(RangeValidationMessage);
 
     /// <summary>
     /// Adds a blank cell at the end (appended when a new temperature row is added to the parent).
