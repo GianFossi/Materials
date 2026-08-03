@@ -42,7 +42,8 @@ public sealed class InternalTablesCrudTests : IDisposable
 
         viewModel.SelectedTable = sqliteSequence;
         WaitUntil(
-            () => string.Equals(viewModel.TableRows?.Table?.TableName, "sqlite_sequence", StringComparison.OrdinalIgnoreCase) && viewModel.TableRows.Count > 0,
+            () => string.Equals(viewModel.TableRows?.Table?.TableName, "sqlite_sequence", StringComparison.OrdinalIgnoreCase)
+                && (viewModel.TableRows?.Count ?? 0) > 0,
             "sqlite_sequence table did not load");
 
         Assert.True(viewModel.CanEditSelectedTable, "sqlite_sequence should be editable through the raw-table workflow.");
