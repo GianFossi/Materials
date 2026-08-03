@@ -56,6 +56,18 @@ module ExcelHelpers =
         | Ok grid -> grid
         | Error err -> errorGrid (materialErrorToText err)
 
+    /// <summary>Boxes an optional number for a grid cell, rendering <c>None</c> as an empty cell.</summary>
+    /// <param name="value">Optional value read from the domain.</param>
+    /// <returns>The boxed number, or the empty string when the value is absent.</returns>
+    /// <remarks>
+    /// An empty cell reads as "not reported", which is what <c>None</c> means. Substituting zero
+    /// would be indistinguishable from a genuinely measured zero.
+    /// </remarks>
+    let boxOptional (value: float option) : obj =
+        match value with
+        | Some number -> box number
+        | None -> box ""
+
     /// <summary>Builds a rectangular Excel grid from a header row and a list of same-length data rows.</summary>
     let gridOfRows (headers: string list) (rows: obj list list) : obj[,] =
         let columnCount = List.length headers

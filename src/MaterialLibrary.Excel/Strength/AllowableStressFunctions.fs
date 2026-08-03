@@ -23,8 +23,7 @@ module AllowableStressFunctions =
         | _ -> Division1AllowableStress
 
     let private containsSize (size: float) (dataset: AllowableStressDataset) : bool =
-        (dataset.SizeMinimum |> Option.forall (fun lo -> size >= lo))
-        && (dataset.SizeMaximum |> Option.forall (fun hi -> size <= hi))
+        SizeThicknessRange.contains size dataset.SizeRange
 
     let private effectiveAllowableStressSource (material: Material) (source: AllowableStressSource) =
         let isBoltingOnlyMaterial =
@@ -79,15 +78,10 @@ module AllowableStressFunctions =
                     )
 
     let private allowableStressSourceLabel (dataset: AllowableStressDataset) : string =
-        match dataset.SizeMinimum, dataset.SizeMaximum with
-        | None, None -> "all sizes"
-        | Some lo, None -> sprintf ">= %.3f mm" lo
-        | None, Some hi -> sprintf "<= %.3f mm" hi
-        | Some lo, Some hi -> sprintf "%.3f - %.3f mm" lo hi
+        SizeThicknessRange.describe dataset.SizeRange
 
     let private allowableStressSizeSortKey (dataset: AllowableStressDataset) =
-        let lower = dataset.SizeMinimum |> Option.defaultValue Double.NegativeInfinity
-        let upper = dataset.SizeMaximum |> Option.defaultValue Double.PositiveInfinity
+        let lower, upper = SizeThicknessRange.sortKey dataset.SizeRange
         lower, upper, dataset.DatabaseRowId
 
     let private allowableStressSourceGrid (datasets: AllowableStressDataset list) : obj[,] =

@@ -41,21 +41,31 @@ internal static class MaterialFactory
             FSharpList<ElasticModulusTablePoint>.Empty,
             FSharpOption<FSharpList<SpecificHeatTablePoint>>.None,
             FSharpList<DensityTablePoint>.Empty,
+            FSharpOption<FSharpList<Tuple<double, double>>>.None,
             FSharpOption<FSharpList<Tuple<double, double>>>.None);
 
-    /// <summary>Creates minimum mechanical properties from the values entered in the editor.</summary>
-    /// <param name="elongationPercent">Minimum elongation at fracture (%).</param>
+    /// <summary>
+    /// Creates the room-temperature tensile-test results from the values entered in the editor.
+    /// </summary>
+    /// <param name="elongationLongitudinalPercent">Elongation at fracture (%) along the rolling direction, or <c>null</c> when not reported.</param>
+    /// <param name="elongationTransversePercent">Elongation at fracture (%) across the rolling direction, or <c>null</c> when not reported.</param>
     /// <param name="reductionOfAreaPercent">Minimum reduction of area at fracture (%).</param>
     /// <param name="specifiedMinimumYieldStrength">Specified Minimum Yield Strength, SMYS (MPa).</param>
     /// <param name="specifiedMinimumUltimateStrength">Specified Minimum Ultimate Tensile Strength, SMUTS (MPa).</param>
     /// <returns>A populated <see cref="BasicProperties"/> record.</returns>
+    /// <remarks>
+    /// Every value here is measured at room temperature. The temperature-dependent minimum strengths
+    /// Sy(T) and Su(T) are separate tables and are not derived from these.
+    /// </remarks>
     internal static BasicProperties CreateBasicProperties(
-        double elongationPercent,
+        double? elongationLongitudinalPercent,
+        double? elongationTransversePercent,
         double reductionOfAreaPercent,
         double specifiedMinimumYieldStrength,
         double specifiedMinimumUltimateStrength) =>
         BasicPropertiesModule.create(
-            elongationPercent,
+            FSharpInterop.ToOption(elongationLongitudinalPercent),
+            FSharpInterop.ToOption(elongationTransversePercent),
             reductionOfAreaPercent,
             specifiedMinimumYieldStrength,
             specifiedMinimumUltimateStrength);

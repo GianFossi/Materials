@@ -11,9 +11,44 @@ All numeric values are handled and persisted using these fixed units:
 - Specific heat: J/(kg*K)
 - Thermal conductivity: W/(m*K)
 - Thermal expansion coefficient: 1/degC
+- Thermal diffusivity: m^2/s
+- Size, diameter, and thickness bands: mm
 - Strain and elongation values: percent when documented as % in table descriptions
 
 These units are also documented directly in XML comments inside the F# source files for Material properties and tables.
+
+## Room-Temperature Tensile Test vs Temperature-Dependent Strength
+
+These are separate things and are stored separately:
+
+- `BasicProperties` holds only what the **room-temperature** tensile coupon test produces:
+  `ElongationLongitudinalPercent`, `ElongationTransversePercent` (both optional; the ASME reference
+  tables do not report them), `ReductionOfAreaPercent`, `SpecifiedMinimumYieldStrength` (SMYS), and
+  `SpecifiedMinimumUltimateStrength` (SMUTS). `BasicProperties.governingElongationPercent` returns
+  the weaker of the two directions when a single value is needed.
+- `StrengthProperties.TensileProperties` holds the governing Sy(T) and Su(T) curve, with no size
+  dependence and no elongation.
+- `StrengthProperties.TensileStrengthDatasets` holds Sy(T) and Su(T) **per Size/Diameter/Thickness
+  band**, one dataset per published ASME row, because the guaranteed minimum strength falls as the
+  section gets heavier.
+
+## Allowable Stresses
+
+`StrengthProperties.AllowableStressDatasets` keeps one curve per source table, case, and size band:
+
+| Source | ASME table | Meaning |
+| --- | --- | --- |
+| `Division1AllowableStress` | 1A / 1B | Section VIII Division 1 (also Section I and XII), normal allowable stress S |
+| `Division1HighAllowableStress` | 1A / 1B, note G5 | The higher alternative allowable stress: above two thirds of yield but within 90 % of it. Permitted only where slightly greater permanent deformation is acceptable, and **not** for flanges of gasketed joints |
+| `Division2AllowableStress` | 5A / 5B | Section VIII Division 2 allowable stress S |
+| `BoltingAllowableStress` | 3 | Bolting materials |
+
+Each dataset carries a `SizeThicknessRange` in mm whose two ends are independently inclusive or
+exclusive, so adjacent bands partition the range instead of overlapping at the boundary.
+`SizeThicknessRange.contains` is the only correct way to select a band for a given section.
+
+`StrengthProperties.AllowableStresses` is a separate, hand-entered table indexed by Section III
+service level. Reference materials populate the datasets, not this list.
 
 Stress/strain datasets also carry explicit basis metadata:
 

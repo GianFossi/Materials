@@ -37,7 +37,9 @@ Materials
   |-- MaterialSpecificHeatRows
   |-- MaterialThermalConductivityRows
   |-- MaterialTensileRows
+  |-- MaterialTensileStrengthDatasetRows
   |-- MaterialAllowableStressRows
+  |-- MaterialAllowableStressDatasetRows
   |-- MaterialCompressionRows
   |-- MaterialAsmeCodeRows
 ```
@@ -81,12 +83,18 @@ The application creates these tables with `CREATE TABLE IF NOT EXISTS`. They are
 | `MaterialDensityRows` | Normalized density rows. | `MaterialID`, `Temperature`, `Density` |
 | `MaterialSpecificHeatRows` | Normalized specific heat rows. | `MaterialID`, `Temperature`, `SpecificHeat` |
 | `MaterialThermalConductivityRows` | Normalized thermal conductivity rows. | `MaterialID`, `Temperature`, `Conductivity` |
-| `MaterialTensileRows` | Normalized tensile-property rows. | `MaterialID`, `Temperature`, `YieldStrength`, `TensileStrength`, `ElongationPercent`, `ReductionOfAreaPercent` |
-| `MaterialAllowableStressRows` | Normalized allowable-stress rows. | `MaterialID`, `Temperature`, `SectionIServiceLevelA`, `SectionIServiceLevelB`, `SectionIServiceLevelC`, `SectionIServiceLevelD`, `SectionIIWeld` |
+| `MaterialTensileRows` | Governing Sy/Su rows, with no size dependence. | `MaterialID`, `Temperature`, `YieldStrength`, `TensileStrength` |
+| `MaterialTensileStrengthDatasetRows` | Sy and Su, one row per (size band, temperature). | `MaterialID`, `Kind` (`Sy`/`Su`), `SizeMinimum`, `SizeMinimumIncluded`, `SizeMaximum`, `SizeMaximumIncluded`, `Temperature`, `Strength` |
+| `MaterialAllowableStressRows` | Hand-entered allowable stresses by Section III service level. | `MaterialID`, `Temperature`, `SectionIServiceLevelA`, `SectionIServiceLevelB`, `SectionIServiceLevelC`, `SectionIServiceLevelD`, `SectionIIWeld` |
+| `MaterialAllowableStressDatasetRows` | ASME allowable stresses, one row per (division, case, size band, temperature). | `MaterialID`, `Division` (`VIII-1`/`VIII-2`/`Bolting`), `StressCase` (`Normal`/`High`), `SizeMinimum`, `SizeMinimumIncluded`, `SizeMaximum`, `SizeMaximumIncluded`, `MaximumTemperature`, `CreepTemperature`, `Temperature`, `AllowableStress` |
 | `MaterialCompressionRows` | Normalized compression-property rows. | `MaterialID`, `Temperature`, `CompressiveStrength`, `CompressiveYield` |
 | `MaterialAsmeCodeRows` | ASME code designations linked to a material. | `MaterialID`, `AsmeCode` |
 
 `MaterialDocumentStore` is the canonical full-fidelity read-back source for application-written materials. The scalar and row tables keep common fields queryable from ordinary SQL.
+
+The two `...DatasetRows` tables repeat their size band and discriminators on every row on purpose: one row then answers "which allowable stress applies to this size at this temperature" without a join. Size bounds are in millimetres, and each end carries its own `...Included` flag (`1`/`0`) so that adjacent ASME bands such as "up to 5 incl." and "over 5" stay disjoint at the boundary. Elongation and reduction of area are **not** in `MaterialTensileRows`: they come from the room-temperature tensile coupon test and live on the `Materials` row (`RuptureElongationLong`, `RuptureElongationTransv`) and in `MaterialLibraryExtension` (`ReductionOfAreaPercent`).
+
+Schema provisioning also repairs older working copies: a reference column this build writes but the file lacks is added with `ALTER TABLE`, and an application-owned row table left in a superseded shape is dropped so the current definition recreates it. Only application-owned tables are ever dropped, and they are a projection of `MaterialDocumentStore`, which is never touched.
 
 ## View
 

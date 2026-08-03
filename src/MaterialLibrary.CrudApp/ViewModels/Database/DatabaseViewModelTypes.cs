@@ -81,6 +81,8 @@ public sealed class DatabaseRowViewModel
         Name = summary.Name;
         Specification = summary.Specification;
         Grade = summary.Grade;
+        ClassConditionTemper = summary.ClassConditionTemper;
+        Uns = summary.Uns;
         HasDocument = summary.HasDocument;
     }
 
@@ -99,6 +101,12 @@ public sealed class DatabaseRowViewModel
     /// <summary>Grade text.</summary>
     public string Grade { get; }
 
+    /// <summary>Class, condition, or tempering designation.</summary>
+    public string ClassConditionTemper { get; }
+
+    /// <summary>UNS alloy identifier.</summary>
+    public string Uns { get; }
+
     /// <summary>Whether this material was written by the application and can be read back in full.</summary>
     public bool HasDocument { get; }
 
@@ -108,4 +116,35 @@ public sealed class DatabaseRowViewModel
     /// application rows have a stored document and round-trip losslessly.
     /// </remarks>
     public string Origin => HasDocument ? "Application" : "ASME reference";
+
+    /// <summary>Reports whether one search term appears anywhere in this row's identity.</summary>
+    /// <param name="term">Term to look for; matched case-insensitively as a substring.</param>
+    /// <returns><c>true</c> when any identity field contains the term.</returns>
+    /// <remarks>
+    /// Covers the database ID, the material key, specification, grade, class/condition/tempering,
+    /// UNS, and the composed full name, so a user can find a row by whichever identifier they happen
+    /// to have to hand.
+    /// </remarks>
+    public bool Matches(string term)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+        {
+            return true;
+        }
+
+        return Contains(DatabaseId.ToString(System.Globalization.CultureInfo.InvariantCulture), term)
+            || Contains(MaterialKey, term)
+            || Contains(Specification, term)
+            || Contains(Grade, term)
+            || Contains(ClassConditionTemper, term)
+            || Contains(Uns, term)
+            || Contains(Name, term);
+    }
+
+    /// <summary>Case-insensitive substring test tolerant of null fields.</summary>
+    /// <param name="value">Field being searched.</param>
+    /// <param name="term">Term to look for.</param>
+    /// <returns><c>true</c> when the field contains the term.</returns>
+    private static bool Contains(string? value, string term) =>
+        !string.IsNullOrEmpty(value) && value.Contains(term, StringComparison.OrdinalIgnoreCase);
 }

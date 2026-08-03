@@ -1,6 +1,7 @@
 using System.Globalization;
 using MaterialLibraryCrudApp.Interop;
 using MaterialLibrary.Domain;
+using Microsoft.FSharp.Core;
 
 namespace MaterialLibraryCrudApp.ViewModels;
 
@@ -41,7 +42,8 @@ public sealed class MaterialEditViewModel : ObservableObject
     private string _nominalComposition = string.Empty;
     private string _classConditionTempering = string.Empty;
     private string _alloyIdentificationUns = string.Empty;
-    private string _elongationPercent = "0";
+    private string _elongationLongitudinalPercent = string.Empty;
+    private string _elongationTransversePercent = string.Empty;
     private string _reductionOfAreaPercent = "0";
     private string _specifiedMinimumYieldStrength = "0";
     private string _specifiedMinimumUltimateStrength = "0";
@@ -68,7 +70,8 @@ public sealed class MaterialEditViewModel : ObservableObject
         _nominalComposition = existing.NominalComposition;
         _classConditionTempering = existing.Class_Condition_Tempering;
         _alloyIdentificationUns = existing.AlloyIdentification_UNS;
-        _elongationPercent = Format(existing.BasicProperties.ElongationPercent);
+        _elongationLongitudinalPercent = FormatOptional(existing.BasicProperties.ElongationLongitudinalPercent);
+        _elongationTransversePercent = FormatOptional(existing.BasicProperties.ElongationTransversePercent);
         _reductionOfAreaPercent = Format(existing.BasicProperties.ReductionOfAreaPercent);
         _specifiedMinimumYieldStrength = Format(existing.BasicProperties.SpecifiedMinimumYieldStrength);
         _specifiedMinimumUltimateStrength = Format(existing.BasicProperties.SpecifiedMinimumUltimateStrength);
@@ -146,14 +149,27 @@ public sealed class MaterialEditViewModel : ObservableObject
         set => SetProperty(ref _alloyIdentificationUns, value);
     }
 
-    /// <summary>Minimum elongation at fracture (%), as entered text.</summary>
-    public string ElongationPercent
+    /// <summary>
+    /// Room-temperature elongation at fracture (%) along the rolling direction, as entered text.
+    /// Blank means not reported.
+    /// </summary>
+    public string ElongationLongitudinalPercent
     {
-        get => _elongationPercent;
-        set => SetProperty(ref _elongationPercent, value);
+        get => _elongationLongitudinalPercent;
+        set => SetProperty(ref _elongationLongitudinalPercent, value);
     }
 
-    /// <summary>Minimum reduction of area at fracture (%), as entered text.</summary>
+    /// <summary>
+    /// Room-temperature elongation at fracture (%) across the rolling direction, as entered text.
+    /// Blank means not reported.
+    /// </summary>
+    public string ElongationTransversePercent
+    {
+        get => _elongationTransversePercent;
+        set => SetProperty(ref _elongationTransversePercent, value);
+    }
+
+    /// <summary>Room-temperature minimum reduction of area at fracture (%), as entered text.</summary>
     public string ReductionOfAreaPercent
     {
         get => _reductionOfAreaPercent;
@@ -203,12 +219,20 @@ public sealed class MaterialEditViewModel : ObservableObject
             return false;
         }
 
-        if (!TryParse(ElongationPercent, out var elongation) ||
-            !TryParse(ReductionOfAreaPercent, out var reductionOfArea) ||
+        // Both elongations are optional: the ASME reference tables leave them blank, so a blank cell
+        // must round-trip as "not reported" rather than being rejected or silently read as zero.
+        if (!TryParseOptional(ElongationLongitudinalPercent, out var elongationLongitudinal) ||
+            !TryParseOptional(ElongationTransversePercent, out var elongationTransverse))
+        {
+            validationMessage = "Elongation must be numeric or left blank.";
+            return false;
+        }
+
+        if (!TryParse(ReductionOfAreaPercent, out var reductionOfArea) ||
             !TryParse(SpecifiedMinimumYieldStrength, out var smys) ||
             !TryParse(SpecifiedMinimumUltimateStrength, out var smuts))
         {
-            validationMessage = "Elongation, reduction of area, SMYS, and SMUTS must be numeric.";
+            validationMessage = "Reduction of area, SMYS, and SMUTS must be numeric.";
             return false;
         }
 
@@ -223,7 +247,8 @@ public sealed class MaterialEditViewModel : ObservableObject
         _draft.ClassConditionTempering = ClassConditionTempering.Trim();
         _draft.AlloyIdentificationUns = AlloyIdentificationUns.Trim();
         _draft.Family = SelectedFamily.Value;
-        _draft.ElongationPercent = elongation;
+        _draft.ElongationLongitudinalPercent = elongationLongitudinal;
+        _draft.ElongationTransversePercent = elongationTransverse;
         _draft.ReductionOfAreaPercent = reductionOfArea;
         _draft.SpecifiedMinimumYieldStrength = smys;
         _draft.SpecifiedMinimumUltimateStrength = smuts;
@@ -246,4 +271,36 @@ public sealed class MaterialEditViewModel : ObservableObject
     private static bool TryParse(string? text, out double value) =>
         double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out value)
         && double.IsFinite(value);
+
+    /// <summary>Formats an optional numeric field, rendering "not reported" as an empty box.</summary>
+    /// <param name="value">Optional value read from the domain.</param>
+    /// <returns>Round-trippable text, or the empty string when the value is absent.</returns>
+    /// <remarks>
+    /// Showing a blank rather than <c>0</c> matters: zero elongation would be a real measurement,
+    /// while the ASME reference tables simply do not report the value for most materials.
+    /// </remarks>
+    private static string FormatOptional(FSharpOption<double>? value) =>
+        value is null ? string.Empty : Format(value.Value);
+
+    /// <summary>Parses an optional numeric field, accepting blank as "not reported".</summary>
+    /// <param name="text">Text entered by the user.</param>
+    /// <param name="value">Receives the parsed value, or <c>null</c> when the box is blank.</param>
+    /// <returns><c>true</c> when the text was blank or a valid number.</returns>
+    private static bool TryParseOptional(string? text, out double? value)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            value = null;
+            return true;
+        }
+
+        if (TryParse(text, out var parsed))
+        {
+            value = parsed;
+            return true;
+        }
+
+        value = null;
+        return false;
+    }
 }

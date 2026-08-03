@@ -1,19 +1,30 @@
 namespace MaterialLibrary.Domain
 
-/// <summary>Tensile properties measured at a specific temperature.</summary>
-/// <remarks>Values are typically taken from ASME Section II Part D, Table Y-1 or from material certifications.</remarks>
+/// <summary>Minimum strengths at one temperature.</summary>
+/// <remarks>
+/// <para>
+/// Values are typically taken from ASME Section II Part D, Tables Y-1 (Sy) and U (Su), or from
+/// material certifications. Units: temperature in degC, strengths in MPa.
+/// </para>
+/// <para>
+/// Elongation and reduction of area are deliberately absent: they come from the room-temperature
+/// tensile coupon test and are single scalars, so they belong to
+/// <see cref="BasicProperties"/> rather than to a per-temperature row.
+/// </para>
+/// <para>
+/// This record holds the governing curve, with no size dependence. When Sy and Su vary with
+/// section size or thickness, each group's curve is preserved separately in
+/// <see cref="StrengthProperties.TensileStrengthDatasets"/>.
+/// </para>
+/// </remarks>
 type TensileProperties =
     {
         /// Test temperature (°C).
         Temperature: float
-        /// 0.2 % proof (yield) strength (MPa).
+        /// 0.2 % proof (yield) strength Sy (MPa).
         YieldStrength: float
-        /// Ultimate tensile strength (MPa).
+        /// Ultimate tensile strength Su (MPa).
         TensileStrength: float
-        /// Minimum elongation at fracture (%).
-        ElongationPercent: float
-        /// Minimum reduction of area at fracture (%).
-        ReductionOfAreaPercent: float
     }
 
 /// <summary>A point used to create an external-pressure material table.</summary>

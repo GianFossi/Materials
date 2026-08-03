@@ -14,13 +14,31 @@ open ROP
 module MaterialSerialization =
 
     [<Literal>]
-    let CurrentSchemaVersion = 14
+    let CurrentSchemaVersion = 16
+
+    /// <summary>Oldest schema version this build can still read.</summary>
+    /// <remarks>
+    /// <para>
+    /// Version 15 only added the optional thermal-diffusivity table to the physical properties, so a
+    /// version 14 document is still readable: the field is simply absent and deserializes to
+    /// <c>None</c>. Rejecting 14 outright would make every previously saved library unreadable for
+    /// no benefit.
+    /// </para>
+    /// <para>
+    /// Version 16 splits elongation by rolling direction, adds the size-banded Sy/Su datasets, and
+    /// gives every size band its inclusivity flags. All three are read back compatibly: the legacy
+    /// <c>elongationPercent</c> seeds the longitudinal value, an absent dataset list reads as empty,
+    /// and an absent inclusivity flag defaults to inclusive.
+    /// </para>
+    /// </remarks>
+    [<Literal>]
+    let MinimumReadableSchemaVersion = 14
 
     let private validateSchemaVersion version =
-        match version with
-        | CurrentSchemaVersion -> Ok()
-        | unsupported ->
-            Error(MaterialError.InvalidOperation $"Unsupported material JSON schema version: {unsupported}")
+        if version >= MinimumReadableSchemaVersion && version <= CurrentSchemaVersion then
+            Ok()
+        else
+            Error(MaterialError.InvalidOperation $"Unsupported material JSON schema version: {version}")
 
     let private normalizeOptionalString (value: string option) : string =
         match value with
@@ -93,16 +111,47 @@ module MaterialSerialization =
         |> Result.map List.rev
 
     let private basicPropertiesToJson (bp: BasicProperties) : BasicPropertiesJson =
-        { ElongationPercent = bp.ElongationPercent
+        { ElongationPercent = None
+          ElongationLongitudinalPercent = bp.ElongationLongitudinalPercent
+          ElongationTransversePercent = bp.ElongationTransversePercent
           ReductionOfAreaPercent = bp.ReductionOfAreaPercent
           SpecifiedMinimumYieldStrength = bp.SpecifiedMinimumYieldStrength
           SpecifiedMinimumUltimateStrength = bp.SpecifiedMinimumUltimateStrength }
 
     let private basicPropertiesFromJson (json: BasicPropertiesJson) : BasicProperties =
-        { ElongationPercent = json.ElongationPercent
+        // Documents written before elongation was split by rolling direction carry a single
+        // elongationPercent, which the reference importer filled from the longitudinal column;
+        // it seeds the longitudinal value so those files keep their data.
+        { ElongationLongitudinalPercent =
+            match json.ElongationLongitudinalPercent with
+            | Some value -> Some value
+            | None -> json.ElongationPercent
+          ElongationTransversePercent = json.ElongationTransversePercent
           ReductionOfAreaPercent = json.ReductionOfAreaPercent
           SpecifiedMinimumYieldStrength = json.SpecifiedMinimumYieldStrength
           SpecifiedMinimumUltimateStrength = json.SpecifiedMinimumUltimateStrength }
+
+    let private sizeRangeToJson (range: SizeThicknessRange) : SizeThicknessRangeJson =
+        { Minimum = range.Minimum
+          MinimumIncluded = Some range.MinimumIncluded
+          Maximum = range.Maximum
+          MaximumIncluded = Some range.MaximumIncluded }
+
+    /// Rebuilds a size band, falling back to the legacy bare bounds and defaulting an absent
+    /// inclusivity flag to inclusive, which is how ASME prints an unqualified limit.
+    let private sizeRangeFromJson
+        (range: SizeThicknessRangeJson option)
+        (legacyMinimum: float option)
+        (legacyMaximum: float option)
+        : SizeThicknessRange =
+        match range with
+        | Some value ->
+            SizeThicknessRange.create
+                value.Minimum
+                (value.MinimumIncluded |> Option.defaultValue true)
+                value.Maximum
+                (value.MaximumIncluded |> Option.defaultValue true)
+        | None -> SizeThicknessRange.create legacyMinimum true legacyMaximum true
 
     let private compressionPropertiesToJson (properties: CompressionProperties) : CompressionPropertiesJson =
         { Temperature = properties.Temperature
@@ -198,13 +247,26 @@ module MaterialSerialization =
                     | StandardStrengthAllowableStress -> 0
                     | HighStrengthAllowableStress -> 1
                   Table = PropertyTableSerialization.toJson dataset.Table
-                  SizeMinimum = dataset.SizeMinimum
-                  SizeMaximum = dataset.SizeMaximum
+                  SizeRange = Some(sizeRangeToJson dataset.SizeRange)
+                  SizeMinimum = None
+                  SizeMaximum = None
                   MaximumTemperature = dataset.MaximumTemperature
                   CreepTemperature = dataset.CreepTemperature
                   AsmeNoteReferences = dataset.AsmeNoteReferences |> List.map asmeNoteReferenceToJson
                   Notes = dataset.Notes })
           TensileProperties = Some sp.TensileProperties
+          TensileStrengthDatasets =
+            sp.TensileStrengthDatasets
+            |> List.map (fun dataset ->
+                { DatabaseRowId = dataset.DatabaseRowId
+                  Kind =
+                    match dataset.Kind with
+                    | YieldStrengthSy -> 0
+                    | UltimateTensileStrengthSu -> 1
+                  Table = PropertyTableSerialization.toJson dataset.Table
+                  SizeRange = Some(sizeRangeToJson dataset.SizeRange)
+                  AsmeNoteReferences = dataset.AsmeNoteReferences |> List.map asmeNoteReferenceToJson
+                  Notes = dataset.Notes })
           CompressionProperties =
             sp.CompressionProperties
             |> Option.map (List.map compressionPropertiesToJson)
@@ -317,8 +379,7 @@ module MaterialSerialization =
                                Source = source
                                Case = allowableCase
                                Table = table
-                               SizeMinimum = dataset.SizeMinimum
-                               SizeMaximum = dataset.SizeMaximum
+                               SizeRange = sizeRangeFromJson dataset.SizeRange dataset.SizeMinimum dataset.SizeMaximum
                                MaximumTemperature = dataset.MaximumTemperature
                                CreepTemperature = dataset.CreepTemperature
                                AsmeNoteReferences = noteReferences
@@ -327,10 +388,39 @@ module MaterialSerialization =
                     })
                 |> sequenceResultList
 
+            let! tensileStrengthDatasets =
+                json.TensileStrengthDatasets
+                |> List.map (fun dataset ->
+                    result {
+                        let! kind =
+                            match dataset.Kind with
+                            | 0 -> Ok YieldStrengthSy
+                            | 1 -> Ok UltimateTensileStrengthSu
+                            | value ->
+                                Error(MaterialError.InvalidOperation $"Unknown tensile-strength kind: {value}")
+
+                        let! table = PropertyTableSerialization.fromJson dataset.Table
+                        let! noteReferences =
+                            dataset.AsmeNoteReferences
+                            |> List.map asmeNoteReferenceFromJson
+                            |> sequenceResultList
+
+                        return!
+                            ({ DatabaseRowId = dataset.DatabaseRowId
+                               Kind = kind
+                               Table = table
+                               SizeRange = sizeRangeFromJson dataset.SizeRange None None
+                               AsmeNoteReferences = noteReferences
+                               Notes = dataset.Notes }: TensileStrengthDataset)
+                            |> TensileStrengthDataset.validate
+                    })
+                |> sequenceResultList
+
             return
                 { AllowableStresses = defaultArg json.AllowableStresses []
                   AllowableStressDatasets = allowableStressDatasets
                   TensileProperties = defaultArg json.TensileProperties []
+                  TensileStrengthDatasets = tensileStrengthDatasets
                   CompressionProperties = compressionProperties
                   StressStrainTables = stressStrainTables
                   CyclicStrainTables = cyclicCurves

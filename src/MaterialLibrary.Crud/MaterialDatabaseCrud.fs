@@ -5,6 +5,7 @@ open System.IO
 open Microsoft.Data.Sqlite
 open MaterialLibrary
 open MaterialLibrary.Domain
+open MaterialLibrary.Domain.Database.Lookup
 
 /// <summary>Summary of one material as listed from the database.</summary>
 type DatabaseMaterialSummary =
@@ -18,6 +19,10 @@ type DatabaseMaterialSummary =
       Specification: string
       /// Grade text (<c>TypeGrade</c>) from the <c>Materials</c> table.
       Grade: string
+      /// Class / condition / tempering designation from the <c>Materials</c> table.
+      ClassConditionTemper: string
+      /// UNS alloy identifier (<c>AlloyDesignationNumber</c>) from the <c>Materials</c> table.
+      Uns: string
       /// Whether a lossless serialized document is stored for this material.
       HasDocument: bool }
 
@@ -215,6 +220,71 @@ module MaterialDatabaseCrud =
 
                 command.ExecuteNonQuery() |> ignore
 
+    /// <summary>Flattens size-banded curves into one row per (band, temperature) point.</summary>
+    /// <param name="connection">Open connection.</param>
+    /// <param name="databaseId">Material primary key.</param>
+    /// <param name="table">Target table name.</param>
+    /// <param name="extraColumns">
+    /// Names of the discriminator columns that precede the value column, such as <c>Kind</c> for a
+    /// strength dataset or <c>Source</c> and <c>Case</c> for an allowable-stress one. The last name
+    /// is the value column; the ones before it are text.
+    /// </param>
+    /// <param name="datasets">
+    /// For each dataset: its size band, the text values of the leading discriminator columns, the
+    /// optional numeric metadata columns, and the curve to flatten.
+    /// </param>
+    /// <remarks>
+    /// Every row repeats its band and discriminators. That denormalization is deliberate: a single
+    /// row then answers "which allowable stress applies to this size at this temperature" without a
+    /// join, which is how the raw-table browser and ad-hoc SQL queries use these tables.
+    /// </remarks>
+    let private writeSizeBandedRows
+        (connection: SqliteConnection)
+        (databaseId: int64)
+        (table: string)
+        (extraColumns: string list)
+        (datasets: (SizeThicknessRange * string list * (string * float option) list * PropertyTable) list)
+        =
+        for sizeRange, discriminators, metadata, curve in datasets do
+            let valueColumn = List.last extraColumns
+            let discriminatorColumns = extraColumns |> List.take (extraColumns.Length - 1)
+
+            let columns =
+                discriminatorColumns
+                @ [ "SizeMinimum"; "SizeMinimumIncluded"; "SizeMaximum"; "SizeMaximumIncluded" ]
+                @ (metadata |> List.map fst)
+                @ [ "Temperature"; valueColumn ]
+
+            let columnList = String.Join(", ", "MaterialID" :: columns)
+            let parameterList = String.Join(", ", "$materialId" :: (columns |> List.map (fun c -> "$" + c)))
+
+            // A PropertyTable stores its points per column; each column's entries are the (X, Y)
+            // pairs, so both levels have to be walked to reach one temperature/value point.
+            for column in curve.Columns do
+                for entry in column.Entries do
+                    use command = connection.CreateCommand()
+                    command.CommandText <- $"INSERT INTO {table} ({columnList}) VALUES ({parameterList})"
+                    command.Parameters.AddWithValue("$materialId", databaseId) |> ignore
+
+                    List.iter2
+                        (fun name value -> command.Parameters.AddWithValue("$" + name, box (value: string)) |> ignore)
+                        discriminatorColumns
+                        discriminators
+
+                    addOptional command "$SizeMinimum" sizeRange.Minimum
+                    command.Parameters.AddWithValue("$SizeMinimumIncluded", (if sizeRange.MinimumIncluded then 1 else 0))
+                    |> ignore
+                    addOptional command "$SizeMaximum" sizeRange.Maximum
+                    command.Parameters.AddWithValue("$SizeMaximumIncluded", (if sizeRange.MaximumIncluded then 1 else 0))
+                    |> ignore
+
+                    for name, value in metadata do
+                        addOptional command ("$" + name) value
+
+                    command.Parameters.AddWithValue("$Temperature", entry.X) |> ignore
+                    command.Parameters.AddWithValue("$" + valueColumn, entry.Value) |> ignore
+                    command.ExecuteNonQuery() |> ignore
+
     /// <summary>Writes the ASME <c>Materials</c> row for a material.</summary>
     /// <param name="connection">Open connection.</param>
     /// <param name="databaseId">Material primary key.</param>
@@ -222,8 +292,9 @@ module MaterialDatabaseCrud =
     /// <remarks>
     /// Maps the domain identity onto the reference table's own column names. <c>SMTS</c> and
     /// <c>SMYS</c> carry the specified minimum ultimate and yield strengths (MPa);
-    /// <c>RuptureElongationLong</c> carries the elongation (%). Reduction of area has no column in
-    /// the reference schema and is kept in the extension row instead.
+    /// <c>RuptureElongationLong</c> and <c>RuptureElongationTransv</c> carry the room-temperature
+    /// elongation at fracture (%) in each rolling direction. Reduction of area has no column in the
+    /// reference schema and is kept in the extension row instead.
     /// </remarks>
     let private writeMaterialsRow (connection: SqliteConnection) (databaseId: int64) (material: Material) =
         use command = connection.CreateCommand()
@@ -233,11 +304,11 @@ module MaterialDatabaseCrud =
             INSERT INTO Materials
                 (ID, NominalComposition, ProductForm, Specification, TypeGrade,
                  ClassConditionTemper, AlloyDesignationNumber, SMTS, SMYS,
-                 RuptureElongationLong, Notes)
+                 RuptureElongationLong, RuptureElongationTransv, Notes)
             VALUES
                 ($id, $nominalComposition, $productForm, $specification, $typeGrade,
                  $classConditionTemper, $alloyDesignationNumber, $smts, $smys,
-                 $elongation, $notes)
+                 $elongationLong, $elongationTransv, $notes)
             ON CONFLICT(ID) DO UPDATE SET
                 NominalComposition = excluded.NominalComposition,
                 ProductForm = excluded.ProductForm,
@@ -248,6 +319,7 @@ module MaterialDatabaseCrud =
                 SMTS = excluded.SMTS,
                 SMYS = excluded.SMYS,
                 RuptureElongationLong = excluded.RuptureElongationLong,
+                RuptureElongationTransv = excluded.RuptureElongationTransv,
                 Notes = excluded.Notes"""
 
         command.Parameters.AddWithValue("$id", databaseId) |> ignore
@@ -259,7 +331,8 @@ module MaterialDatabaseCrud =
         command.Parameters.AddWithValue("$alloyDesignationNumber", material.AlloyIdentification_UNS) |> ignore
         command.Parameters.AddWithValue("$smts", material.BasicProperties.SpecifiedMinimumUltimateStrength) |> ignore
         command.Parameters.AddWithValue("$smys", material.BasicProperties.SpecifiedMinimumYieldStrength) |> ignore
-        command.Parameters.AddWithValue("$elongation", material.BasicProperties.ElongationPercent) |> ignore
+        addOptional command "$elongationLong" material.BasicProperties.ElongationLongitudinalPercent
+        addOptional command "$elongationTransv" material.BasicProperties.ElongationTransversePercent
         addOptionalText command "$notes" material.Notes
         command.ExecuteNonQuery() |> ignore
 
@@ -361,18 +434,35 @@ module MaterialDatabaseCrud =
             |> List.map (fun (temperature, conductivity) -> [ Some temperature; Some conductivity ])
         )
 
+        insertRows connection databaseId "MaterialThermalDiffusivityRows" [ "Temperature"; "Diffusivity" ] (
+            physical.ThermalDiffusivityTable
+            |> Option.defaultValue []
+            |> List.map (fun (temperature, diffusivity) -> [ Some temperature; Some diffusivity ])
+        )
+
+        // Elongation and reduction of area are room-temperature scalars, so they belong to the
+        // Materials row and the extension row, not to a per-temperature strength row.
         insertRows
             connection
             databaseId
             "MaterialTensileRows"
-            [ "Temperature"; "YieldStrength"; "TensileStrength"; "ElongationPercent"; "ReductionOfAreaPercent" ]
+            [ "Temperature"; "YieldStrength"; "TensileStrength" ]
             (strength.TensileProperties
-             |> List.map (fun row ->
-                 [ Some row.Temperature
-                   Some row.YieldStrength
-                   Some row.TensileStrength
-                   Some row.ElongationPercent
-                   Some row.ReductionOfAreaPercent ]))
+             |> List.map (fun row -> [ Some row.Temperature; Some row.YieldStrength; Some row.TensileStrength ]))
+
+        // One row per (size band, temperature) point, with the band repeated on every row so a
+        // single row is meaningful on its own in SQL.
+        writeSizeBandedRows
+            connection
+            databaseId
+            "MaterialTensileStrengthDatasetRows"
+            [ "Kind"; "Strength" ]
+            (strength.TensileStrengthDatasets
+             |> List.map (fun dataset ->
+                 dataset.SizeRange,
+                 [ TensileStrengthDataset.kindSymbol dataset.Kind ],
+                 [],
+                 dataset.Table))
 
         insertRows
             connection
@@ -393,6 +483,23 @@ module MaterialDatabaseCrud =
                    row.Section_I_ServiceLevel_D
                    row.Section_II_Weld ]))
 
+        // The ASME allowable stresses, one row per (division, case, size band, temperature). This is
+        // the table that answers "what may this material carry", so the division and the normal/high
+        // case are stored as text rather than as codes: the raw-table browser shows them directly.
+        writeSizeBandedRows
+            connection
+            databaseId
+            "MaterialAllowableStressDatasetRows"
+            [ "Division"; "StressCase"; "AllowableStress" ]
+            (strength.AllowableStressDatasets
+             |> List.map (fun dataset ->
+                 dataset.SizeRange,
+                 [ AllowableStressDataset.divisionLabel dataset.Source
+                   AllowableStressDataset.caseLabel dataset.Case ],
+                 [ "MaximumTemperature", dataset.MaximumTemperature
+                   "CreepTemperature", dataset.CreepTemperature ],
+                 dataset.Table))
+
         insertRows
             connection
             databaseId
@@ -401,6 +508,36 @@ module MaterialDatabaseCrud =
             (strength.CompressionProperties
              |> Option.defaultValue []
              |> List.map (fun row -> [ Some row.Temperature; Some row.CompressiveStrength; Some row.CompressiveYield ]))
+
+        // External-pressure charts are flattened one row per point, carrying the parent table's
+        // reference conditions on every row so a point is meaningful on its own in SQL.
+        for table in strength.ExternalPressureTables do
+            let sourceKind =
+                match table.Source with
+                | MaterialDatabase -> "MaterialDatabase"
+                | CodeCase2964 -> "CodeCase2964"
+
+            // A PropertyTable holds size-banded columns, each carrying (X, Value) entries; for an
+            // external-pressure chart X is Factor A and Value the allowable compressive stress.
+            for column in table.Table.Columns do
+              for entry in column.Entries do
+                use command = connection.CreateCommand()
+
+                command.CommandText <-
+                    "INSERT INTO MaterialExternalPressureRows
+                        (MaterialID, ReferenceTemperature, ReferenceDurationHours, ReductionFactor,
+                         SourceKind, FactorA, CompressiveStress, TangentModulus)
+                     VALUES ($id, $refTemp, $duration, $reduction, $source, $factorA, $stress, $tangent)"
+
+                command.Parameters.AddWithValue("$id", databaseId) |> ignore
+                command.Parameters.AddWithValue("$refTemp", table.ReferenceTemperature) |> ignore
+                addOptional command "$duration" table.ReferenceDurationHours
+                addOptional command "$reduction" table.ReductionFactor
+                command.Parameters.AddWithValue("$source", sourceKind) |> ignore
+                command.Parameters.AddWithValue("$factorA", entry.X) |> ignore
+                command.Parameters.AddWithValue("$stress", entry.Value) |> ignore
+                command.Parameters.AddWithValue("$tangent", DBNull.Value) |> ignore
+                command.ExecuteNonQuery() |> ignore
 
         // ASME codes are text, so they do not fit the numeric insertRows helper.
         for code in material.ApplicableAsmeCodes do
@@ -486,6 +623,7 @@ module MaterialDatabaseCrud =
                 if hasExtension then
                     $"""
                     SELECT m.ID, m.Specification, m.TypeGrade,
+                           m.ClassConditionTemper, m.AlloyDesignationNumber,
                            e.MaterialKey AS MaterialKey, e.Name AS Name,
                            {if hasDocuments then
                                 $"(SELECT COUNT(*) FROM {MaterialDatabaseSchema.DocumentTable} d WHERE d.MaterialID = m.ID)"
@@ -497,6 +635,7 @@ module MaterialDatabaseCrud =
                 else
                     """
                     SELECT m.ID, m.Specification, m.TypeGrade,
+                           m.ClassConditionTemper, m.AlloyDesignationNumber,
                            NULL AS MaterialKey, NULL AS Name, 0 AS DocumentCount
                     FROM Materials m
                     ORDER BY m.ID"""
@@ -506,15 +645,27 @@ module MaterialDatabaseCrud =
 
             while reader.Read() do
                 let databaseId = reader.GetInt64(reader.GetOrdinal "ID")
+                let specification = text reader "Specification"
+                let grade = text reader "TypeGrade"
+                let classConditionTemper = text reader "ClassConditionTemper"
+                let uns = text reader "AlloyDesignationNumber"
 
                 results.Add
                     { DatabaseId = databaseId
                       // Materials never written by this application have no key; the integer ID is
                       // the only identifier they have.
                       MaterialKey = optionalText reader "MaterialKey" |> Option.defaultValue (string databaseId)
-                      Name = text reader "Name"
-                      Specification = text reader "Specification"
-                      Grade = text reader "TypeGrade"
+                      // Reference rows have no extension row and therefore no stored name, so the
+                      // canonical name is composed the same way the domain composes it. Without this
+                      // every one of the shipped materials would list with a blank name.
+                      Name =
+                        optionalText reader "Name"
+                        |> Option.defaultWith (fun () ->
+                            Material.composeMaterialName specification grade classConditionTemper uns)
+                      Specification = specification
+                      Grade = grade
+                      ClassConditionTemper = classConditionTemper
+                      Uns = uns
                       HasDocument = reader.GetInt64(reader.GetOrdinal "DocumentCount") > 0L }
 
             Ok(List.ofSeq results))
@@ -529,30 +680,66 @@ module MaterialDatabaseCrud =
     /// saved once before this returns it.
     /// </remarks>
     let readMaterial (databasePath: string) (materialKey: string) : Result<Material, MaterialError> =
-        withConnection databasePath (fun connection ->
-            if not (MaterialDatabaseSchema.tableExists connection MaterialDatabaseSchema.DocumentTable) then
-                Error(
-                    MaterialError.NotFound
-                        "This database has no application tables yet; provision the schema and save a material first."
-                )
-            else
+        // Resolving the identifier needs the read-write connection (it consults the extension
+        // table), but hydrating a reference material opens its own read-only connection, so the
+        // lookup is finished and released before falling back.
+        let resolved =
+            withConnection databasePath (fun connection ->
                 match tryResolveDatabaseId connection materialKey with
                 | None -> Error(MaterialError.NotFound $"Material not found in database: {materialKey}")
                 | Some databaseId ->
+                    if not (MaterialDatabaseSchema.tableExists connection MaterialDatabaseSchema.DocumentTable) then
+                        // No application tables yet: nothing can have a document.
+                        Ok(databaseId, None)
+                    else
+                        use command = connection.CreateCommand()
+
+                        command.CommandText <-
+                            $"SELECT Payload FROM {MaterialDatabaseSchema.DocumentTable} WHERE MaterialID = $id"
+
+                        command.Parameters.AddWithValue("$id", databaseId) |> ignore
+
+                        match command.ExecuteScalar() with
+                        | null -> Ok(databaseId, None)
+                        | payload -> Ok(databaseId, Some(string payload)))
+
+        resolved
+        |> Result.bind (fun (databaseId, payload) ->
+            match payload with
+            // Written by this application: the stored document is the lossless form and wins.
+            | Some json -> MaterialSerialization.fromJsonStringComplete json
+            // One of the shipped ASME rows. It has no document, but the reference tables hold its
+            // identity, tensile rows, and allowable-stress datasets, so assemble it from those.
+            | None -> AsmeMaterialRepository.findById databasePath databaseId)
+
+    /// <summary>
+    /// Reports whether a material is stored as an application document or only as reference rows.
+    /// </summary>
+    /// <param name="databasePath">Database to inspect.</param>
+    /// <param name="materialKey">Domain <c>Material.Id</c>, or the integer database identifier.</param>
+    /// <returns>
+    /// <c>Ok true</c> when a lossless document exists, <c>Ok false</c> when the material can only be
+    /// hydrated from the ASME reference tables, or an error when it is absent altogether.
+    /// </returns>
+    /// <remarks>
+    /// Lets a caller warn that a hydrated reference material carries only what the ASME schema
+    /// holds, rather than the full domain object it will become once saved.
+    /// </remarks>
+    let hasStoredDocument (databasePath: string) (materialKey: string) : Result<bool, MaterialError> =
+        withConnection databasePath (fun connection ->
+            match tryResolveDatabaseId connection materialKey with
+            | None -> Error(MaterialError.NotFound $"Material not found in database: {materialKey}")
+            | Some databaseId ->
+                if not (MaterialDatabaseSchema.tableExists connection MaterialDatabaseSchema.DocumentTable) then
+                    Ok false
+                else
                     use command = connection.CreateCommand()
 
                     command.CommandText <-
-                        $"SELECT Payload FROM {MaterialDatabaseSchema.DocumentTable} WHERE MaterialID = $id"
+                        $"SELECT COUNT(*) FROM {MaterialDatabaseSchema.DocumentTable} WHERE MaterialID = $id"
 
                     command.Parameters.AddWithValue("$id", databaseId) |> ignore
-
-                    match command.ExecuteScalar() with
-                    | null ->
-                        Error(
-                            MaterialError.NotFound
-                                $"Material {materialKey} exists in the reference tables but has not been saved by this application."
-                        )
-                    | payload -> MaterialSerialization.fromJsonStringComplete (string payload))
+                    Ok(Convert.ToInt64(command.ExecuteScalar()) > 0L))
 
     /// <summary>
     /// Creates or replaces a material and all of its tables, provisioning any missing schema first.

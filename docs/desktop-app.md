@@ -12,9 +12,11 @@ change-notifying view models that F# records cannot provide. It supports:
 - Listing every material's identification in the library: Id, Specification, Grade, Class/Condition/Tempering,
   UNS, Form, Product analysis (the domain's `NominalComposition`), Family (ASME code), and the composed Full name.
 - Creating, editing (identity fields, ASME `Family`, `BasicProperties`, and notes), and deleting a material.
-- Editing the property tables of a material ("Edit Tables..."). Twelve tables: thermal expansion, elastic
-  modulus, density, specific heat, thermal conductivity, tensile properties, allowable stresses, compression
-  properties, Norton power-law creep, Garofalo creep, Kachanov omega creep, and Code Case 2964 Appendix III.
+- Editing the property tables of a material ("Edit Tables..."). Fifteen tables: thermal expansion, elastic
+  modulus, density, specific heat, thermal conductivity, thermal diffusivity, governing minimum strengths
+  Sy/Su, minimum strengths Sy/Su by size group, allowable stresses by size group (Div 1 / Div 2), allowable
+  stresses by service level, compression properties, Norton power-law creep, Garofalo creep, Kachanov omega
+  creep, and Code Case 2964 Appendix III.
   Column headers carry the fixed unit of measure; optional columns are marked `*` and a blank cell is stored
   as the F# `None`. Writes go through `MaterialLibrary.Crud`'s own helpers, so domain rules (sort by
   temperature, refresh `LastModified`) are applied by the library, not reimplemented in the UI.
@@ -61,8 +63,11 @@ Example 1 - modify material data:
      with **OK**.
    - To modify one external pressure row, open the **External pressure** page, select the table and point,
      change the selected Factor A / Factor B values, then confirm with **OK**.
-   - To add, delete, or modify allowable stress data, open the **Allowable stresses** page, edit the
-     temperature/stress rows, add a new row for a new temperature point, or delete the selected row.
+   - To add, delete, or modify allowable stress data, open the **Allowable stresses by size group
+     (Div 1 / Div 2)** page. Each line carries its own division, case, and Size/Diameter/Thickness band, so
+     one line reads as "this stress, for this division, at this size, at this temperature". Editing a band
+     on every line of a group moves that whole group; editing it on one line splits that point into a group
+     of its own.
 5. Save the result with **Save** or **Save JSON As...**. If the data came from a database working copy,
    use the database manager's save/export command for the working database.
 

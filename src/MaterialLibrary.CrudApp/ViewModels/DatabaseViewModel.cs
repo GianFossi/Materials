@@ -82,6 +82,8 @@ public sealed partial class DatabaseViewModel : ObservableObject
         OpenDatabaseCommand = new AsyncRelayCommand(OpenDatabaseAsync);
         ReopenLastDatabaseCommand = new AsyncRelayCommand(ReopenLastDatabaseAsync, () => !string.IsNullOrWhiteSpace(_lastSourcePath) && !IsBusy);
         ImportSelectedCommand = new RelayCommand(ImportSelected, () => SelectedMaterial is not null);
+        ShowRawRowsForSelectedCommand = new RelayCommand(ShowRawRowsForSelected, () => SelectedMaterial is not null);
+        ClearMaterialFilterCommand = new RelayCommand(ClearMaterialFilter, () => HasMaterialFilter);
         ExportLibraryCommand = new RelayCommand(ExportLibrary, () => IsOpen && _libraryMaterials.Count > 0);
         DeleteSelectedCommand = new RelayCommand(DeleteSelected, () => SelectedMaterial is not null);
         SaveWorkingCopyAsCommand = new RelayCommand(SaveWorkingCopyAs, () => IsOpen);
@@ -207,6 +209,7 @@ public sealed partial class DatabaseViewModel : ObservableObject
             if (SetProperty(ref _selectedMaterial, value))
             {
                 ImportSelectedCommand.RaiseCanExecuteChanged();
+                ShowRawRowsForSelectedCommand.RaiseCanExecuteChanged();
                 DeleteSelectedCommand.RaiseCanExecuteChanged();
             }
         }
@@ -422,6 +425,12 @@ public sealed partial class DatabaseViewModel : ObservableObject
     public AsyncRelayCommand ReopenLastDatabaseCommand { get; }
     /// <summary>Reads the selected database material and queues it for the library.</summary>
     public RelayCommand ImportSelectedCommand { get; }
+
+    /// <summary>Restricts the raw-table tab to the selected material and switches to it.</summary>
+    public RelayCommand ShowRawRowsForSelectedCommand { get; }
+
+    /// <summary>Removes the material restriction from the raw-table tab.</summary>
+    public RelayCommand ClearMaterialFilterCommand { get; }
     /// <summary>Writes every material of the in-memory library into the working copy.</summary>
     public RelayCommand ExportLibraryCommand { get; }
     /// <summary>Deletes the selected material and all of its linked rows.</summary>

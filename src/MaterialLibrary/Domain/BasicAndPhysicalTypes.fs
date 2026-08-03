@@ -25,19 +25,37 @@ type MaterialError =
 // ========== BASIC PROPERTIES (FIXED, ROOM TEMPERATURE) ==========
 
 /// <summary>
-/// Temperature-independent material properties, measured at room temperature.
-/// These are the guaranteed minimum values per ASME Section II Part D, Tables Y-1 and U.
+/// Results of the room-temperature tensile coupon test, and only those.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Every value here is measured at room temperature on a standard tensile coupon: elongation at
+/// fracture in each rolling direction, reduction of area, and the two specified minimum strengths.
+/// They are single scalars, not curves, and they must not be confused with the temperature-dependent
+/// minimum strengths Sy(T) and Su(T) — those live in
+/// <see cref="StrengthProperties.TensileStrengthDatasets"/>, where each size/thickness group carries
+/// its own curve.
+/// </para>
+/// <para>
+/// Units: elongation and reduction of area in percent; SMYS and SMUTS in MPa.
+/// See ASME Section II Part D, Tables Y-1 and U.
+/// </para>
+/// </remarks>
 type BasicProperties =
     {
-        /// Minimum elongation at fracture (%), from the standard tensile coupon test.
-        /// Use the governing direction per source data (longitudinal or transverse).
-        ElongationPercent: float
-        /// Minimum reduction of cross-sectional area at fracture (%).
+        /// Minimum elongation at fracture (%) on a coupon cut parallel to the rolling direction,
+        /// at room temperature. <c>None</c> when the source does not report it.
+        ElongationLongitudinalPercent: float option
+        /// Minimum elongation at fracture (%) on a coupon cut across the rolling direction,
+        /// at room temperature. <c>None</c> when the source does not report it.
+        ElongationTransversePercent: float option
+        /// Minimum reduction of cross-sectional area at fracture (%), at room temperature.
         ReductionOfAreaPercent: float
-        /// Specified Minimum Yield Strength — SMYS (MPa). See ASME Section II Part D, Table Y-1.
+        /// Specified Minimum Yield Strength — SMYS (MPa), at room temperature.
+        /// See ASME Section II Part D, Table Y-1.
         SpecifiedMinimumYieldStrength: float
-        /// Specified Minimum Ultimate Tensile Strength — SMUTS (MPa). See ASME Section II Part D, Table U.
+        /// Specified Minimum Ultimate Tensile Strength — SMUTS (MPa), at room temperature.
+        /// See ASME Section II Part D, Table U.
         SpecifiedMinimumUltimateStrength: float
     }
 
@@ -125,6 +143,11 @@ type PhysicalPropertiesTable =
 
         /// Optional table of thermal conductivity κ vs temperature (W/(m·K)), stored as (T, κ) pairs.
         ThermalConductivityTable: (float * float) list option
+
+        /// Optional table of thermal diffusivity a vs temperature (m^2/s), stored as (T, a) pairs.
+        /// Grouped with specific heat and thermal conductivity because the three describe the same
+        /// heat-transfer behaviour and ASME publishes them together per material group.
+        ThermalDiffusivityTable: (float * float) list option
     }
 
 // ========== HELPER MODULES ==========
@@ -132,16 +155,43 @@ type PhysicalPropertiesTable =
 /// <summary>Factory functions for constructing and querying <see cref="BasicProperties"/> records.</summary>
 module BasicProperties =
     /// <summary>Creates a <see cref="BasicProperties"/> record from individual arguments.</summary>
-    /// <param name="elongation">Minimum elongation at fracture (%) in the governing direction (longitudinal or transverse).</param>
-    /// <param name="ductility">Minimum reduction of area at fracture (%).</param>
+    /// <param name="elongationLongitudinal">Room-temperature elongation at fracture (%) along the rolling direction, or <c>None</c>.</param>
+    /// <param name="elongationTransverse">Room-temperature elongation at fracture (%) across the rolling direction, or <c>None</c>.</param>
+    /// <param name="ductility">Room-temperature minimum reduction of area at fracture (%).</param>
     /// <param name="smys">Specified Minimum Yield Strength (MPa).</param>
     /// <param name="smuts">Specified Minimum Ultimate Tensile Strength (MPa).</param>
     /// <returns>A fully populated <see cref="BasicProperties"/> record.</returns>
-    let create (elongation: float) (ductility: float) (smys: float) (smuts: float) =
-        { ElongationPercent = elongation
+    let create
+        (elongationLongitudinal: float option)
+        (elongationTransverse: float option)
+        (ductility: float)
+        (smys: float)
+        (smuts: float)
+        =
+        { ElongationLongitudinalPercent = elongationLongitudinal
+          ElongationTransversePercent = elongationTransverse
           ReductionOfAreaPercent = ductility
           SpecifiedMinimumYieldStrength = smys
           SpecifiedMinimumUltimateStrength = smuts }
+
+    /// <summary>
+    /// Elongation (%) to use when a single governing value is required.
+    /// </summary>
+    /// <param name="properties">Room-temperature tensile-test results.</param>
+    /// <returns>
+    /// The smaller of the two reported directions, the one that is reported when only one is, or
+    /// <c>None</c> when neither is.
+    /// </returns>
+    /// <remarks>
+    /// Transverse coupons are normally the weaker direction, so taking the minimum keeps the
+    /// governing value conservative without assuming which direction the source measured.
+    /// </remarks>
+    let governingElongationPercent (properties: BasicProperties) : float option =
+        match properties.ElongationLongitudinalPercent, properties.ElongationTransversePercent with
+        | Some longitudinal, Some transverse -> Some(min longitudinal transverse)
+        | Some value, None
+        | None, Some value -> Some value
+        | None, None -> None
 
 /// <summary>Factory helpers for <see cref="ElasticModulusTablePoint"/>.</summary>
 module ElasticModulusTablePoint =
@@ -166,6 +216,7 @@ module PhysicalPropertiesTable =
     /// <param name="specificHeatOpt">Optional table of specific heat Cp(T) data points.</param>
     /// <param name="densityTable">Table of mass density ρ(T) data points.</param>
     /// <param name="thermalCondOpt">Optional table of thermal conductivity κ(T) as (T, κ) pairs.</param>
+    /// <param name="thermalDiffOpt">Optional table of thermal diffusivity a(T) as (T, a) pairs, in m^2/s.</param>
     /// <returns>A fully populated <see cref="PhysicalPropertiesTable"/> record.</returns>
     let create
         (thermalExpReferenceTemperature: float option)
@@ -174,6 +225,7 @@ module PhysicalPropertiesTable =
         (specificHeatOpt: SpecificHeatTablePoint list option)
         (densityTable: DensityTablePoint list)
         (thermalCondOpt: (float * float) list option)
+        (thermalDiffOpt: (float * float) list option)
         =
         let referenceTemperature = defaultArg thermalExpReferenceTemperature 20.0
 
@@ -182,7 +234,8 @@ module PhysicalPropertiesTable =
           ElasticModulusTable = elasticMod
           SpecificHeatTable = specificHeatOpt
           DensityTable = densityTable
-          ThermalConductivityTable = thermalCondOpt }
+          ThermalConductivityTable = thermalCondOpt
+          ThermalDiffusivityTable = thermalDiffOpt }
 
     /// <summary>Returns the minimum and maximum temperatures covered by the thermal expansion table.</summary>
     /// <param name="table">The physical properties table to query.</param>

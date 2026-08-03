@@ -46,7 +46,7 @@ public sealed class MaterialDraft
             string.Empty,
             string.Empty,
             string.Empty,
-            MaterialFactory.CreateBasicProperties(0, 0, 0, 0));
+            MaterialFactory.CreateBasicProperties(null, null, 0, 0, 0));
 
         // Reuse the domain's own empty-material shape so defaults stay in one place.
         PhysicalProperties = seed.PhysicalProperties;
@@ -86,7 +86,8 @@ public sealed class MaterialDraft
         AsmeNoteReferences = material.AsmeNoteReferences.ToReadOnlyList().ToList();
 
         // Flattened scalar sub-records.
-        ElongationPercent = material.BasicProperties.ElongationPercent;
+        ElongationLongitudinalPercent = material.BasicProperties.ElongationLongitudinalPercent.AsNullable();
+        ElongationTransversePercent = material.BasicProperties.ElongationTransversePercent.AsNullable();
         ReductionOfAreaPercent = material.BasicProperties.ReductionOfAreaPercent;
         SpecifiedMinimumYieldStrength = material.BasicProperties.SpecifiedMinimumYieldStrength;
         SpecifiedMinimumUltimateStrength = material.BasicProperties.SpecifiedMinimumUltimateStrength;
@@ -142,10 +143,19 @@ public sealed class MaterialDraft
 
     // ---------- Basic properties (units fixed a priori) ----------
 
-    /// <summary>Minimum elongation at fracture (%).</summary>
-    public double ElongationPercent { get; set; }
+    /// <summary>
+    /// Room-temperature elongation at fracture (%) along the rolling direction; <c>null</c> when not
+    /// reported.
+    /// </summary>
+    public double? ElongationLongitudinalPercent { get; set; }
 
-    /// <summary>Minimum reduction of area at fracture (%).</summary>
+    /// <summary>
+    /// Room-temperature elongation at fracture (%) across the rolling direction; <c>null</c> when
+    /// not reported.
+    /// </summary>
+    public double? ElongationTransversePercent { get; set; }
+
+    /// <summary>Room-temperature minimum reduction of area at fracture (%).</summary>
     public double ReductionOfAreaPercent { get; set; }
 
     /// <summary>Specified Minimum Yield Strength, SMYS (MPa).</summary>
@@ -248,7 +258,8 @@ public sealed class MaterialDraft
             ApplicableAsmeCodes.ToFSharpList(),
             AsmeNoteReferences.ToFSharpList(),
             MaterialFactory.CreateBasicProperties(
-                ElongationPercent,
+                ElongationLongitudinalPercent,
+                ElongationTransversePercent,
                 ReductionOfAreaPercent,
                 SpecifiedMinimumYieldStrength,
                 SpecifiedMinimumUltimateStrength),

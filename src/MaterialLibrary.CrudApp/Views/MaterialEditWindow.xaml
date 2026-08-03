@@ -34,6 +34,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--
@@ -87,28 +89,45 @@
 
         <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="4,8" />
 
-        <TextBlock Grid.Row="9" Grid.Column="0" Text="Elongation (%)" Style="{StaticResource FieldLabelStyle}" />
-        <TextBox Grid.Row="9" Grid.Column="1"
-                 Text="{Binding ElongationPercent, UpdateSourceTrigger=PropertyChanged}"
+        <!--
+            Everything in this block comes from the room-temperature tensile coupon test, and only
+            from it. The temperature-dependent minimum strengths Sy(T) and Su(T) vary with section
+            size and are edited in the tables window, not here.
+        -->
+        <TextBlock Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2"
+                   Text="Room-temperature tensile test"
+                   FontWeight="Bold"
+                   Margin="4,4,4,2" />
+
+        <TextBlock Grid.Row="10" Grid.Column="0" Text="Elongation, longitudinal (%)" Style="{StaticResource FieldLabelStyle}" />
+        <TextBox Grid.Row="10" Grid.Column="1"
+                 Text="{Binding ElongationLongitudinalPercent, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Leave blank when the source does not report this direction."
                  Style="{StaticResource FieldInputStyle}" />
 
-        <TextBlock Grid.Row="10" Grid.Column="0" Text="Reduction of area (%)" Style="{StaticResource FieldLabelStyle}" />
-        <TextBox Grid.Row="10" Grid.Column="1"
+        <TextBlock Grid.Row="11" Grid.Column="0" Text="Elongation, transverse (%)" Style="{StaticResource FieldLabelStyle}" />
+        <TextBox Grid.Row="11" Grid.Column="1"
+                 Text="{Binding ElongationTransversePercent, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Leave blank when the source does not report this direction."
+                 Style="{StaticResource FieldInputStyle}" />
+
+        <TextBlock Grid.Row="12" Grid.Column="0" Text="Reduction of area (%)" Style="{StaticResource FieldLabelStyle}" />
+        <TextBox Grid.Row="12" Grid.Column="1"
                  Text="{Binding ReductionOfAreaPercent, UpdateSourceTrigger=PropertyChanged}"
                  Style="{StaticResource FieldInputStyle}" />
 
-        <TextBlock Grid.Row="11" Grid.Column="0" Text="SMYS (MPa)" Style="{StaticResource FieldLabelStyle}" />
-        <TextBox Grid.Row="11" Grid.Column="1"
+        <TextBlock Grid.Row="13" Grid.Column="0" Text="SMYS (MPa)" Style="{StaticResource FieldLabelStyle}" />
+        <TextBox Grid.Row="13" Grid.Column="1"
                  Text="{Binding SpecifiedMinimumYieldStrength, UpdateSourceTrigger=PropertyChanged}"
                  Style="{StaticResource FieldInputStyle}" />
 
-        <TextBlock Grid.Row="12" Grid.Column="0" Text="SMUTS (MPa)" Style="{StaticResource FieldLabelStyle}" />
-        <TextBox Grid.Row="12" Grid.Column="1"
+        <TextBlock Grid.Row="14" Grid.Column="0" Text="SMUTS (MPa)" Style="{StaticResource FieldLabelStyle}" />
+        <TextBox Grid.Row="14" Grid.Column="1"
                  Text="{Binding SpecifiedMinimumUltimateStrength, UpdateSourceTrigger=PropertyChanged}"
                  Style="{StaticResource FieldInputStyle}" />
 
-        <TextBlock Grid.Row="13" Grid.Column="0" Text="Notes" Style="{StaticResource FieldLabelStyle}" />
-        <TextBox Grid.Row="13" Grid.Column="1"
+        <TextBlock Grid.Row="15" Grid.Column="0" Text="Notes" Style="{StaticResource FieldLabelStyle}" />
+        <TextBox Grid.Row="15" Grid.Column="1"
                  Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
                  Style="{StaticResource FieldInputStyle}"
                  Height="64"
@@ -117,7 +136,7 @@
                  VerticalContentAlignment="Top"
                  VerticalScrollBarVisibility="Auto" />
 
-        <StackPanel Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2"
+        <StackPanel Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Margin="0,12,0,0">

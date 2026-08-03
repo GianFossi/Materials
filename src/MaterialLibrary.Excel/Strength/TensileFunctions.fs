@@ -16,7 +16,7 @@ open MaterialLibrary.Interpolation
 /// </remarks>
 module TensileFunctions =
 
-    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete tensile-properties table: temperature (degC), yield strength, tensile strength (MPa), elongation %, reduction of area %.")>]
+    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Governing minimum-strength table: temperature (degC), yield strength Sy, tensile strength Su (MPa). Elongation and reduction of area are room-temperature scalars; see MatBasicPropertiesTable.")>]
     let MatTensilePropertiesTable
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         : obj[,] =
@@ -25,13 +25,8 @@ module TensileFunctions =
             rows
             |> List.sortBy (fun r -> r.Temperature)
             |> List.map (fun r ->
-                [ box r.Temperature
-                  box r.YieldStrength
-                  box r.TensileStrength
-                  box r.ElongationPercent
-                  box r.ReductionOfAreaPercent ])
-            |> ExcelHelpers.gridOfRows
-                [ "Temperature"; "YieldStrength"; "TensileStrength"; "Elongation"; "ReductionOfArea" ])
+                [ box r.Temperature; box r.YieldStrength; box r.TensileStrength ])
+            |> ExcelHelpers.gridOfRows [ "Temperature"; "YieldStrength"; "TensileStrength" ])
         |> ExcelHelpers.ofGridResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated yield strength (MPa) at a given temperature (degC). Linear interpolation between tabulated values.")>]

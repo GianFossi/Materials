@@ -78,17 +78,17 @@ public sealed partial class DatabaseViewModel
                 using var connection = new SqliteConnection($"Data Source={path}");
                 connection.Open();
                 var sourceColumns = GetColumnNames(connection, tableName);
-                var count = CountRows(connection, tableName, sourceColumns, _rowFilter);
+                var count = CountRows(connection, tableName, sourceColumns, _rowFilter, _materialIdFilter);
                 var table = new DataTable(tableName);
                 using var command = connection.CreateCommand();
-                var where = BuildSqlSearch(sourceColumns, _rowFilter);
+                var where = BuildSqlSearch(sourceColumns, _rowFilter, _materialIdFilter);
                 var order = string.IsNullOrWhiteSpace(_sortColumn) || !sourceColumns.Contains(_sortColumn)
                     ? string.Empty
                     : $" ORDER BY {QuoteIdentifier(_sortColumn)}{(_sortDescending ? " DESC" : " ASC")}";
                 command.CommandText = kind == "table"
                     ? $"SELECT rowid AS __rowid, * FROM {QuoteIdentifier(tableName)}" + where + order + " LIMIT $limit OFFSET $offset"
                     : $"SELECT * FROM {QuoteIdentifier(tableName)}" + where + order + " LIMIT $limit OFFSET $offset";
-                if (!string.IsNullOrWhiteSpace(_rowFilter)) command.Parameters.AddWithValue("$search", "%" + _rowFilter + "%");
+                BindSearchParameters(command, sourceColumns, _rowFilter, _materialIdFilter);
                 command.Parameters.AddWithValue("$limit", pageSize);
                 command.Parameters.AddWithValue("$offset", offset);
                 try
@@ -101,6 +101,7 @@ public sealed partial class DatabaseViewModel
                     table.Clear();
                     using var fallback = connection.CreateCommand();
                     fallback.CommandText = $"SELECT * FROM {QuoteIdentifier(tableName)}" + where + order + " LIMIT $limit OFFSET $offset";
+                    BindSearchParameters(fallback, sourceColumns, _rowFilter, _materialIdFilter);
                     if (!string.IsNullOrWhiteSpace(_rowFilter)) fallback.Parameters.AddWithValue("$search", "%" + _rowFilter + "%");
                     fallback.Parameters.AddWithValue("$limit", pageSize);
                     fallback.Parameters.AddWithValue("$offset", offset);
@@ -136,11 +137,11 @@ public sealed partial class DatabaseViewModel
         {
             using var connection = OpenRawConnection();
             var sourceColumns = GetColumnNames(connection, SelectedTable.Name);
-            TableRowCount = CountRows(connection, SelectedTable.Name, sourceColumns, _rowFilter);
+            TableRowCount = CountRows(connection, SelectedTable.Name, sourceColumns, _rowFilter, _materialIdFilter);
 
             var table = new DataTable(SelectedTable.Name);
             using var command = connection.CreateCommand();
-            var where = BuildSqlSearch(sourceColumns, _rowFilter);
+            var where = BuildSqlSearch(sourceColumns, _rowFilter, _materialIdFilter);
             var order = string.IsNullOrWhiteSpace(_sortColumn) || !sourceColumns.Contains(_sortColumn)
                 ? string.Empty
                 : $" ORDER BY {QuoteIdentifier(_sortColumn)}{(_sortDescending ? " DESC" : " ASC")}";
@@ -148,7 +149,7 @@ public sealed partial class DatabaseViewModel
                 ? $"SELECT rowid AS __rowid, * FROM {QuoteIdentifier(SelectedTable.Name)}"
                 : $"SELECT * FROM {QuoteIdentifier(SelectedTable.Name)}")
                 + where + order + " LIMIT $limit OFFSET $offset";
-            if (!string.IsNullOrWhiteSpace(_rowFilter)) command.Parameters.AddWithValue("$search", "%" + _rowFilter + "%");
+            BindSearchParameters(command, sourceColumns, _rowFilter, _materialIdFilter);
             command.Parameters.AddWithValue("$limit", TablePageSize);
             command.Parameters.AddWithValue("$offset", TableOffset);
 
@@ -164,6 +165,7 @@ public sealed partial class DatabaseViewModel
                 table.Clear();
                 using var fallback = connection.CreateCommand();
                 fallback.CommandText = $"SELECT * FROM {QuoteIdentifier(SelectedTable.Name)}" + where + order + " LIMIT $limit OFFSET $offset";
+                BindSearchParameters(fallback, sourceColumns, _rowFilter, _materialIdFilter);
                 if (!string.IsNullOrWhiteSpace(_rowFilter)) fallback.Parameters.AddWithValue("$search", "%" + _rowFilter + "%");
                 fallback.Parameters.AddWithValue("$limit", TablePageSize);
                 fallback.Parameters.AddWithValue("$offset", TableOffset);
@@ -389,11 +391,23 @@ public sealed partial class DatabaseViewModel
         return Convert.ToInt32(command.ExecuteScalar());
     }
 
-    private static int CountRows(SqliteConnection connection, string tableName, IReadOnlyList<string> columns, string filter)
+    /// <summary>Counts the rows a table would return under the current restrictions.</summary>
+    /// <param name="connection">Open connection.</param>
+    /// <param name="tableName">Table to count.</param>
+    /// <param name="columns">Columns of that table.</param>
+    /// <param name="filter">Free-text filter.</param>
+    /// <param name="materialId">Material restriction, or <c>null</c>.</param>
+    /// <returns>Row count, used to drive paging.</returns>
+    private static int CountRows(
+        SqliteConnection connection,
+        string tableName,
+        IReadOnlyList<string> columns,
+        string filter,
+        long? materialId = null)
     {
         using var command = connection.CreateCommand();
-        command.CommandText = $"SELECT COUNT(*) FROM {QuoteIdentifier(tableName)}" + BuildSqlSearch(columns, filter);
-        if (!string.IsNullOrWhiteSpace(filter)) command.Parameters.AddWithValue("$search", "%" + filter + "%");
+        command.CommandText = $"SELECT COUNT(*) FROM {QuoteIdentifier(tableName)}" + BuildSqlSearch(columns, filter, materialId);
+        BindSearchParameters(command, columns, filter, materialId);
         return Convert.ToInt32(command.ExecuteScalar());
     }
 
@@ -407,10 +421,57 @@ public sealed partial class DatabaseViewModel
         return columns;
     }
 
-    private static string BuildSqlSearch(IReadOnlyList<string> columns, string filter)
+    /// <summary>Name of the column that links a raw table back to a material.</summary>
+    private const string MaterialLinkColumn = "MaterialID";
+
+    /// <summary>Builds the WHERE clause for the free-text search and the material link.</summary>
+    /// <param name="columns">Columns of the table being queried.</param>
+    /// <param name="filter">Free-text filter; matched against every column as text.</param>
+    /// <param name="materialId">Material to restrict to, or <c>null</c> for no restriction.</param>
+    /// <returns>A WHERE clause, or an empty string when neither restriction applies.</returns>
+    /// <remarks>
+    /// The two restrictions are combined with AND, so following a material and then typing a search
+    /// narrows within that material rather than escaping it. The material link is an exact
+    /// comparison on <c>MaterialID</c>, not a text match, so filtering on material 77 cannot also
+    /// match a stress value that happens to contain "77".
+    /// </remarks>
+    private static string BuildSqlSearch(IReadOnlyList<string> columns, string filter, long? materialId = null)
     {
-        if (string.IsNullOrWhiteSpace(filter) || columns.Count == 0) return string.Empty;
-        return " WHERE " + string.Join(" OR ", columns.Select(c => $"CAST({QuoteIdentifier(c)} AS TEXT) LIKE $search"));
+        var clauses = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(filter) && columns.Count > 0)
+        {
+            clauses.Add("(" + string.Join(" OR ", columns.Select(c => $"CAST({QuoteIdentifier(c)} AS TEXT) LIKE $search")) + ")");
+        }
+
+        if (materialId is not null && columns.Contains(MaterialLinkColumn, StringComparer.OrdinalIgnoreCase))
+        {
+            clauses.Add($"{QuoteIdentifier(MaterialLinkColumn)} = $materialId");
+        }
+
+        return clauses.Count == 0 ? string.Empty : " WHERE " + string.Join(" AND ", clauses);
+    }
+
+    /// <summary>Binds the parameters used by <see cref="BuildSqlSearch"/>.</summary>
+    /// <param name="command">Command being built.</param>
+    /// <param name="columns">Columns of the table being queried.</param>
+    /// <param name="filter">Free-text filter.</param>
+    /// <param name="materialId">Material restriction, or <c>null</c>.</param>
+    private static void BindSearchParameters(
+        SqliteCommand command,
+        IReadOnlyList<string> columns,
+        string filter,
+        long? materialId)
+    {
+        if (!string.IsNullOrWhiteSpace(filter) && columns.Count > 0)
+        {
+            command.Parameters.AddWithValue("$search", "%" + filter + "%");
+        }
+
+        if (materialId is not null && columns.Contains(MaterialLinkColumn, StringComparer.OrdinalIgnoreCase))
+        {
+            command.Parameters.AddWithValue("$materialId", materialId.Value);
+        }
     }
 
     private static int InsertRawRow(SqliteConnection connection, SqliteTransaction transaction, string tableName, DataRow row)

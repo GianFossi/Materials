@@ -12,7 +12,7 @@ module PhysicalPropertyFunctions =
 
     // ── Basic (room-temperature) properties ─────────────────────────────────
 
-    [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Returns the room-temperature basic properties (elongation %, reduction of area %, SMYS, SMUTS) as a 4-row table.")>]
+    [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Returns the room-temperature tensile-test results (elongation % longitudinal and transverse, reduction of area %, SMYS, SMUTS) as a 5-row table. Blank where a direction is not reported.")>]
     let MatBasicPropertiesTable
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         : obj[,] =
@@ -20,7 +20,8 @@ module PhysicalPropertyFunctions =
         |> Result.map (fun bp ->
             ExcelHelpers.gridOfRows
                 [ "Property"; "Value" ]
-                [ [ box "ElongationPercent"; box bp.ElongationPercent ]
+                [ [ box "ElongationLongitudinalPercent"; ExcelHelpers.boxOptional bp.ElongationLongitudinalPercent ]
+                  [ box "ElongationTransversePercent"; ExcelHelpers.boxOptional bp.ElongationTransversePercent ]
                   [ box "ReductionOfAreaPercent"; box bp.ReductionOfAreaPercent ]
                   [ box "SpecifiedMinimumYieldStrength"; box bp.SpecifiedMinimumYieldStrength ]
                   [ box "SpecifiedMinimumUltimateStrength"; box bp.SpecifiedMinimumUltimateStrength ] ])

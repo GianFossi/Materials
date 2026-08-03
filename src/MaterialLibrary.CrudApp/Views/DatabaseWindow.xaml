@@ -28,6 +28,10 @@
             <Button Content="Import to Library"
                     Command="{Binding ImportSelectedCommand}"
                     Style="{StaticResource ToolbarButtonStyle}" />
+            <Button Content="Show Raw Rows"
+                    Command="{Binding ShowRawRowsForSelectedCommand}"
+                    ToolTip="Restrict the Raw Tables tab to the selected material and switch to it"
+                    Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Write Library to DB"
                     Command="{Binding ExportLibraryCommand}"
                     Style="{StaticResource ToolbarButtonStyle}" />
@@ -116,8 +120,36 @@
                    TextWrapping="Wrap"
                    Foreground="#555" />
 
-        <TabControl>
+        <TabControl SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
             <TabItem Header="Materials">
+              <DockPanel>
+                <!--
+                    Search covers every identifier a user might have to hand: the database ID, the
+                    material key, specification, grade, class/condition/tempering, UNS, and the
+                    composed full name. Terms are ANDed, so "sa-516 70" narrows rather than widens.
+                -->
+                <Border DockPanel.Dock="Top"
+                        Background="#F6F8FA"
+                        BorderBrush="#D5DCE3"
+                        BorderThickness="0,0,0,1"
+                        Padding="6">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left"
+                                   Text="Search"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0"
+                                   FontWeight="SemiBold" />
+                        <TextBlock DockPanel.Dock="Right"
+                                   Text="{Binding MaterialCountDisplay}"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0"
+                                   Foreground="#52616F" />
+                        <TextBox Text="{Binding MaterialSearch, UpdateSourceTrigger=PropertyChanged, Delay=200}"
+                                 Padding="4,3"
+                                 ToolTip="Match on ID, key, specification, grade, class/condition/tempering, UNS, or full name" />
+                    </DockPanel>
+                </Border>
+
                 <DataGrid ItemsSource="{Binding Materials}"
                           SelectedItem="{Binding SelectedMaterial, Mode=TwoWay}"
                           AutoGenerateColumns="False"
@@ -132,14 +164,49 @@
                         <DataGridTextColumn Header="Material key" Binding="{Binding MaterialKey}" Width="150" />
                         <DataGridTextColumn Header="Specification" Binding="{Binding Specification}" Width="150" />
                         <DataGridTextColumn Header="Grade" Binding="{Binding Grade}" Width="90" />
+                        <DataGridTextColumn Header="Class/Cond/Temper" Binding="{Binding ClassConditionTemper}" Width="140" />
+                        <DataGridTextColumn Header="UNS" Binding="{Binding Uns}" Width="90" />
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="Origin" Binding="{Binding Origin}" Width="120" />
                     </DataGrid.Columns>
                 </DataGrid>
+              </DockPanel>
             </TabItem>
 
             <TabItem Header="Raw Tables">
                 <DockPanel Margin="6">
+                    <!--
+                        Shown only while the tab is following a material, so it is obvious that the
+                        grid is a filtered view rather than the whole table.
+                    -->
+                    <Border DockPanel.Dock="Top"
+                            Background="#EAF3FF"
+                            BorderBrush="#3F78B5"
+                            BorderThickness="1"
+                            Padding="8"
+                            Margin="0,0,0,6">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasMaterialFilter}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right"
+                                    Content="Show all rows"
+                                    Command="{Binding ClearMaterialFilterCommand}"
+                                    Style="{StaticResource DialogButtonStyle}" />
+                            <TextBlock Text="{Binding MaterialFilterDisplay}"
+                                       VerticalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Foreground="#1D4ED8" />
+                        </DockPanel>
+                    </Border>
+
                     <StackPanel DockPanel.Dock="Top"
                                 Orientation="Horizontal"
                                 Margin="0,0,0,6">

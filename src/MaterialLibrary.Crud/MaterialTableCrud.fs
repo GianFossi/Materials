@@ -63,6 +63,13 @@ module PhysicalPropertyCrud =
     let setThermalConductivity (rows: (float * float) list option) (material: Material) =
         touch { material.PhysicalProperties with ThermalConductivityTable = rows |> Option.map (List.sortBy fst) } material
 
+    /// <summary>Replaces the thermal-diffusivity table, sorted by temperature.</summary>
+    /// <param name="rows">Rows as (temperature degC, diffusivity m^2/s) pairs, or None to clear.</param>
+    /// <param name="material">Source material.</param>
+    /// <returns>Updated material with a refreshed <c>LastModified</c> stamp.</returns>
+    let setThermalDiffusivity (rows: (float * float) list option) (material: Material) =
+        touch { material.PhysicalProperties with ThermalDiffusivityTable = rows |> Option.map (List.sortBy fst) } material
+
 /// <summary>CRUD helpers for strength-property table collections stored in <see cref="Material.StrengthProperties"/>.</summary>
 module StrengthPropertyCrud =
     let private touch (strengthProperties: StrengthProperties) (material: Material) =
@@ -73,8 +80,17 @@ module StrengthPropertyCrud =
     let setAllowableStresses rows material =
         touch { material.StrengthProperties with AllowableStresses = rows } material
 
-    let setAllowableStressDatasets rows material =
-        touch { material.StrengthProperties with AllowableStressDatasets = rows } material
+    let setAllowableStressDatasets (rows: AllowableStressDataset list) material =
+        touch
+            { material.StrengthProperties with
+                AllowableStressDatasets = rows |> List.sortBy AllowableStressDataset.sortKey }
+            material
+
+    let setTensileStrengthDatasets (rows: TensileStrengthDataset list) material =
+        touch
+            { material.StrengthProperties with
+                TensileStrengthDatasets = rows |> List.sortBy TensileStrengthDataset.sortKey }
+            material
 
     let setTensileProperties (rows: TensileProperties list) (material: Material) =
         touch { material.StrengthProperties with TensileProperties = rows |> List.sortBy (fun row -> row.Temperature) } material
