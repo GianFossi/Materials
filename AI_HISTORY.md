@@ -669,3 +669,13 @@ Verification: all 7 projects build in Release with **0 warnings, 0 errors** (doc
 Note on the F# split mechanics, since it is easy to get wrong: compile order in the `.fsproj` is semantic, not cosmetic. Every new file has to be inserted at exactly the position the original occupied, and the parts have to stay in their original relative order, because F# forbids forward references. The splits above were derived from the existing top-level declaration order, so the resulting order is the original order.
 
 Verification: all 7 projects build in Release with **0 warnings, 0 errors**. `MaterialLibrary.Tests` 42/42 and `MaterialLibrary.CrudApp.Tests` **27/27** (4 new Save As tests) pass. The three standing harnesses - XML/interop 18, database CRUD 45 against the real 2129-material database, application 43 - all still pass, so the refactor is behaviour-preserving. Release EXE published and launched cleanly. The Save As tests assert all four paths: the suggested name is never the source, choosing the source prompts and is refused by default leaving the file byte-identical, choosing it with confirmation proceeds, and saving elsewhere never prompts.
+
+## 2026-08-03 - Raw tables include SQLite internal objects
+
+- Date: 2026-08-03
+- Area: `src/MaterialLibrary.CrudApp` raw-table browser, `tests/MaterialLibrary.CrudApp.Tests`, `docs/desktop-app.md`
+- Change: Removed the `sqlite_%` exclusion from the raw-table discovery query so the table picker now includes SQLite-managed internal tables (for example `sqlite_sequence`), and added an integration-style test that opens a working copy, selects `sqlite_sequence`, edits `seq`, saves, and verifies the persisted value.
+- Why: Fix the reported CRUD-app limitation where internal tables in `asme_materials.db` were not accessible in the raw-table workflow and therefore could not be edited there.
+- Impact: Raw Tables now exposes all entries returned by `sqlite_master` for `table`/`view`; direct maintenance CRUD on internal tables is available from the same UI flow, while working-copy safety remains unchanged.
+- Files: src/MaterialLibrary.CrudApp/ViewModels/Database/DatabaseViewModel.RawTables.cs, tests/MaterialLibrary.CrudApp.Tests/InternalTablesCrudTests.cs, docs/desktop-app.md, AI_HISTORY.md
+- Follow-up: If users should optionally hide internal SQLite objects, add a UI toggle instead of hard-filtering them out.
