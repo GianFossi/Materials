@@ -9,9 +9,9 @@ type StoredMaterialTableKind =
     | SpecificHeat
     | Density
     | ThermalConductivity
-    | AllowableStress
+    | SyTable
+    | SuTable
     | AllowableStressDataset
-    | Tensile
     | Compression
     | StressStrain
     | CyclicStrain

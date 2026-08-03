@@ -361,37 +361,11 @@ module MaterialDatabaseCrud =
             |> List.map (fun (temperature, conductivity) -> [ Some temperature; Some conductivity ])
         )
 
-        insertRows
-            connection
-            databaseId
-            "MaterialTensileRows"
-            [ "Temperature"; "YieldStrength"; "TensileStrength"; "ElongationPercent"; "ReductionOfAreaPercent" ]
-            (strength.TensileProperties
-             |> List.map (fun row ->
-                 [ Some row.Temperature
-                   Some row.YieldStrength
-                   Some row.TensileStrength
-                   Some row.ElongationPercent
-                   Some row.ReductionOfAreaPercent ]))
-
-        insertRows
-            connection
-            databaseId
-            "MaterialAllowableStressRows"
-            [ "Temperature"
-              "SectionIServiceLevelA"
-              "SectionIServiceLevelB"
-              "SectionIServiceLevelC"
-              "SectionIServiceLevelD"
-              "SectionIIWeld" ]
-            (strength.AllowableStresses
-             |> List.map (fun row ->
-                 [ Some row.Temperature
-                   row.Section_I_ServiceLevel_A
-                   row.Section_I_ServiceLevel_B
-                   row.Section_I_ServiceLevel_C
-                   row.Section_I_ServiceLevel_D
-                   row.Section_II_Weld ]))
+        // MaterialTensileRows and MaterialAllowableStressRows are legacy projection tables that
+        // mapped to the old flat TensileProperties and AllowableStresses lists. Those lists have
+        // been replaced by SyTable and AllowableStressDatasets (stored in the JSON document).
+        // The extension tables are kept for schema compatibility but are no longer written;
+        // the canonical JSON document in MaterialDocumentStore is the source of truth.
 
         insertRows
             connection

@@ -140,9 +140,9 @@ public sealed class StressStrainTableEditorViewModel : ObservableObject
                 updated.BasicProperties,
                 updated.PhysicalProperties,
                 new StrengthProperties(
-                    updated.StrengthProperties.AllowableStresses,
-                    updated.StrengthProperties.AllowableStressDatasets,
-                    updated.StrengthProperties.TensileProperties,
+                   updated.StrengthProperties.SyTable,
+                   updated.StrengthProperties.SuTable,
+                   updated.StrengthProperties.AllowableStressDatasets,
                     updated.StrengthProperties.CompressionProperties,
                      built.ToFSharpList(),
                     updated.StrengthProperties.CyclicStrainTables,

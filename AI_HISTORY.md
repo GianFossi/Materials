@@ -679,3 +679,32 @@ Verification: all 7 projects build in Release with **0 warnings, 0 errors**. `Ma
 - Impact: Raw Tables now exposes all entries returned by `sqlite_master` for `table`/`view`; direct maintenance CRUD on internal tables is available from the same UI flow, while working-copy safety remains unchanged.
 - Files: src/MaterialLibrary.CrudApp/ViewModels/Database/DatabaseViewModel.RawTables.cs, tests/MaterialLibrary.CrudApp.Tests/InternalTablesCrudTests.cs, docs/desktop-app.md, AI_HISTORY.md
 - Follow-up: If users should optionally hide internal SQLite objects, add a UI toggle instead of hard-filtering them out.
+
+## 2026-08-03 - Size-ranged Sy/Su tables and separate allowable-stress editors
+
+- Date: 2026-08-03
+- Area: Domain, CRUD, Serialization, ASME repo, Excel, CrudApp ViewModels/Views
+- Change: Replaced flat `TensileProperties list` and `AllowableStresses list` in `StrengthProperties` with `SyTable: PropertyTable option` and `SuTable: PropertyTable option` (2D PropertyTable supporting size-range columns). Allowable stress data already lived in `AllowableStressDatasets: AllowableStressDataset list` and is unchanged at domain level. Added five dedicated CrudApp editor tabs (Sy, Su, Allowable Div.1, Div.1 High, Div.2), each a temperature × size-range 2D grid. Column headers carry editable SizeMin/SizeMax bounds (mm); rows are temperatures independent per table.
+- Why: User request: edit Sy/Su/allowable tables as temperature × size-range matrices with column headers showing the range, one table per stress type.
+- Impact: Breaking domain change (schema version 14 → 15, no backward compatibility). Excel Sy/Su functions now use PropertyTable lookup. ASME DB loading builds 2D PropertyTable from per-row size ranges.
+- Files:
+  - src/MaterialLibrary/Domain/MechanicalProperties.fs (removed TensileProperties, AllowableStress types)
+  - src/MaterialLibrary/Domain/MaterialTypes.fs (StrengthProperties: replaced TensileProperties/AllowableStresses with SyTable/SuTable)
+  - src/MaterialLibrary/Serialization/MaterialJsonTypes.fs (StrengthPropertiesJson updated)
+  - src/MaterialLibrary/Serialization/MaterialSerialization.fs (version 14→15, strengthProperties round-trip)
+  - src/MaterialLibrary/builders/ExternalPressureTableBuilder.fs (tryResolveStrengthRatioR updated)
+  - src/MaterialLibrary/Database.Lookup/AsmeMaterialRepository.fs (loadStrengthTable2D, hydrate returns Result)
+  - src/MaterialLibrary.Crud/CrudTypes.fs (StoredMaterialTableKind updated)
+  - src/MaterialLibrary.Crud/MaterialTableCrud.fs (setSyTable, setSuTable added)
+  - src/MaterialLibrary.Crud/MaterialDatabaseCrud.fs (removed MaterialTensileRows / MaterialAllowableStressRows inserts)
+  - src/MaterialLibrary.Excel/Strength/TensileFunctions.fs (Sy/Su Excel functions updated)
+  - src/MaterialLibrary.CrudApp/Interop/MaterialTableSpec.cs (removed TensileProperties/AllowableStresses specs)
+  - src/MaterialLibrary.CrudApp/ViewModels/RelayCommand.cs (added generic RelayCommand<T>)
+  - src/MaterialLibrary.CrudApp/ViewModels/SizeRangedColumnViewModel.cs (new)
+  - src/MaterialLibrary.CrudApp/ViewModels/SizeRangedTableEditorViewModel.cs (new abstract base)
+  - src/MaterialLibrary.CrudApp/ViewModels/StrengthTableEditors.cs (new: Sy/Su concrete editors)
+  - src/MaterialLibrary.CrudApp/ViewModels/AllowableStressTableEditorViewModel.cs (new: handles AllowableStressDataset list per source)
+  - src/MaterialLibrary.CrudApp/ViewModels/MaterialTablesViewModel.cs (added 5 strength editors + TryBuildMaterial wiring)
+  - Various existing CrudApp ViewModels (StrengthProperties constructor updated)
+  - tests/MaterialLibrary.Tests/Tests.fs (round-trip test uses SyTable/SuTable; schema version regex updated)
+- Follow-up: Add MaterialTablesWindow.xaml tabs and XAML code-behind for the 5 new editors; add XAML data-grid with dynamic columns per size range.

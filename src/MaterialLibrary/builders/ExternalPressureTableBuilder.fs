@@ -158,19 +158,26 @@ module ExternalPressureTableBuilder =
         (material: Material)
         : Result<float * string, MaterialError> =
 
-        match
-            material.StrengthProperties.TensileProperties
-            |> List.tryFind (fun item -> item.Temperature = temperature)
-        with
-        | Some props when props.YieldStrength > 0.0 && props.TensileStrength > 0.0 ->
-            Ok(props.YieldStrength / props.TensileStrength, "TensileProperties")
+        // Try to read Sy and Su from the 2D property tables (first column that contains this temperature).
+        let tryReadTableAt (table: PropertyTable option) =
+            table
+            |> Option.bind (fun t ->
+                t.Columns
+                |> List.tryPick (fun col ->
+                    col.Entries
+                    |> List.tryFind (fun entry -> entry.X = temperature)
+                    |> Option.map (fun entry -> entry.Value)))
+
+        match tryReadTableAt material.StrengthProperties.SyTable, tryReadTableAt material.StrengthProperties.SuTable with
+        | Some sy, Some su when sy > 0.0 && su > 0.0 ->
+            Ok(sy / su, "SyTable/SuTable")
         | _ ->
             match Material.tryGetSmysToSmutsRatio material with
             | Some ratio when ratio >= 0.0 && ratio <= 1.0 -> Ok(ratio, "BasicProperties")
             | _ ->
                 Error(
                     MaterialError.InvalidOperation
-                        "Unable to resolve Code Case 2964 strength ratio R from tensile properties or basic properties"
+                        "Unable to resolve Code Case 2964 strength ratio R from Sy/Su tables or basic properties"
                 )
 
     /// <summary>
