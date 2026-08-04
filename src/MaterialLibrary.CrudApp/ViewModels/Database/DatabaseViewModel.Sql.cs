@@ -93,8 +93,8 @@ public sealed partial class DatabaseViewModel
                 SqlResults = null;
                 await RefreshAllAsync();
                 CaptureWorkingFingerprint();
-            StatusMessage = $"SQL completed; SQLite reported {result.Changes} changed row(s).";
-            RecordAudit("SQL", sql);
+                StatusMessage = $"SQL completed; SQLite reported {result.Changes} changed row(s).";
+                RecordAudit("SQL", sql);
             }
             SqlHistory.Insert(0, sql);
             while (SqlHistory.Count > 50) SqlHistory.RemoveAt(SqlHistory.Count - 1);
@@ -117,7 +117,7 @@ public sealed partial class DatabaseViewModel
 
     private static SqlExecutionResult ExecuteSqlCore(string path, string sql, CancellationToken cancellationToken)
     {
-        using var connection = new SqliteConnection($"Data Source={path}");
+        using var connection = new SqliteConnection(BuildConnectionString(path));
         connection.Open();
         using var command = connection.CreateCommand();
         command.CommandText = sql;

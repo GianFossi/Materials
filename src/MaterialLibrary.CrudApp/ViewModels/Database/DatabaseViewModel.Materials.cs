@@ -248,7 +248,7 @@ public sealed partial class DatabaseViewModel
 
     private static bool ForeignKeysAreValid(string path, out string error)
     {
-        using var connection = new SqliteConnection($"Data Source={path}");
+        using var connection = new SqliteConnection(BuildConnectionString(path));
         connection.Open();
         using var command = connection.CreateCommand();
         command.CommandText = "PRAGMA foreign_key_check";

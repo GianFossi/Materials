@@ -47,7 +47,7 @@ public sealed partial class DatabaseViewModel
             var sql = CreateTableSql;
             var changes = await Task.Run(() =>
             {
-                using var connection = new SqliteConnection($"Data Source={path}");
+                using var connection = new SqliteConnection(BuildConnectionString(path));
                 connection.Open();
                 using var command = connection.CreateCommand();
                 command.CommandText = sql;
@@ -127,7 +127,7 @@ public sealed partial class DatabaseViewModel
             var path = _workingPath;
             await Task.Run(() =>
             {
-                using var connection = new SqliteConnection($"Data Source={path}");
+                using var connection = new SqliteConnection(BuildConnectionString(path));
                 connection.Open();
                 using var command = connection.CreateCommand();
                 command.CommandText = sql;

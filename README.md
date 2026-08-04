@@ -43,3 +43,62 @@ The package readmes are intentionally short and point back to these repository d
 ## GitHub
 
 GitHub renders this root README as the repository landing page. Detailed topics live under `docs/` so direct links remain stable and easier to maintain.
+
+---
+
+## Manual CRUD Operations on the Database
+
+### 1. The linking key
+
+`Materials.ID` (integer, ASME table) is the **central hub**. Every application extension table declares:
+
+```sql
+MaterialID INTEGER NOT NULL REFERENCES Materials(ID) ON DELETE CASCADE
+```
+
+The ownership chain is:
+
+```
+Materials  (ASME, integer ID)
+  ├── MaterialLibraryExtension        ← also holds MaterialKey (string, e.g. "SA-516-70")
+  ├── MaterialDocumentStore           ← full JSON document, source of truth
+  ├── MaterialAllowableStressDatasetRows
+  ├── MaterialElasticModulusRows
+  ├── MaterialThermalExpansionRows
+  ├── MaterialAsmeCodeRows
+  └── ... all other *Rows tables
+```
+
+`MaterialLibraryExtension` is the **secondary** bridge: it maps the string domain key (`MaterialKey`) back to the integer `MaterialID`, and the unique index `IX_MaterialLibraryExtension_MaterialKey` enforces that mapping.
+
+---
+
+### 2. Which tables are safe to edit manually?
+
+**Projection tables** (`MaterialElasticModulusRows`, `MaterialAllowableStressDatasetRows`, `MaterialThermalExpansionRows`, etc.) are **rebuilt from scratch by "Write Library to DB"**. Editing them directly in the Raw Tables tab will be overwritten the next time a write is triggered. They are read-only from a data-authoring perspective.
+
+**The only two tables you should author manually are:**
+
+- `MaterialDocumentStore` — the JSON payload is the canonical source of truth for all property curves (Sy, Su, allowable stresses, creep, fatigue, stress-strain, external-pressure charts).
+- `MaterialLibraryExtension` — scalar metadata per material: family, welding P/G numbers, maximum allowable temperatures, reduction of area, thermal-expansion reference temperature.
+
+**Safe-edit checklist for the Raw Tables tab:**
+
+1. Always work on the **working copy** — the app enforces this and never writes to the reference database.
+2. Run **Integrity Check** after any manual SQL or raw-grid edit.
+3. Use **Save Working Copy As…** to export the result to a permanent file.
+
+---
+
+### 3. Where to perform each CRUD operation
+
+| Goal | Where to act |
+|---|---|
+| Add / edit a material | **Materials tab → edit fields → Write Library to DB** |
+| Edit allowable stress data | **Materials tab → select material → Allowable Stress editor** |
+| Manual SQL on extension tables | **SQL tab** (auto-creates a timestamped backup before each run) |
+| Inspect raw row data | **Raw Tables tab** (read-only intent; Save Changes commits to working copy) |
+| Persist the result permanently | **Save Working Copy As…** → overwrite or save to a new file |
+
+> **Never edit `asme_materials.db` directly.** The app opens it read-only; all writes target `asme_materials.working.db`. Only **Save Working Copy As…** exports that back to a permanent file.
+

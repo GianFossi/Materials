@@ -369,10 +369,19 @@ public sealed partial class DatabaseViewModel
         }
     }
 
+    // Pooling=False ensures Dispose() physically closes the file handle so no background
+    // Task.Run can hold a stale read lock that blocks subsequent write operations.
+    private static string BuildConnectionString(string path) =>
+        new SqliteConnectionStringBuilder { DataSource = path, Pooling = false }.ConnectionString;
+
     private SqliteConnection OpenRawConnection()
     {
-        var connection = new SqliteConnection($"Data Source={_workingPath}");
+        var connection = new SqliteConnection(BuildConnectionString(_workingPath!));
         connection.Open();
+        // Retry up to 5 s when a background task briefly holds the read lock.
+        using var timeout = connection.CreateCommand();
+        timeout.CommandText = "PRAGMA busy_timeout = 5000";
+        timeout.ExecuteNonQuery();
         return connection;
     }
 
@@ -385,7 +394,7 @@ public sealed partial class DatabaseViewModel
             var path = _workingPath;
             var result = await Task.Run(() =>
             {
-                using var connection = new SqliteConnection($"Data Source={path}");
+                using var connection = new SqliteConnection(BuildConnectionString(path));
                 connection.Open();
                 using var command = connection.CreateCommand();
                 command.CommandText = "PRAGMA integrity_check";

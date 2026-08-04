@@ -74,7 +74,7 @@ public sealed partial class DatabaseViewModel
         {
             var result = await Task.Run(() =>
             {
-                using var connection = new SqliteConnection($"Data Source={path}");
+                using var connection = new SqliteConnection(BuildConnectionString(path));
                 connection.Open();
                 var sourceColumns = GetColumnNames(connection, tableName);
                 var count = CountRows(connection, tableName, sourceColumns, _rowFilter, _materialIdFilter);
@@ -335,7 +335,7 @@ public sealed partial class DatabaseViewModel
 
     private static RawCommitResult ApplyRawChanges(string path, string tableName, IReadOnlyList<string> primaryKeys, IReadOnlyList<RawRowChange> changes)
     {
-        using var connection = new SqliteConnection($"Data Source={path}");
+        using var connection = new SqliteConnection(BuildConnectionString(path));
         connection.Open();
         using var transaction = connection.BeginTransaction();
         var changed = 0;
