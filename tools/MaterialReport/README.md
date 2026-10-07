@@ -6,16 +6,14 @@ Nessuno script modifica il database pacchettizzato: viene letto da una copia tem
 | Script | Cosa fa |
 | --- | --- |
 | `Export-MaterialReport.fsx` | Report per materiale (CSV), elenco dei materiali privi di dati per ogni gruppo, riepilogo finale. |
-| `Test-MaterialReport.fsx` | Test su un elenco fisso di materiali (carbon/low alloy, inox, leghe di nichel, 5Cr/9Cr, 9Ni…). Esce con codice 1 se c'è un FAIL. |
 | `Import-ExternalPressureXml.fsx` | Parsing e validazione degli XML delle pressioni esterne; importazione opzionale in una **copia** del database con mappa materiale → figura. |
-| `MaterialReportCore.fsx` | Modulo comune (lettura DB, modello dati per materiale). |
+| `MaterialReportCore.fs` | Modulo comune (lettura DB, modello dati per materiale), usato anche dal progetto `tests/MaterialLibrary.DataValidation`. |
 
 Dalla radice del repository:
 
 ```powershell
 dotnet fsi tools/MaterialReport/Export-MaterialReport.fsx            # report + riepilogo
 dotnet fsi tools/MaterialReport/Export-MaterialReport.fsx --long     # anche un CSV con un punto per riga
-dotnet fsi tools/MaterialReport/Test-MaterialReport.fsx              # test; --strict per fallire anche sui materiali assenti
 dotnet fsi tools/MaterialReport/Import-ExternalPressureXml.fsx       # solo parsing e validazione
 ```
 
@@ -35,14 +33,9 @@ Come leggere i dati:
 - **Allungamento a rottura**: campo vuoto nel DB per tutti i materiali; i range di spessore non sono modellati.
 - **Curva ciclica** (VIII-2 3-D.4): servono Kcss/Ncss (Tabella 3-D.2M), che il DB non contiene.
 
-## Test-MaterialReport
+## Test dei dati
 
-Per ogni materiale trovato:
-
-- **FAIL**: dato richiesto mancante o incoerente (SMYS/SMTS, Sy, Su, E, densità, Poisson, dilatazione, Cp/λ/a, P/G Number, Div. 1, dati per la curva stress-strain, confronti fra tabelle: Sy ≤ Su, E decrescente, Cp = λ/(ρ·a)…) e valori di Codice per un sottoinsieme di gradi (SMYS/SMTS).
-- **WARN**: Div. 2 assente, materiale non ammesso in VIII-1, scostamento oltre il 3 % dai criteri del Codice (≤ SMTS/3.5 o /2.4, ≤ 2/3 Sy, ≤ 0.9 Sy per G5): da verificare sul Codice.
-- Lacune note del DB (allungamento, External Pressure Chart, Kcss/Ncss) sono solo informative e non cambiano l'esito.
-- Le richieste senza materiale nel DB sono elencate come `NOT FOUND` (con `--strict` fanno fallire il test).
+I test sui valori del database (materiali del Prontuario, confronto con il testo del Codice, baseline) sono nel progetto xUnit `tests/MaterialLibrary.DataValidation`: vedi il [readme](../../tests/MaterialLibrary.DataValidation/README.md).
 
 ## Import-ExternalPressureXml
 

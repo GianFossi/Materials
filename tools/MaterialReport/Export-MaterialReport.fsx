@@ -23,7 +23,8 @@
 //
 // The database is never modified.
 
-#load "MaterialReportCore.fsx"
+#r "nuget: Microsoft.Data.Sqlite, 9.0.0"
+#load "MaterialReportCore.fs"
 
 open System
 open System.Collections.Generic

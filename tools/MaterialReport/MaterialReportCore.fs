@@ -1,12 +1,11 @@
-// MaterialReportCore.fsx
+// MaterialReportCore.fs
 //
-// Shared read-only model of ASME_Materials.db used by Export-MaterialReport.fsx and
-// Test-MaterialReport.fsx. Nothing here writes to the database: it is copied to a temporary file
-// and read from the copy, so no -wal/-shm side files appear next to the packaged database.
+// Shared read-only model of ASME_Materials.db. It is #load-ed by Export-MaterialReport.fsx and
+// compiled into tests/MaterialLibrary.DataValidation, so both read the database the same way.
+// Nothing here writes to the database: it is copied to a temporary file and read from the copy,
+// so no -wal/-shm side files appear next to the packaged database.
 
 module MaterialReportCore
-
-#r "nuget: Microsoft.Data.Sqlite, 9.0.0"
 
 open System
 open System.Collections.Generic
