@@ -32,6 +32,7 @@ dotnet run --project tests/MaterialLibrary.Tests/MaterialLibrary.Tests.fsproj
 - `src/MaterialLibrary.CrudApp` - Windows WPF desktop CRUD app.
 - `tests/MaterialLibrary.Tests` - compiled tests.
 - `tests/MaterialLibrary.Examples` - compiled examples.
+- `tools/MaterialReport` - F# scripts: database completeness report, material tests, external-pressure XML import ([readme](tools/MaterialReport/README.md)).
 
 ## NuGet
 
