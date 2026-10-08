@@ -32,6 +32,8 @@ dotnet run --project tests/MaterialLibrary.Tests/MaterialLibrary.Tests.fsproj
 - `src/MaterialLibrary.CrudApp` - Windows WPF desktop CRUD app.
 - `tests/MaterialLibrary.Tests` - compiled tests.
 - `tests/MaterialLibrary.Examples` - compiled examples.
+- `tools/MaterialReport` - F# scripts: database completeness report and external-pressure XML import ([readme](tools/MaterialReport/README.md)).
+- `tests/MaterialLibrary.DataValidation` - xUnit validation of the data in `ASME_Materials.db` (handbook materials, Code comparison, baseline) ([readme](tests/MaterialLibrary.DataValidation/README.md)).
 
 ## NuGet
 
