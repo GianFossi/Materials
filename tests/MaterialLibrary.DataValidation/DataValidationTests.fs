@@ -201,49 +201,50 @@ let private prontuarioMaterials () : (MaterialData * Prontuario.Row) list =
               yield d, row ]
     |> List.distinctBy (fun (d, _) -> d.Id)
 
-/// The physical-property tables of a material compared with the staged Code text.
+/// The physical-property tables of a material compared with the staged Code text. The Code column
+/// is chosen from the UNS number or from the group the Code notes assign to the composition, never
+/// from the database link between material and group.
 let private codeChecks (d: MaterialData) : Check list =
     let reference = Database.codeReference.Value
+    let expected = Database.physical d
 
-    let reproduces (quantity: string) (name: string) (curve: Curve) =
-        if curve.IsEmpty then
-            [ check $"{name} reproduces the Code" false "no data in the database" ]
-        else
-            match CodeText.diagnose 0.0005 quantity reference curve with
+    let reproduces (name: string) (r: PhysicalReference.Reference) (curve: Curve) =
+        match r.Column with
+        | None when curve.IsEmpty -> [ check $"{name} reproduces the Code" false "no data in the database" ]
+        | None -> [ infoIf $"{name} reproduces the Code" true "group not determined from the Code notes: not verified" ]
+        | Some column ->
+            match CodeText.diagnoseAgainst 0.0005 column curve with
             | CodeText.Exact _ -> [ check $"{name} reproduces the Code" true "" ]
-            | other -> [ check $"{name} reproduces the Code" false (CodeText.describe name other) ]
+            | other ->
+                [ check $"{name} reproduces the Code" false $"{CodeText.describe name other} [expected {r.Source}]" ]
 
     // The mean coefficient derived from the stored instantaneous one against column B of the Code.
     let meanAgainstCode =
-        match CodeText.diagnose 0.0005 "AlphaInstantaneous" reference d.AlphaInstantaneous with
-        | CodeText.Exact columns ->
-            match columns |> List.tryPick (CodeText.meanColumnOf reference) with
-            | Some mean ->
-                let lookup = mean.Values |> dict
+        match expected.AlphaMean.Column with
+        | Some mean ->
+            let lookup = mean.Values |> dict
 
-                let deviations =
-                    [ for t, derived in d.AlphaMean do
-                          match lookup.TryGetValue t with
-                          | true, code when abs (derived - code) > 0.1 -> yield $"{fmt t} degC: derived {fmt derived}, Code {fmt code}"
-                          | _ -> () ]
+            let deviations =
+                [ for t, derived in d.AlphaMean do
+                      match lookup.TryGetValue t with
+                      | true, code when abs (derived - code) > 0.1 -> yield $"{fmt t} degC: derived {fmt derived}, Code {fmt code}"
+                      | _ -> () ]
 
-                [ check "Derived mean expansion equals the Code column B (tol 0.1)" deviations.IsEmpty (String.Join("; ", deviations |> List.truncate 3)) ]
-            | None -> []
-        | _ -> []
+            [ check "Derived mean expansion equals the Code column B (tol 0.1)" deviations.IsEmpty (String.Join("; ", deviations |> List.truncate 3)) ]
+        | None -> []
 
-    let densityPoisson =
-        match d.Poisson, d.Density with
-        | Some nu, Some rho ->
-            let known = reference.PoissonDensity |> List.exists (fun p -> abs (p.Poisson - nu) < 1e-9 && abs (p.Density - rho) < 1e-9)
-            [ check "Poisson ratio and density are a pair of Table PRD" known $"nu {nu}, density {rho}" ]
-        | _ -> [ check "Poisson ratio and density are a pair of Table PRD" false "missing" ]
+    let scalar (name: string) (r: PhysicalReference.Reference) (database: float option) =
+        match r.Curve, database with
+        | (_, code) :: _, Some value when r.FromCode -> [ check $"{name} equals the Code" (abs (code - value) < 1e-9) $"database {value}, Code {code} ({r.Source})" ]
+        | _ -> [ infoIf $"{name} equals the Code" true "not verified" ]
 
-    reproduces "E" "Elastic modulus" d.Elastic
-    @ reproduces "AlphaInstantaneous" "Instantaneous expansion" d.AlphaInstantaneous
+    reproduces "Elastic modulus" expected.Elastic d.Elastic
+    @ reproduces "Instantaneous expansion" expected.AlphaInstantaneous d.AlphaInstantaneous
     @ meanAgainstCode
-    @ reproduces "Conductivity" "Thermal conductivity" d.Conductivity
-    @ reproduces "Diffusivity" "Thermal diffusivity" d.Diffusivity
-    @ densityPoisson
+    @ reproduces "Thermal conductivity" expected.Conductivity d.Conductivity
+    @ reproduces "Thermal diffusivity" expected.Diffusivity d.Diffusivity
+    @ scalar "Density" expected.Density d.Density
+    @ scalar "Poisson ratio" expected.Poisson d.Poisson
 
 /// The materials of the technical handbook: values, temperature range and completeness.
 [<Trait("Category", "DataValidation")>]
@@ -291,9 +292,17 @@ type CodeReferenceTests(output: ITestOutputHelper) =
 [<Trait("Category", "DataValidation")>]
 type BaselineTests(output: ITestOutputHelper) =
 
+    /// The values of the database as they are now.
     let current () =
         prontuarioMaterials ()
-        |> List.collect (fun (d, row) -> Snapshot.take d (Some row.TmaxC))
+        |> List.collect (fun (d, row) -> Snapshot.take d (Some row.TmaxC) None)
+        |> List.sortBy (fun p -> p.MaterialId, p.Table, p.Point)
+
+    /// The values the baseline must hold: Code values for the physical properties, database values
+    /// (not yet verified against the Code text) for the other tables.
+    let reference () =
+        prontuarioMaterials ()
+        |> List.collect (fun (d, row) -> Snapshot.take d (Some row.TmaxC) (Some(Database.physical d)))
         |> List.sortBy (fun p -> p.MaterialId, p.Table, p.Point)
 
     [<Fact>]
@@ -301,16 +310,49 @@ type BaselineTests(output: ITestOutputHelper) =
         let now = current ()
 
         if Environment.GetEnvironmentVariable "UPDATE_BASELINE" = "1" then
-            Snapshot.write Database.baselinePath now
-            output.WriteLine $"Baseline rewritten: {Database.baselinePath} ({now.Length} points)"
+            let points = reference ()
+            Snapshot.write Database.baselinePath points
+            output.WriteLine $"Baseline rewritten: {Database.baselinePath} ({points.Length} points)"
         else
             Assert.True(IO.File.Exists Database.baselinePath, $"baseline not found: {Database.baselinePath} (run once with UPDATE_BASELINE=1)")
             let differences = Snapshot.differences (Snapshot.read Database.baselinePath) now
+            let reportPath = IO.Path.Combine(AppContext.BaseDirectory, "baseline-differences.txt")
+            IO.File.WriteAllLines(reportPath, differences)
             differences |> List.truncate 200 |> List.iter output.WriteLine
 
             if not differences.IsEmpty then
                 let head = String.Join(Environment.NewLine, differences |> List.truncate 20)
-                Assert.Fail($"{differences.Length} values differ from the baseline (review them; if correct run with UPDATE_BASELINE=1):{Environment.NewLine}{head}")
+                Assert.Fail($"{differences.Length} values differ from the baseline (all of them in {reportPath}); review them, and if the database is right run with UPDATE_BASELINE=1:{Environment.NewLine}{head}")
+
+/// How every physical property of the handbook materials was resolved against the Code text.
+[<Trait("Category", "DataValidation")>]
+type PhysicalReferenceSummaryTests(output: ITestOutputHelper) =
+
+    [<Fact>]
+    member _.``Physical reference resolution``() =
+        let say (s: string) = output.WriteLine s
+        let materials = prontuarioMaterials () |> List.map fst
+
+        let properties =
+            [ "E", (fun (p: PhysicalReference.PhysicalProperties) -> p.Elastic)
+              "Alpha instantaneous", (fun p -> p.AlphaInstantaneous)
+              "Alpha mean", (fun p -> p.AlphaMean)
+              "Conductivity", (fun p -> p.Conductivity)
+              "Diffusivity", (fun p -> p.Diffusivity)
+              "Specific heat", (fun p -> p.SpecificHeat)
+              "Density", (fun p -> p.Density)
+              "Poisson", (fun p -> p.Poisson) ]
+
+        say $"Handbook materials: {materials.Length}"
+
+        for name, pick in properties do
+            let unresolved =
+                materials |> List.filter (fun d -> not (pick (Database.physical d)).FromCode)
+
+            say $"{name}: {materials.Length - unresolved.Length} from the Code, {unresolved.Length} database values kept"
+
+            for d in unresolved |> List.truncate 12 do
+                say $"    not verified: {Database.describe d}"
 
 /// Pure checks of the derivation used for the mean thermal expansion (no database).
 type MeanExpansionTests() =

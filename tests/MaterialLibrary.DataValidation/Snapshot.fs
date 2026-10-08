@@ -20,7 +20,9 @@ type Point =
       Temperature: float option
       Value: float option
       /// True when the temperature is above the Tmax of the handbook row.
-      BeyondTmax: bool }
+      BeyondTmax: bool
+      /// Where the value comes from: the Code text (physical properties) or the database.
+      Source: string }
 
 /// Temperatures (degC) sampled in addition to Tmin and Tmax.
 let sampleTemperatures = [ 100.0; 200.0; 300.0; 400.0; 500.0; 600.0 ]
@@ -56,14 +58,14 @@ let tablesOf (d: MaterialData) : (string * Curve) list =
     @ banded "Div2 allowable" d.Div2
     @ [ "E (GPa)", d.Elastic
         "Alpha instantaneous (1e-6/degC)", d.AlphaInstantaneous
-        "Alpha mean derived (1e-6/degC)", d.AlphaMean
+        "Alpha mean (1e-6/degC)", d.AlphaMean
         "Specific heat (J/kg/K)", d.SpecificHeat
         "Conductivity (W/m/K)", d.Conductivity
         "Diffusivity (mm2/s)", d.Diffusivity ]
 
 /// The sampled points of one curve: Tmin, Tmax and the grid temperatures that the curve lists;
 /// a sample temperature inside the curve range that the table does not list is recorded empty.
-let private pointsOf (d: MaterialData) (name: string) (curve: Curve) (tmax: float option) : Point list =
+let private pointsOf (d: MaterialData) (name: string) (curve: Curve) (source: string) (tmax: float option) : Point list =
     let make point (temperature: float option) (value: float option) =
         { MaterialId = d.Id
           Material = $"{d.Specification} {d.Grade} {d.ClassCondition} {d.Uns}".Replace("  ", " ").Trim()
@@ -74,7 +76,8 @@ let private pointsOf (d: MaterialData) (name: string) (curve: Curve) (tmax: floa
           BeyondTmax =
             (match temperature, tmax with
              | Some t, Some limit -> t > limit
-             | _ -> false) }
+             | _ -> false)
+          Source = source }
 
     match curve with
     | [] -> [ make "Tmin" None None; make "Tmax" None None ]
@@ -89,33 +92,62 @@ let private pointsOf (d: MaterialData) (name: string) (curve: Curve) (tmax: floa
                   yield make (t.ToString("0", inv)) (Some t) (valueAt t curve) ]
 
 /// Full snapshot of a material; <c>tmax</c> is the handbook Tmax used to flag the points beyond it.
-let take (d: MaterialData) (tmax: float option) : Point list =
-    let scalar name (value: float option) =
+/// With <c>reference</c> the physical properties are the ones of the Code text instead of the
+/// database values: that is the snapshot a baseline is made of.
+let take (d: MaterialData) (tmax: float option) (reference: PhysicalReference.PhysicalProperties option) : Point list =
+    let label = $"{d.Specification} {d.Grade} {d.ClassCondition} {d.Uns}".Replace("  ", " ").Trim()
+
+    let scalar name (value: float option) (source: string) =
         { MaterialId = d.Id
-          Material = $"{d.Specification} {d.Grade} {d.ClassCondition} {d.Uns}".Replace("  ", " ").Trim()
+          Material = label
           Table = name
           Point = "value"
           Temperature = None
           Value = value
-          BeyondTmax = false }
+          BeyondTmax = false
+          Source = source }
 
-    [ yield scalar "SMYS (MPa)" d.Smys
-      yield scalar "SMTS (MPa)" d.Smts
-      yield scalar "Density (kg/m3)" d.Density
-      yield scalar "Poisson ratio" d.Poisson
+    let scalarOf (database: float option) (pick: PhysicalReference.PhysicalProperties -> PhysicalReference.Reference) =
+        match reference with
+        | Some r ->
+            let x = pick r
+            (x.Curve |> List.tryHead |> Option.map snd), x.Source
+        | None -> database, "Database"
+
+    let density, densitySource = scalarOf d.Density (fun r -> r.Density)
+    let poisson, poissonSource = scalarOf d.Poisson (fun r -> r.Poisson)
+
+    let physical =
+        match reference with
+        | Some r ->
+            [ "E (GPa)", (r.Elastic.Curve, r.Elastic.Source)
+              "Alpha instantaneous (1e-6/degC)", (r.AlphaInstantaneous.Curve, r.AlphaInstantaneous.Source)
+              "Alpha mean (1e-6/degC)", (r.AlphaMean.Curve, r.AlphaMean.Source)
+              "Specific heat (J/kg/K)", (r.SpecificHeat.Curve, r.SpecificHeat.Source)
+              "Conductivity (W/m/K)", (r.Conductivity.Curve, r.Conductivity.Source)
+              "Diffusivity (mm2/s)", (r.Diffusivity.Curve, r.Diffusivity.Source) ]
+            |> dict
+        | None -> dict []
+
+    [ yield scalar "SMYS (MPa)" d.Smys "Database"
+      yield scalar "SMTS (MPa)" d.Smts "Database"
+      yield scalar "Density (kg/m3)" density densitySource
+      yield scalar "Poisson ratio" poisson poissonSource
 
       for name, curve in tablesOf d do
-          yield! pointsOf d name curve tmax ]
+          match physical.TryGetValue name with
+          | true, (referenceCurve, source) -> yield! pointsOf d name referenceCurve source tmax
+          | _ -> yield! pointsOf d name curve "Database" tmax ]
 
 let private fmt (v: float option) =
     match v with
     | Some x -> x.ToString("0.######", inv)
     | None -> ""
 
-let header = "MaterialId;Material;Table;Point;Temperature;Value;BeyondTmax"
+let header = "MaterialId;Material;Table;Point;Temperature;Value;BeyondTmax;Source"
 
 let toLine (p: Point) : string =
-    String.Join(";", [ string p.MaterialId; p.Material; p.Table; p.Point; fmt p.Temperature; fmt p.Value; (if p.BeyondTmax then "Y" else "") ])
+    String.Join(";", [ string p.MaterialId; p.Material; p.Table; p.Point; fmt p.Temperature; fmt p.Value; (if p.BeyondTmax then "Y" else ""); p.Source ])
 
 let write (path: string) (points: Point list) =
     Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
@@ -137,12 +169,24 @@ let read (path: string) : Point list =
           Point = c.[3]
           Temperature = parseOpt c.[4]
           Value = parseOpt c.[5]
-          BeyondTmax = (c.[6] = "Y") })
+          BeyondTmax = (c.[6] = "Y")
+          Source = (if c.Length > 7 then c.[7] else "") })
     |> List.ofArray
 
 let private key (p: Point) = p.MaterialId, p.Table, p.Point
 
-let private sameNumber (a: float option) (b: float option) =
+/// Tolerance of a table: the mean expansion is derived by integration in the database and printed
+/// with one decimal in the Code; the specific heat is a formula; every other value is exact.
+let private sameValue (table: string) (a: float option) (b: float option) =
+    match a, b with
+    | None, None -> true
+    | Some x, Some y ->
+        if table.StartsWith("Alpha mean", StringComparison.Ordinal) then abs (x - y) <= 0.1
+        elif table.StartsWith("Specific heat", StringComparison.Ordinal) then abs (x - y) <= 1e-3 * max 1.0 (abs y)
+        else abs (x - y) < 1e-6
+    | _ -> false
+
+let private sameTemperature (a: float option) (b: float option) =
     match a, b with
     | None, None -> true
     | Some x, Some y -> abs (x - y) < 1e-6
@@ -155,7 +199,7 @@ let differences (baseline: Point list) (current: Point list) : string list =
 
     [ for p in baseline do
           match now.TryGetValue(key p) with
-          | true, c when sameNumber c.Value p.Value && sameNumber c.Temperature p.Temperature -> ()
+          | true, c when sameValue p.Table c.Value p.Value && sameTemperature c.Temperature p.Temperature -> ()
           | true, c ->
               yield $"changed  {p.Material} | {p.Table} | {p.Point}: baseline {fmt p.Temperature} degC = {fmt p.Value}, now {fmt c.Temperature} degC = {fmt c.Value}"
           | _ -> yield $"missing  {p.Material} | {p.Table} | {p.Point}: baseline {fmt p.Value}, no longer in the database"

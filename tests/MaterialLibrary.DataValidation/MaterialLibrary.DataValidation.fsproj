@@ -12,11 +12,13 @@
     <!-- Same read-only database model used by tools/MaterialReport scripts. -->
     <Compile Include="../../tools/MaterialReport/MaterialReportCore.fs" Link="MaterialReportCore.fs" />
     <Compile Include="Checks.fs" />
+    <Compile Include="CodeText.fs" />
+    <Compile Include="CodeGroups.fs" />
+    <Compile Include="PhysicalReference.fs" />
     <Compile Include="Snapshot.fs" />
     <Compile Include="Prontuario.fs" />
     <Compile Include="Catalog.fs" />
     <Compile Include="References.fs" />
-    <Compile Include="CodeText.fs" />
     <Compile Include="Database.fs" />
     <Compile Include="DataValidationTests.fs" />
   </ItemGroup>

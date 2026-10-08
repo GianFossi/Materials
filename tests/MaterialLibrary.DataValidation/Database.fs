@@ -23,11 +23,12 @@ let path: string =
         search (DirectoryInfo AppContext.BaseDirectory)
     | custom -> custom
 
-/// Every material of the database with its data, read once (the file is copied, never modified).
+/// The whole database, read once (the file is copied, never modified).
+let db: Lazy<Db> = lazy (load path)
+
+/// Every material of the database with its data.
 let materials: Lazy<MaterialData list> =
-    lazy
-        (let db = load path
-         db.Materials |> List.map (buildData db))
+    lazy (db.Value.Materials |> List.map (buildData db.Value))
 
 /// The materials selected by a catalog entry.
 let select (entry: Catalog.Entry) : MaterialData list =
@@ -56,3 +57,11 @@ let codeReference: Lazy<CodeText.CodeReference> =
 /// The verified snapshot of the handbook materials.
 let baselinePath: string =
     Path.Combine(repositoryRoot, "tests", "MaterialLibrary.DataValidation", "Baseline", "prontuario-baseline.csv")
+
+/// Composition lists of the notes of the Code tables (group of each steel).
+let codeGroups: Lazy<CodeGroups.GroupLists> =
+    lazy (CodeGroups.load (Path.Combine(repositoryRoot, "src", "MaterialLibrary", "data", "physical-properties-xml")))
+
+/// The physical properties a material must have according to the Code.
+let physical (d: MaterialData) : PhysicalReference.PhysicalProperties =
+    PhysicalReference.of' codeReference.Value codeGroups.Value d
