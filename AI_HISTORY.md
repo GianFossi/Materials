@@ -34,6 +34,28 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 - Validation: SDK 10.0.201; Release builds of Excel (x86/x64 packed XLLs) and examples succeeded; all 51 core/CRUD tests and 45 WPF tests passed. Compiler nullability warnings remain visible; no warnings were suppressed. Direct dependencies are current; transitive dependencies remain at the versions selected by their upstream packages.
 - Files: global.json, src/*/*proj, tests/*/*proj, .vscode/launch.json, .vscode/launch-advanced.json, .vscode/omnisharp.json, .vscode/tasks.json, docs/requirements.md, docs/desktop-app.md, docs/excel-addin.md, AI_HISTORY.md
 
+- Date: 2026-10-18
+- Area: Full MAIN union, bolting tables and mandatory coverage reports
+- Change: MAIN now unions identities from every supplied table, retaining all raw rows in Material_Source. Added separate real Sb1/Table 3 and Sb2/Table 4 tables with guarded inserts and preserved table-scoped notes. Added complete mechanical row-count/availability and physical-presence matrices, per-material missing-family lists and summary totals, always generated and printed during creation or comparison.
+- Why: Keep materials present only outside the initial six exports, expose all requested missing data and distinguish bolting allowable stresses from S1/S2.
+- Impact: Recognizes the abbreviated condition header in 6A–6C and contextual BOLTING form for Table 4. Missing source families are reported rather than blocking MAIN creation. Empty curves count as rows but not as data. Physical availability reads tabulated values or constant density/Nu without importing unsupported property families. Added schema v2 provenance and tests for all-table union, isolated bolting, empty data and physical aliases/constants.
+- Files: tools/MaterialLibrary.DatabaseUpdater/{Domain,Input,Database,Coverage,Reports,TextReport,Program}.fs, tools/MaterialLibrary.DatabaseUpdater/MaterialLibrary.DatabaseUpdater.fsproj, tests/MaterialLibrary.DatabaseUpdater.Tests/Tests.fs, docs/database-updater.md, README.md, AI_HISTORY.md
+
+- Date: 2026-10-18
+- Area: Database updater console arguments and text reporting
+- Change: Added --sourcedir, --newdatabasefile with an edition-derived default name, --compare with default asme_materials.db, full --help and --report for UTF-8 output instead of terminal output. Added a shared directory/ZIP parser accepting CSV/CVS, automatic edition detection and a complete text report. Comparison alone uses disposable temporary output and does not publish a new database; creation can be explicitly combined with comparison. Existing argument names remain aliases.
+- Why: Support the requested console workflow with table-named source folders, readable reports and a comparison-only operation instead of updating a baseline in place.
+- Impact: Structured CSV/JSON persistence is optional through --report-dir; successful --report commands are silent on stdout. Existing output files are preserved, and source path/type/digest metadata distinguishes directory manifests from ZIP hashes. Added tests for help, defaults, directory/ZIP equivalence, read-only comparisons and identical terminal/file report contents.
+- Files: tools/MaterialLibrary.DatabaseUpdater/{Program,Input,Domain,Database,Reports,TextReport}.fs, tools/MaterialLibrary.DatabaseUpdater/MaterialLibrary.DatabaseUpdater.fsproj, tests/MaterialLibrary.DatabaseUpdater.Tests/Tests.fs, docs/database-updater.md, README.md, AI_HISTORY.md
+
+- Date: 2026-10-18
+- Area: ASME 2025 database import and update tooling
+- Change: Added a standalone F# ZIP-to-SQLite importer for Sy, Su, S1 (1A+1B) and S2 (5A+5B). Preserves table-scoped general/specific notes, exact source rows, size boundaries, separate curve variants and blank revision rows. Builds a fresh edition without overwriting its baseline, reuses unambiguous material IDs and reports identity/row/note differences, missing strengths, size coverage and inconsistencies.
+- Why: Make the supplied metric 2025 exports reproducibly importable and expose missing or conflicting data instead of guessing engineering values or merging ambiguous materials.
+- Impact: New normalized output schema allows NULL scalar SMYS/SMUS when absent or size-dependent, while retaining per-row minima. Other properties and existing library/app behavior remain unchanged; consuming the normalized database requires a separate integration. Legacy baseline comparison is limited to identities and available notes; full row comparison works between importer-generated databases.
+- Files: tools/MaterialLibrary.DatabaseUpdater/*, tests/MaterialLibrary.DatabaseUpdater.Tests/*, docs/database-updater.md, README.md, AI_HISTORY.md
+- Follow-up: Review reported candidate identities and source inconsistencies; add other property families in a later task.
+
 - Date: 2026-08-23
 - Area: Project license
 - Change: Switched project license from MIT to PolyForm Noncommercial 1.0.0. Added root LICENSE file with the full PolyForm Noncommercial 1.0.0 text and updated docs/license.md accordingly.
@@ -894,3 +916,8 @@ The second was a repeat of one fixed earlier on this branch and reintroduced by 
 **Schema window narrowed deliberately.** Version 14 is now refused rather than read. Its tensile data lived in a `tensileProperties` array that no longer has any field to deserialize into, so accepting it would appear to succeed while dropping the strength curves - worse than a clear error naming the version. Version 15 still loads in full: the legacy single `elongationPercent` seeds the longitudinal value, and the absent diffusivity table reads as `None`.
 
 Verification: all 7 projects build in Release with **0 warnings, 0 errors**. `MaterialLibrary.Tests` **48/48** and `MaterialLibrary.CrudApp.Tests` **45/45** pass, including six tests added to cover the combination neither branch tested alone: elongation optionality and its `None` round trip, a pre-split document still loading, thermal diffusivity round-tripping, physical-property and welding hydration in physically sensible SI ranges, the division and case labels with Division 2 allowing more than Division 1, and SA-325 keeping one Sy/Su column per diameter band with the heavier band weaker.
+
+
+## 2026-10-18 - Four-field ASME identity and scoped console coverage
+
+MAIN now uses only Specification, Grade, ClassConditionTemper and UNS, enforced by a nullable-safe UNIQUE index. ProductForm distinguishes only S1/S2 curves. Tables 6A–6D are excluded entirely. Legacy five-field comparison identities are merged deterministically; conflicting nominal compositions remain diagnostic rather than generating duplicate materials. The terminal/file report ends after physical availability with Nu as the last column. Separate mechanical matrices check Sy/Su/Sb1/Sb2 for bolting and Sy/Su/S1/S2 for other forms; shared identities belong to both contexts without duplicating MAIN. Detailed CSV diagnostics remain available through --report-dir. Regression tests cover shared applicability, empty curves and report boundaries.

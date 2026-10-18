@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Domain.fs" />
+    <Compile Include="Input.fs" />
+    <Compile Include="Database.fs" />
+    <Compile Include="Coverage.fs" />
+    <Compile Include="Reports.fs" />
+    <Compile Include="TextReport.fs" />
+    <Compile Include="Program.fs" />
+    <EmbeddedResource Include="Schema.sql" />
+    <PackageReference Include="FSharp.Core" Version="10.1.301" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+  </ItemGroup>
+</Project>

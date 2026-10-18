@@ -8,6 +8,7 @@ Type-safe F#/.NET material-property library for ASME Section II Part D workflows
 - [Requirements and dependencies](docs/requirements.md) - SDK, platforms, packages, units, and project notes.
 - [Installation, build, and removal](docs/installation.md) - restore/build/test, NuGet package commands, Excel/app publishing, and cleanup.
 - [ASME_Materials.db schema](docs/asme-materials-db.md) - packaged SQLite database layout, table relationships, row counts, and safety rules.
+- [2025 database and F# console updater](docs/database-updater.md) - unique four-field MAIN identities (excluding 6A–6D), import Sy/Su/S1/S2 and separate bolting Sb1/Sb2, print separate bolting/other mechanical matrices and end with physical coverage, create with `--newdatabasefile` or compare with `--compare`.
 - [Library API](docs/library-api.md) - F# examples, checked APIs, persistence, and database lookup.
 - [Material models and tables](docs/material-models.md) - fixed units, external pressure, stress-strain, unified tables, and creep model selection.
 - [Excel add-in](docs/excel-addin.md) - build/load steps and worksheet functions.
@@ -32,6 +33,7 @@ dotnet run --project tests/MaterialLibrary.Tests/MaterialLibrary.Tests.fsproj
 - `src/MaterialLibrary.CrudApp` - Windows WPF desktop CRUD app.
 - `tests/MaterialLibrary.Tests` - compiled tests.
 - `tests/MaterialLibrary.Examples` - compiled examples.
+- `tools/MaterialLibrary.DatabaseUpdater` - standalone F# edition importer and database comparison tool.
 
 ## NuGet
 
