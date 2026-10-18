@@ -1,0 +1,15 @@
+{
+  "regulatory_materials": 2336,
+  "regulatory_source_fields_verified": 30507,
+  "note_documents_verified_against_zip": 10,
+  "full_note_texts_verified": 414,
+  "main_materials": 2532,
+  "mechanical_values": 149029,
+  "integrity_check": "ok",
+  "foreign_key_check": "ok",
+  "database_sha256": "c8193358c3ceded38ebb3eb5479289dc596170982b0c01e80fef35cf48640785",
+  "tests_passed": 32,
+  "note_texts_and_links_unchanged": true,
+  "mechanical_data_unchanged": true,
+  "asme_scalar_conflict_fields": 748
+}

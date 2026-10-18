@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="Domain.fs" />
     <Compile Include="Input.fs" />
+    <Compile Include="AsmeData.fs" />
     <Compile Include="Database.fs" />
     <Compile Include="Coverage.fs" />
     <Compile Include="Reports.fs" />

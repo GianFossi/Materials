@@ -11,7 +11,7 @@ Il progetto console F# `tools/MaterialLibrary.DatabaseUpdater` crea un database 
 | Sb1 | `3/*.csv` — ammissibili bolting Table 3 |
 | Sb2 | `4/*.csv` — ammissibili bolting Table 4 |
 
-Le cartelle 2A/2B contribuiscono a MAIN e alla provenienza completa, senza essere mescolate a S1/S2 o Sb1/Sb2. Le loro curve non sono ancora importate. Lo stesso criterio vale per altre tabelle sorgenti con intestazioni di identità ASME valide. Le tabelle 6A–6D sono completamente ignorate, incluse identità e note. I file non CSV/note vengono elencati come ignorati.
+Le cartelle 2A/2B contribuiscono a MAIN e alla provenienza completa, senza essere mescolate a S1/S2 o Sb1/Sb2. Le loro curve non sono ancora importate; i campi normativi ASME vengono invece importati. Lo stesso criterio vale per altre tabelle sorgenti con intestazioni di identità ASME valide. Le tabelle 6A–6D sono completamente ignorate, incluse identità e note. I file non CSV/note vengono elencati come ignorati.
 
 ## Esecuzione
 
@@ -106,6 +106,8 @@ Le note hanno chiave **tabella di origine + codice**: `1A:G5`, `1B:G5`, `5A:G1` 
 | `Property_Notes` | Codici grezzi e testo delle note specifiche risolte, con tabella nel tipo |
 | `Source_Notes`, `Property_Note_Links` | Definizioni e collegamenti con integrità referenziale |
 | `VW_Property_Notes_All` | Note specifiche e generali applicabili a ciascuna curva |
+| `ASME_Data` | P-Number, Group Number, diagramma di pressione esterna e limiti per sezioni I/III/VIII-1/VIII-2/XII, quando univoci |
+| `ASME_Data_Source` | Ogni campo normativo non mancante, testo originale e temperatura numerica solo se incondizionata, con collegamento alla riga sorgente |
 | `Source_Documents`, `Import_Files` | Documenti delle note, conteggi e impronte dei file |
 | `Import_Omitted_Rows` | Righe prive di identità e di qualsiasi dato tecnico, mantenute integralmente come evidenza |
 | `Database_Metadata` | Edizione, unità, ambito, percorso/tipo sorgente e impronta SHA-256; per directory si usa il manifesto ordinato di percorsi e contenuti CSV/note |
@@ -124,6 +126,22 @@ WHERE s.id_main = @materialId;
 
 Il file CSV non conserva la tipografia alternativa usata da ASME per alcuni valori dipendenti dal tempo. Il tool conserva i valori e le note ma non ricostruisce quella distinzione grafica.
 
+## Dati normativi ASME e note
+
+`ASME_Data` contiene una riga per ogni materiale con almeno un campo normativo fornito dagli export. Il tool importa `P-No.`, `Group No.`, `External Pressure Chart No.` e i limiti per sezioni I, III, VIII-1, VIII-2 e XII. P-Number resta testuale (es. 5A, 10H). Le temperature sono in °C. Un campo scalare viene compilato solo se tutti i valori non mancanti concordano. Valori diversi per tabella, dimensione o product form non vengono ridotti arbitrariamente a un solo limite: lo scalare resta NULL e il conflitto viene segnalato.
+
+`ASME_Data_Source` conserva ogni valore originale con `id_main`, tabella, file e riga. `NP` e qualificatori come `204 (Cl. 3 only)` rimangono testo; non diventano limiti incondizionati. `NumericValue` è presente soltanto per temperature puramente numeriche. La colonna `Time_Dependent_Start_Temp` rimane NULL perché gli export non espongono questo campo e non conservano la tipografia necessaria a ricostruirlo. Le proprietà fisiche restano fuori dall’importazione corrente.
+
+Le note non sono soltanto codici: `Source_Notes.NoteText` contiene il testo completo, incluse continuazioni, distinto per tabella di origine. `Source_Documents.Contents` conserva integralmente ogni notes.txt decodificato, con SHA-256 del file originale. `Property_Notes` conserva i testi delle note specifiche risolte; `VW_Property_Notes_All` include sia quelle specifiche sia le generali applicabili alla tabella della curva. Un codice non risolto è segnalato senza inventare testo. Gli export 6A–6D sono esclusi anche dal catalogo note.
+
+```sql
+SELECT m.Specification, m.Grade, a.*
+FROM Main m JOIN ASME_Data a ON a.id_main = m.id;
+
+SELECT SourceTable, FieldName, RawValue, NumericValue, File, CsvLine
+FROM ASME_Data_Source WHERE id_main = @materialId;
+```
+
 ## Report
 
 Il report testuale va sul terminale oppure nel file indicato con `--report` e termina con il prospetto “MAIN - PRESENZA E, Alpha, c, k, a, density, Nu”. I prospetti stampati non hanno la colonna MissingData; l’ultima colonna del prospetto fisico è Nu. I seguenti file strutturati vengono conservati quando si specifica `--report-dir`:
@@ -133,6 +151,8 @@ Il report testuale va sul terminale oppure nel file indicato con `--report` e te
 | `summary.json`, `README.md` | Conteggi, verifiche e limiti del confronto |
 | `main-mechanical.csv` | MAIN completo: Specification, Grade, ClassConditionTemper, UNS, NominalComposition, ID e conteggi Sy/Su/S1/S2/Sb1/Sb2, indicatori HasData e lista delle assenze |
 | `main-bolting.csv`, `main-nonbolting.csv` | Prospetti separati con i conteggi delle sole famiglie applicabili |
+| `asme-data-source.csv` | Tutti i campi normativi originali, valori numerici validi e provenienza |
+| `asme-data-conflicts.csv` | Campi normativi non scalari per identità MAIN, con evidenza dei valori originali |
 | `composition-conflicts.csv` | Composizioni nominali discordanti per una stessa identità |
 | `main-physical.csv` | MAIN completo con YES/NO per E, Alpha, c, k, a, density e Nu |
 | `missing-mechanical.csv` | Ogni materiale con almeno una famiglia meccanica priva di valori, con elenco preciso delle famiglie mancanti |

@@ -55,6 +55,13 @@ module Reports =
                 if System.Text.RegularExpressions.Regex.IsMatch(item.Identity.Grade,@"^\d{4}-\d{2}-\d{2}(?: |$)") then
                     add "Warning" "DateLikeLegacyGrade" materialKey baselinePath ("Old grade resembles an Excel date conversion; do not interpret its unmatched identity as a confirmed deletion: " + item.Identity.Grade)
         for materialKey,rows in Map.toSeq groups do
+            for column,header,isTemperature in AsmeData.fields do
+                let supplied = AsmeData.values header rows
+                if supplied.Length > 1 && Convert.IsDBNull(AsmeData.scalar header isTemperature rows) then
+                    let evidence = rows |> List.choose (fun row -> let value = AsmeData.sourceValue header row in if missing value then None else Some (location row + "=" + value)) |> String.concat "; "
+                    add "Warning" "ConflictingAsmeData" materialKey ("ASME_Data." + column) ("Scalar left NULL; context-specific values retained in ASME_Data_Source: " + evidence)
+                if isTemperature && (supplied |> List.exists (fun value -> number value = None && normalize value <> "NP")) then
+                    add "Info" "QualifiedAsmeLimit" materialKey ("ASME_Data." + column) ("Qualified limits retained verbatim; not converted to unconditional temperatures: " + json supplied)
             let compositions = rows |> List.map (fun row -> field "Nominal Composition" row.Fields) |> List.filter (missing >> not) |> List.distinct
             let normalizedCompositions = compositions |> List.map compositionKey |> List.distinct
             if normalizedCompositions.Length > 1 then
@@ -213,10 +220,16 @@ module Reports =
         if dbMissing <> missingRows.Count then failwith "Database/report missing-strength count mismatch"
         let compositionConflicts = issues |> Seq.filter (fun issue -> issue.Code="ConflictingNominalComposition") |> Seq.toList
         csv (Path.Combine(directory,"composition-conflicts.csv")) ["MaterialKey";"Source";"Detail"] (compositionConflicts |> List.map (fun issue -> [issue.MaterialKey;issue.Source;issue.Detail]))
+        let asmeConflicts = issues |> Seq.filter (fun issue -> issue.Code="ConflictingAsmeData") |> Seq.toList
+        csv (Path.Combine(directory,"asme-data-conflicts.csv")) ["MaterialKey";"Field";"Detail"] (asmeConflicts |> List.map (fun issue -> [issue.MaterialKey;issue.Source;issue.Detail]))
+        let asmeRows = Database.query db "SELECT id_main,FieldName,RawValue,NumericValue,SourceTable,File,CsvLine FROM ASME_Data_Source ORDER BY id_main,FieldName,File,CsvLine"
+        csv (Path.Combine(directory,"asme-data-source.csv")) ["MaterialId";"FieldName";"RawValue";"NumericValue";"SourceTable";"File";"CsvLine"] (asmeRows |> List.map (Array.map string >> Array.toList))
+        let asmeCount = Database.query db "SELECT count(*) FROM ASME_Data" |> List.head |> Array.head |> Convert.ToInt32
         let summary = {|
             Edition=edition; Baseline=baselinePath; BaselineEdition=baselineEdition; ArchiveSHA256=(if input.SourceKind="ZIP" then input.ArchiveHash else null)
             SourceKind=input.SourceKind; SourcePath=input.SourcePath; SourceSHA256=input.ArchiveHash
             MaterialCount=groups.Count; IdentityFields=[|"Specification";"Grade";"ClassConditionTemper";"UNS"|]; ExcludedTables=[|"6A";"6B";"6C";"6D"|]; CompositionConflictCount=compositionConflicts.Length; SourceRowCount=mechanicalRows.Length; IdentitySourceRowCount=input.Rows.Length; MainCoverage=coverage; BlankRevisionRows=input.Omitted.Length; StressValueCount=input.Rows |> List.sumBy (fun row -> row.Values.Length)
+            AsmeDataMaterialCount=asmeCount; AsmeDataSourceFieldCount=asmeRows.Length; AsmeDataConflictCount=asmeConflicts.Length
             NoteDefinitionCount=input.Notes.Length; Tables=tableCounts; MaterialChanges=counts; NoteChanges=noteCounts
             MissingSyOnly=missingSyOnly; MissingSuOnly=missingSuOnly; MissingBoth=missingBoth; MissingStrengthTotal=missingRows.Count
             MissingWithStrengthCandidates=missingWithStrengthCandidates; MissingWithoutStrengthCandidates=missingWithoutStrengthCandidates
@@ -230,6 +243,7 @@ module Reports =
 
 - Materiali: {groups.Count}
 - Righe identità da tabelle ammesse (6A–6D escluse): {input.Rows.Length}; curve meccaniche: {mechanicalRows.Length}; valori di tensione: {summary.StressValueCount}
+- Dati normativi ASME: {asmeCount} materiali; {asmeRows.Length} campi sorgente conservati; {asmeConflicts.Length} conflitti scalari segnalati.
 - Note definite: {input.Notes.Length}, distinte per tabella di origine.
 - Con valori S1/S2/Sb1/Sb2 ma senza Sy: {missingSyOnly}; senza Su: {missingSuOnly}; senza entrambi: {missingBoth}.
 - Fra questi, {missingWithStrengthCandidates} hanno possibili curve sotto identità diverse; {missingWithoutStrengthCandidates} non hanno candidati secondo i criteri conservativi del tool.

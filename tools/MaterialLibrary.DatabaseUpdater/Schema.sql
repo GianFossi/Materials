@@ -120,11 +120,13 @@ CREATE TABLE ASME_Data (
     id_main INTEGER NOT NULL,
     P_Number TEXT,
     Group_Number TEXT,
+    External_Pressure_Chart_No TEXT,
     Time_Dependent_Start_Temp REAL,
     Max_Temp_Sect_I REAL,
     Max_Temp_Sect_III REAL,
     Max_Temp_Sect_VIII_1 REAL,
     Max_Temp_Sect_VIII_2 REAL,
+    Max_Temp_Sect_XII REAL,
     FOREIGN KEY (id_main) REFERENCES Main(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX IDX_ASMEData_Main ON ASME_Data (id_main);

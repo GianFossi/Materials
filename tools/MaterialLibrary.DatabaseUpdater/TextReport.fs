@@ -26,6 +26,7 @@ module TextReport =
         detailedReportsPath |> Option.iter (fun path -> line ("Report CSV/JSON: " + path))
         line ""
         line (sprintf "Materiali: %d; curve: %d; valori: %d; note: %d" (number "MaterialCount") (number "SourceRowCount") (number "StressValueCount") (number "NoteDefinitionCount"))
+        line (sprintf "Dati normativi ASME: %d materiali; %d campi sorgente; %d conflitti scalari." (number "AsmeDataMaterialCount") (number "AsmeDataSourceFieldCount") (number "AsmeDataConflictCount"))
         line "S1 = 1A + 1B; S2 = 5A + 5B; Sb1 = Table 3; Sb2 = Table 4. Tensioni MPa, temperature °C, dimensioni mm."
         counts "Differenze tra materiali:" "MaterialChanges"
         counts "Differenze nelle note:" "NoteChanges"

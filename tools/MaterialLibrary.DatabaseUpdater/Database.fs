@@ -117,6 +117,13 @@ module Database =
             SourceTable TEXT NOT NULL, File TEXT NOT NULL, CsvLine INTEGER NOT NULL,
             RawFieldsJson TEXT NOT NULL, Fingerprint TEXT NOT NULL, PRIMARY KEY(File,CsvLine));
         CREATE INDEX IDX_MaterialSource_Main ON Material_Source(id_main);
+        CREATE TABLE ASME_Data_Source (
+            id_main INTEGER NOT NULL REFERENCES Main(id) ON DELETE CASCADE,
+            SourceTable TEXT NOT NULL, File TEXT NOT NULL, CsvLine INTEGER NOT NULL,
+            FieldName TEXT NOT NULL, RawValue TEXT NOT NULL, NumericValue REAL,
+            PRIMARY KEY(File,CsvLine,FieldName),
+            FOREIGN KEY(File,CsvLine) REFERENCES Material_Source(File,CsvLine));
+        CREATE INDEX IDX_ASMEDataSource_Main ON ASME_Data_Source(id_main);
         CREATE TABLE Import_Files (Path TEXT PRIMARY KEY, SHA256 TEXT NOT NULL, RowCount INTEGER NOT NULL);
         CREATE TABLE Import_Omitted_Rows (SourceTable TEXT NOT NULL, File TEXT NOT NULL, CsvLine INTEGER NOT NULL, Reason TEXT NOT NULL, RawFieldsJson TEXT NOT NULL, PRIMARY KEY(File,CsvLine));
         CREATE TABLE Source_Documents (SourceTable TEXT PRIMARY KEY, SHA256 TEXT NOT NULL, Contents TEXT NOT NULL);
@@ -189,7 +196,7 @@ module Database =
         let nullable = function Some value -> box value | None -> box DBNull.Value
         let text value = if missing value then box DBNull.Value else box value
         let sourceMetadata = ["SourceKind",input.SourceKind; "SourcePath",input.SourcePath; "SourceSHA256",input.ArchiveHash] @ (if input.SourceKind="ZIP" then ["ArchiveSHA256",input.ArchiveHash] else [])
-        for name,value in sourceMetadata @ ["Edition",edition; "Units","MPa; degrees Celsius; mm"; "Scope","MAIN=source tables excluding 6A-6D;Sy,Su,S1=1A+1B,S2=5A+5B,Sb1=3,Sb2=4"; "IdentityPolicy","Specification,Grade,ClassConditionTemper,UNS only; ProductForm belongs only to S1/S2"; "SchemaVersion","2025-import-v3"] do
+        for name,value in sourceMetadata @ ["Edition",edition; "Units","MPa; degrees Celsius; mm"; "Scope","MAIN=source tables excluding 6A-6D;Sy,Su,S1=1A+1B,S2=5A+5B,Sb1=3,Sb2=4"; "IdentityPolicy","Specification,Grade,ClassConditionTemper,UNS only; ProductForm belongs only to S1/S2"; "SchemaVersion","2025-import-v4"] do
             insert "Database_Metadata" ["Key",box name; "Value",box value] |> ignore
         for file,sha,count in input.Files do insert "Import_Files" ["Path",box file; "SHA256",box sha; "RowCount",box count] |> ignore
         for row in input.Omitted do insert "Import_Omitted_Rows" ["SourceTable",box row.Table; "File",box row.File; "CsvLine",box row.Line; "Reason",box row.Reason; "RawFieldsJson",box (row.Fields |> Map.toSeq |> dict |> json)] |> ignore
@@ -212,12 +219,22 @@ module Database =
                 "AlloyDesignation",text identity.Alloy; "ClassConditionTemper",text identity.Condition; "NominalComposition",nullable (nominalComposition rows);
                 "SMYS",nullable (unique (rows |> List.map (fun r -> r.Sy))); "SMUS",nullable (unique (rows |> List.map (fun r -> r.Su)))] |> ignore
             insert "Material_Identity" ["id_main",box id; "NaturalKey",box materialKey] |> ignore
+            // MAIN remains unique. Context-dependent or qualified limits stay in per-source evidence.
+            if AsmeData.fields |> List.exists (fun (_,header,_) -> not (AsmeData.values header rows).IsEmpty) then
+                insert "ASME_Data" (["id_main",box id] @ (AsmeData.fields |> List.map (fun (column,header,isTemperature) -> column,AsmeData.scalar header isTemperature rows))) |> ignore
         let sizes = Dictionary<SizeBand,int64>()
         let defined = input.Notes |> List.map (fun n -> (n.Table,n.Code),n) |> Map.ofList
         // Every source table contributes identities and exact audit rows, even when its values are not imported yet.
         for row in input.Rows do
             insert "Material_Source" ["id_main",box ids[key row.Identity]; "SourceTable",box row.Table; "File",box row.File; "CsvLine",box row.Line;
                 "RawFieldsJson",box (row.Fields |> Map.toSeq |> dict |> json); "Fingerprint",box row.Fingerprint] |> ignore
+        for row in input.Rows do
+            for column,header,isTemperature in AsmeData.fields do
+                let raw = AsmeData.sourceValue header row
+                if not (missing raw) then
+                    insert "ASME_Data_Source" ["id_main",box ids[key row.Identity]; "SourceTable",box row.Table;
+                        "File",box row.File; "CsvLine",box row.Line; "FieldName",box column; "RawValue",box raw;
+                        "NumericValue",(if isTemperature then nullable (number raw) else box DBNull.Value)] |> ignore
         // Mechanical families remain separate, including the two bolting-only tables.
         let mechanicalRows = input.Rows |> List.filter (fun row -> isMechanicalTable row.Table)
         for row in mechanicalRows do
@@ -252,6 +269,8 @@ module Database =
             let expected = mechanicalRows |> List.filter (fun row -> row.Table=source) |> List.length |> int64
             if count table <> expected then failwith ("Bolting-only table count does not match source: " + table)
         if count "Material_Source" <> int64 input.Rows.Length then failwith "Not every source row was linked to MAIN"
+        let expectedAsmeFields = input.Rows |> List.sumBy (fun row -> AsmeData.fields |> List.filter (fun (_,header,_) -> not (missing (AsmeData.sourceValue header row))) |> List.length)
+        if count "ASME_Data_Source" <> int64 expectedAsmeFields then failwith "Regulatory source-field counts do not match input"
         if count "Main" <> int64 groups.Length || count "Source_Notes" <> int64 input.Notes.Length then failwith "Imported material/note counts do not match input"
         if not (query db "SELECT 1 FROM Main GROUP BY Specification,COALESCE(Grade,''),COALESCE(ClassConditionTemper,''),COALESCE(AlloyDesignation,'') HAVING count(*)>1").IsEmpty then failwith "Duplicate four-field MAIN identity"
         if query db "PRAGMA integrity_check" <> [[|box "ok"|]] then failwith "Database integrity check failed"

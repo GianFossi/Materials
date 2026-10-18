@@ -581,3 +581,76 @@ let ``shared bolting identity remains unique with both applicability groups`` ()
     Assert.Equal(7,finalSection.TrimEnd().Split('\n').Length)
     Assert.EndsWith("Nu",(finalSection.Split('\n')[1]).TrimEnd())
     Assert.DoesNotContain("MissingData",text)
+
+[<Fact>]
+let ``ASME data imports identifiers and Celsius limits with exact regulatory provenance`` () =
+    use work = new Workspace()
+    let zip,output,reports = work.Path "regulatory.zip",work.Path "regulatory.db",work.Path "reports"
+    do
+        use empty = ZipFile.Open(zip,ZipArchiveMode.Create)
+        ()
+    appendTable zip "1A" (extraFields "SA-REG" "Plate" "N" @ [
+        "P-No.","5A"; "Group No.","1"; "External Pressure Chart No.","CS-1";
+        "I—Applic. and Max. Temp. Limit (°C)","649";
+        "III—Applic. and Max. Temp. Limit (°C)","427";
+        "VIII-1—Applic. and Max. Temp. Limit (°C)","538";
+        "XII—Applic. and Max. Temp. Limit (°C)","343"])
+    appendTable zip "2A" (extraFields "SA-REG" "Plate" "N" @ [
+        "P-No.","5A"; "Group No.","1";
+        "VIII-2-Applic. and Max. Temp. Limit (°C)","427"])
+    captureConsole (fun () -> Program.run [|"--input";zip;"--newdatabasefile";output;"--report-dir";reports;"--report";work.Path "report.txt"|]) |> ignore
+    use db = Database.connect output SqliteOpenMode.ReadWrite
+    let row = Database.query db "SELECT P_Number,Group_Number,External_Pressure_Chart_No,Max_Temp_Sect_I,Max_Temp_Sect_III,Max_Temp_Sect_VIII_1,Max_Temp_Sect_VIII_2,Max_Temp_Sect_XII FROM ASME_Data" |> List.exactlyOne
+    Assert.Equal<string list>(["5A";"1";"CS-1";"649";"427";"538";"427";"343"],row |> Array.map string |> Array.toList)
+    Assert.Equal(10,Database.query db "SELECT count(*) FROM ASME_Data_Source" |> List.head |> Array.head |> Convert.ToInt32)
+    Assert.True(Database.query db "SELECT Time_Dependent_Start_Temp FROM ASME_Data" |> List.head |> Array.head |> isNull)
+    let note = Database.query db "SELECT NoteText FROM VW_Property_Notes_All WHERE SourceTable='1A' AND Code='G1'" |> List.exactlyOne |> Array.head |> string
+    Assert.Equal("Specific 1A",note)
+    use transaction = db.BeginTransaction()
+    Database.execute db (Some transaction) "DELETE FROM Main" []
+    Assert.Empty(Database.query db "PRAGMA foreign_key_check")
+    transaction.Rollback()
+
+[<Fact>]
+let ``ASME data never promotes NP qualified or conflicting source limits to unconditional scalars`` () =
+    use work = new Workspace()
+    let zip,output,reports = work.Path "limits.zip",work.Path "limits.db",work.Path "reports"
+    do
+        use empty = ZipFile.Open(zip,ZipArchiveMode.Create)
+        ()
+    appendTable zip "1A" (extraFields "SA-LIMIT" "Plate" "N" @ [
+        "P-No.","5A"; "I—Applic. and Max. Temp. Limit (°C)","NP";
+        "III—Applic. and Max. Temp. Limit (°C)","204 (Cl. 3 only)";
+        "VIII-1—Applic. and Max. Temp. Limit (°C)","538"])
+    appendVariant zip "1A" (Map.add "Product Form" "Tube" >> Map.add "P-No." "5B" >> Map.add "VIII-1—Applic. and Max. Temp. Limit (°C)" "649")
+    captureConsole (fun () -> Program.run [|"--input";zip;"--newdatabasefile";output;"--report-dir";reports;"--report";work.Path "report.txt"|]) |> ignore
+    use db = Database.connect output SqliteOpenMode.ReadOnly
+    let row = Database.query db "SELECT P_Number,Max_Temp_Sect_I,Max_Temp_Sect_III,Max_Temp_Sect_VIII_1 FROM ASME_Data" |> List.exactlyOne
+    Assert.All(row,fun value -> Assert.Null(value))
+    let raw = Database.query db "SELECT DISTINCT RawValue FROM ASME_Data_Source WHERE NumericValue IS NULL" |> List.map (Array.head >> string)
+    Assert.Contains("NP",raw)
+    Assert.Contains("204 (Cl. 3 only)",raw)
+    Assert.Contains("5A",raw)
+    Assert.Contains("5B",raw)
+    Assert.Contains("ConflictingAsmeData",File.ReadAllText(Path.Combine(reports,"issues.csv")))
+    Assert.Contains("QualifiedAsmeLimit",File.ReadAllText(Path.Combine(reports,"issues.csv")))
+    Assert.Contains("Max_Temp_Sect_VIII_1",File.ReadAllText(Path.Combine(reports,"asme-data-conflicts.csv")))
+    Assert.Equal(1,Database.query db "SELECT count(*) FROM Main" |> List.head |> Array.head |> Convert.ToInt32)
+
+[<Fact>]
+let ``every imported note text and complete source document survives database round trip`` () =
+    use work = new Workspace()
+    let zip,output = work.Path "notes.zip",work.Path "notes.db"
+    archive zip false
+    let input = Input.readArchive zip "2025"
+    Database.create output "2025" input [] |> ignore
+    use db = Database.connect output SqliteOpenMode.ReadOnly
+    let notes = Database.query db "SELECT SourceTable,Code,Kind,NoteText FROM Source_Notes" |> List.map (fun row -> (string row[0],string row[1]),(string row[2],string row[3])) |> Map.ofList
+    for note in input.Notes do Assert.Equal((note.Kind,note.Text),notes[(note.Table,note.Code)])
+    let documents = Database.query db "SELECT SourceTable,Contents,SHA256 FROM Source_Documents" |> List.map (fun row -> string row[0],(string row[1],string row[2])) |> Map.ofList
+    for table,contents,sha in input.Documents do Assert.Equal((contents,sha),documents[table])
+    for row in input.Rows do
+        for code in row.NoteCodes do
+            let expected = input.Notes |> List.find (fun note -> note.Table=row.Table && note.Code=code)
+            let actual = Database.query db $"SELECT n.NoteText FROM VW_Property_Notes_All n JOIN Property_Source s ON s.id_property=n.id_property WHERE s.SourceTable='{row.Table}' AND s.CsvLine={row.Line} AND n.Code='{code}'" |> List.exactlyOne |> Array.head |> string
+            Assert.Equal(expected.Text,actual)
