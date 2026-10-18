@@ -69,9 +69,9 @@ Each dataset carries `SizeMinimum` and `SizeMaximum` in mm alongside its own cur
 
 Stress/strain datasets also carry explicit basis metadata:
 
-- StressStrainTable: `ReferenceDurationHours`, `StrainBasis`, `StressBasis`, `Source`
-- CreepTable: `ReferenceTemperature`, `AppliedStress`, `Source`
-- FatigueCurve: `StressBasis`
+- StressStrainTable: True Stress versus True Strain - Parameters: `ReferenceTemperature`, `ReferenceDurationHours`, `Source`
+- CreepTable: True Stress versus Time - Parameters: `ReferenceTemperature`, `AppliedStress`, `Source`
+- FatigueCurve: Stress Amplitude versus Strain - Parameters: `ReferenceTemperature`
 
 Isochronous tables use `StressStrainTable.ReferenceDurationHours = Some hours`.
 

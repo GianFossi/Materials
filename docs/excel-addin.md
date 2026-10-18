@@ -3,12 +3,12 @@
 ## Excel Add-In | Componente Aggiuntivo Excel
 
 EN: `src/MaterialLibrary.Excel` is an [Excel-DNA](https://excel-dna.net/) add-in (`ExcelDna.AddIn` 1.9.0,
-`net8.0-windows`) that exposes material search and property lookups as native Excel worksheet
+`net10.0-windows`) that exposes material search and property lookups as native Excel worksheet
 functions. It is a thin, stateful wrapper around the pure `MaterialLibrary` API: all mutable state
 (the loaded materials) lives in one cache module in this project, never in the core library.
 
 IT: `src/MaterialLibrary.Excel` e un componente aggiuntivo [Excel-DNA](https://excel-dna.net/)
-(`ExcelDna.AddIn` 1.9.0, `net8.0-windows`) che espone la ricerca materiali e le proprieta come
+(`ExcelDna.AddIn` 1.9.0, `net10.0-windows`) che espone la ricerca materiali e le proprieta come
 funzioni native di Excel. E un wrapper sottile e stateful sull'API pura di `MaterialLibrary`: tutto
 lo stato mutabile (i materiali caricati) vive in un unico modulo cache in questo progetto, mai nella
 libreria principale.
@@ -20,8 +20,9 @@ dotnet build src/MaterialLibrary.Excel/MaterialLibrary.Excel.fsproj -c Release
 ```
 
 This produces `MaterialLibrary.Excel-AddIn-packed.xll` (32-bit) and `MaterialLibrary.Excel-AddIn64-packed.xll`
-(64-bit) under `src/MaterialLibrary.Excel/bin/Release/net8.0-windows/publish/`, each a self-contained
-package including the managed dependencies and the native SQLite provider. In Excel: File > Options >
+(64-bit) under `src/MaterialLibrary.Excel/bin/Release/net10.0-windows/publish/`, each a packed
+package including the managed dependencies and the native SQLite provider. Install the .NET 10 runtime
+matching Excel's bitness separately; it is not bundled in the XLL. In Excel: File > Options >
 Add-ins > Manage: Excel Add-ins > Go... > Browse..., then pick the `.xll` matching your Excel bitness
 (File > Account > About Excel shows 32-bit/64-bit).
 
@@ -74,4 +75,3 @@ IT: Non ancora verificato automaticamente: il passo di packaging sopra riesce e 
 validi, ma questo ambiente non puo aprire Excel, quindi la registrazione effettiva delle funzioni e il
 comportamento in Excel non sono stati testati interattivamente. Verificare caricando il componente
 aggiuntivo e richiamando alcune funzioni prima di farvi affidamento.
-

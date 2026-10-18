@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
     <AssemblyName>MaterialLibrary.CrudApp</AssemblyName>
@@ -38,8 +38,9 @@
     F# projects use so no assembly binding redirect is needed.
   -->
   <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="10.1.301" />
+    <PackageReference Include="FSharp.Core" Version="11.0.100" />
+    <PackageReference Include="NumericInput.Core" Version="1.3.3" />
+    <PackageReference Include="NumericInput.WPF" Version="1.3.3" />
   </ItemGroup>
 
 </Project>
-

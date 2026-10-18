@@ -5,7 +5,6 @@
 - The repository test fixture `tests/Fixtures/asme_materials.working.db` is a read-only copy of the
   supplied working database. Tests must copy it to a temporary path before any mutation; never edit
   the fixture in place.
-
 - Opening `reference.db` creates `reference.working.db`; the selected reference file is never written.
 - Modified working databases are persisted/exported only through **Save Working Copy As...**.
 - Automatic backups are created beside the working database before destructive SQL/schema operations.

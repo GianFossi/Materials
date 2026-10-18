@@ -18,6 +18,22 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 
 ## History
 
+- Date: 2026-10-18
+- Area: WPF application dependencies
+- Change: Added NumericInput.Core and NumericInput.WPF package references, both pinned to 1.3.3, to MaterialLibrary.CrudApp only.
+- Why: Make the requested numeric-input dependencies available to the desktop application.
+- Impact: Dependency-only change; existing UI controls and numeric-input behavior are unchanged.
+- Validation: Restore resolved both packages to 1.3.3 and the Release build succeeded. Desktop suite: 44/45 passed; SuppliedFixtureOpensThroughDatabaseWorkflow failed with an empty table collection in the full suite but passed in isolation. Existing nullability warnings remain.
+- Files: src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj, docs/requirements.md, AI_HISTORY.md
+
+- Date: 2026-10-18
+- Area: .NET runtime and NuGet dependencies
+- Change: Migrated all seven projects to net10.0/net10.0-windows, selected the .NET 10 SDK, and updated direct NuGet dependencies to the latest stable versions returned by NuGet. Removed the redundant System.Text.Json package in favor of the .NET 10 shared framework. Updated VS Code build/debug paths and runtime requirements; ExcelDna.AddIn remains at the latest stable 1.9.0.
+- Why: Align the complete repository with .NET 10 and current stable dependency revisions.
+- Impact: Consumers now require .NET 10; test projects retain xUnit v2 and VSTest. Excel users require the matching .NET 10 runtime.
+- Validation: SDK 10.0.201; Release builds of Excel (x86/x64 packed XLLs) and examples succeeded; all 51 core/CRUD tests and 45 WPF tests passed. Compiler nullability warnings remain visible; no warnings were suppressed. Direct dependencies are current; transitive dependencies remain at the versions selected by their upstream packages.
+- Files: global.json, src/*/*proj, tests/*/*proj, .vscode/launch.json, .vscode/launch-advanced.json, .vscode/omnisharp.json, .vscode/tasks.json, docs/requirements.md, docs/desktop-app.md, docs/excel-addin.md, AI_HISTORY.md
+
 - Date: 2026-08-03
 - Area: CRUD app size-range validation UX
 - Change: Added inline header validation for size-ranged Sy/Su/allowable columns: invalid Min/Max numbers and Min >= Max now show immediate red warnings and header highlight.

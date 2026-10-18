@@ -2,7 +2,7 @@
 
 ## Desktop CRUD App | Applicazione Desktop CRUD
 
-EN: `src/MaterialLibrary.CrudApp` is a Windows-only WPF desktop application (`net8.0-windows`) that wraps
+EN: `src/MaterialLibrary.CrudApp` is a Windows-only WPF desktop application (`net10.0-windows`) that wraps
 `src/MaterialLibrary.Crud`'s `MaterialCrudRepository` in a UI. It is written in **C# with XAML and MVVM**,
 because WPF's data binding, commands, and code-behind model are designed around C# and around mutable,
 change-notifying view models that F# records cannot provide. It supports:
@@ -25,7 +25,7 @@ change-notifying view models that F# records cannot provide. It supports:
 - Importing a staged XML data file into the selected material ("Import XML data file...").
 - A **database manager** ("Database...") over an ASME `ASME_Materials.db`: see below.
 
-IT: `src/MaterialLibrary.CrudApp` e un'applicazione desktop WPF solo Windows (`net8.0-windows`) che
+IT: `src/MaterialLibrary.CrudApp` e un'applicazione desktop WPF solo Windows (`net10.0-windows`) che
 espone `MaterialCrudRepository` di `src/MaterialLibrary.Crud` tramite un'interfaccia utente. E scritta
 in **C# con XAML e MVVM**, perche il data binding, i comandi e il modello code-behind di WPF sono
 progettati attorno a C# e a view model mutabili con notifica di modifica, che i record F# non possono
