@@ -46,7 +46,8 @@ public sealed class AllowableStressTableEditorViewModel : SizeRangedTableEditorV
             if (_source.IsDivision1AllowableStress)     return "Allowable — Div. 1 Normal";
             if (_source.IsDivision1HighAllowableStress) return "Allowable — Div. 1 High";
             if (_source.IsDivision2AllowableStress)     return "Allowable — Div. 2";
-            if (_source.IsBoltingAllowableStress)       return "Allowable — Bolting";
+            if (_source.IsBoltingAllowableStress)       return "Allowable — Sb1 (Table 3)";
+            if (_source.IsBoltingDivision2AllowableStress) return "Allowable — Sb2 (Table 4)";
             return "Allowable Stress";
         }
     }

@@ -13,8 +13,9 @@ open ROP
 /// </summary>
 module MaterialSerialization =
 
+    /// <summary>Schema 17 distinguishes Sb2/Table 4; versions 15 and 16 remain readable.</summary>
     [<Literal>]
-    let CurrentSchemaVersion = 16
+    let CurrentSchemaVersion = 17
 
     /// <summary>Oldest schema version this build can still read.</summary>
     /// <remarks>
@@ -74,6 +75,7 @@ module MaterialSerialization =
             | TableSy -> 4
             | TableSu -> 5
             | TableSBolting -> 6
+            | TableSBolting2 -> 7
           Code = reference.Code }
 
     let private asmeNoteReferenceFromJson
@@ -89,6 +91,7 @@ module MaterialSerialization =
                 | 4 -> Ok TableSy
                 | 5 -> Ok TableSu
                 | 6 -> Ok TableSBolting
+                | 7 -> Ok TableSBolting2
                 | value -> Error(MaterialError.InvalidOperation $"Unknown ASME note table: {value}")
 
             if String.IsNullOrWhiteSpace reference.Code then
@@ -219,6 +222,7 @@ module MaterialSerialization =
                     | Division1AllowableStress -> 0
                     | Division2AllowableStress -> 1
                     | BoltingAllowableStress -> 2
+                    | BoltingDivision2AllowableStress -> 4
                     | Division1HighAllowableStress -> 3
                   Case =
                     match dataset.Case with
@@ -324,6 +328,7 @@ module MaterialSerialization =
                             | 1 -> Ok Division2AllowableStress
                             | 2 -> Ok BoltingAllowableStress
                             | 3 -> Ok Division1HighAllowableStress
+                            | 4 -> Ok BoltingDivision2AllowableStress
                             | value ->
                                 Error(MaterialError.InvalidOperation $"Unknown allowable-stress source: {value}")
 
@@ -518,7 +523,8 @@ module MaterialSerialization =
                         | Division1AllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
                         | Division1HighAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
                         | Division2AllowableStress -> [ AsmeSectionVIII2 ]
-                        | BoltingAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1; AsmeSectionVIII2 ])
+                        | BoltingAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
+                        | BoltingDivision2AllowableStress -> [ AsmeSectionVIII2 ])
                     |> List.distinct }
         }
 

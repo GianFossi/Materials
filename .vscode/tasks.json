@@ -471,7 +471,7 @@
         "-AddInPath",
         "${workspaceFolder}/publish/excel/packed/MaterialLibrary.Excel-AddIn-packed.xll",
         "-DatabasePath",
-        "${workspaceFolder}/src/MaterialLibrary/data/ASME_Materials.db"
+        "${workspaceFolder}/src/MaterialLibrary/data/asme_materials_2025.db"
       ],
       "group": "test",
       "problemMatcher": [],
@@ -501,7 +501,7 @@
         "-AddInPath",
         "${workspaceFolder}/publish/excel/packed/MaterialLibrary.Excel-AddIn64-packed.xll",
         "-DatabasePath",
-        "${workspaceFolder}/src/MaterialLibrary/data/ASME_Materials.db"
+        "${workspaceFolder}/src/MaterialLibrary/data/asme_materials_2025.db"
       ],
       "group": "test",
       "problemMatcher": [],

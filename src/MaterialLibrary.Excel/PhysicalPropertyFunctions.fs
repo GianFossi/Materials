@@ -36,11 +36,14 @@ module PhysicalPropertyFunctions =
         ([<ExcelArgument(Description = "Interpolation mode: Linear (default), CubicSpline, Constant, Lagrange.")>] mode: obj)
         ([<ExcelArgument(Description = "Lagrange polynomial degree, used only when mode is Lagrange (default 3).")>] lagrangeDegree: obj)
         : obj =
-        let interpolationMode = Args.interpolationMode mode lagrangeDegree
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "density" temperatureC None None None
+        else
+            let interpolationMode = Args.interpolationMode mode lagrangeDegree
 
-        LibraryCache.current().GetDensity(materialId, temperatureC, interpolationMode)
-        |> Result.map (fun lookup -> lookup.Value)
-        |> ExcelHelpers.ofFloatResult
+            LibraryCache.current().GetDensity(materialId, temperatureC, interpolationMode)
+            |> Result.map (fun lookup -> lookup.Value)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Complete density vs temperature table (degC, kg/m^3).")>]
     let MatDensityTable
@@ -61,26 +64,32 @@ module PhysicalPropertyFunctions =
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         : obj =
-        ExcelHelpers.withMaterial materialId (fun material ->
-            let points =
-                material.PhysicalProperties.ElasticModulusTable
-                |> List.map (fun p -> p.Temperature, p.ElasticModulus)
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "E" temperatureC None None None
+        else
+            ExcelHelpers.withMaterial materialId (fun material ->
+                let points =
+                    material.PhysicalProperties.ElasticModulusTable
+                    |> List.map (fun p -> p.Temperature, p.ElasticModulus)
 
-            AdHocTable.interpolate "ElasticModulus" "Temperature" "degC" "ElasticModulus" "MPa" points temperatureC)
-        |> ExcelHelpers.ofFloatResult
+                AdHocTable.interpolate "ElasticModulus" "Temperature" "degC" "ElasticModulus" "MPa" points temperatureC)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Interpolated Poisson's ratio (dimensionless) at a given temperature (degC), from rows that specify it. Linear interpolation between tabulated values.")>]
     let MatPoissonRatio
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         : obj =
-        ExcelHelpers.withMaterial materialId (fun material ->
-            let points =
-                material.PhysicalProperties.ElasticModulusTable
-                |> List.choose (fun p -> p.PoissonRatio |> Option.map (fun nu -> p.Temperature, nu))
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "Nu" temperatureC None None None
+        else
+            ExcelHelpers.withMaterial materialId (fun material ->
+                let points =
+                    material.PhysicalProperties.ElasticModulusTable
+                    |> List.choose (fun p -> p.PoissonRatio |> Option.map (fun nu -> p.Temperature, nu))
 
-            AdHocTable.interpolate "PoissonRatio" "Temperature" "degC" "PoissonRatio" "" points temperatureC)
-        |> ExcelHelpers.ofFloatResult
+                AdHocTable.interpolate "PoissonRatio" "Temperature" "degC" "PoissonRatio" "" points temperatureC)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Shear modulus G = E / (2*(1+nu)) (MPa) at a given temperature (degC), from independently interpolated E and Poisson's ratio.")>]
     let MatShearModulus
@@ -126,11 +135,14 @@ module PhysicalPropertyFunctions =
         ([<ExcelArgument(Description = "Interpolation mode: Linear (default), CubicSpline, Constant, Lagrange.")>] mode: obj)
         ([<ExcelArgument(Description = "Lagrange polynomial degree, used only when mode is Lagrange (default 3).")>] lagrangeDegree: obj)
         : obj =
-        let interpolationMode = Args.interpolationMode mode lagrangeDegree
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "c" temperatureC None None None
+        else
+            let interpolationMode = Args.interpolationMode mode lagrangeDegree
 
-        LibraryCache.current().GetSpecificHeatFromTable(materialId, temperatureC, interpolationMode)
-        |> Result.map (fun lookup -> lookup.Value)
-        |> ExcelHelpers.ofFloatResult
+            LibraryCache.current().GetSpecificHeatFromTable(materialId, temperatureC, interpolationMode)
+            |> Result.map (fun lookup -> lookup.Value)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Complete specific-heat table (degC, J/(kg*K)), if the material has one.")>]
     let MatSpecificHeatTable
@@ -154,13 +166,16 @@ module PhysicalPropertyFunctions =
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         : obj =
-        ExcelHelpers.withMaterial materialId (fun material ->
-            let points =
-                material.PhysicalProperties.ThermalExpansionTable
-                |> List.map (fun p -> p.Temperature, p.ExpansionCoefficient)
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "Alpha" temperatureC None None None
+        else
+            ExcelHelpers.withMaterial materialId (fun material ->
+                let points =
+                    material.PhysicalProperties.ThermalExpansionTable
+                    |> List.map (fun p -> p.Temperature, p.ExpansionCoefficient)
 
-            AdHocTable.interpolate "ThermalExpansion" "Temperature" "degC" "ExpansionCoefficient" "1/degC" points temperatureC)
-        |> ExcelHelpers.ofFloatResult
+                AdHocTable.interpolate "ThermalExpansion" "Temperature" "degC" "ExpansionCoefficient" "1/degC" points temperatureC)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Reference temperature (degC) used by the mean thermal-expansion table.")>]
     let MatThermalExpansionReferenceTemperature
@@ -188,12 +203,15 @@ module PhysicalPropertyFunctions =
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         : obj =
-        ExcelHelpers.withMaterial materialId (fun material ->
-            match material.PhysicalProperties.ThermalConductivityTable with
-            | None -> Error(MaterialError.InvalidOperation "No thermal conductivity table defined")
-            | Some points ->
-                AdHocTable.interpolate "ThermalConductivity" "Temperature" "degC" "ThermalConductivity" "W/(m*K)" points temperatureC)
-        |> ExcelHelpers.ofFloatResult
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "k" temperatureC None None None
+        else
+            ExcelHelpers.withMaterial materialId (fun material ->
+                match material.PhysicalProperties.ThermalConductivityTable with
+                | None -> Error(MaterialError.InvalidOperation "No thermal conductivity table defined")
+                | Some points ->
+                    AdHocTable.interpolate "ThermalConductivity" "Temperature" "degC" "ThermalConductivity" "W/(m*K)" points temperatureC)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Physical", Description = "Complete thermal-conductivity table (degC, W/(m*K)), if the material has one.")>]
     let MatThermalConductivityTable

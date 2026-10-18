@@ -57,6 +57,8 @@
     <Compile Include="Database.Lookup\MaterialSearchCriteria.fs" />
     <Compile Include="Database.Lookup\MaterialFiltering.fs" />
     <Compile Include="Database.Lookup\AsmeMaterialFamilyClassification.fs" />
+    <Compile Include="Database.Lookup\Asme2025Data.fs" />
+    <Compile Include="Database.Lookup\Asme2025Repository.fs" />
     <Compile Include="Database.Lookup\AsmeMaterialRepository.fs" />
     <Compile Include="Models\StressStrainModels.fs" />
     <Compile Include="Models\ExternalPressureTableModels.fs" />
@@ -78,30 +80,30 @@
   <ItemGroup>
     <None Include="README-NUGET.md" Pack="true" PackagePath="\" />
     <None Include="MaterialLibrary.config.xml" Pack="true" PackagePath="\" />
-    <None Include="MaterialLibrary.config.xml" Pack="true" PackagePath="contentFiles\any\any\" PackageCopyToOutput="true" />
-    <None Include="data\ASME_Materials.db" Pack="true" PackagePath="contentFiles\any\any\data\" PackageCopyToOutput="true" />
-    <None Include="data\external-pressure-xml\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\external-pressure-xml\" PackageCopyToOutput="true" />
-    <None Include="data\physical-properties-xml\index.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\" PackageCopyToOutput="true" />
-    <None Include="data\physical-properties-xml\ThermalExpansion\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalExpansion\" PackageCopyToOutput="true" />
-    <None Include="data\physical-properties-xml\ThermalConductivity\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalConductivity\" PackageCopyToOutput="true" />
-    <None Include="data\physical-properties-xml\ThermalDiffusivity\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalDiffusivity\" PackageCopyToOutput="true" />
-    <None Include="data\physical-properties-xml\ElasticModulus\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ElasticModulus\" PackageCopyToOutput="true" />
-    <None Include="data\physical-properties-xml\Density\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\Density\" PackageCopyToOutput="true" />
-    <None Include="data\physical-properties-xml\PoissonRatio\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\PoissonRatio\" PackageCopyToOutput="true" />
+    <None Include="MaterialLibrary.config.xml" Pack="true" PackagePath="contentFiles\any\any\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\asme_materials_2025.db" Pack="true" PackagePath="contentFiles\any\any\data\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\external-pressure-xml\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\external-pressure-xml\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\physical-properties-xml\index.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\physical-properties-xml\ThermalExpansion\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalExpansion\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\physical-properties-xml\ThermalConductivity\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalConductivity\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\physical-properties-xml\ThermalDiffusivity\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ThermalDiffusivity\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\physical-properties-xml\ElasticModulus\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\ElasticModulus\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\physical-properties-xml\Density\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\Density\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="data\physical-properties-xml\PoissonRatio\*.xml" Pack="true" PackagePath="contentFiles\any\any\data\physical-properties-xml\PoissonRatio\" PackageCopyToOutput="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!--
     Guard for the packaged data files.
 
-    ASME_Materials.db is shipped inside the NuGet package as a content file. It is a binary that is
+    asme_materials_2025.db is shipped inside the NuGet package as a content file. It is a binary that is
     easy to leave untracked, and when it is absent `dotnet pack` still succeeds - it simply produces
     a package with no database in it, which only fails much later at the consumer. This target turns
     that silent hole into a build error, so a fresh clone or a CI agent cannot publish a broken
     package. It runs before pack rather than before build so ordinary local builds stay fast.
   -->
   <Target Name="VerifyPackagedDataFiles" BeforeTargets="GenerateNuspec">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)\data\ASME_Materials.db')"
-           Text="Packaged data file 'data\ASME_Materials.db' is missing. It is referenced with Pack=&quot;true&quot; and must be present (and committed to source control) before packing." />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\data\asme_materials_2025.db')"
+           Text="Packaged data file 'data\asme_materials_2025.db' is missing. It is referenced with Pack=&quot;true&quot; and must be present (and committed to source control) before packing." />
   </Target>
 
   <ItemGroup>

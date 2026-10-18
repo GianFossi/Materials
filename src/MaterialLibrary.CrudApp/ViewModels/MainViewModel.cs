@@ -46,6 +46,7 @@ public sealed class MainViewModel : ObservableObject
         SaveLibraryXmlCommand = new RelayCommand(SaveLibraryXml);
         ImportMaterialXmlCommand = new RelayCommand(ImportMaterialXml);
         ExportMaterialXmlCommand = new RelayCommand(ExportMaterialXml, HasSelection);
+        Open2025EditorCommand = new RelayCommand(Open2025Editor);
         ManageDatabaseCommand = new RelayCommand(ManageDatabase);
         DeleteMaterialCommand = new RelayCommand(DeleteMaterial, HasSelection);
         CompareMaterialsCommand = new RelayCommand(CompareMaterials, () => Materials.Count > 1);
@@ -120,6 +121,22 @@ public sealed class MainViewModel : ObservableObject
 
     /// <summary>Saves the selected material to an XML file.</summary>
     public RelayCommand ExportMaterialXmlCommand { get; }
+
+    /// <summary>Open the native ASME 2025 property editor on a shared user working copy.</summary>
+    public RelayCommand Open2025EditorCommand { get; }
+
+    private void Open2025Editor()
+    {
+        try
+        {
+            if (!Asme2025Crud.prepareWorkingCopy(Configuration.resolveAsmeDatabasePath(null)).TryUnwrap(out var path, out var error)) { StatusMessage = error; return; }
+            var editor = new Asme2025EditorWindow(new Asme2025EditorViewModel(path));
+            editor.Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.DataContext == this);
+            editor.ShowDialog();
+            StatusMessage = $"ASME 2025 working database: {path}";
+        }
+        catch (Exception ex) { StatusMessage = ex.Message; }
+    }
 
     /// <summary>Opens the database manager.</summary>
     public RelayCommand ManageDatabaseCommand { get; }

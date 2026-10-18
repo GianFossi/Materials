@@ -1,5 +1,7 @@
 # Excel Add-In
 
+Il database attivo è l’edizione 2025. Per la nuova schermata comune di modifica proprietà, i percorsi e le funzioni native, vedere [Editor ASME 2025](asme-2025-editor.md). Le sezioni sul database `Materials` descrivono il percorso legacy, ancora disponibile per accesso esplicito al 2023 archiviato.
+
 ## Excel Add-In | Componente Aggiuntivo Excel
 
 EN: `src/MaterialLibrary.Excel` is an [Excel-DNA](https://excel-dna.net/) add-in (`ExcelDna.AddIn` 1.9.0,
@@ -34,14 +36,14 @@ test-excel-demo: x64
 ```
 
 Each task publishes the add-in, opens `tests/MaterialLibrary.Examples/Demo.xlsx`, registers the matching
-packed `.xll`, rewrites the workbook's database formula to the repository `ASME_Materials.db` on a
+packed `.xll`, rewrites the workbook's database formula to the repository `data/asme_materials_2025.db` on a
 temporary copy, recalculates, and fails if any formula cell returns an Excel error.
 
 Data sources are resolved automatically on load, via `Configuration.resolveAsmeDatabasePath` in the
 core library:
 
 - The ASME SQLite database, from `MaterialLibrary.config.xml` next to the add-in if present, otherwise
-  `ASME_Material_DB.sqlite` next to the add-in. This supplies identity, basic properties, and
+  `data/asme_materials_2025.db` next to the add-in. This supplies identity, basic properties, and
   allowable-stress datasets.
 - Optionally, a complete material-library JSON file (produced by `MatSaveLibrary` or
   `MaterialLibrarySerialization.saveToFile`) loaded explicitly via `MatOpenJsonLibrary`, supplying the

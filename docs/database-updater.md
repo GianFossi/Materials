@@ -183,4 +183,4 @@ L'importazione verifica edizione e unità, sequenza delle parti denominate `Expo
 
 ## Compatibilità
 
-Il nuovo database usa lo schema normalizzato richiesto e le tabelle di audit del tool. La libreria e l'app desktop esistenti continuano a usare il precedente schema `Materials`: l'integrazione del database 2025 in tali componenti richiederà un adeguamento separato. Il tool non trasferisce o ricostruisce le altre proprietà del vecchio database.
+Il nuovo database usa lo schema normalizzato richiesto e le tabelle di audit del tool. La libreria, la CRUD ed Excel leggono lo schema 2025 nativamente; vedere [editor ASME 2025](asme-2025-editor.md). Lo schema precedente `Materials` rimane disponibile solo aprendo esplicitamente il database archiviato. Il tool non trasferisce o ricostruisce le altre proprietà del vecchio database.

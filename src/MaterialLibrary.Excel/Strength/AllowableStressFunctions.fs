@@ -19,7 +19,8 @@ module AllowableStressFunctions =
         match text |> Option.map (fun s -> s.Trim().ToUpperInvariant()) with
         | Some("S1H" | "DIVISION1HIGH" | "HIGH") -> Division1HighAllowableStress
         | Some("S2" | "DIVISION2") -> Division2AllowableStress
-        | Some("BOLTING" | "S3") -> BoltingAllowableStress
+        | Some("BOLTING" | "S3" | "SB1") -> BoltingAllowableStress
+        | Some "SB2" -> BoltingDivision2AllowableStress
         | _ -> Division1AllowableStress
 
     let private containsSize (size: float) (dataset: AllowableStressDataset) : bool =
@@ -27,17 +28,8 @@ module AllowableStressFunctions =
         && (dataset.SizeMaximum |> Option.forall (fun hi -> size <= hi))
 
     let private effectiveAllowableStressSource (material: Material) (source: AllowableStressSource) =
-        let isBoltingOnlyMaterial =
-            material.StrengthProperties.AllowableStressDatasets
-            |> List.exists (fun d -> d.Source = BoltingAllowableStress)
-            && material.StrengthProperties.AllowableStressDatasets
-               |> List.forall (fun d -> d.Source = BoltingAllowableStress)
-
-        match source with
-        | Division1AllowableStress
-        | Division1HighAllowableStress
-        | Division2AllowableStress when isBoltingOnlyMaterial -> BoltingAllowableStress
-        | _ -> source
+        // Families are not interchangeable: absence of S1/S2 must not silently select bolting data.
+        source
 
     let private allowableStressDatasetsForSource (material: Material) (source: AllowableStressSource) =
         let effectiveSource = effectiveAllowableStressSource material source
@@ -57,9 +49,9 @@ module AllowableStressFunctions =
         | candidates ->
             match sizeMm with
             | Some size ->
-                match candidates |> List.tryFind (containsSize size) with
-                | Some dataset -> Ok dataset
-                | None ->
+                match candidates |> List.filter (containsSize size) with
+                | [dataset] -> Ok dataset
+                | _ ->
                     Error(
                         MaterialError.InvalidOperation(
                             sprintf "No %A allowable-stress dataset covers size %.3f mm" effectiveSource size
@@ -116,23 +108,26 @@ module AllowableStressFunctions =
 
         ExcelHelpers.gridOfRows ("Temperature" :: (orderedDatasets |> List.map allowableStressSourceLabel)) rows
 
-    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated allowable stress (MPa) at a given temperature (degC) and size (mm). source: \"S1\" (default), \"S1H\"/High, \"S2\", \"Bolting\"/S3. Bolting-only materials use S3 from ASME_Materials.db for S1/S1H/S2 requests.")>]
+    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Interpolated allowable stress (MPa) at a given temperature (degC) and size (mm). source: \"S1\" (default), \"S1H\"/High, \"S2\", \"Bolting\"/S3. Sb1 (Table 3) and Sb2 (Table 4) are distinct; no family substitution.")>]
     let MatAllowableStress
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         ([<ExcelArgument(Description = "Nominal size/thickness, mm. Required whenever more than one size range exists for the chosen source.")>] sizeMm: obj)
-        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H/High, S2, Bolting/S3.")>] source: obj)
+        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H/High, S2, Sb1/Bolting/S3, Sb2.")>] source: obj)
         : obj =
-        ExcelHelpers.withMaterial materialId (fun material ->
-            selectAllowableStressDataset material (parseAllowableStressSource (Args.optionalTextOption source)) (Args.optionalNumberOption sizeMm)
-            |> Result.bind (fun dataset -> PropertyTable.lookup1D temperatureC dataset.Table)
-            |> Result.map (fun result -> result.Value))
-        |> ExcelHelpers.ofFloatResult
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId (Args.optionalTextOption source |> Option.defaultValue "S1" |> fun s -> match s.Trim().ToUpperInvariant() with "BOLTING" | "S3" -> "Sb1" | other -> other) temperatureC (Args.optionalNumberOption sizeMm) None None
+        else
+            ExcelHelpers.withMaterial materialId (fun material ->
+                selectAllowableStressDataset material (parseAllowableStressSource (Args.optionalTextOption source)) (Args.optionalNumberOption sizeMm)
+                |> Result.bind (fun dataset -> PropertyTable.lookup1D temperatureC dataset.Table)
+                |> Result.map (fun result -> result.Value))
+            |> ExcelHelpers.ofFloatResult
 
-    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete allowable-stress table for one source. Pass sizeMm to select one size range. Bolting-only materials use S3 from ASME_Materials.db for S1/S1H/S2 requests.")>]
+    [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete allowable-stress table for one source. Pass sizeMm to select one size range. Sb1 (Table 3) and Sb2 (Table 4) are distinct; no family substitution.")>]
     let MatAllowableStressTable
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
-        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H/High, S2, Bolting/S3.")>] source: obj)
+        ([<ExcelArgument(Description = "Allowable-stress source: S1 (default), S1H/High, S2, Sb1/Bolting/S3, Sb2.")>] source: obj)
         ([<ExcelArgument(Description = "Optional nominal size/thickness, mm, to show only its size range.")>] sizeMm: obj)
         : obj[,] =
         let result =

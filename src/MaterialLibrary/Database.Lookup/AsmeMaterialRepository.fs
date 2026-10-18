@@ -112,7 +112,7 @@ module AsmeMaterialRepository =
                 Family = AsmeMaterialFamilyClassification.classify specification grade classCondition composition uns
                 Notes = optionalText reader "Notes" }
 
-    let private loadCandidates (connection: SqliteConnection) =
+    let private loadLegacyCandidates (connection: SqliteConnection) =
         use command = connection.CreateCommand()
         command.CommandText <- "SELECT * FROM Materials ORDER BY ID"
         use reader = command.ExecuteReader()
@@ -123,12 +123,18 @@ module AsmeMaterialRepository =
 
         materials |> Seq.toList
 
+    /// <summary>Read normalized 2025 identities or explicitly opened archived reference tables.</summary>
+    let private loadCandidates (connection: SqliteConnection) =
+        if Asme2025Data.isNormalized connection then Asme2025Data.materials connection |> List.map (Asme2025Repository.hydrate connection)
+        else loadLegacyCandidates connection
+
     let private sourceDefinition =
         function
         | Division1AllowableStress -> "AllowableStress1Table", "MaximumTemperature"
         | Division1HighAllowableStress -> "AllowableStress1HTable", "MaximumTemperature"
         | Division2AllowableStress -> "AllowableStress2Table", "MaximumTemperature"
         | BoltingAllowableStress -> "AllowableStress3Table", "MaxTemp_VIII1"
+        | BoltingDivision2AllowableStress -> "AllowableStress4Table", "MaxTemp_VIII2"
 
     let private tableExists (connection: SqliteConnection) tableName =
         use command = connection.CreateCommand()
@@ -692,7 +698,7 @@ module AsmeMaterialRepository =
             else
                 None
 
-    let private hydrate (connection: SqliteConnection) (material: Material) =
+    let private hydrateLegacy (connection: SqliteConnection) (material: Material) =
         let databaseId = Int64.Parse(material.Id)
 
         let sources =
@@ -723,7 +729,8 @@ module AsmeMaterialRepository =
                             | Division1AllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
                             | Division1HighAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
                             | Division2AllowableStress -> [ AsmeSectionVIII2 ]
-                            | BoltingAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1; AsmeSectionVIII2 ])
+                            | BoltingAllowableStress -> [ AsmeSectionI; AsmeSectionVIII1 ]
+                            | BoltingDivision2AllowableStress -> [ AsmeSectionVIII2 ])
                         |> List.distinct
 
                     { material with
@@ -736,6 +743,10 @@ module AsmeMaterialRepository =
                                 SyTable = syTable
                                 SuTable = suTable
                                 AllowableStressDatasets = allowableDatasets |> List.sortBy allowableDatasetSortKey } })))
+
+    /// <summary>Native candidates are already hydrated; legacy candidates require the archived table reader.</summary>
+    let private hydrate connection material =
+        if Asme2025Data.isNormalized connection then Ok material else hydrateLegacy connection material
 
     let findMany databasePath criteria =
         if String.IsNullOrWhiteSpace databasePath || not (File.Exists databasePath) then
@@ -779,16 +790,18 @@ module AsmeMaterialRepository =
                 // The reader is closed before hydrate runs, because hydrate issues further
                 // commands on the same connection and SQLite will not allow that while it is open.
                 let candidate =
-                    use command = connection.CreateCommand()
-                    command.CommandText <- "SELECT * FROM Materials WHERE ID = $id"
-                    command.Parameters.AddWithValue("$id", databaseId) |> ignore
-                    use reader = command.ExecuteReader()
-
-                    if reader.Read() then
-                        Some(materialFromReader reader)
+                    if Asme2025Data.isNormalized connection then
+                        Asme2025Data.materials connection |> List.tryFind (fun m -> m.Id=databaseId) |> Option.map (Asme2025Repository.hydrate connection)
                     else
-                        None
+                        use command = connection.CreateCommand()
+                        command.CommandText <- "SELECT * FROM Materials WHERE ID = $id"
+                        command.Parameters.AddWithValue("$id", databaseId) |> ignore
+                        use reader = command.ExecuteReader()
 
+                        if reader.Read() then
+                            Some(materialFromReader reader)
+                        else
+                            None
                 match candidate with
                 | Some material -> hydrate connection material
                 | None -> Error(MaterialError.NotFound $"Material not found in the ASME reference tables: {databaseId}")

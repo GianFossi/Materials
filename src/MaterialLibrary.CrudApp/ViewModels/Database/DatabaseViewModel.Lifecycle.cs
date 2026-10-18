@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Media;
 using MaterialLibrary.Crud;
 using MaterialLibrary.Domain;
+using MaterialLibrary.Domain.Database.Lookup;
 using MaterialLibraryCrudApp.Interop;
 using MaterialLibraryCrudApp.Services;
 using Microsoft.Data.Sqlite;
@@ -52,9 +53,16 @@ public sealed partial class DatabaseViewModel
     {
         var source = ResolveSourcePath(path);
         var working = BuildWorkingCopyPath(source);
+        using var schemaCheck = Asme2025Data.openRead(source);
+        var native2025 = Asme2025Data.isNormalized(schemaCheck);
+        if (native2025)
+        {
+            if (!Asme2025Crud.prepareWorkingCopy(source).TryUnwrap(out var prepared, out var error)) { StatusMessage = error; return; }
+            working = prepared;
+        }
 
         var workingPath = working;
-        if (!string.Equals(source, working, StringComparison.OrdinalIgnoreCase))
+        if (!native2025 && !string.Equals(source, working, StringComparison.OrdinalIgnoreCase))
         {
             var copyResult = await Task.Run(() => MaterialDatabaseCrud.createWorkingCopy(source, working), cancellationToken);
             if (!copyResult.TryUnwrap(out workingPath, out var copyError))
@@ -95,11 +103,12 @@ public sealed partial class DatabaseViewModel
     /// <param name="requestedPath">Path picked in the open-file dialog.</param>
     /// <returns>
     /// The best source path: when a <c>.working.db</c> file is picked and its sibling source exists,
-    /// the sibling source is returned to avoid chaining into <c>.working.working.db</c> files.
+    /// an existing explicit working copy is retained so reopening never discards its edits.
     /// </returns>
     private static string ResolveSourcePath(string requestedPath)
     {
         var fullPath = Path.GetFullPath(requestedPath);
+        if (fullPath.EndsWith(".working.db", StringComparison.OrdinalIgnoreCase)) return fullPath;
         var directory = Path.GetDirectoryName(fullPath) ?? Path.GetTempPath();
         var extension = Path.GetExtension(fullPath);
         var stem = Path.GetFileNameWithoutExtension(fullPath);
@@ -122,6 +131,7 @@ public sealed partial class DatabaseViewModel
     private static string BuildWorkingCopyPath(string sourcePath)
     {
         var fullPath = Path.GetFullPath(sourcePath);
+        if (fullPath.EndsWith(".working.db", StringComparison.OrdinalIgnoreCase)) return fullPath;
         var directory = Path.GetDirectoryName(fullPath) ?? Path.GetTempPath();
         var extension = Path.GetExtension(fullPath);
         var stem = Path.GetFileNameWithoutExtension(fullPath);

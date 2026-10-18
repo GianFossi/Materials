@@ -20,13 +20,13 @@ module ConfigurationFunctions =
     // ── Read: default paths and accessibility ─────────────────────────────
 
     [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the configuration file path this add-in uses by default (next to the add-in's runtime folder).")>]
-    let MatConfigPath () : string = Configuration.resolveConfigPath None
+    let MatConfigPath () : string = Configuration.resolveConfigPath (Some(AddInPaths.runtimeDirectory ()))
 
-    [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the default ASME database path: from the configuration file if present, otherwise a sibling ASME_Material_DB.sqlite.")>]
-    let MatDefaultAsmeDatabasePath () : string = Configuration.resolveAsmeDatabasePath None
+    [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the default ASME database path: from the configuration file if present, otherwise data/asme_materials_2025.db next to the add-in.")>]
+    let MatDefaultAsmeDatabasePath () : string = LibraryCache.defaultDatabasePath ()
 
     [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the default EN database path: from the configuration file if present, otherwise a sibling en_materials.db.")>]
-    let MatDefaultEnDatabasePath () : string = Configuration.resolveEnDatabasePath None
+    let MatDefaultEnDatabasePath () : string = Configuration.resolveEnDatabasePath (Some(AddInPaths.runtimeDirectory ()))
 
     [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Checks that a file exists and can actually be opened for reading. Returns \"OK\" or an explanatory error.")>]
     let MatCheckFileAccessible
@@ -50,7 +50,7 @@ module ConfigurationFunctions =
     let MatConfigTable
         ([<ExcelArgument(Description = "Configuration file path; blank uses the default path next to the add-in.")>] path: obj)
         : obj[,] =
-        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath None) path
+        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath (Some(AddInPaths.runtimeDirectory ()))) path
 
         match Configuration.loadOrCreateDefault resolvedPath with
         | Error message -> ExcelHelpers.errorGrid (sprintf "#VALUE! %s" message)
@@ -103,7 +103,7 @@ module ConfigurationFunctions =
         ([<ExcelArgument(Description = "ASME database file name; blank leaves it unchanged.")>] asmeFileName: obj)
         ([<ExcelArgument(Description = "EN database file name; blank leaves it unchanged.")>] enFileName: obj)
         : string =
-        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath None) path
+        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath (Some(AddInPaths.runtimeDirectory ()))) path
 
         let update (cfg: LibraryConfiguration) =
             let withFolder =
@@ -131,7 +131,7 @@ module ConfigurationFunctions =
         ([<ExcelArgument(Description = "Strict validation (TRUE/FALSE); blank leaves it unchanged.")>] strictValidation: obj)
         ([<ExcelArgument(Description = "Default material ID; blank leaves it unchanged.")>] defaultMaterialId: obj)
         : string =
-        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath None) path
+        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath (Some(AddInPaths.runtimeDirectory ()))) path
 
         let update (cfg: LibraryConfiguration) =
             let current = cfg.General
@@ -160,7 +160,7 @@ module ConfigurationFunctions =
         ([<ExcelArgument(Description = "Lagrange polynomial degree, used only when mode is LagrangePolynomial; blank leaves it unchanged.")>] lagrangeDegree: obj)
         ([<ExcelArgument(Description = "Flat-extrapolate outside the tabulated range (TRUE/FALSE); blank leaves it unchanged.")>] extrapolateFlat: obj)
         : string =
-        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath None) path
+        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath (Some(AddInPaths.runtimeDirectory ()))) path
 
         let currentSection (cfg: LibraryConfiguration) : InterpolationSectionOptions option =
             match section.Trim().ToLowerInvariant() with
@@ -211,7 +211,7 @@ module ConfigurationFunctions =
         ([<ExcelArgument(Description = "Default Kachanov-Omega integration time steps; blank keeps the current value.")>] kachanovTimeSteps: obj)
         ([<ExcelArgument(Description = "Default Kachanov-Omega total simulation time, hours; blank keeps the current value.")>] kachanovTotalHours: obj)
         : string =
-        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath None) path
+        let resolvedPath = Args.optionalText (Configuration.resolveConfigPath (Some(AddInPaths.runtimeDirectory ()))) path
 
         let update (cfg: LibraryConfiguration) =
             let current = cfg.Creep

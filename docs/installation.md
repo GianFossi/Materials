@@ -30,7 +30,7 @@ Generated package:
 
 - `publish/nuget/MaterialLibrary.1.0.2.nupkg`
 
-The `MaterialLibrary` package includes `ASME_Materials.db` as `contentFiles/any/any/data/ASME_Materials.db`.
+The `MaterialLibrary` package includes `asme_materials_2025.db` as `contentFiles/any/any/data/asme_materials_2025.db`.
 
 Publish to NuGet:
 

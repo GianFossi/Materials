@@ -5,6 +5,19 @@ open MaterialLibrary
 open MaterialLibrary.Domain
 open MaterialLibrary.Domain.Database.Lookup
 
+/// <summary>Resolve content beside the XLL, including Excel-DNA's generated packed subdirectory.</summary>
+module AddInPaths =
+    /// <summary>Directory containing the 2025 reference and configuration; never Excel.exe's installation directory.</summary>
+    let runtimeDirectory () =
+        let directory =
+            try Path.GetDirectoryName(ExcelDna.Integration.ExcelDnaUtil.XllPath)
+            with _ -> System.AppContext.BaseDirectory
+        let directory = if System.String.IsNullOrWhiteSpace directory then System.AppContext.BaseDirectory else directory
+        let parent = Directory.GetParent directory
+        if Path.GetFileName(directory).Equals("packed",System.StringComparison.OrdinalIgnoreCase) && not (isNull parent)
+           && File.Exists(Path.Combine(parent.FullName,"data","asme_materials_2025.db")) then parent.FullName
+        else directory
+
 /// <summary>
 /// Process-wide, thread-safe cache holding the materials currently available to Excel worksheet
 /// functions. This is the only place in the Excel add-in allowed to hold mutable state; every
@@ -51,7 +64,7 @@ module LibraryCache =
         MaterialLibrary(s.DatabaseMaterials @ s.JsonMaterials)
 
     /// <summary>Resolves the default ASME database path via <see cref="Configuration.resolveAsmeDatabasePath"/>.</summary>
-    let defaultDatabasePath () : string = Configuration.resolveAsmeDatabasePath None
+    let defaultDatabasePath () : string = Configuration.resolveAsmeDatabasePath (Some(AddInPaths.runtimeDirectory ()))
 
     /// <summary>Loads (or reloads) all materials from the ASME SQLite database at <paramref name="path"/>.</summary>
     /// <param name="path">Database file path; when <c>None</c>, resolves via <see cref="defaultDatabasePath"/>.</param>
@@ -139,3 +152,17 @@ module LibraryCache =
                 | None -> "JSON library: not loaded"
 
             sprintf "%s | %s | Combined: %d materials" dbPart jsonPart state.Combined.Count)
+
+    /// <summary>Active database for native property queries; defaults to the packaged 2025 edition.</summary>
+    let databasePath () = lock gate (fun () -> state.DatabasePath |> Option.defaultWith defaultDatabasePath)
+
+    /// <summary>Whether a worksheet material comes from native 2025 data rather than a JSON override.</summary>
+    let useNativeFor materialId =
+        ensureLoaded ()
+        let overridden = lock gate (fun () -> state.JsonMaterials |> List.exists (fun m -> m.Id=materialId))
+        if overridden then false
+        else
+            try
+                use db = Asme2025Data.openRead (databasePath ())
+                Asme2025Data.isNormalized db
+            with _ -> false

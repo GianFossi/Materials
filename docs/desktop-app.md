@@ -1,5 +1,7 @@
 # Desktop App
 
+Il database attivo è l’edizione 2025. Per la nuova schermata comune di modifica proprietà, i percorsi e le funzioni native, vedere [Editor ASME 2025](asme-2025-editor.md). Le sezioni sul database `Materials` descrivono il percorso legacy, ancora disponibile per accesso esplicito al 2023 archiviato.
+
 ## Desktop CRUD App | Applicazione Desktop CRUD
 
 EN: `src/MaterialLibrary.CrudApp` is a Windows-only WPF desktop application (`net10.0-windows`) that wraps

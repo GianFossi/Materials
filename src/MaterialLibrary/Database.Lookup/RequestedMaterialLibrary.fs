@@ -30,7 +30,8 @@ module RequestedMaterialLibrary =
                         | StandardAllowableStress, Division1AllowableStress -> true
                         | HighAllowableStress, Division1HighAllowableStress -> true
                         | _, Division2AllowableStress
-                        | _, BoltingAllowableStress -> dataset.Case = StandardStrengthAllowableStress
+                        | _, BoltingAllowableStress
+                        | _, BoltingDivision2AllowableStress -> dataset.Case = StandardStrengthAllowableStress
                         | _ -> false)
 
                 { material with

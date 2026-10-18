@@ -32,3 +32,12 @@
 *.nupkg
 *.snupkg
 *.log
+
+# SQLite runtime sidecars and generated working copies
+*.db-shm
+*.db-wal
+*.db-journal
+/src/MaterialLibrary/data/*.working.db
+
+# WPF temporary compilation projects
+*_wpftmp.csproj

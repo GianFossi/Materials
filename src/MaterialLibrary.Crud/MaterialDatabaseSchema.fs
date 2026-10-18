@@ -3,6 +3,7 @@ namespace MaterialLibrary.Crud
 open System
 open Microsoft.Data.Sqlite
 open MaterialLibrary.Domain
+open MaterialLibrary.Domain.Database.Lookup
 
 /// <summary>
 /// Definition and provisioning of the application-owned tables added to an ASME material database.
@@ -379,7 +380,12 @@ module MaterialDatabaseSchema =
                   yield table ]
 
     let ensureSchema (connection: SqliteConnection) : Result<string list, MaterialError> =
-        if not (tableExists connection "Materials") then
+        if Asme2025Data.isNormalized connection then
+            try
+                Asme2025Crud.ensureSchema connection
+                Ok []
+            with ex -> Error(MaterialError.InvalidOperation ex.Message)
+        elif not (tableExists connection "Materials") then
             Error(
                 MaterialError.InvalidOperation
                     "Database does not contain a 'Materials' table; it is not an ASME material database."

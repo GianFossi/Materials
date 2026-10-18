@@ -176,8 +176,8 @@ module Configuration =
             { DataFolder = "./data"
               ExportFolder = "./export"
               AutoCreateFolders = true
-              MaterialDatabaseFolder = @"C:\Users\ganfossi\Documents\DataBase\data"
-              AsmeMaterialDatabaseFile = "ASME_Materials.db"
+              MaterialDatabaseFolder = Path.Combine(AppContext.BaseDirectory, "data")
+              AsmeMaterialDatabaseFile = "asme_materials_2025.db"
               EnMaterialDatabaseFile = "en_materials.db" } }
 
     /// <summary>
@@ -297,14 +297,16 @@ module Configuration =
 
         if File.Exists configPath then
             match load configPath with
-            | Ok cfg -> getPath cfg
+            | Ok cfg ->
+                let configured = getPath cfg
+                if Path.IsPathRooted configured then configured else Path.GetFullPath(Path.Combine(baseDir, configured))
             | Error _ -> Path.Combine(baseDir, fallbackFileName)
         else
             Path.Combine(baseDir, fallbackFileName)
 
-    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>ASME_Materials.db</c>).</summary>
+    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>asme_materials_2025.db</c>).</summary>
     let resolveAsmeDatabasePath (baseDirectory: string option) : string =
-        resolveDatabasePath baseDirectory getAsmeDatabasePath "ASME_Materials.db"
+        resolveDatabasePath baseDirectory getAsmeDatabasePath (Path.Combine("data", "asme_materials_2025.db"))
 
     /// <summary>Resolves the default EN database path (configuration file if present, else a sibling <c>en_materials.db</c>).</summary>
     let resolveEnDatabasePath (baseDirectory: string option) : string =

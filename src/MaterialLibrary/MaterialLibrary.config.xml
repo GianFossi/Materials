@@ -54,8 +54,8 @@
     <DataFolder>./data</DataFolder>
     <ExportFolder>./export</ExportFolder>
     <AutoCreateFolders>true</AutoCreateFolders>
-    <MaterialDatabaseFolder>C:\Users\ganfossi\Documents\DataBase\data</MaterialDatabaseFolder>
-    <AsmeMaterialDatabaseFile>ASME_Materials.db</AsmeMaterialDatabaseFile>
+    <MaterialDatabaseFolder>./data</MaterialDatabaseFolder>
+    <AsmeMaterialDatabaseFile>asme_materials_2025.db</AsmeMaterialDatabaseFile>
     <EnMaterialDatabaseFile>en_materials.db</EnMaterialDatabaseFile>
   </Io>
 </LibraryConfiguration>

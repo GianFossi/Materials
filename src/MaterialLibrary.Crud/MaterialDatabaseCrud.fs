@@ -54,6 +54,15 @@ module MaterialDatabaseCrud =
     [<Literal>]
     let DocumentFormat = "json"
 
+    /// <summary>Detect a native database without changing error behavior for missing or invalid paths.</summary>
+    let private normalizedPath path =
+        try
+            if not (File.Exists path) then false
+            else
+                use db = Asme2025Data.openRead path
+                Asme2025Data.isNormalized db
+        with _ -> false
+
     // ── Connection helpers ────────────────────────────────────────────────────
 
     /// <summary>Opens a read-write connection with foreign-key enforcement enabled.</summary>
@@ -154,28 +163,33 @@ module MaterialDatabaseCrud =
     /// cannot be derived from an integer primary key.
     /// </remarks>
     let private tryResolveDatabaseId (connection: SqliteConnection) (materialKey: string) : int64 option =
-        use command = connection.CreateCommand()
-
-        command.CommandText <-
-            $"SELECT MaterialID FROM {MaterialDatabaseSchema.ExtensionTable} WHERE MaterialKey = $key"
-
-        command.Parameters.AddWithValue("$key", materialKey) |> ignore
-
-        match command.ExecuteScalar() with
-        | null ->
-            // Not written by this application; fall back to a direct integer key.
+        if Asme2025Data.isNormalized connection then
             match Int64.TryParse materialKey with
-            | true, parsed ->
-                use exists = connection.CreateCommand()
-                exists.CommandText <- "SELECT COUNT(*) FROM Materials WHERE ID = $id"
-                exists.Parameters.AddWithValue("$id", parsed) |> ignore
-
-                if Convert.ToInt64(exists.ExecuteScalar()) > 0L then
-                    Some parsed
-                else
-                    None
+            | true,id -> Asme2025Data.materials connection |> List.tryFind (fun m -> m.Id=id) |> Option.map (fun m -> m.Id)
             | _ -> None
-        | value -> Some(Convert.ToInt64 value)
+        else
+            use command = connection.CreateCommand()
+
+            command.CommandText <-
+                $"SELECT MaterialID FROM {MaterialDatabaseSchema.ExtensionTable} WHERE MaterialKey = $key"
+
+            command.Parameters.AddWithValue("$key", materialKey) |> ignore
+
+            match command.ExecuteScalar() with
+            | null ->
+                // Not written by this application; fall back to a direct integer key.
+                match Int64.TryParse materialKey with
+                | true, parsed ->
+                    use exists = connection.CreateCommand()
+                    exists.CommandText <- "SELECT COUNT(*) FROM Materials WHERE ID = $id"
+                    exists.Parameters.AddWithValue("$id", parsed) |> ignore
+
+                    if Convert.ToInt64(exists.ExecuteScalar()) > 0L then
+                        Some parsed
+                    else
+                        None
+                | _ -> None
+            | value -> Some(Convert.ToInt64 value)
 
     /// <summary>Allocates the next free <c>Materials.ID</c>.</summary>
     /// <param name="connection">Open connection.</param>
@@ -658,7 +672,9 @@ module MaterialDatabaseCrud =
             use command = connection.CreateCommand()
 
             command.CommandText <-
-                if hasExtension then
+                if Asme2025Data.isNormalized connection then
+                    "SELECT id AS ID,Specification,Grade AS TypeGrade,ClassConditionTemper,AlloyDesignation AS AlloyDesignationNumber,NULL AS MaterialKey,NULL AS Name,0 AS DocumentCount FROM Main ORDER BY id"
+                elif hasExtension then
                     $"""
                     SELECT m.ID, m.Specification, m.TypeGrade,
                            m.ClassConditionTemper, m.AlloyDesignationNumber,
@@ -792,7 +808,9 @@ module MaterialDatabaseCrud =
     /// editor actually disappears from the database.
     /// </remarks>
     let upsertMaterial (databasePath: string) (material: Material) : Result<CrudChange, MaterialError> =
-        if isNull (box material) || String.IsNullOrWhiteSpace material.Id then
+        if normalizedPath databasePath then
+            Error(MaterialError.InvalidOperation "Use the ASME 2025 property editor to update native curves; exporting a legacy material document would lose curve identity.")
+        elif isNull (box material) || String.IsNullOrWhiteSpace material.Id then
             CrudResult.invalid "Material must have a non-empty ID"
         else
             withConnection databasePath (fun connection ->
@@ -831,33 +849,47 @@ module MaterialDatabaseCrud =
     /// <param name="materialKey">Domain <c>Material.Id</c>, or the integer database identifier.</param>
     /// <returns><c>Ok change</c>, or an error when the material is absent.</returns>
     let deleteMaterial (databasePath: string) (materialKey: string) : Result<CrudChange, MaterialError> =
-        withConnection databasePath (fun connection ->
-            match tryResolveDatabaseId connection materialKey with
-            | None -> CrudResult.notFound $"Material not found in database: {materialKey}"
-            | Some databaseId ->
-                try
-                    use transaction = connection.BeginTransaction()
+        if normalizedPath databasePath then
+            if not (databasePath.EndsWith(".working.db",StringComparison.OrdinalIgnoreCase)) then CrudResult.invalid "Delete from a .working.db copy only."
+            else
+                withConnection databasePath (fun db ->
+                    match Int64.TryParse materialKey with
+                    | true,id ->
+                        use tx = db.BeginTransaction()
+                        use command = db.CreateCommand()
+                        command.CommandText <- "DELETE FROM Main WHERE id=$id"
+                        command.Parameters.AddWithValue("$id",id) |> ignore
+                        if command.ExecuteNonQuery()=0 then CrudResult.notFound "Material not found."
+                        else tx.Commit(); CrudResult.changed Delete (Some materialKey) None "Material and all native curves deleted."
+                    | _ -> CrudResult.notFound "Material not found.")
+        else
+            withConnection databasePath (fun connection ->
+                match tryResolveDatabaseId connection materialKey with
+                | None -> CrudResult.notFound $"Material not found in database: {materialKey}"
+                | Some databaseId ->
+                    try
+                        use transaction = connection.BeginTransaction()
 
-                    // Extension rows are removed explicitly as well as by cascade, so the delete
-                    // still works on a connection where foreign keys happen to be disabled.
-                    clearMaterialRows connection databaseId
+                        // Extension rows are removed explicitly as well as by cascade, so the delete
+                        // still works on a connection where foreign keys happen to be disabled.
+                        clearMaterialRows connection databaseId
 
-                    for table in [ MaterialDatabaseSchema.ExtensionTable; MaterialDatabaseSchema.DocumentTable ] do
-                        if MaterialDatabaseSchema.tableExists connection table then
-                            use command = connection.CreateCommand()
-                            command.CommandText <- $"DELETE FROM {table} WHERE MaterialID = $id"
-                            command.Parameters.AddWithValue("$id", databaseId) |> ignore
-                            command.ExecuteNonQuery() |> ignore
+                        for table in [ MaterialDatabaseSchema.ExtensionTable; MaterialDatabaseSchema.DocumentTable ] do
+                            if MaterialDatabaseSchema.tableExists connection table then
+                                use command = connection.CreateCommand()
+                                command.CommandText <- $"DELETE FROM {table} WHERE MaterialID = $id"
+                                command.Parameters.AddWithValue("$id", databaseId) |> ignore
+                                command.ExecuteNonQuery() |> ignore
 
-                    use command = connection.CreateCommand()
-                    command.CommandText <- "DELETE FROM Materials WHERE ID = $id"
-                    command.Parameters.AddWithValue("$id", databaseId) |> ignore
-                    command.ExecuteNonQuery() |> ignore
+                        use command = connection.CreateCommand()
+                        command.CommandText <- "DELETE FROM Materials WHERE ID = $id"
+                        command.Parameters.AddWithValue("$id", databaseId) |> ignore
+                        command.ExecuteNonQuery() |> ignore
 
-                    transaction.Commit()
-                    CrudResult.changed Delete (Some materialKey) None "Material deleted from database"
-                with ex ->
-                    Error(MaterialError.InvalidOperation(sprintf "Database delete failed: %s" ex.Message)))
+                        transaction.Commit()
+                        CrudResult.changed Delete (Some materialKey) None "Material deleted from database"
+                    with ex ->
+                        Error(MaterialError.InvalidOperation(sprintf "Database delete failed: %s" ex.Message)))
 
     /// <summary>Saves every material of an in-memory library into the database.</summary>
     /// <param name="databasePath">Database to write.</param>

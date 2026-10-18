@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
+    <UseWPF>true</UseWPF>
     <AssemblyName>MaterialLibrary.Excel</AssemblyName>
     <RootNamespace>MaterialLibrary.Excel</RootNamespace>
     <LangVersion>latest</LangVersion>
@@ -26,6 +27,7 @@
     <Compile Include="InterpolationFunctions.fs" />
     <Compile Include="MaterialSearchFunctions.fs" />
     <Compile Include="MaterialPersistenceFunctions.fs" />
+    <Compile Include="NativePropertyFunctions.fs" />
     <Compile Include="PhysicalPropertyFunctions.fs" />
     <Compile Include="Strength\StrengthHelpers.fs" />
     <Compile Include="Strength\TensileFunctions.fs" />
@@ -35,11 +37,13 @@
     <Compile Include="Strength\ExternalPressureFunctions.fs" />
     <Compile Include="Strength\CreepModelFunctions.fs" />
     <Compile Include="Strength\CreepRuptureFunctions.fs" />
+    <Compile Include="EditorRibbon.fs" />
     <Compile Include="AddIn.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MaterialLibrary\MaterialLibrary.fsproj" />
+    <ProjectReference Include="..\MaterialLibrary.CrudApp\MaterialLibrary.CrudApp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

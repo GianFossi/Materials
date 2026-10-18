@@ -120,6 +120,7 @@
                            Height="28"
                            Margin="8,4"
                            Background="#CBD3DA" />
+                <Button Content="Proprietà ASME 2025" Command="{Binding Open2025EditorCommand}" Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Database..."
                         Command="{Binding ManageDatabaseCommand}"
                         Style="{StaticResource ToolbarButtonStyle}" />

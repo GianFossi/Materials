@@ -76,10 +76,13 @@ try {
                     $cell = $used.Cells.Item($row, $column)
                     $formula = $cell.Formula
 
-                    if ($formula -is [string] -and $formula -match "asme_materials\.db|ASME_Materials\.db") {
+                    if ($formula -is [string] -and $formula -match '(?i)MatOpenDatabase\(') {
+                        $cell.Formula = '=MatOpenDatabase("' + $database.Replace('"', '""') + '")'
+                    }
+                    elseif ($formula -is [string] -and $formula -match "asme_materials(?:_2025)?\.db|ASME_Materials\.db") {
                         $cell.Formula = [regex]::Replace(
                             $formula,
-                            '"[^"]*(?:asme_materials|ASME_Materials)\.db"',
+                            '"[^"]*(?:asme_materials(?:_2025)?|ASME_Materials)\.db"',
                             '"' + $database + '"')
                     }
 
@@ -114,7 +117,7 @@ try {
                     $formulaCount++
                     $text = [string]$cell.Text
 
-                    if ($text -match "^#(VALUE!|NAME\?|REF!|DIV/0!|NUM!|N/A|NULL!)") {
+                    if ($text -match "^(?:#(?:VALUE!|NAME\?|REF!|DIV/0!|NUM!|N/A|NULL!)|ERROR:)") {
                         $errorCount++
                         $address = $cell.Address($false, $false)
                         $errors.Add("$($sheet.Name)!$address = $text :: $formula")

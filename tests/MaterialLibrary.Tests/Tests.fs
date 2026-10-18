@@ -440,7 +440,7 @@ let ``material library search uses ASME identity criteria`` () =
 [<Fact>]
 let ``requested database library loads six materials and classifies allowable stress sources`` () =
     let databasePath =
-        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
 
     let materials = RequestedMaterialLibrary.loadMaterials databasePath |> expectOk
 
@@ -1116,7 +1116,7 @@ let ``ASME database fallback file name is asme materials db`` () =
         Directory.CreateDirectory(baseDirectory) |> ignore
         let resolved = Configuration.resolveAsmeDatabasePath (Some baseDirectory)
 
-        Assert.Equal(Path.Combine(baseDirectory, "ASME_Materials.db"), resolved)
+        Assert.Equal(Path.Combine(baseDirectory, "data", "asme_materials_2025.db"), resolved)
     finally
         if Directory.Exists(baseDirectory) then
             Directory.Delete(baseDirectory, true)
@@ -1499,7 +1499,7 @@ let ``CRUD configuration can save read and delete XML config`` () =
     try
         let config = ConfigurationCrud.createDefault ()
         Assert.True(ConfigurationCrud.save path config |> Result.isOk)
-        Assert.Equal("ASME_Materials.db", (ConfigurationCrud.read path |> expectOk).Io.AsmeMaterialDatabaseFile)
+        Assert.Equal("asme_materials_2025.db", (ConfigurationCrud.read path |> expectOk).Io.AsmeMaterialDatabaseFile)
         Assert.True(ConfigurationCrud.delete path |> Result.isOk)
         Assert.False(File.Exists(path))
     finally
@@ -1667,7 +1667,7 @@ let ``thermal diffusivity round-trips through JSON`` () =
 [<Fact>]
 let ``reference hydration fills the physical properties and welding info`` () =
     let databasePath =
-        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
 
     let material = AsmeMaterialRepository.findById databasePath 1L |> expectOk
     let physical = material.PhysicalProperties
@@ -1688,7 +1688,7 @@ let ``reference hydration fills the physical properties and welding info`` () =
 [<Fact>]
 let ``allowable-stress datasets expose their division and case as labels`` () =
     let databasePath =
-        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
 
     // SA-334 7 carries note G5, which is what marks the higher alternative stress values.
     let material = AsmeMaterialRepository.findById databasePath 736L |> expectOk
@@ -1724,7 +1724,7 @@ let ``allowable-stress datasets expose their division and case as labels`` () =
 [<Fact>]
 let ``Sy and Su keep one column per published size band`` () =
     let databasePath =
-        Configuration.createDefault () |> Configuration.getAsmeDatabasePath
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
 
     // SA-325 bolting publishes two diameter bands and derates the heavier one.
     let material = AsmeMaterialRepository.findById databasePath 260L |> expectOk

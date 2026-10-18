@@ -79,6 +79,8 @@ public sealed partial class DatabaseViewModel : ObservableObject
         AuditLog = new ReadOnlyObservableCollection<string>(_auditLog);
         LoadAuditStore();
 
+        Open2025Command = new AsyncRelayCommand(Open2025Async, () => !IsBusy);
+        Edit2025PropertiesCommand = new RelayCommand(Edit2025Properties, () => IsOpen && !IsBusy);
         OpenDatabaseCommand = new AsyncRelayCommand(OpenDatabaseAsync);
         ReopenLastDatabaseCommand = new AsyncRelayCommand(ReopenLastDatabaseAsync, () => !string.IsNullOrWhiteSpace(_lastSourcePath) && !IsBusy);
         ImportSelectedCommand = new RelayCommand(ImportSelected, () => SelectedMaterial is not null);
@@ -509,6 +511,8 @@ public sealed partial class DatabaseViewModel : ObservableObject
     private void RefreshCommandStates()
     {
         ExportLibraryCommand.RaiseCanExecuteChanged();
+        Open2025Command.RaiseCanExecuteChanged();
+        Edit2025PropertiesCommand.RaiseCanExecuteChanged();
         SaveWorkingCopyAsCommand.RaiseCanExecuteChanged();
         RefreshCommand.RaiseCanExecuteChanged();
         CreateTableCommand.RaiseCanExecuteChanged();

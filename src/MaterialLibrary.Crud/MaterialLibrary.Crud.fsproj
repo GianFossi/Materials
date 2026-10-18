@@ -25,6 +25,7 @@
     <Compile Include="XmlDataCrud.fs" />
     <Compile Include="MaterialRepository.fs" />
     <Compile Include="MaterialTableCrud.fs" />
+    <Compile Include="Asme2025Crud.fs" />
     <Compile Include="MaterialDatabaseSchema.fs" />
     <Compile Include="MaterialDatabaseCrud.fs" />
   </ItemGroup>

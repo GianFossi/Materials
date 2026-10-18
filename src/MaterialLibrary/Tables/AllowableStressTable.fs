@@ -11,6 +11,8 @@ type AsmePartDTable =
     | TableSy
     | TableSu
     | TableSBolting
+    /// <summary>Bolting design stresses from Table 4.</summary>
+    | TableSBolting2
 
 /// A note identifier as printed in one specific ASME Section II-D table.
 type AsmeNoteReference =
@@ -51,6 +53,8 @@ type AllowableStressSource =
     | Division2AllowableStress
     /// Bolting materials, Table 3.
     | BoltingAllowableStress
+    /// <summary>Bolting design stress Sb2, Table 4; never substituted for S2 or Sb1.</summary>
+    | BoltingDivision2AllowableStress
 
 /// <summary>Distinguishes the normal allowable stress from the higher alternative one.</summary>
 /// <remarks>
@@ -93,7 +97,11 @@ module AllowableStressDataset =
             Error(MaterialError.InvalidOperation "Allowable-stress maximum size must be finite")
         elif
             match dataset.SizeMinimum, dataset.SizeMaximum with
-            | Some lower, Some upper -> lower >= upper
+            | Some lower, Some upper ->
+                lower > upper || (lower=upper && not (dataset.Table.Columns |> List.exists (fun c ->
+                    match c.SizeRange.Lower,c.SizeRange.Upper with
+                    | Some lo,Some hi -> lo.Value=lower && hi.Value=upper && lo.Inclusion=Inclusive && hi.Inclusion=Inclusive
+                    | _ -> false)))
             | _ -> false
         then
             Error(MaterialError.InvalidOperation "Allowable-stress size range must be ascending")
@@ -109,7 +117,8 @@ module AllowableStressDataset =
         | Division1AllowableStress
         | Division1HighAllowableStress -> "VIII-1"
         | Division2AllowableStress -> "VIII-2"
-        | BoltingAllowableStress -> "Bolting"
+        | BoltingAllowableStress -> "Sb1"
+        | BoltingDivision2AllowableStress -> "Sb2"
 
     /// <summary>Name of the allowable-stress case, for display and for SQL projections.</summary>
     /// <param name="case">Case carried by the dataset.</param>

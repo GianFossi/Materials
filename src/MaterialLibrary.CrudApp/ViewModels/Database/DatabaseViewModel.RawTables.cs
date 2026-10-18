@@ -53,7 +53,7 @@ public sealed partial class DatabaseViewModel
                     Tables.Add(table);
             }
 
-            SelectedTable = Tables.FirstOrDefault(t => string.Equals(t.Name, "Materials", StringComparison.OrdinalIgnoreCase))
+            SelectedTable = Tables.FirstOrDefault(t => string.Equals(t.Name, "Main", StringComparison.OrdinalIgnoreCase) || string.Equals(t.Name, "Materials", StringComparison.OrdinalIgnoreCase))
                 ?? Tables.FirstOrDefault();
         }
         catch (Exception ex)
@@ -447,9 +447,10 @@ public sealed partial class DatabaseViewModel
             clauses.Add("(" + string.Join(" OR ", columns.Select(c => $"CAST({QuoteIdentifier(c)} AS TEXT) LIKE $search")) + ")");
         }
 
-        if (materialId is not null && columns.Contains(MaterialLinkColumn, StringComparer.OrdinalIgnoreCase))
+        if (materialId is not null && columns.Any(c => c.Equals(MaterialLinkColumn, StringComparison.OrdinalIgnoreCase) || c.Equals("id_main", StringComparison.OrdinalIgnoreCase)))
         {
-            clauses.Add($"{QuoteIdentifier(MaterialLinkColumn)} = $materialId");
+            var link = columns.First(c => c.Equals(MaterialLinkColumn, StringComparison.OrdinalIgnoreCase) || c.Equals("id_main", StringComparison.OrdinalIgnoreCase));
+            clauses.Add($"{QuoteIdentifier(link)} = $materialId");
         }
 
         return clauses.Count == 0 ? string.Empty : " WHERE " + string.Join(" AND ", clauses);
@@ -471,7 +472,7 @@ public sealed partial class DatabaseViewModel
             command.Parameters.AddWithValue("$search", "%" + filter + "%");
         }
 
-        if (materialId is not null && columns.Contains(MaterialLinkColumn, StringComparer.OrdinalIgnoreCase))
+        if (materialId is not null && columns.Any(c => c.Equals(MaterialLinkColumn, StringComparison.OrdinalIgnoreCase) || c.Equals("id_main", StringComparison.OrdinalIgnoreCase)))
         {
             command.Parameters.AddWithValue("$materialId", materialId.Value);
         }

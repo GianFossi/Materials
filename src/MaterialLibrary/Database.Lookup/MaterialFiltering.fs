@@ -44,7 +44,12 @@ module MaterialFiltering =
         && matchesOptional normalize criteria.ClassConditionTemper material.Class_Condition_Tempering
         && matchesOptional normalize criteria.Uns material.AlloyIdentification_UNS
         && matchesOptional normalize criteria.NominalComposition material.NominalComposition
-        && matchesOptional normalize criteria.ProductForm material.ProductForm
+        && (matchesOptional normalize criteria.ProductForm material.ProductForm
+            || (String.IsNullOrWhiteSpace material.ProductForm &&
+                (let forms = material.StrengthProperties.AllowableStressDatasets |> List.collect (fun d ->
+                    let labels = d.Table.Columns |> List.choose (fun c -> c.SizeRange.Label |> Option.map (fun label -> (label.Split('/')[0]).Trim())) |> List.filter (String.IsNullOrWhiteSpace >> not)
+                    if d.Source=BoltingAllowableStress || d.Source=BoltingDivision2AllowableStress then "BOLTING"::labels else labels)
+                 forms |> List.exists (matchesOptional normalize criteria.ProductForm))))
         && (criteria.Family |> Option.forall (fun family -> material.Family = Some family))
 
     let findMany (criteria: MaterialSearchCriteria) (materials: Material list) =

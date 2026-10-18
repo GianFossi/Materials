@@ -33,34 +33,9 @@ module TensileFunctions =
     /// value from the first column that covers the temperature, to preserve legacy behaviour.
     /// </summary>
     let private lookupStrengthAtTemp (table: PropertyTable) (tempC: float) : Result<float, MaterialError> =
-        // Try exact match first across all columns.
-        let exactMatch =
-            table.Columns
-            |> List.tryPick (fun col ->
-                col.Entries
-                |> List.tryFind (fun e -> e.X = tempC)
-                |> Option.map (fun e -> e.Value))
-
-        match exactMatch with
-        | Some value -> Ok value
-        | None ->
-            // Fall back: interpolate within the first column that brackets the temperature.
-            let bracketing =
-                table.Columns
-                |> List.tryPick (fun col ->
-                    let entries = col.Entries
-                    if entries.IsEmpty then None
-                    else
-                        let lo = (List.head entries).X
-                        let hi = (List.last entries).X
-                        if tempC >= lo && tempC <= hi then Some col else None)
-
-            match bracketing with
-            | None ->
-                Error(MaterialError.InvalidOperation $"No Sy/Su data at temperature {tempC} degC")
-            | Some col ->
-                PropertyTable.lookup1D tempC { table with Columns = [ col ] }
-                |> Result.map (fun r -> r.Value)
+        match table.Columns with
+        | [only] -> PropertyTable.lookup1D tempC { table with Columns=[only] } |> Result.map (fun r -> r.Value)
+        | _ -> Error(MaterialError.InvalidOperation "Several Sy/Su curves exist. Use MatPropertyValue with size and/or curve ID.")
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete Sy table: temperature (degC), yield strength (MPa). Returns one column per size range when the material has size-dependent Sy.")>]
     let MatYieldStrengthTable
@@ -77,11 +52,14 @@ module TensileFunctions =
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         : obj =
-        ExcelHelpers.withMaterial materialId (fun material ->
-            match material.StrengthProperties.SyTable with
-            | None -> Error(MaterialError.InvalidOperation "No Sy table stored in material")
-            | Some table -> lookupStrengthAtTemp table temperatureC)
-        |> ExcelHelpers.ofFloatResult
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "Sy" temperatureC None None None
+        else
+            ExcelHelpers.withMaterial materialId (fun material ->
+                match material.StrengthProperties.SyTable with
+                | None -> Error(MaterialError.InvalidOperation "No Sy table stored in material")
+                | Some table -> lookupStrengthAtTemp table temperatureC)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Complete Su table: temperature (degC), ultimate tensile strength (MPa). Returns one column per size range when the material has size-dependent Su.")>]
     let MatUltimateStrengthTable
@@ -98,11 +76,14 @@ module TensileFunctions =
         ([<ExcelArgument(Description = "Material ID.")>] materialId: string)
         ([<ExcelArgument(Description = "Query temperature, degC.")>] temperatureC: float)
         : obj =
-        ExcelHelpers.withMaterial materialId (fun material ->
-            match material.StrengthProperties.SuTable with
-            | None -> Error(MaterialError.InvalidOperation "No Su table stored in material")
-            | Some table -> lookupStrengthAtTemp table temperatureC)
-        |> ExcelHelpers.ofFloatResult
+        if LibraryCache.useNativeFor materialId then
+            NativePropertyFunctions.value materialId "Su" temperatureC None None None
+        else
+            ExcelHelpers.withMaterial materialId (fun material ->
+                match material.StrengthProperties.SuTable with
+                | None -> Error(MaterialError.InvalidOperation "No Su table stored in material")
+                | Some table -> lookupStrengthAtTemp table temperatureC)
+            |> ExcelHelpers.ofFloatResult
 
     [<ExcelFunction(Category = "MaterialLibrary.Strength", Description = "Combined Sy / Su summary table: temperature (degC), Sy (MPa), Su (MPa). Uses the first column of each size-ranged table when multiple columns exist.")>]
     let MatTensilePropertiesTable
