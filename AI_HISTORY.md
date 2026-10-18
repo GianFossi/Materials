@@ -34,6 +34,14 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 - Validation: SDK 10.0.201; Release builds of Excel (x86/x64 packed XLLs) and examples succeeded; all 51 core/CRUD tests and 45 WPF tests passed. Compiler nullability warnings remain visible; no warnings were suppressed. Direct dependencies are current; transitive dependencies remain at the versions selected by their upstream packages.
 - Files: global.json, src/*/*proj, tests/*/*proj, .vscode/launch.json, .vscode/launch-advanced.json, .vscode/omnisharp.json, .vscode/tasks.json, docs/requirements.md, docs/desktop-app.md, docs/excel-addin.md, AI_HISTORY.md
 
+- Date: 2026-08-23
+- Area: Project license
+- Change: Switched project license from MIT to PolyForm Noncommercial 1.0.0. Added root LICENSE file with the full PolyForm Noncommercial 1.0.0 text and updated docs/license.md accordingly.
+- Why: Restrict use to noncommercial purposes per project owner's direction.
+- Impact: Licensing terms changed; commercial use is no longer permitted under the repository license. No code behavior impact.
+- Files: LICENSE, docs/license.md, AI_HISTORY.md
+- Follow-up: Review NuGet package metadata (PackageLicenseExpression / PackageLicenseFile) if packages are re-published, so the new license is reflected on nuget.org.
+
 - Date: 2026-08-03
 - Area: CRUD app size-range validation UX
 - Change: Added inline header validation for size-ranged Sy/Su/allowable columns: invalid Min/Max numbers and Min >= Max now show immediate red warnings and header highlight.
