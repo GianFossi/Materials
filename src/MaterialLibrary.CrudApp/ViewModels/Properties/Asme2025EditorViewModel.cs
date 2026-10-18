@@ -41,6 +41,7 @@ public sealed class Asme2025EditorViewModel : ObservableObject
         foreach (var material in Asme2025Data.materials(db)) Materials.Add(material);
         MaterialView = CollectionViewSource.GetDefaultView(Materials);
         MaterialView.Filter = item => item is Asme2025Material m && Search.Split(' ', StringSplitOptions.RemoveEmptyEntries).All(term => $"{m.Id} {m.Specification} {m.Grade} {m.Condition} {m.UNS}".Contains(term, StringComparison.OrdinalIgnoreCase));
+        ImportXmlCommand = new RelayCommand(OpenXmlImport);
         SaveCurveCommand = new RelayCommand(SaveCurve, () => SelectedMaterial is not null);
         NewCurveCommand = new RelayCommand(NewCurve, () => SelectedMaterial is not null);
         DeleteCurveCommand = new RelayCommand(DeleteCurve, () => _curve is not null);
@@ -119,6 +120,15 @@ public sealed class Asme2025EditorViewModel : ObservableObject
     public bool IsDirty => _curveDirty || _constantsDirty || _identityDirty;
     /// <summary>Current operation status and validation errors.</summary>
     public string Status { get => _status; private set => SetProperty(ref _status, value); }
+    /// <summary>Open XML association and preview tools for physical properties and pressure charts.</summary>
+    public RelayCommand ImportXmlCommand { get; }
+    private void OpenXmlImport()
+    {
+        if (!AllowDiscard()) return;
+        var window = new MaterialLibraryCrudApp.Views.XmlImportWindow(new XmlImportViewModel(_path));
+        window.Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.DataContext == this);
+        window.ShowDialog(); ReloadCurves(); LoadConstants();
+    }
     /// <summary>Save this variant atomically.</summary>
     public RelayCommand SaveCurveCommand { get; }
     /// <summary>Prepare a new variant in the current family.</summary>

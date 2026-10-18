@@ -55,9 +55,13 @@ module Asme2025Repository =
                   MaximumTemperature=None;CreepTemperature=None;AsmeNoteReferences=references c;Notes=Some(c.SourceNotes + "\n" + c.UserNotes) })))
         let regulatory = Asme2025Data.query db "SELECT P_Number,Group_Number,Max_Temp_Sect_I,Max_Temp_Sect_VIII_1,Max_Temp_Sect_VIII_2 FROM ASME_Data WHERE id_main=$id" ["$id",box identity.Id] |> List.tryHead
         let temperature index = regulatory |> Option.bind (fun r -> if isNull r[index] then None else Some(Convert.ToDouble r[index]))
+        let pressure = Asme2025Data.pressureCurves db identity.Id |> List.choose (fun (_,name,temperature,points) ->
+            if points.IsEmpty then None
+            else PropertyTable.create1D name "Factor A" "dimensionless" "Factor B" "MPa" ReturnError (points |> List.map (fun (a,b) -> PropertyTable.entry a b))
+                 |> Result.toOption |> Option.map (fun table -> ExternalPressureTable.create table temperature None MaterialDatabase None))
         { material with
             Family=AsmeMaterialFamilyClassification.classify identity.Specification identity.Grade identity.Condition identity.NominalComposition identity.UNS
             ApplicableAsmeCodes=allowable |> List.collect (fun d -> match d.Source with Division1AllowableStress | Division1HighAllowableStress | BoltingAllowableStress -> [AsmeSectionI;AsmeSectionVIII1] | _ -> [AsmeSectionVIII2]) |> List.distinct
-            StrengthProperties={material.StrengthProperties with SyTable=table "Sy" (curves "Sy");SuTable=table "Su" (curves "Su");AllowableStressDatasets=allowable}
+            StrengthProperties={material.StrengthProperties with SyTable=table "Sy" (curves "Sy");SuTable=table "Su" (curves "Su");AllowableStressDatasets=allowable;ExternalPressureTables=pressure}
             MaximumAllowableTemperature={AsmeViiiI=temperature 2;AsmeViii1=temperature 3;AsmeViii2=temperature 4}
             WeldingInfo=regulatory |> Option.bind (fun r -> if isNull r[0] && isNull r[1] then None else Some {PNumber=string r[0];GNumber=string r[1]}) }

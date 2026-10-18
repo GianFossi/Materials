@@ -26,6 +26,10 @@
     <Compile Include="MaterialRepository.fs" />
     <Compile Include="MaterialTableCrud.fs" />
     <Compile Include="Asme2025Crud.fs" />
+    <Compile Include="XmlPropertyTypes.fs" />
+    <Compile Include="XmlPropertyReader.fs" />
+    <Compile Include="XmlPropertyMatching.fs" />
+    <Compile Include="XmlPropertyImport.fs" />
     <Compile Include="MaterialDatabaseSchema.fs" />
     <Compile Include="MaterialDatabaseCrud.fs" />
   </ItemGroup>

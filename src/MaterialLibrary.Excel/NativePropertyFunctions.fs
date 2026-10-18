@@ -24,7 +24,7 @@ module NativePropertyFunctions =
             | _ -> box "ERROR: Use an integer MAIN material ID."
         with ex -> box ("ERROR: " + ex.Message)
 
-    [<ExcelFunction(Category="MaterialLibrary.ASME2025",Description="ASME 2025 property value: Sy,Su,S1,S2,Sb1,Sb2,E,Alpha,c,k,a,density,Nu. Celsius, MPa and fixed SI units; explicit variant selection and no extrapolation.")>]
+    [<ExcelFunction(Category="MaterialLibrary.ASME2025",Description="ASME 2025 property value: Sy,Su,S1,S2,Sb1,Sb2,E,Alpha (mean),AlphaInstantaneous,c,k,a,density,Nu. Celsius, MPa and fixed SI units; explicit variant selection and no extrapolation.")>]
     let MatPropertyValue (materialId: string) (propertyCode: string) (temperatureC: float) (sizeMm: obj) (productForm: obj) (curveId: obj) : obj =
         let selectedId = Args.optionalNumberOption curveId
         match selectedId with
@@ -45,3 +45,16 @@ module NativePropertyFunctions =
 
     [<ExcelFunction(Category="MaterialLibrary.ASME2025",Description="List every property family and its fixed unit for the ASME 2025 editor.")>]
     let MatPropertyFamilies () = Asme2025Data.families |> Array.map (fun (c,u) -> [box c;box u]) |> Array.toList |> ExcelHelpers.gridOfRows ["Property";"Unit"]
+
+    /// <summary>Expose imported native external-pressure charts with source chart identity and temperature.</summary>
+    [<ExcelFunction(Category="MaterialLibrary.ASME2025",Description="ASME 2025 external-pressure chart points: chart, temperature Celsius, dimensionless A and B in MPa.")>]
+    let MatExternalPressureImportedTable (materialId: string) : obj[,] =
+        try
+            use db = Asme2025Data.openRead (LibraryCache.databasePath ())
+            match Int64.TryParse materialId with
+            | true,id when Asme2025Data.isNormalized db ->
+                Asme2025Data.pressureCurves db id
+                |> List.collect (fun (curveId,name,t,points) -> points |> List.map (fun (a,b) -> [box curveId;box name;box t;box a;box b]))
+                |> ExcelHelpers.gridOfRows ["CurveId";"Chart";"Temperature_C";"A";"B_MPa"]
+            | _ -> array2D [[box "ERROR: Use an integer MAIN material ID from ASME 2025."]]
+        with ex -> array2D [[box ("ERROR: " + ex.Message)]]

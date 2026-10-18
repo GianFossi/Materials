@@ -19,6 +19,14 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 ## History
 
 - Date: 2026-10-18
+- Area: ASME 2025 physical properties and external-pressure XML import
+- Change: Added recursive XML folder reading, explicit unit conversion, separate mean/instantaneous expansion, reviewable PDF staging extraction, graphical source/database overlays, editable numerical previews, and manual or explainable automatic MAIN associations. CRUD and Excel share the workflow; Excel also exposes imported pressure-chart tables. Import keeps full XML, original SHA-256, notes, associations and before/after history, updates its own curves idempotently, guards concurrent changes and versions shared pressure charts.
+- Why: Populate and maintain physical data from verified XML records without losing notes or associating ambiguous alloy groups automatically.
+- Impact: Writes target working copies only. Unknown units, malformed records and ambiguous PDF pressure exponents cannot silently become numerical curves; raw extracts require explicit review. Existing reference and archived databases remain unchanged. No conversion of TE elongation C into specific heat c.
+- Validation: 72 core/CRUD tests passed, including real staged XML, units/notes, constants, replacement consent, transactional rollback, repeated import, stale previews, matching conflicts, pressure chart isolation and native hydration. Release Excel x64 and x86 builds include WPF compilation; interactive WPF/Excel validation requires Windows.
+- Files: XmlPropertyTypes/Reader/Matching/Import.fs, XmlImportViewModel/Window, Asme2025Data/Repository, EditorRibbon/NativePropertyFunctions, XmlPhysicalImportTests.fs, docs/xml-physical-import.md, README.md
+
+- Date: 2026-10-18
 - Area: WPF application dependencies
 - Change: Added NumericInput.Core and NumericInput.WPF package references, both pinned to 1.3.3, to MaterialLibrary.CrudApp only.
 - Why: Make the requested numeric-input dependencies available to the desktop application.

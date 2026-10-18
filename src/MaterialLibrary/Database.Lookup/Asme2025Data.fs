@@ -43,13 +43,14 @@ type Asme2025Material = {
 /// <summary>Native read access shared by the desktop editor, library and Excel; it never modifies a reference database.</summary>
 module Asme2025Data =
     /// <summary>All editable families with fixed units; alpha is mean expansion in 1/C and a is diffusivity in m²/s.</summary>
-    let families = [|"Sy","MPa";"Su","MPa";"S1","MPa";"S2","MPa";"Sb1","MPa";"Sb2","MPa";"E","MPa";"Alpha","1/degC";"c","J/(kg*K)";"k","W/(m*K)";"a","m2/s";"density","kg/m3";"Nu","dimensionless"|]
+    let families = [|"Sy","MPa";"Su","MPa";"S1","MPa";"S2","MPa";"Sb1","MPa";"Sb2","MPa";"E","MPa";"Alpha","1/degC";"AlphaInstantaneous","1/degC";"c","J/(kg*K)";"k","W/(m*K)";"a","m2/s";"density","kg/m3";"Nu","dimensionless"|]
 
     /// <summary>Normalize public property aliases to the family names shown by the editor.</summary>
     let canonicalCode (code: string) =
         match code.Trim().ToUpperInvariant() with
         | "SY" -> "Sy" | "SU" -> "Su" | "SB1" -> "Sb1" | "SB2" -> "Sb2"
-        | "ALPHA" -> "Alpha" | "C" | "CP" -> "c" | "K" | "TC" -> "k" | "A" | "TD" -> "a"
+        | "ALPHAINSTANTANEOUS" | "ALPHA_INSTANTANEOUS" -> "AlphaInstantaneous"
+        | "ALPHAMEAN" | "ALPHA_MEAN" | "ALPHA" -> "Alpha" | "C" | "CP" -> "c" | "K" | "TC" -> "k" | "A" | "TD" -> "a"
         | "DENSITY" | "RHO" -> "density" | "NU" -> "Nu" | other -> other
 
     /// <summary>Return the normalized storage identifier used by Physical_Properties.</summary>
@@ -110,13 +111,20 @@ module Asme2025Data =
                     query db "SELECT SourceTable,Code,Kind,NoteText FROM VW_Property_Notes_All WHERE id_property=$id ORDER BY SourceTable,Kind,Code" ["$id",box id]
                     |> List.map (fun n -> $"{n[0]} / {n[1]} ({n[2]}): {n[3]}") |> String.concat "\n\n"
                 else ""
+            let xmlProvenance =
+                if mechanical || (query db "SELECT 1 FROM sqlite_master WHERE name='Xml_Property_Associations'" []).IsEmpty then ""
+                else query db "SELECT a.RecordJson,d.File FROM Xml_Property_Associations a JOIN Xml_Import_Documents d ON d.SHA256=a.DocumentSHA256 WHERE a.id_main=$m AND a.PropertyCode=$c AND a.TargetId=$id" ["$m",box materialId;"$c",box code;"$id",box id]
+                     |> List.map (fun r ->
+                         use doc = JsonDocument.Parse(string r[0])
+                         let notes = doc.RootElement.GetProperty("Notes").GetString()
+                         $"XML: {r[1]}\n{notes}") |> String.concat "\n"
             let metadata =
                 if (query db "SELECT 1 FROM sqlite_master WHERE name='Property_Curve_Metadata'" []).IsEmpty then None
                 else query db "SELECT SizeAxis,UserNotes FROM Property_Curve_Metadata WHERE Code=$c AND CurveId=$id" ["$c",box code;"$id",box id] |> List.tryHead
             let userNotes = metadata |> Option.map (fun r -> string r[1]) |> Option.defaultValue ""
             let axis = metadata |> Option.map (fun r -> string r[0]) |> Option.defaultValue (string row[6])
             let nullable (value: obj) = if isNull value then Nullable() else Nullable(Convert.ToDouble value)
-            let curve = { Id=id;MaterialId=materialId;Code=code;ProductForm=string row[1];SizeMinimum=nullable row[2];SizeMaximum=nullable row[3];MinimumIncluded=Convert.ToBoolean row[4];MaximumIncluded=Convert.ToBoolean row[5];SizeAxis=axis;SourceTable=string row[7];SourceNotes=sourceNotes;UserNotes=userNotes;Points=points;Version="" }
+            let curve = { Id=id;MaterialId=materialId;Code=code;ProductForm=string row[1];SizeMinimum=nullable row[2];SizeMaximum=nullable row[3];MinimumIncluded=Convert.ToBoolean row[4];MaximumIncluded=Convert.ToBoolean row[5];SizeAxis=axis;SourceTable=string row[7];SourceNotes=(if mechanical then sourceNotes else xmlProvenance);UserNotes=userNotes;Points=points;Version="" }
             {curve with Version=fingerprint curve})
 
     /// <summary>Interpolate only inside the selected curve; ambiguous variants require an explicit curve ID.</summary>
@@ -148,3 +156,13 @@ module Asme2025Data =
             | [row] when not (isNull row[0]) -> Ok(Convert.ToDouble row[0])
             | _ -> Error "No tabulated property or stored constant."
         else lookup available temperature size productForm curveId
+
+    /// <summary>Read material-linked pressure curves; X is dimensionless Factor A and Y is Factor B in MPa.</summary>
+    let pressureCurves (db: SqliteConnection) materialId =
+        query db """SELECT v.id,c.Chart_Name,v.Temperature FROM Material_EP_Charts m
+            JOIN External_Pressure_Charts c ON c.id=m.id_ep_chart JOIN EP_Chart_Curves v ON v.id_ep_chart=c.id
+            WHERE m.id_main=$id ORDER BY v.Temperature,v.id""" ["$id",box materialId]
+        |> List.map (fun row ->
+            let id=Convert.ToInt64 row[0]
+            let points=query db "SELECT Factor_A,Factor_B FROM EP_Chart_Points WHERE id_ep_curve=$id ORDER BY Factor_A" ["$id",box id] |> List.map (fun p -> Convert.ToDouble p[0],Convert.ToDouble p[1])
+            id,string row[1],Convert.ToDouble row[2],points)

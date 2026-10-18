@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="Tests.fs" />
     <Compile Include="Native2025Tests.fs" />
+    <Compile Include="XmlPhysicalImportTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

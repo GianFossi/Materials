@@ -7,6 +7,7 @@ Type-safe F#/.NET material-property library for ASME Section II Part D workflows
 - [Overview](docs/overview.md) - features and repository layout.
 - [Requirements and dependencies](docs/requirements.md) - SDK, platforms, packages, units, and project notes.
 - [Installation, build, and removal](docs/installation.md) - restore/build/test, NuGet package commands, Excel/app publishing, and cleanup.
+- [Physical properties and external-pressure XML import](docs/xml-physical-import.md) - folder scan, editable curve previews, explainable manual/automatic associations, separate mean/instantaneous expansion and audited updates.
 - [ASME 2025 editor for CRUD and Excel](docs/asme-2025-editor.md) - active 2025 database, complete property editor, native worksheet functions and archived 2023 edition.
 - [Archived 2023 database schema](docs/asme-materials-db.md) - previous SQLite layout retained for explicit legacy access.
 - [2025 database and F# console updater](docs/database-updater.md) - unique four-field MAIN identities (excluding 6A–6D), import Sy/Su/S1/S2 and separate bolting Sb1/Sb2, import regulatory ASME fields with source evidence and complete note texts, print separate bolting/other mechanical matrices and end with physical coverage, create with `--newdatabasefile` or compare with `--compare`.

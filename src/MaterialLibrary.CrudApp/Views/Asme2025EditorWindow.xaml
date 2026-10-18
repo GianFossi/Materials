@@ -3,6 +3,7 @@
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  Title="ASME 2025 — Proprietà dei materiali" Width="1250" Height="850" MinWidth="950" MinHeight="650">
  <DockPanel Margin="12">
+  <Button DockPanel.Dock="Top" Content="Importa proprietà / diagrammi da XML…" Command="{Binding ImportXmlCommand}" HorizontalAlignment="Right" Padding="12,6" Margin="0,0,0,8"/>
   <TextBlock DockPanel.Dock="Top" Text="ASME 2025 · modifica della copia di lavoro" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8"/>
   <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" TextWrapping="Wrap" Margin="0,8,0,0"/>
   <Grid>

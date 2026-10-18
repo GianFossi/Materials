@@ -7,7 +7,7 @@ Il database predefinito è `src/MaterialLibrary/data/asme_materials_2025.db`, ne
 1. Avviare `MaterialLibrary.CrudApp` su Windows con .NET 10 Desktop Runtime.
 2. Premere **Proprietà ASME 2025** nella finestra principale. In alternativa: **Database… → Apri ASME 2025 → Modifica proprietà 2025**.
 3. Cercare il materiale per Specification, Grade, Class/Condition/Temper o UNS e selezionarlo.
-4. Scegliere Sy, Su, S1, S2, Sb1, Sb2, E, Alpha, c, k, a, density o Nu.
+4. Scegliere Sy, Su, S1, S2, Sb1, Sb2, E, Alpha, AlphaInstantaneous, c, k, a, density o Nu.
 5. Selezionare la variante dall'elenco: numero curva, product form, fascia dimensionale e tabella sorgente identificano la selezione. Le curve non sono unite né sostituite automaticamente.
 6. Modificare, aggiungere o eliminare punti nella griglia. **Nuova curva** crea una variante; **Salva curva** salva solo quella selezionata; **Elimina curva** elimina solo quella selezionata.
 7. Nella scheda **Costanti fisiche** inserire o cancellare densità e Poisson costanti; una casella vuota salva NULL.
@@ -35,6 +35,10 @@ Gli ID nell'esempio sono segnaposto. `MatSearch` restituisce gli ID MAIN reali. 
 
 Una ricerca ambigua restituisce un messaggio: scegliere dimensione, product form e/o CurveId. Non viene scelta la prima curva. La temperatura deve essere nel campo della curva; non si estrapola. S1/S2 non vengono sostituite da dati bolting, e Sb1/Table 3 resta distinta da Sb2/Table 4. S1H non è dedotta dalla tipografia persa negli export CSV. Le funzioni preesistenti restano disponibili; per leggere tutte le varianti e scegliere esplicitamente usare le funzioni native. I materiali caricati da JSON mantengono la precedenza nelle funzioni preesistenti.
 
+## Importazione XML
+
+Il pulsante **Importa proprietà / diagrammi da XML…** apre il confronto grafico e le associazioni manuali/automatiche. Excel espone anche **Importa XML proprietà / chart** nel ribbon. Vedere la [procedura e il formato XML](xml-physical-import.md), incluse le limitazioni degli estratti PDF e la conservazione delle note.
+
 ## File e unità
 
 CRUD ed Excel condividono normalmente `%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db`. Viene creata al primo utilizzo con il backup SQLite del riferimento; le successive aperture conservano le modifiche. Una copia di lavoro selezionata esplicitamente viene utilizzata direttamente. Il file di riferimento e il database archiviato non vengono modificati dall'editor. Le scritture native richiedono un nome terminante in `.working.db`.
@@ -45,6 +49,7 @@ Se si vuole iniziare nuovamente dal riferimento aggiornato, chiudere CRUD ed Exc
 | --- | --- |
 | Sy, Su, S1, S2, Sb1, Sb2, E | MPa |
 | Alpha | 1/°C, coefficiente medio |
+| AlphaInstantaneous | 1/°C, coefficiente istantaneo |
 | c | J/(kg·K) |
 | k | W/(m·K) |
 | a | m²/s |
