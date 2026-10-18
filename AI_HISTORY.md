@@ -19,6 +19,14 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 ## History
 
 - Date: 2026-10-18
+- Area: WPF design-time build artifacts
+- Change: Removed a tracked generated WPF temporary project that targeted .NET 8 and contained machine-specific paths.
+- Why: Prevent Visual Studio design-time builds from evaluating stale framework references after the application migrated to .NET 10.
+- Impact: No application behavior change; the actual project remains on .NET 10 and generated WPF temporary projects remain ignored.
+- Validation: The MaterialLibrary.CrudApp build succeeded on .NET 10 with no errors.
+- Files: src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp_fnawpzz1_wpftmp.csproj, AI_HISTORY.md
+
+- Date: 2026-10-18
 - Area: ASME 2025 physical properties and external-pressure XML import
 - Change: Added recursive XML folder reading, explicit unit conversion, separate mean/instantaneous expansion, reviewable PDF staging extraction, graphical source/database overlays, editable numerical previews, and manual or explainable automatic MAIN associations. CRUD and Excel share the workflow; Excel also exposes imported pressure-chart tables. Import keeps full XML, original SHA-256, notes, associations and before/after history, updates its own curves idempotently, guards concurrent changes and versions shared pressure charts.
 - Why: Populate and maintain physical data from verified XML records without losing notes or associating ambiguous alloy groups automatically.
