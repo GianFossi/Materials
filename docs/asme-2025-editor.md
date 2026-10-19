@@ -5,15 +5,20 @@ Il database predefinito è `src/MaterialLibrary/data/asme_materials_2025.db`, ne
 ## Applicazione CRUD
 
 1. Avviare `MaterialLibrary.CrudApp` su Windows con .NET 10 Desktop Runtime.
-2. Premere **Proprietà ASME 2025** nella finestra principale. In alternativa: **Database… → Apri ASME 2025 → Modifica proprietà 2025**.
+2. Premere **ASME 2025 Properties** nella finestra principale. In alternativa: **Database… → Open ASME 2025 → Edit 2025 Properties**.
 3. Cercare il materiale per Specification, Grade, Class/Condition/Temper o UNS e selezionarlo.
 4. Scegliere Sy, Su, S1, S2, Sb1, Sb2, E, Alpha, AlphaInstantaneous, c, k, a, density o Nu.
-5. Selezionare la variante dall'elenco: numero curva, product form, fascia dimensionale e tabella sorgente identificano la selezione. Le curve non sono unite né sostituite automaticamente.
-6. Modificare, aggiungere o eliminare punti nella griglia. **Nuova curva** crea una variante; **Salva curva** salva solo quella selezionata; **Elimina curva** elimina solo quella selezionata.
-7. Nella scheda **Costanti fisiche** inserire o cancellare densità e Poisson costanti; una casella vuota salva NULL.
-8. La scheda **Identità MAIN** permette di creare/modificare l'identità e la composizione. L'unicità resta sui quattro campi, senza ProductForm.
+5. Select a variant from the dropdown. Each entry shows the curve ID, product form, size bounds and inclusivity, axis, source table, and point count. SMLS/WLD variants are identified as **Seamless**/**Welded** while retaining their source abbreviations. Curves with the same thickness range but different product forms remain separate. Unbounded ranges are labelled **no bounds specified**; curves are never merged or replaced automatically.
+6. For **S1**, verify or change the explicit **Normal Stress (no G5)** / **High Stress (G5 note)** classification. The initial value is inferred from the curve's specific source-note links, can be explicitly selected, and is saved in working-copy metadata.
+7. For welded **S1/S2** product forms, the guidance panel shows any joint-efficiency factors stated in the original notes and warns users to check their conditions and limits. When no explicit factor is found, it shows the configured default efficiency (initially **0.70**) as a reference only. It never changes or automatically reduces curve values.
+8. Edit, add, or delete points in the grid. **New curve** creates a variant; **Save curve** saves only the selected variant; **Delete curve** deletes only that variant.
+9. In **Editable Notes**, add, edit, or remove curve annotations. The source-note dropdown offers relevant ASME notes to copy; copied text is editable and the official note remains separate and unchanged.
+10. In **Physical Constants**, enter or clear constant density and Poisson ratio; a blank field saves NULL.
+11. **MAIN Identity** creates or edits the identity and composition. Uniqueness remains based on the four identity fields, not ProductForm. Sb1/Sb2 or S1/S2 families are hidden only when existing curves unambiguously identify the material as bolting or non-bolting; identities containing both categories retain both sets.
 
-Le note ASME generali e specifiche sono mostrate integralmente e in sola lettura. Le **Note dell'utente** sono separate. Le modifiche a una curva non alterano i documenti sorgenti, i collegamenti alle note o le altre varianti. I punti vengono salvati in una transazione; temperature duplicate, valori non finiti, intervalli dimensionali impossibili e dati cambiati esternamente sono rifiutati. Una modifica non salvata richiede salvataggio o scarto prima di cambiare contesto.
+Product-form values and the default joint efficiency can be edited in **Options → Application options...**. See [CRUD Application Options and User Guidance](./crud-app-options.md) for XML storage, file-picker defaults, and field guidance.
+
+Le note ASME generali e specifiche sono mostrate integralmente e in sola lettura. Le note copiate sono annotazioni della curva, non sostituiscono i collegamenti ASME ufficiali. Le modifiche a una curva non alterano i documenti sorgenti, i collegamenti alle note o le altre varianti. I punti e i metadati vengono salvati in una transazione; temperature duplicate, valori non finiti, intervalli dimensionali impossibili e dati cambiati esternamente sono rifiutati. Una modifica non salvata richiede salvataggio o scarto prima di cambiare contesto.
 
 L'editor nativo opera sui dati normalizzati. L'editor dei documenti JSON resta disponibile per librerie complete con modelli di creep, fatica e altri dati; l'esportazione di un documento JSON sopra una riga nativa viene rifiutata per evitare di perdere identità e provenienza delle curve.
 
@@ -37,7 +42,7 @@ Una ricerca ambigua restituisce un messaggio: scegliere dimensione, product form
 
 ## Importazione XML
 
-Il pulsante **Importa proprietà / diagrammi da XML…** apre il confronto grafico e le associazioni manuali/automatiche. Excel espone anche **Importa XML proprietà / chart** nel ribbon. Vedere la [procedura e il formato XML](xml-physical-import.md), incluse le limitazioni degli estratti PDF e la conservazione delle note.
+The **Import properties / charts from XML...** button opens the graphical comparison and manual/automatic association workflow. Excel also exposes **Import XML Properties / Chart** in the ribbon. See the [XML workflow and format](xml-physical-import.md), including PDF-extract limitations and note preservation.
 
 ## File e unità
 

@@ -43,13 +43,19 @@ module Asme2025Repository =
         let basic = BasicProperties.create None None 0. (scalar "SMYS") (scalar "SMUS")
         let material = Material.create (string identity.Id) (Material.composeMaterialName identity.Specification identity.Grade identity.Condition identity.UNS) identity.Specification identity.Grade basic physical
                        |> Material.setIdentity "" identity.NominalComposition identity.Specification identity.Grade identity.Condition identity.UNS
-        let source code = match code with "S1" -> Division1AllowableStress | "S2" -> Division2AllowableStress | "Sb1" -> BoltingAllowableStress | _ -> BoltingDivision2AllowableStress
+        let source (curve: Asme2025Curve) =
+            match curve.Code,curve.S1StressLevel with
+            | "S1","High" -> Division1HighAllowableStress
+            | "S1",_ -> Division1AllowableStress
+            | "S2",_ -> Division2AllowableStress
+            | "Sb1",_ -> BoltingAllowableStress
+            | _ -> BoltingDivision2AllowableStress
         let references (curve: Asme2025Curve) : AsmeNoteReference list =
             let table = match curve.SourceTable with "1A" -> Some Table1A | "1B" -> Some Table1B | "5A" -> Some Table5A | "5B" -> Some Table5B | "3" -> Some TableSBolting | "4" -> Some TableSBolting2 | _ -> None
             table |> Option.map (fun table -> Asme2025Data.query db "SELECT DISTINCT Code FROM VW_Property_Notes_All WHERE id_property=$id AND Kind='Specific' ORDER BY Code" ["$id",box curve.Id] |> List.map (fun row -> ({Table=table;Code=string row[0]}: AsmeNoteReference))) |> Option.defaultValue []
         let allowable : AllowableStressDataset list = ["S1";"S2";"Sb1";"Sb2"] |> List.collect (fun code -> curves code |> List.choose (fun c ->
             table code [c] |> Option.map (fun t ->
-                { DatabaseRowId=c.Id;Source=source code;Case=StandardStrengthAllowableStress;Table=t;
+                { DatabaseRowId=c.Id;Source=source c;Case=(if c.Code="S1" && c.S1StressLevel="High" then HighStrengthAllowableStress else StandardStrengthAllowableStress);Table=t;
                   SizeMinimum=if c.SizeMinimum.HasValue then Some c.SizeMinimum.Value else None;
                   SizeMaximum=if c.SizeMaximum.HasValue then Some c.SizeMaximum.Value else None;
                   MaximumTemperature=None;CreepTemperature=None;AsmeNoteReferences=references c;Notes=Some(c.SourceNotes + "\n" + c.UserNotes) })))

@@ -18,6 +18,46 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 
 ## History
 
+- Date: 2026-10-19
+- Area: CRUD application guidance and options
+- Change: Added English explanations and control tooltips across material, table, ASME, XML-import, and database windows. Replaced free-text product-form entry with configured dropdowns and added an Options window persisting product-form choices, default joint efficiency, XML import folder, and SQLite database path in a user-local XML settings file.
+- Why: Clarify data-entry meaning and workflow, standardize product-form values, and let users configure recurring defaults without editing application files.
+- Impact: Existing material/curve product forms remain visible even if absent from the configured list. Joint efficiency is a reference only and does not change curve values. XML/database paths seed file dialogs; database edits still use working copies.
+- Validation: Release build succeeded; options XML round-trip and product-form-preservation test passed; all 48 CrudApp tests passed. Existing nullable warning in database working-copy lifecycle remains.
+- Files: src/MaterialLibrary.CrudApp/App.xaml.cs, src/MaterialLibrary.CrudApp/Services/ApplicationOptions.cs, src/MaterialLibrary.CrudApp/Services/DialogService.cs, src/MaterialLibrary.CrudApp/Services/IDialogService.cs, src/MaterialLibrary.CrudApp/ViewModels/MainViewModel.cs, src/MaterialLibrary.CrudApp/ViewModels/MaterialEditViewModel.cs, src/MaterialLibrary.CrudApp/ViewModels/OptionsViewModel.cs, src/MaterialLibrary.CrudApp/ViewModels/DatabaseViewModel.cs, src/MaterialLibrary.CrudApp/ViewModels/Database/DatabaseViewModel.Lifecycle.cs, src/MaterialLibrary.CrudApp/ViewModels/Properties/Asme2025EditorViewModel.cs, src/MaterialLibrary.CrudApp/ViewModels/Properties/XmlImportViewModel.cs, src/MaterialLibrary.CrudApp/Views/MainWindow.xaml, src/MaterialLibrary.CrudApp/Views/MaterialEditWindow.xaml, src/MaterialLibrary.CrudApp/Views/MaterialTablesWindow.xaml, src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml, src/MaterialLibrary.CrudApp/Views/DatabaseWindow.xaml, src/MaterialLibrary.CrudApp/Views/XmlImportWindow.xaml, src/MaterialLibrary.CrudApp/Views/OptionsWindow.xaml, src/MaterialLibrary.CrudApp/Views/OptionsWindow.xaml.cs, tests/MaterialLibrary.CrudApp.Tests/ApplicationOptionsTests.cs, docs/crud-app-options.md, docs/asme-2025-editor.md, AI_HISTORY.md
+
+- Date: 2026-10-19
+- Area: ASME 2025 allowable-stress editing
+- Change: Replaced the free-form user-note box with an editable per-curve notes grid and relevant ASME-note copy dropdown while keeping source notes read-only. Added persisted S1 Normal/High (G5) classification, inferred old curves from specific G5 links, and wired High Stress curves through native material hydration. Added welded S1/S2 FSE guidance from explicit source-note factors or a clearly unverified 0.70 typical reference. Hide the opposite S/Sb families only when existing curves unambiguously identify a bolting or non-bolting identity.
+- Why: Make note editing and copying usable, expose the allowable-stress alternatives and joint-efficiency treatment, and avoid presenting inapplicable bolting families as normal allowable stress.
+- Impact: Working-copy metadata schema adds user-note rows and S1 stress classification with additive migration; source notes and their links remain unchanged. Bolting/non-bolting identities with both data categories retain both family sets.
+- Validation: Native S1 classification, editable-note persistence, and high-stress hydration test passed; all 47 CrudApp tests passed. The full core suite passed 70/73; three tests failed only while deleting temporary SQLite working-copy folders because Windows reported open-file locks.
+- Files: src/MaterialLibrary/Database.Lookup/Asme2025Data.fs, src/MaterialLibrary/Database.Lookup/Asme2025Repository.fs, src/MaterialLibrary.Crud/Asme2025Crud.fs, src/MaterialLibrary.CrudApp/ViewModels/Properties/Asme2025EditorViewModel.cs, src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml, src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml.cs, tests/MaterialLibrary.Tests/Native2025Tests.fs, tests/MaterialLibrary.CrudApp.Tests/WpfSmokeTests.cs, docs/asme-2025-editor.md, AI_HISTORY.md
+
+- Date: 2026-10-18
+- Area: ASME 2025 product-form selection
+- Change: Expanded SMLS and WLD product-form abbreviations in curve dropdown titles to explicit Italian labels while preserving their source abbreviations.
+- Why: Make it clear that curves with the same thickness range can still be distinct seamless and welded product variants.
+- Impact: Curve selection remains independent and no stored product-form data changes; added regression coverage for same-range SMLS/WLD variants.
+- Validation: All 47 MaterialLibrary.CrudApp.Tests passed, including a same-range SMLS/WLD display check.
+- Files: src/MaterialLibrary.CrudApp/ViewModels/Properties/Asme2025EditorViewModel.cs, tests/MaterialLibrary.CrudApp.Tests/WpfSmokeTests.cs, docs/asme-2025-editor.md, AI_HISTORY.md
+
+- Date: 2026-10-18
+- Area: ASME 2025 curve selection
+- Change: Reworked the property-curve dropdown to show a readable multi-line summary with curve ID/product form, explicit dimensional bounds and axis, source table, and point count. Missing bounds are now described as unbounded rather than rendered as empty values.
+- Why: Make product variants and size-range rows distinguishable when selecting curves in the ASME 2025 editor.
+- Impact: Selection semantics and persisted data are unchanged; only the dropdown's display has changed. Added coverage for unbounded and open/closed ranges.
+- Validation: All 47 MaterialLibrary.CrudApp.Tests passed; the focused curve-label test also passed.
+- Files: src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml, src/MaterialLibrary.CrudApp/ViewModels/Properties/Asme2025EditorViewModel.cs, tests/MaterialLibrary.CrudApp.Tests/WpfSmokeTests.cs, docs/asme-2025-editor.md, AI_HISTORY.md
+
+- Date: 2026-10-18
+- Area: ASME 2025 editor click handling
+- Change: Updated the ASME 2025 editor button-hit traversal to safely walk both visual and content-element parent chains, including fallback to logical parents for detached visuals.
+- Why: Prevent UI-thread crashes when `PreviewMouseDown` originates from inline text nodes (for example `System.Windows.Documents.Run`) that are not valid inputs for `VisualTreeHelper.GetParent`.
+- Impact: Save-button click interception now works for both visual and inline text origins without throwing exceptions; no workflow or command behavior changes.
+- Validation: Added a WPF smoke regression test that invokes the private `FindButton` helper with a `Run` source and verifies the owning `Button` is resolved.
+- Files: src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml.cs, tests/MaterialLibrary.CrudApp.Tests/WpfSmokeTests.cs, AI_HISTORY.md
+
 - Date: 2026-10-18
 - Area: WPF design-time build artifacts
 - Change: Removed a tracked generated WPF temporary project that targeted .NET 8 and contained machine-specific paths.

@@ -25,7 +25,7 @@ let private working action =
 /// <summary>Create a new curve in MPa or the selected physical family's fixed unit.</summary>
 let private curve materialId code =
     { Id=0L;MaterialId=materialId;Code=code;ProductForm="";SizeMinimum=Nullable();SizeMaximum=Nullable();MinimumIncluded=false;MaximumIncluded=true;
-      SizeAxis="thickness-or-unspecified";SourceTable="User";SourceNotes="";UserNotes="User comment";Version="";
+      SizeAxis="thickness-or-unspecified";SourceTable="User";SourceNotes="";UserNotes="User comment";UserNoteItems=[||];S1StressLevel="Normal";Version="";
       Points=[|{Temperature=20.;Value=100.};{Temperature=100.;Value=80.}|] }
 
 [<Fact>]
@@ -41,6 +41,40 @@ let ``native 2025 reads every identity and preserves both bolting families and n
     let json = MaterialSerialization.toJsonString material
     let roundTrip = MaterialSerialization.fromJsonStringComplete json |> ok
     Assert.Equal<AllowableStressDataset list>(material.StrengthProperties.AllowableStressDatasets,roundTrip.StrengthProperties.AllowableStressDatasets)
+
+[<Fact>]
+let ``native S1 curves classify G5 as high stress and persist editable note rows`` () = working (fun path ->
+    let identity,selected =
+        use db = Asme2025Data.openRead path
+        let materialIdWithG5 =
+            Asme2025Data.query db """SELECT p.id_main FROM Material_Properties p
+                JOIN Property_Note_Links l ON l.id_property=p.id AND l.SourceTable IN ('1A','1B') AND l.Code='G5'
+                WHERE p.PropertyCode='S1' ORDER BY p.id LIMIT 1""" []
+            |> List.head |> Array.head |> Convert.ToInt64
+        let identity = Asme2025Data.materials db |> List.find (fun m -> m.Id=materialIdWithG5)
+        let selected = Asme2025Data.curves db identity.Id "S1" |> List.find (fun c -> c.SourceNotes.Contains("/ G5 (Specific):"))
+        Assert.Equal("High",selected.S1StressLevel)
+        let standardMaterialId =
+            Asme2025Data.query db """SELECT p.id_main FROM Material_Properties p
+                WHERE p.PropertyCode='S1' AND NOT EXISTS (
+                    SELECT 1 FROM Property_Note_Links l WHERE l.id_property=p.id AND l.SourceTable IN ('1A','1B') AND l.Code='G5')
+                ORDER BY p.id LIMIT 1""" []
+            |> List.head |> Array.head |> Convert.ToInt64
+        let normalCurve = Asme2025Data.curves db standardMaterialId "S1" |> List.head
+        Assert.Equal("Normal",normalCurve.S1StressLevel)
+        identity,selected
+    let note = {SourceTable="1A";Code="G5";Text="Copied and reviewed note"}
+    let requested = {selected with UserNotes=note.Text;UserNoteItems=[|note|];S1StressLevel="High"}
+    let id = Asme2025Crud.saveCurve path requested |> ok
+    use savedDb = Asme2025Data.openRead path
+    let saved = Asme2025Data.curves savedDb identity.Id "S1" |> List.find (fun c -> c.Id=id)
+    Assert.Equal("High",saved.S1StressLevel)
+    Assert.Equal(note.Text,saved.UserNotes)
+    Assert.Equal<Asme2025UserNote array>([|note|],saved.UserNoteItems)
+    let hydrated = Asme2025Repository.hydrate savedDb identity
+    savedDb.Close()
+    Assert.Contains(hydrated.StrengthProperties.AllowableStressDatasets,fun dataset ->
+        dataset.DatabaseRowId=id && dataset.Source=Division1HighAllowableStress && dataset.Case=HighStrengthAllowableStress))
 
 [<Fact>]
 let ``native curve edits preserve source notes and other variants and reject stale updates`` () = working (fun path ->

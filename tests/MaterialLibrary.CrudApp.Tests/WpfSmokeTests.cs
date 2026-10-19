@@ -2,14 +2,17 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using MaterialLibraryCrudApp.Views;
 using MaterialLibraryCrudApp.ViewModels;
 using MaterialLibraryCrudApp.Services;
 using MaterialLibrary.Domain;
+using MaterialLibrary.Domain.Database.Lookup;
 using Xunit;
 
 namespace MaterialLibraryCrudApp.Tests;
@@ -75,6 +78,71 @@ public sealed class WpfSmokeTests
             Assert.True(viewModel.IsOpen, viewModel.StatusMessage);
             Assert.NotEmpty(viewModel.Tables);
         });
+    }
+
+    [Fact]
+    public void AsmeEditorFindButtonHandlesRunSource()
+    {
+        RunOnSta(() =>
+        {
+            var button = new Button();
+            var textBlock = new TextBlock();
+            var run = new Run("Save");
+            textBlock.Inlines.Add(run);
+            button.Content = textBlock;
+            var method = typeof(Asme2025EditorWindow).GetMethod("FindButton", BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.NotNull(method);
+            var found = method!.Invoke(null, new object[] { run }) as Button;
+            Assert.Same(button, found);
+        });
+    }
+
+    [Fact]
+    public void PropertyCurveChoiceShowsUnboundedAndOpenSizeLimitsClearly()
+    {
+        var unbounded = new PropertyCurveChoice(new Asme2025Curve
+        {
+            Id = 103,
+            Code = "S1",
+            ProductForm = "SMLS. PIPE",
+            S1StressLevel = "High",
+            SizeAxis = "thickness-or-unspecified",
+            SourceTable = "1A",
+            Points = Array.Empty<Asme2025Point>()
+        });
+        Assert.Equal("Curve #103 · Seamless (SMLS. PIPE) · High Stress (G5)", unbounded.Title);
+        Assert.Equal("Size: no bounds specified · Axis: thickness / unspecified", unbounded.SizeRangeLabel);
+        Assert.Equal("Table 1A · 0 points", unbounded.SourceLabel);
+
+        var seamless = new PropertyCurveChoice(new Asme2025Curve
+        {
+            Id = 104,
+            ProductForm = "SMLS. PIPE",
+            SizeMinimum = 10,
+            SizeMaximum = 25,
+            MinimumIncluded = false,
+            MaximumIncluded = true,
+            SizeAxis = "thickness-or-unspecified",
+            SourceTable = "1B",
+            Points = Array.Empty<Asme2025Point>()
+        });
+        var welded = new PropertyCurveChoice(new Asme2025Curve
+        {
+            Id = 105,
+            ProductForm = "WLD. PIPE",
+            SizeMinimum = 10,
+            SizeMaximum = 25,
+            MinimumIncluded = false,
+            MaximumIncluded = true,
+            SizeAxis = "thickness-or-unspecified",
+            SourceTable = "1B",
+            Points = Array.Empty<Asme2025Point>()
+        });
+
+        Assert.Equal("Size: > 10 mm · ≤ 25 mm · Axis: thickness / unspecified", seamless.SizeRangeLabel);
+        Assert.Equal(seamless.SizeRangeLabel, welded.SizeRangeLabel);
+        Assert.Equal("Curve #104 · Seamless (SMLS. PIPE)", seamless.Title);
+        Assert.Equal("Curve #105 · Welded (WLD. PIPE)", welded.Title);
     }
 
     private static Button? FindButton(DependencyObject root, string content)

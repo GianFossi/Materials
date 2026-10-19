@@ -43,12 +43,13 @@ public partial class App : Application
 
         InstallGlobalExceptionHandlers();
 
+        var options = ApplicationOptions.Load();
         var window = new MainWindow();
 
         // The dialog service needs the window as its modal owner, and the view model needs the
         // dialog service, so the window is created first and its DataContext assigned afterwards.
-        var dialogService = new DialogService(window);
-        window.DataContext = new MainViewModel(dialogService);
+        var dialogService = new DialogService(window, options);
+        window.DataContext = new MainViewModel(dialogService, options);
 
         MainWindow = window;
         window.Show();

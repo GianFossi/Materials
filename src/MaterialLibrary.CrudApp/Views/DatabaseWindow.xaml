@@ -15,20 +15,24 @@
     <DockPanel Margin="8">
 
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
-            <Button Content="Apri ASME 2025" Command="{Binding Open2025Command}" Style="{StaticResource ToolbarButtonStyle}" />
-            <Button Content="Modifica proprietà 2025" Command="{Binding Edit2025PropertiesCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+            <Button Content="Open ASME 2025" Command="{Binding Open2025Command}" ToolTip="Open the configured ASME 2025 reference database as a protected working copy." Style="{StaticResource ToolbarButtonStyle}" />
+            <Button Content="Edit 2025 Properties" Command="{Binding Edit2025PropertiesCommand}" ToolTip="Open the native ASME 2025 editor for the selected material in the working database." Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Open Database..."
                     Command="{Binding OpenDatabaseCommand}"
+                    ToolTip="Choose a SQLite material database. The configured default path is preselected when available."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Reopen Last"
                     Command="{Binding ReopenLastDatabaseCommand}"
+                    ToolTip="Reopen the last selected source database and its existing working copy."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Refresh"
                     Command="{Binding RefreshCommand}"
+                    ToolTip="Reload material, table, and schema information from the open working database."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Separator Margin="6,4" />
             <Button Content="Import to Library"
                     Command="{Binding ImportSelectedCommand}"
+                    ToolTip="Copy the selected database material into the in-memory library shown in the main window."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Show Raw Rows"
                     Command="{Binding ShowRawRowsForSelectedCommand}"
@@ -36,30 +40,44 @@
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Write Library to DB"
                     Command="{Binding ExportLibraryCommand}"
+                    ToolTip="Write the current in-memory library materials into the open working database."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Delete from DB"
                     Command="{Binding DeleteSelectedCommand}"
+                    ToolTip="Delete the selected material from the working database after confirmation."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Separator Margin="6,4" />
             <Button Content="Save Working Copy As..."
                     Command="{Binding SaveWorkingCopyAsCommand}"
+                    ToolTip="Save the working database to a new database file."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Backup Working Copy"
                     Command="{Binding BackupWorkingCopyCommand}"
+                    ToolTip="Create a backup of the current working database."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Cancel"
                     Command="{Binding CancelOperationCommand}"
+                    ToolTip="Cancel the currently running database operation, if it supports cancellation."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Integrity Check"
                     Command="{Binding IntegrityCheckCommand}"
+                    ToolTip="Run SQLite's integrity check against the open working database."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Undo Last Transaction"
                     Command="{Binding UndoLastTransactionCommand}"
+                    ToolTip="Reverse the most recent recorded database transaction for this working copy."
                     Style="{StaticResource ToolbarButtonStyle}" />
             <Button Content="Redo Last Transaction"
                     Command="{Binding RedoLastTransactionCommand}"
+                    ToolTip="Reapply the most recently undone recorded transaction for this working copy."
                     Style="{StaticResource ToolbarButtonStyle}" />
         </StackPanel>
+
+        <TextBlock DockPanel.Dock="Top"
+                   Text="Use the tabs to browse materials, inspect or edit raw tables, run SQL, review the audit trail, and plot numeric data. Database edits target the working copy shown below."
+                   TextWrapping="Wrap"
+                   Foreground="#52616F"
+                   Margin="4,0,4,6" />
 
         <!-- Makes it unmistakable that edits target a copy, never the file the user picked. -->
         <TextBlock DockPanel.Dock="Top"
@@ -113,6 +131,7 @@
             <Button Content="Close"
                     IsDefault="True"
                     IsCancel="True"
+                    ToolTip="Close the database manager. Any uncommitted raw-table edits will be confirmed first."
                     Style="{StaticResource DialogButtonStyle}" />
         </StackPanel>
 
@@ -148,7 +167,7 @@
                                    Foreground="#52616F" />
                         <TextBox Text="{Binding MaterialSearch, UpdateSourceTrigger=PropertyChanged, Delay=200}"
                                  Padding="4,3"
-                                 ToolTip="Match on ID, key, specification, grade, class/condition/tempering, UNS, or full name" />
+                                 ToolTip="Filter materials by ID, key, specification, grade, class/condition/tempering, UNS, or full name. Search terms are combined." />
                     </DockPanel>
                 </Border>
 
@@ -201,6 +220,7 @@
                             <Button DockPanel.Dock="Right"
                                     Content="Show all rows"
                                     Command="{Binding ClearMaterialFilterCommand}"
+                                    ToolTip="Clear the selected-material filter and show every row in this table."
                                     Style="{StaticResource DialogButtonStyle}" />
                             <TextBlock Text="{Binding MaterialFilterDisplay}"
                                        VerticalAlignment="Center"
@@ -216,31 +236,37 @@
                                   SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
                                   DisplayMemberPath="DisplayName"
                                   Width="260"
-                                  Margin="0,0,8,0" />
+                                  Margin="0,0,8,0"
+                                  ToolTip="Select a database table to browse. Some tables may be read-only." />
                         <TextBox Text="{Binding TableSearch, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="150" ToolTip="Filter table names" Margin="0,0,8,0" />
-                        <Button Content="Clear" Command="{Binding ClearTableToolsCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                                 Width="150" ToolTip="Filter the table selector by table name." Margin="0,0,8,0" />
+                        <Button Content="Clear" Command="{Binding ClearTableToolsCommand}" ToolTip="Clear the row filter, sort selection, and related table tools." Style="{StaticResource ToolbarButtonStyle}" />
                         <Button Content="Refresh Table"
                                 Command="{Binding RefreshTableCommand}"
+                                ToolTip="Reload the selected table page from the working database."
                                 Style="{StaticResource ToolbarButtonStyle}" />
                         <Button Content="Save Changes"
                                 Command="{Binding SaveTableChangesCommand}"
+                                ToolTip="Commit pending edits in the raw table grid to the working database."
                                 Style="{StaticResource ToolbarButtonStyle}" />
-                        <Button Content="Undo" Command="{Binding UndoTableCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                        <Button Content="Redo" Command="{Binding RedoTableCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                        <Button Content="Discard" Command="{Binding DiscardTableChangesCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                        <Button Content="Undo" Command="{Binding UndoTableCommand}" ToolTip="Undo the latest unsaved edit in the current raw table." Style="{StaticResource ToolbarButtonStyle}" />
+                        <Button Content="Redo" Command="{Binding RedoTableCommand}" ToolTip="Redo the latest undone edit in the current raw table." Style="{StaticResource ToolbarButtonStyle}" />
+                        <Button Content="Discard" Command="{Binding DiscardTableChangesCommand}" ToolTip="Discard all unsaved raw-table edits and restore the last loaded values." Style="{StaticResource ToolbarButtonStyle}" />
                         <Button Content="Previous"
                                 Command="{Binding PreviousTablePageCommand}"
+                                ToolTip="Show the previous page of raw table rows."
                                 Style="{StaticResource ToolbarButtonStyle}" />
                         <Button Content="Next"
                                 Command="{Binding NextTablePageCommand}"
+                                ToolTip="Show the next page of raw table rows."
                                 Style="{StaticResource ToolbarButtonStyle}" />
                         <TextBlock Text="Rows/page"
                                    VerticalAlignment="Center"
                                    Margin="12,0,4,0" />
                         <TextBox Text="{Binding TablePageSize, UpdateSourceTrigger=LostFocus}"
                                  Width="64"
-                                 VerticalContentAlignment="Center" />
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Number of raw rows shown per page. Enter a positive integer." />
                         <TextBlock Text="{Binding TablePageDisplay}"
                                    VerticalAlignment="Center"
                                    Margin="12,0,0,0"
@@ -270,10 +296,10 @@
 
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,6,0,0">
                         <TextBlock Text="Filter rows" VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <TextBox Text="{Binding RowFilter, UpdateSourceTrigger=PropertyChanged}" Width="180" Margin="0,0,8,0" />
+                        <TextBox Text="{Binding RowFilter, UpdateSourceTrigger=PropertyChanged}" Width="180" Margin="0,0,8,0" ToolTip="Filter the currently loaded table rows using a text or column-value expression." />
                         <TextBlock Text="Sort" VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <ComboBox ItemsSource="{Binding TableColumns}" SelectedItem="{Binding SortColumn}" Width="140" Margin="0,0,4,0" />
-                        <CheckBox Content="Descending" IsChecked="{Binding SortDescending}" VerticalAlignment="Center" />
+                        <ComboBox ItemsSource="{Binding TableColumns}" SelectedItem="{Binding SortColumn}" Width="140" Margin="0,0,4,0" ToolTip="Choose the column used to sort the visible rows." />
+                        <CheckBox Content="Descending" IsChecked="{Binding SortDescending}" VerticalAlignment="Center" ToolTip="Sort from highest to lowest, or reverse the selected column's natural order." />
                     </StackPanel>
 
                     <DataGrid ItemsSource="{Binding TableRows}"
@@ -297,6 +323,7 @@
                             HorizontalAlignment="Left"
                             Content="Create Table"
                             Command="{Binding CreateTableCommand}"
+                            ToolTip="Execute the CREATE TABLE statement below against the working database."
                             Style="{StaticResource ToolbarButtonStyle}"
                             Margin="0,0,0,6" />
                     <TextBox Text="{Binding CreateTableSql, UpdateSourceTrigger=PropertyChanged}"
@@ -305,7 +332,8 @@
                              FontFamily="Consolas"
                              FontSize="13"
                              VerticalScrollBarVisibility="Auto"
-                             HorizontalScrollBarVisibility="Auto" />
+                             HorizontalScrollBarVisibility="Auto"
+                             ToolTip="Enter a SQLite CREATE TABLE statement. Review the SQL carefully; this changes the working database schema." />
                 </DockPanel>
             </TabItem>
 
@@ -313,18 +341,18 @@
                 <StackPanel Margin="8">
                     <TextBlock Text="Rename selected table" FontWeight="Bold" />
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,10">
-                        <TextBox Text="{Binding RenameTableName, UpdateSourceTrigger=PropertyChanged}" Width="220" />
-                        <Button Content="Rename" Command="{Binding RenameTableCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                        <TextBox Text="{Binding RenameTableName, UpdateSourceTrigger=PropertyChanged}" Width="220" ToolTip="Enter the new name for the selected table." />
+                        <Button Content="Rename" Command="{Binding RenameTableCommand}" ToolTip="Rename the selected table in the working database." Style="{StaticResource ToolbarButtonStyle}" />
                     </StackPanel>
                     <TextBlock Text="Add column to selected table" FontWeight="Bold" />
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,10">
-                        <TextBox Text="{Binding AddColumnSql, UpdateSourceTrigger=PropertyChanged}" Width="320" ToolTip="Example: NewValue REAL" />
-                        <Button Content="Add column" Command="{Binding AddColumnCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                        <TextBox Text="{Binding AddColumnSql, UpdateSourceTrigger=PropertyChanged}" Width="320" ToolTip="Enter the new column name and SQLite type, for example: NewValue REAL." />
+                        <Button Content="Add column" Command="{Binding AddColumnCommand}" ToolTip="Add the specified column to the selected table." Style="{StaticResource ToolbarButtonStyle}" />
                     </StackPanel>
                     <TextBlock Text="Create index SQL" FontWeight="Bold" />
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                        <TextBox Text="{Binding CreateIndexSql, UpdateSourceTrigger=PropertyChanged}" Width="420" ToolTip="Example: CREATE INDEX IX_Name ON Materials(Name)" />
-                        <Button Content="Create index" Command="{Binding CreateIndexCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                        <TextBox Text="{Binding CreateIndexSql, UpdateSourceTrigger=PropertyChanged}" Width="420" ToolTip="Enter a CREATE INDEX statement, for example: CREATE INDEX IX_Name ON Materials(Name)." />
+                        <Button Content="Create index" Command="{Binding CreateIndexCommand}" ToolTip="Execute the index statement against the working database." Style="{StaticResource ToolbarButtonStyle}" />
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -338,16 +366,17 @@
                         </Grid.RowDefinitions>
                         <Button Content="Execute SQL"
                                 Command="{Binding ExecuteSqlCommand}"
+                                ToolTip="Run the SQL statement below against the working database. Destructive statements require confirmation."
                                 Style="{StaticResource ToolbarButtonStyle}"
                                 HorizontalAlignment="Left"
                                 Margin="0,0,0,6" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <TextBox Text="{Binding SavedQueryName, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="4,0" />
-                            <Button Content="Save query" Command="{Binding SaveQueryCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                            <Button Content="Load query" Command="{Binding LoadQueryCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                            <Button Content="Export CSV" Command="{Binding ExportResultsCsvCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                            <Button Content="Export JSON" Command="{Binding ExportResultsJsonCommand}" Style="{StaticResource ToolbarButtonStyle}" />
-                            <Button Content="Export Excel" Command="{Binding ExportResultsExcelCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                            <TextBox Text="{Binding SavedQueryName, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="4,0" ToolTip="Name used to save or reload the SQL statement." />
+                            <Button Content="Save query" Command="{Binding SaveQueryCommand}" ToolTip="Save the current SQL text under the entered query name." Style="{StaticResource ToolbarButtonStyle}" />
+                            <Button Content="Load query" Command="{Binding LoadQueryCommand}" ToolTip="Load the saved SQL statement with the entered query name." Style="{StaticResource ToolbarButtonStyle}" />
+                            <Button Content="Export CSV" Command="{Binding ExportResultsCsvCommand}" ToolTip="Export the current SQL or table result page to CSV." Style="{StaticResource ToolbarButtonStyle}" />
+                            <Button Content="Export JSON" Command="{Binding ExportResultsJsonCommand}" ToolTip="Export the current SQL or table result page to JSON." Style="{StaticResource ToolbarButtonStyle}" />
+                            <Button Content="Export Excel" Command="{Binding ExportResultsExcelCommand}" ToolTip="Export the current SQL or table result page to an Excel workbook." Style="{StaticResource ToolbarButtonStyle}" />
                         </StackPanel>
                         <TextBox Grid.Row="1"
                                  Text="{Binding SqlCommandText, UpdateSourceTrigger=PropertyChanged}"
@@ -356,7 +385,8 @@
                                  FontFamily="Consolas"
                                  FontSize="13"
                                  VerticalScrollBarVisibility="Auto"
-                                 HorizontalScrollBarVisibility="Auto" />
+                                 HorizontalScrollBarVisibility="Auto"
+                                 ToolTip="Enter one SQLite statement to run. Use SELECT to inspect data; changes affect the working database only." />
                     </Grid>
 
                     <DataGrid ItemsSource="{Binding SqlResults}"
@@ -399,17 +429,20 @@
                                   SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
                                   DisplayMemberPath="DisplayName"
                                   Width="220"
-                                  Margin="0,0,8,0" />
+                                  Margin="0,0,8,0"
+                                  ToolTip="Select a database table containing the numeric values to plot." />
                         <ComboBox ItemsSource="{Binding TableColumns}"
                                   SelectedItem="{Binding PlotXColumn, Mode=TwoWay}"
                                   Width="150"
-                                  Margin="0,0,8,0" />
+                                  Margin="0,0,8,0"
+                                  ToolTip="Select the numeric column used for the horizontal axis." />
                         <TextBox Text="{Binding PlotYColumns, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="180" ToolTip="Y columns separated by commas" Margin="0,0,8,0" />
+                                 Width="180" ToolTip="Enter one or more numeric vertical-axis column names, separated by commas." Margin="0,0,8,0" />
                         <Button Content="Plot"
                                 Command="{Binding PlotTableCommand}"
+                                ToolTip="Plot the selected table's numeric columns using the current axis and title settings."
                                 Style="{StaticResource ToolbarButtonStyle}" />
-                        <Button Content="Export PNG" Click="ExportPlotPng_Click" Style="{StaticResource ToolbarButtonStyle}" />
+                        <Button Content="Export PNG" Click="ExportPlotPng_Click" ToolTip="Save the current plot as a PNG image." Style="{StaticResource ToolbarButtonStyle}" />
                         <TextBlock Text="Zoom" VerticalAlignment="Center" Margin="8,0,4,0" />
                         <Slider Minimum="0.5" Maximum="3" Value="{Binding PlotZoom}" Width="90" />
                     </StackPanel>

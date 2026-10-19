@@ -34,7 +34,12 @@ public sealed partial class DatabaseViewModel
         _operationCancellation = cancellation;
         try
         {
-            var path = _dialogService.AskOpenPath("Open material database", FileFilters.Database);
+            var configuredPath = _options.DatabaseFilePath;
+            var path = _dialogService.AskOpenPath(
+                "Open material database",
+                FileFilters.Database,
+                Path.GetDirectoryName(configuredPath),
+                Path.GetFileName(configuredPath));
             if (path is null) return;
             await OpenDatabasePathAsync(path, cancellation.Token);
         }

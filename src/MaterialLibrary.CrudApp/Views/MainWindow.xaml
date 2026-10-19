@@ -54,14 +54,14 @@
         -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Library">
-                <MenuItem Header="_New" Command="{Binding NewLibraryCommand}" />
+                <MenuItem Header="_New" Command="{Binding NewLibraryCommand}" ToolTip="Discard the current in-memory library and start an empty one." />
                 <Separator />
-                <MenuItem Header="_Open JSON..." Command="{Binding OpenLibraryCommand}" />
-                <MenuItem Header="_Save JSON" Command="{Binding SaveLibraryCommand}" />
-                <MenuItem Header="Save JSON _As..." Command="{Binding SaveLibraryAsCommand}" />
+                <MenuItem Header="_Open JSON..." Command="{Binding OpenLibraryCommand}" ToolTip="Load a material library from a JSON file." />
+                <MenuItem Header="_Save JSON" Command="{Binding SaveLibraryCommand}" ToolTip="Save the current library to its existing JSON file." />
+                <MenuItem Header="Save JSON _As..." Command="{Binding SaveLibraryAsCommand}" ToolTip="Choose a new destination for the current JSON library." />
                 <Separator />
-                <MenuItem Header="Open _XML..." Command="{Binding OpenLibraryXmlCommand}" />
-                <MenuItem Header="Save X_ML As..." Command="{Binding SaveLibraryXmlCommand}" />
+                <MenuItem Header="Open _XML..." Command="{Binding OpenLibraryXmlCommand}" ToolTip="Replace the current library with materials read from an XML library file." />
+                <MenuItem Header="Save X_ML As..." Command="{Binding SaveLibraryXmlCommand}" ToolTip="Export the current library to an XML file." />
             </MenuItem>
 
             <MenuItem Header="_Material">
@@ -79,6 +79,9 @@
             <MenuItem Header="_Database">
                 <MenuItem Header="_Manage database..." Command="{Binding ManageDatabaseCommand}" />
             </MenuItem>
+            <MenuItem Header="_Options" ToolTip="Configure product-form choices, default joint efficiency, and file-picker locations.">
+                <MenuItem Header="_Application options..." Command="{Binding OpenOptionsCommand}" />
+            </MenuItem>
         </Menu>
 
         <!-- Top commands wrap onto extra rows when the window is narrow. -->
@@ -90,12 +93,15 @@
             <WrapPanel Orientation="Horizontal">
                 <Button Content="New Library"
                         Command="{Binding NewLibraryCommand}"
+                        ToolTip="Start a new, empty material library. Unsaved library contents are discarded."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Open Library..."
                         Command="{Binding OpenLibraryCommand}"
+                        ToolTip="Load an existing JSON material library."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Save"
                         Command="{Binding SaveLibraryCommand}"
+                        ToolTip="Save the current library to its active JSON file."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Separator Width="1"
                            Height="28"
@@ -103,28 +109,40 @@
                            Background="#CBD3DA" />
                 <Button Content="New Material..."
                         Command="{Binding NewMaterialCommand}"
+                        ToolTip="Create a material and enter its identity and room-temperature tensile properties."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Edit Material..."
                         Command="{Binding EditMaterialCommand}"
+                        ToolTip="Edit the identity and basic properties of the selected material."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Edit Tables..."
                         Command="{Binding EditTablesCommand}"
+                        ToolTip="Edit the selected material's temperature-dependent and other property tables."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Delete Material"
                         Command="{Binding DeleteMaterialCommand}"
+                        ToolTip="Delete the selected material from the current library after confirmation."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Compare Materials"
                         Command="{Binding CompareMaterialsCommand}"
+                        ToolTip="Compare the selected material with another material in this library."
                         Style="{StaticResource ToolbarButtonStyle}" />
                 <Separator Width="1"
                            Height="28"
                            Margin="8,4"
                            Background="#CBD3DA" />
-                <Button Content="Proprietà ASME 2025" Command="{Binding Open2025EditorCommand}" Style="{StaticResource ToolbarButtonStyle}" />
+                <Button Content="ASME 2025 Properties" Command="{Binding Open2025EditorCommand}" ToolTip="Open the ASME 2025 property editor on its protected working copy." Style="{StaticResource ToolbarButtonStyle}" />
                 <Button Content="Database..."
                         Command="{Binding ManageDatabaseCommand}"
+                        ToolTip="Browse and manage a SQLite material database; edits are made to a working copy."
                         Style="{StaticResource ToolbarButtonStyle}" />
             </WrapPanel>
+        </Border>
+
+        <Border DockPanel.Dock="Top" Background="#EAF3FF" Padding="8" Margin="4,6">
+            <TextBlock Text="Select a material to edit, manage its property tables, compare it with another row, or import material data from XML or a database. Hover over a control for field-specific help."
+                       TextWrapping="Wrap"
+                       Foreground="#24476A" />
         </Border>
 
         <StatusBar DockPanel.Dock="Bottom">

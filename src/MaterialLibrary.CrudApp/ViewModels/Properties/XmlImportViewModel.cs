@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using MaterialLibrary.Crud;
 using MaterialLibrary.Domain.Database.Lookup;
@@ -13,13 +14,13 @@ public sealed class XmlTargetChoice : ObservableObject
 {
     /// <summary>Target MAIN identity.</summary>
     public Asme2025Material Material { get; init; } = null!;
-    /// <summary>Select this explicit record/material association for import.</summary>
     private bool _selected;
+    /// <summary>Select this explicit record/material association for import.</summary>
     public bool Selected { get => _selected; set => SetProperty(ref _selected, value); }
     /// <summary>Strength of matching evidence; zero indicates a manual association.</summary>
     public int Score { get; init; }
     /// <summary>Explanation of the match or of unresolved alternatives.</summary>
-    public string Reason { get; init; } = "Associazione manuale";
+    public string Reason { get; init; } = "Manual association";
     /// <summary>Target state fingerprint captured before the import.</summary>
     public string Version { get; init; } = "";
 }
@@ -30,15 +31,16 @@ public sealed class XmlImportViewModel : ObservableObject
     private readonly string _database;
     private XmlPropertyRecord? _record;
     private XmlTargetChoice? _target;
-    private string _folder = "", _search = "", _status = "Scegli una cartella XML.", _numeric = "", _property = "E", _composition = "", _uns = "", _chart = "";
+    private string _folder = "", _search = "", _status = "Choose an XML folder.", _numeric = "", _property = "E", _composition = "", _uns = "", _chart = "";
     private bool _reviewed, _constant, _replace;
     private XmlPropertyProposal[] _proposals = [];
     private readonly HashSet<long> _selectedIds = [];
     private readonly List<Asme2025Material> _materials;
     /// <summary>Create a read-only preview session over a working database.</summary>
-    public XmlImportViewModel(string database)
+    public XmlImportViewModel(string database, string? defaultFolder = null)
     {
         _database = database;
+        _folder = defaultFolder ?? string.Empty;
         using var db = Asme2025Data.openRead(database);
         _materials = Asme2025Data.materials(db).ToList();
         PickFolderCommand = new RelayCommand(PickFolder);
@@ -46,7 +48,7 @@ public sealed class XmlImportViewModel : ObservableObject
         MatchCommand = new RelayCommand(Match);
         SelectAutomaticCommand = new RelayCommand(SelectAutomatic);
         ImportCommand = new RelayCommand(Import);
-        PreviewCommand = new RelayCommand(() => { try { PreviewRecord = BuildRecord(); RaisePropertyChanged(nameof(PreviewRecord)); Status = $"Anteprima: {PreviewRecord.Points.Length} punti; nessuna scrittura."; } catch (Exception e) { Status = e.Message; } });
+        PreviewCommand = new RelayCommand(() => { try { PreviewRecord = BuildRecord(); RaisePropertyChanged(nameof(PreviewRecord)); Status = $"Preview updated: {PreviewRecord.Points.Length} points. No database changes were made."; } catch (Exception e) { Status = e.Message; } });
     }
     /// <summary>Every parsed source row or reviewable raw XML record.</summary>
     public ObservableCollection<XmlPropertyRecord> Records { get; } = [];
@@ -84,7 +86,7 @@ public sealed class XmlImportViewModel : ObservableObject
     /// <summary>Destination family; Alpha is mean and AlphaInstantaneous is independent.</summary>
     public string PropertyCode { get => _property; set { if (SetProperty(ref _property, value)) RaisePropertyChanged(nameof(Unit)); } }
     /// <summary>Fixed destination unit; EP uses dimensionless A and MPa B.</summary>
-    public string Unit => PropertyCode == "EP" ? "A adimensionale, B MPa" : Asme2025Data.families.FirstOrDefault(f => f.Item1 == PropertyCode)?.Item2 ?? "";
+    public string Unit => PropertyCode == "EP" ? "dimensionless A, B in MPa" : Asme2025Data.families.FirstOrDefault(f => f.Item1 == PropertyCode)?.Item2 ?? "";
     /// <summary>Explicit nominal composition from the source record, editable for a verified raw group.</summary>
     public string SourceComposition { get => _composition; set => SetProperty(ref _composition, value); }
     /// <summary>Explicit UNS identifiers from the source record.</summary>
@@ -100,7 +102,7 @@ public sealed class XmlImportViewModel : ObservableObject
     /// <summary>Tab/space/semicolon separated rows: T value, or T A B for pressure charts; SI units only.</summary>
     public string NumericText { get => _numeric; set => SetProperty(ref _numeric, value); }
     /// <summary>Original raw text, with no instructions executed.</summary>
-    public string SourceText => _record is null ? "" : $"NOTE DEL RECORD:\n{_record.Notes}\n\n" + (string.IsNullOrWhiteSpace(_record.RawText) ? _record.Xml : _record.RawText);
+    public string SourceText => _record is null ? "" : $"RECORD NOTES:\n{_record.Notes}\n\n" + (string.IsNullOrWhiteSpace(_record.RawText) ? _record.Xml : _record.RawText);
     /// <summary>Extraction status and limitations.</summary>
     public string Diagnostic => _record?.Diagnostic ?? "";
     /// <summary>Import/validation status.</summary>
@@ -118,7 +120,7 @@ public sealed class XmlImportViewModel : ObservableObject
     /// <summary>Parse editable numerical rows and redraw the preview.</summary>
     public RelayCommand PreviewCommand { get; }
     /// <summary>Choose a source directory without changing database data.</summary>
-    private void PickFolder() { var picker = new OpenFolderDialog { Title = "Cartella con XML delle proprietà fisiche / External Pressure" }; if (picker.ShowDialog() == true) { Folder = picker.FolderName; Scan(); } }
+    private void PickFolder() { var picker = new OpenFolderDialog { Title = "Select folder containing physical-property or external-pressure XML files", InitialDirectory = Directory.Exists(Folder) ? Folder : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) }; if (picker.ShowDialog() == true) { Folder = picker.FolderName; Scan(); } }
     /// <summary>Read XML files recursively and expose each file diagnostic.</summary>
     private void Scan()
     {
@@ -127,14 +129,14 @@ public sealed class XmlImportViewModel : ObservableObject
             var result = XmlPropertyReader.readFolder(Folder);
             Records.Clear(); foreach (var record in result.Item1) Records.Add(record);
             SelectedRecord = Records.FirstOrDefault();
-            Status = $"{Records.Count} record XML; {result.Item2.Length} file non leggibili." + string.Join(Environment.NewLine, result.Item2);
+            Status = $"{Records.Count} XML record(s); {result.Item2.Length} unreadable file(s)." + string.Join(Environment.NewLine, result.Item2);
         }
         catch (Exception e) { Status = e.Message; }
     }
     /// <summary>Parse approved editable SI rows while retaining the original source document.</summary>
     private XmlPropertyRecord BuildRecord()
     {
-        if (_record is null) throw new InvalidOperationException("Seleziona un record XML.");
+        if (_record is null) throw new InvalidOperationException("Select an XML record.");
         var points = new List<XmlPropertyPoint>();
         foreach (var line in NumericText.Split('\n', StringSplitOptions.RemoveEmptyEntries))
         {
@@ -170,7 +172,7 @@ public sealed class XmlImportViewModel : ObservableObject
         {
             var proposal = _proposals.FirstOrDefault(p => p.MaterialId == m.Id && p.RecordKey == _record?.Key);
             if (Search.Split(' ', StringSplitOptions.RemoveEmptyEntries).Any(term => !$"{m.Specification} {m.Grade} {m.Condition} {m.UNS} {m.NominalComposition} {proposal?.Reason}".Contains(term, StringComparison.OrdinalIgnoreCase))) continue;
-            Targets.Add(new() { Material = m, Selected = _selectedIds.Contains(m.Id), Score = proposal?.Score ?? 0, Reason = proposal?.Reason ?? "Associazione manuale", Version = XmlPropertyImport.version(db, m.Id, PropertyCode) });
+            Targets.Add(new() { Material = m, Selected = _selectedIds.Contains(m.Id), Score = proposal?.Score ?? 0, Reason = proposal?.Reason ?? "Manual association", Version = XmlPropertyImport.version(db, m.Id, PropertyCode) });
         }
         SelectedTarget = Targets.OrderByDescending(t => t.Score).FirstOrDefault();
     }
@@ -181,7 +183,7 @@ public sealed class XmlImportViewModel : ObservableObject
         var candidates = _proposals.Where(p => p.RecordKey == _record?.Key && p.Score >= 85 && !p.Reason.Contains("più record" )).Select(p => p.MaterialId).ToHashSet();
         _selectedIds.Clear();
         foreach (var t in Targets) { t.Selected = candidates.Contains(t.Material.Id); if (t.Selected) _selectedIds.Add(t.Material.Id); }
-        RaisePropertyChanged(nameof(Targets)); Status = $"{Targets.Count(t => t.Selected)} associazioni univoche selezionate. Confermare la verifica del record e importare.";
+        RaisePropertyChanged(nameof(Targets)); Status = $"{Targets.Count(t => t.Selected)} unambiguous match(es) selected. Confirm that you reviewed the record before importing.";
     }
     /// <summary>Read current SI curves or A/B pressure points for the selected material.</summary>
     private void RefreshOverlay()
@@ -203,11 +205,11 @@ public sealed class XmlImportViewModel : ObservableObject
             var record = BuildRecord();
             if (!XmlPropertyImport.validate(record, Reviewed).TryUnwrap(out _, out var problem)) { Status = problem; return; }
             var selected = Targets.Where(t => t.Selected).ToArray();
-            if (selected.Length == 0) { Status = "Seleziona almeno un materiale nella colonna Importa."; return; }
-            if (MessageBox.Show($"Importare {record.PropertyCode}, {record.Points.Length} punti, per {selected.Length} materiali?\nSostituzione esplicita: {ReplaceExisting}", "Conferma importazione XML", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+            if (selected.Length == 0) { Status = "Select at least one material using the Import checkbox."; return; }
+            if (MessageBox.Show($"Import {record.PropertyCode} with {record.Points.Length} points into {selected.Length} material(s)?\nExplicit replacement enabled: {ReplaceExisting}", "Confirm XML import", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
             var assignments = selected.Select(t => new XmlPropertyAssignment(t.Material.Id, record, Reviewed, ReplaceExisting, t.Version)).ToArray();
             if (!XmlPropertyImport.apply(_database, assignments).TryUnwrap(out var count, out var error)) { Status = error; return; }
-            RefreshTargets(); Status = $"Importate {count} associazioni. XML, hash e cronologia conservati.";
+            RefreshTargets(); Status = $"Imported {count} association(s). Source XML, hashes, and history are preserved.";
         }
         catch (Exception e) { Status = e.Message; }
     }

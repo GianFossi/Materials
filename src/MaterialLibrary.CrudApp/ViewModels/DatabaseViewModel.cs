@@ -17,6 +17,7 @@ namespace MaterialLibraryCrudApp.ViewModels;
 public sealed partial class DatabaseViewModel : ObservableObject
 {
     private readonly IDialogService _dialogService;
+    private readonly ApplicationOptions _options;
     private readonly IReadOnlyList<Material> _libraryMaterials;
     private readonly List<Material> _imported = [];
 
@@ -71,11 +72,13 @@ public sealed partial class DatabaseViewModel : ObservableObject
     /// <summary>Creates the database manager.</summary>
     /// <param name="dialogService">Provider of file pickers and message boxes.</param>
     /// <param name="libraryMaterials">Materials of the in-memory library, available for export.</param>
+    /// <param name="options">User preferences used to initialize database and property dialogs.</param>
     /// <exception cref="ArgumentNullException">Thrown when a dependency is <c>null</c>.</exception>
-    public DatabaseViewModel(IDialogService dialogService, IReadOnlyList<Material> libraryMaterials)
+    public DatabaseViewModel(IDialogService dialogService, IReadOnlyList<Material> libraryMaterials, ApplicationOptions? options = null)
     {
         _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         _libraryMaterials = libraryMaterials ?? throw new ArgumentNullException(nameof(libraryMaterials));
+        _options = options ?? new ApplicationOptions();
         AuditLog = new ReadOnlyObservableCollection<string>(_auditLog);
         LoadAuditStore();
 

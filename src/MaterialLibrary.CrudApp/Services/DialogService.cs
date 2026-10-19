@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using MaterialLibrary.Domain;
 using MaterialLibraryCrudApp.ViewModels;
@@ -10,13 +11,16 @@ namespace MaterialLibraryCrudApp.Services;
 public sealed class DialogService : IDialogService
 {
     private readonly Window _owner;
+    private readonly ApplicationOptions _options;
 
     /// <summary>Creates the service.</summary>
     /// <param name="owner">Window used as the modal owner for every dialog raised here.</param>
+    /// <param name="options">Persistent user preferences shared with editor windows.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="owner"/> is <c>null</c>.</exception>
-    public DialogService(Window owner)
+    public DialogService(Window owner, ApplicationOptions options)
     {
         _owner = owner ?? throw new ArgumentNullException(nameof(owner));
+        _options = options ?? throw new ArgumentNullException(nameof(options));
     }
 
     /// <inheritdoc />
@@ -25,6 +29,22 @@ public sealed class DialogService : IDialogService
         var dialog = new OpenFileDialog { Title = title, Filter = filter, CheckFileExists = true };
 
         // ShowDialog returns bool?; only an explicit true means the user confirmed.
+        return dialog.ShowDialog(_owner) == true ? dialog.FileName : null;
+    }
+
+    /// <inheritdoc />
+    public string? AskOpenPath(string title, string filter, string? initialDirectory, string? fileName)
+    {
+        var dialog = new OpenFileDialog { Title = title, Filter = filter, CheckFileExists = true };
+        if (!string.IsNullOrWhiteSpace(initialDirectory) && Directory.Exists(initialDirectory))
+        {
+            dialog.InitialDirectory = initialDirectory;
+        }
+        if (!string.IsNullOrWhiteSpace(fileName))
+        {
+            dialog.FileName = fileName;
+        }
+
         return dialog.ShowDialog(_owner) == true ? dialog.FileName : null;
     }
 
@@ -83,7 +103,7 @@ public sealed class DialogService : IDialogService
     /// <inheritdoc />
     public Material? EditMaterial(Material? existing)
     {
-        var dialog = new MaterialEditWindow(new MaterialEditViewModel(existing)) { Owner = _owner };
+        var dialog = new MaterialEditWindow(new MaterialEditViewModel(existing, _options)) { Owner = _owner };
 
         return dialog.ShowDialog() == true ? dialog.ConfirmedMaterial : null;
     }
@@ -99,12 +119,19 @@ public sealed class DialogService : IDialogService
     /// <inheritdoc />
     public IReadOnlyList<Material>? ManageDatabase(IReadOnlyList<Material> currentMaterials)
     {
-        var viewModel = new DatabaseViewModel(this, currentMaterials);
+        var viewModel = new DatabaseViewModel(this, currentMaterials, _options);
         var dialog = new DatabaseWindow(viewModel) { Owner = _owner };
         dialog.ShowDialog();
 
         // The manager is a workspace rather than an OK/Cancel dialog: whatever the user imported
         // while it was open is handed back, regardless of how the window was closed.
         return viewModel.ImportedMaterials.Count > 0 ? viewModel.ImportedMaterials : null;
+    }
+
+    /// <summary>Opens the options editor for application preferences.</summary>
+    public void ShowOptions()
+    {
+        var dialog = new OptionsWindow(_options) { Owner = _owner };
+        dialog.ShowDialog();
     }
 }

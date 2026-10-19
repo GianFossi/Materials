@@ -31,7 +31,7 @@ public sealed partial class DatabaseViewModel
         if (HasUnsavedTableChanges) { StatusMessage = "Save or discard raw-table changes before editing properties."; return; }
         try
         {
-            var editor = new Asme2025EditorWindow(new Asme2025EditorViewModel(_workingPath, SelectedMaterial?.DatabaseId));
+            var editor = new Asme2025EditorWindow(new Asme2025EditorViewModel(_workingPath, SelectedMaterial?.DatabaseId, _options));
             editor.Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.DataContext == this);
             editor.ShowDialog();
             CaptureWorkingFingerprint();

@@ -10,6 +10,10 @@ open Microsoft.Data.Sqlite
 [<CLIMutable>]
 type Asme2025Point = { Temperature: float; Value: float }
 
+/// <summary>A copied or manually authored note attached to one editable property curve.</summary>
+[<CLIMutable>]
+type Asme2025UserNote = { SourceTable: string; Code: string; Text: string }
+
 /// <summary>One independently editable 2025 curve; sizes are mm, stresses MPa, temperatures Celsius.</summary>
 [<CLIMutable>]
 type Asme2025Curve = {
@@ -25,6 +29,8 @@ type Asme2025Curve = {
     SourceTable: string
     SourceNotes: string
     UserNotes: string
+    UserNoteItems: Asme2025UserNote array
+    S1StressLevel: string
     Points: Asme2025Point array
     Version: string
 }
@@ -92,6 +98,13 @@ module Asme2025Data =
     let curves (db: SqliteConnection) materialId requestedCode =
         let code = canonicalCode requestedCode
         let mechanical = ["Sy";"Su";"S1";"S2";"Sb1";"Sb2"] |> List.contains code
+        let metadataColumns =
+            query db "PRAGMA table_info(Property_Curve_Metadata)" []
+            |> List.map (fun row -> string row[1])
+        let hasMetadata = not metadataColumns.IsEmpty
+        let hasNoteItems = metadataColumns |> List.contains "UserNoteItemsJson"
+        let hasStressLevel = metadataColumns |> List.contains "S1StressLevel"
+        let selectedMetadataColumns = ["SizeAxis";"UserNotes"] @ (if hasNoteItems then ["UserNoteItemsJson"] else []) @ (if hasStressLevel then ["S1StressLevel"] else [])
         let rows =
             if mechanical then
                 query db """SELECT p.id,p.ProductForm,z.SizeMin,z.SizeMax,z.SizeMinIncluded,z.SizeMaxIncluded,
@@ -119,12 +132,39 @@ module Asme2025Data =
                          let notes = doc.RootElement.GetProperty("Notes").GetString()
                          $"XML: {r[1]}\n{notes}") |> String.concat "\n"
             let metadata =
-                if (query db "SELECT 1 FROM sqlite_master WHERE name='Property_Curve_Metadata'" []).IsEmpty then None
-                else query db "SELECT SizeAxis,UserNotes FROM Property_Curve_Metadata WHERE Code=$c AND CurveId=$id" ["$c",box code;"$id",box id] |> List.tryHead
-            let userNotes = metadata |> Option.map (fun r -> string r[1]) |> Option.defaultValue ""
-            let axis = metadata |> Option.map (fun r -> string r[0]) |> Option.defaultValue (string row[6])
+                if not hasMetadata then None
+                else
+                    let columnsSql = String.Join(",",selectedMetadataColumns)
+                    query db $"SELECT {columnsSql} FROM Property_Curve_Metadata WHERE Code=$c AND CurveId=$id" ["$c",box code;"$id",box id]
+                    |> List.tryHead
+            let metadataValue column =
+                metadata
+                |> Option.bind (fun row -> selectedMetadataColumns |> List.tryFindIndex ((=) column) |> Option.map (fun index -> row[index]))
+                |> Option.defaultValue null
+            let legacyUserNotes = metadataValue "UserNotes" |> fun value -> if isNull value then "" else string value
+            let noteItemsJson = metadataValue "UserNoteItemsJson" |> fun value -> if isNull value then "" else string value
+            let userNoteItems =
+                if String.IsNullOrWhiteSpace noteItemsJson then [||]
+                else
+                    let decoded = JsonSerializer.Deserialize<Asme2025UserNote array>(noteItemsJson)
+                    if isNull decoded then [||] else decoded
+            let effectiveNoteItems =
+                if userNoteItems.Length > 0 || String.IsNullOrWhiteSpace legacyUserNotes then userNoteItems
+                else [|{SourceTable="User";Code="";Text=legacyUserNotes}|]
+            let userNotes =
+                if effectiveNoteItems.Length > 0 then effectiveNoteItems |> Array.map (fun note -> note.Text) |> String.concat "\n\n"
+                else legacyUserNotes
+            let axisValue = metadataValue "SizeAxis"
+            let axis = if isNull axisValue then string row[6] else string axisValue
+            let inferredStressLevel =
+                if code="S1" && System.Text.RegularExpressions.Regex.IsMatch(sourceNotes,"(?im)^\\s*1[AB]\\s*/\\s*G5\\s*\\(Specific\\):")
+                then "High"
+                else "Normal"
+            let stressLevel =
+                let stored = metadataValue "S1StressLevel"
+                if isNull stored || String.IsNullOrWhiteSpace(string stored) then inferredStressLevel else string stored
             let nullable (value: obj) = if isNull value then Nullable() else Nullable(Convert.ToDouble value)
-            let curve = { Id=id;MaterialId=materialId;Code=code;ProductForm=string row[1];SizeMinimum=nullable row[2];SizeMaximum=nullable row[3];MinimumIncluded=Convert.ToBoolean row[4];MaximumIncluded=Convert.ToBoolean row[5];SizeAxis=axis;SourceTable=string row[7];SourceNotes=(if mechanical then sourceNotes else xmlProvenance);UserNotes=userNotes;Points=points;Version="" }
+            let curve = { Id=id;MaterialId=materialId;Code=code;ProductForm=string row[1];SizeMinimum=nullable row[2];SizeMaximum=nullable row[3];MinimumIncluded=Convert.ToBoolean row[4];MaximumIncluded=Convert.ToBoolean row[5];SizeAxis=axis;SourceTable=string row[7];SourceNotes=(if mechanical then sourceNotes else xmlProvenance);UserNotes=userNotes;UserNoteItems=effectiveNoteItems;S1StressLevel=stressLevel;Points=points;Version="" }
             {curve with Version=fingerprint curve})
 
     /// <summary>Interpolate only inside the selected curve; ambiguous variants require an explicit curve ID.</summary>

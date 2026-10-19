@@ -13,6 +13,10 @@
         ShowInTaskbar="False">
 
     <Window.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="ToolTip" Value="Enter a value using the units shown beside the field or in the table header." />
+        </Style>
+
         <!--
             Reusable template for a size-ranged temperature × size-range table editor.
             DataContext must be a SizeRangedTableEditorViewModel (or subclass).
@@ -32,16 +36,19 @@
                                VerticalAlignment="Center" Margin="0,0,6,0" />
                     <Button DockPanel.Dock="Right" Content="Add"
                             Command="{Binding AddRowCommand}"
-                            MinWidth="50" Margin="4,0,0,0" />
+                            MinWidth="50" Margin="4,0,0,0"
+                            ToolTip="Add a temperature row using the value entered in the adjacent field." />
                     <TextBox Text="{Binding NewTemperature, UpdateSourceTrigger=PropertyChanged}"
-                             VerticalAlignment="Center" />
+                             VerticalAlignment="Center"
+                             ToolTip="Temperature in °C for the new row." />
                 </DockPanel>
 
                 <!-- Right: add column button -->
                 <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0" VerticalAlignment="Top">
                     <Button Content="+ Column"
                             Command="{Binding AddColumnCommand}"
-                            MinWidth="80" Margin="0,0,0,4" />
+                            MinWidth="80" Margin="0,0,0,4"
+                            ToolTip="Add a new size-range column to this property table." />
                 </StackPanel>
 
                 <!-- Unit label at bottom -->
@@ -142,7 +149,8 @@
                                                     <TextBox Text="{Binding ., Mode=TwoWay,
                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                              Width="75" Height="24" Margin="0,1"
-                                                             HorizontalContentAlignment="Right" />
+                                                             HorizontalContentAlignment="Right"
+                                                             ToolTip="Property value for this temperature and size range, in the unit shown below." />
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
@@ -159,6 +167,12 @@
 
     <DockPanel Margin="8">
 
+        <TextBlock DockPanel.Dock="Top"
+                   Text="Edit the selected material's numerical datasets. Use the tabs to switch between flat property tables and specialized creep, stress-strain, fatigue, and other curve data. Enter values in the units shown beside each table."
+                   TextWrapping="Wrap"
+                   Foreground="#52616F"
+                   Margin="4,0,4,8" />
+
         <StackPanel DockPanel.Dock="Bottom"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
@@ -166,9 +180,11 @@
             <Button Content="OK"
                     IsDefault="True"
                     Click="OnConfirm"
+                    ToolTip="Validate and apply the table edits to this material."
                     Style="{StaticResource DialogButtonStyle}" />
             <Button Content="Cancel"
                     IsCancel="True"
+                    ToolTip="Close without applying the table edits."
                     Style="{StaticResource DialogButtonStyle}" />
         </StackPanel>
 
@@ -187,15 +203,18 @@
                              Margin="0,0,8,0"
                              ItemsSource="{Binding Tables}"
                              SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
-                             DisplayMemberPath="Title" />
+                             DisplayMemberPath="Title"
+                             ToolTip="Select the property table to edit. Selecting another table commits the current grid edits." />
 
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
                             <Button Content="Add row"
                                     Command="{Binding AddRowCommand}"
+                                    ToolTip="Add a new data row to the selected flat property table."
                                     Style="{StaticResource DialogButtonStyle}" />
                             <Button Content="Delete row"
                                     Command="{Binding DeleteRowCommand}"
+                                    ToolTip="Delete the selected data row from the current table."
                                     Style="{StaticResource DialogButtonStyle}" />
                         </StackPanel>
 
@@ -213,7 +232,8 @@
                                   SelectionUnit="FullRow"
                                   GridLinesVisibility="All"
                                   HeadersVisibility="All"
-                                  AlternatingRowBackground="#F7F7F7" />
+                                  AlternatingRowBackground="#F7F7F7"
+                                  ToolTip="Edit the selected table's temperature and property values. Column headers show the property names and units." />
                     </DockPanel>
                 </DockPanel>
             </TabItem>
@@ -222,8 +242,8 @@
                 <DockPanel DataContext="{Binding CreepEditor}" Margin="0,6,0,0">
                     <StackPanel DockPanel.Dock="Left" Width="230" Margin="0,0,8,0">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                            <Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" />
-                            <Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Add table" Command="{Binding AddTableCommand}" ToolTip="Create a creep table for this material." Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete" Command="{Binding DeleteTableCommand}" ToolTip="Delete the selected creep table." Style="{StaticResource DialogButtonStyle}" />
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}" DisplayMemberPath="DisplayName" />
                     </StackPanel>
@@ -231,15 +251,15 @@
                         <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="120" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="120" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                             <TextBlock Text="Temperature C" Margin="0,0,4,0" VerticalAlignment="Center" />
-                            <TextBox Grid.Column="1" Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+                            <TextBox Grid.Column="1" Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" ToolTip="Test temperature in °C." />
                             <TextBlock Grid.Column="2" Text="Stress MPa" Margin="0,0,4,0" VerticalAlignment="Center" />
-                            <TextBox Grid.Column="3" Text="{Binding SelectedTable.AppliedStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+                            <TextBox Grid.Column="3" Text="{Binding SelectedTable.AppliedStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" ToolTip="Applied stress for this creep test, in MPa." />
                             <TextBlock Grid.Column="4" Text="Description" Margin="0,0,4,0" VerticalAlignment="Center" />
-                            <TextBox Grid.Column="5" Text="{Binding SelectedTable.Description, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="5" Text="{Binding SelectedTable.Description, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional source or test description for this creep table." />
                         </Grid>
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
-                            <Button Content="Add point" Command="{Binding AddPointCommand}" Style="{StaticResource DialogButtonStyle}" />
-                            <Button Content="Delete point" Command="{Binding DeletePointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Add point" Command="{Binding AddPointCommand}" ToolTip="Add a time/strain measurement to the selected creep table." Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete point" Command="{Binding DeletePointCommand}" ToolTip="Delete the selected time/strain measurement." Style="{StaticResource DialogButtonStyle}" />
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="False">
                             <DataGrid.Columns>
@@ -263,9 +283,11 @@
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
                             <Button Content="Add table"
                                     Command="{Binding AddTableCommand}"
+                                    ToolTip="Create a stress-strain dataset for this material."
                                     Style="{StaticResource DialogButtonStyle}" />
                             <Button Content="Delete"
                                     Command="{Binding DeleteTableCommand}"
+                                    ToolTip="Delete the selected stress-strain dataset."
                                     Style="{StaticResource DialogButtonStyle}" />
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Tables}"
@@ -292,35 +314,40 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="Temperature" VerticalAlignment="Center" Margin="0,0,4,4" />
-                            <TextBox Grid.Column="1" Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" />
+                            <TextBox Grid.Column="1" Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" ToolTip="Test temperature in °C." />
                             <TextBlock Grid.Column="2" Text="Duration h" VerticalAlignment="Center" Margin="0,0,4,4" />
-                            <TextBox Grid.Column="3" Text="{Binding SelectedTable.DurationHours, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" />
+                            <TextBox Grid.Column="3" Text="{Binding SelectedTable.DurationHours, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" ToolTip="Duration represented by this isochronous dataset, in hours." />
                             <TextBlock Grid.Column="4" Text="Yield MPa" VerticalAlignment="Center" Margin="0,0,4,4" />
-                            <TextBox Grid.Column="5" Text="{Binding SelectedTable.YieldStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" />
+                            <TextBox Grid.Column="5" Text="{Binding SelectedTable.YieldStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,4" ToolTip="Yield stress for this dataset, in MPa." />
                             <TextBlock Grid.Column="6" Text="Ultimate MPa" VerticalAlignment="Center" Margin="0,0,4,4" />
-                            <TextBox Grid.Column="7" Text="{Binding SelectedTable.UltimateStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" />
+                            <TextBox Grid.Column="7" Text="{Binding SelectedTable.UltimateStress, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="Ultimate tensile stress for this dataset, in MPa." />
 
                             <TextBlock Grid.Row="1" Text="Strain basis" VerticalAlignment="Center" Margin="0,0,4,4" />
                             <ComboBox Grid.Row="1" Grid.Column="1"
                                       ItemsSource="{Binding SelectedTable.BasisOptions}"
                                       SelectedItem="{Binding SelectedTable.StrainBasis, Mode=TwoWay}"
-                                      Margin="0,0,10,4" />
+                                      Margin="0,0,10,4"
+                                      ToolTip="Select whether the strain values use Engineering or True basis." />
                             <TextBlock Grid.Row="1" Grid.Column="2" Text="Stress basis" VerticalAlignment="Center" Margin="0,0,4,4" />
                             <ComboBox Grid.Row="1" Grid.Column="3"
                                       ItemsSource="{Binding SelectedTable.BasisOptions}"
                                       SelectedItem="{Binding SelectedTable.StressBasis, Mode=TwoWay}"
-                                      Margin="0,0,10,4" />
+                                      Margin="0,0,10,4"
+                                      ToolTip="Select whether the stress values use Engineering or True basis." />
                             <TextBlock Grid.Row="1" Grid.Column="4" Text="Description" VerticalAlignment="Center" Margin="0,0,4,4" />
                             <TextBox Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="3"
                                      Text="{Binding SelectedTable.Description, UpdateSourceTrigger=PropertyChanged}"
-                                     Margin="0,0,0,4" />
+                                     Margin="0,0,0,4"
+                                     ToolTip="Optional description of the stress-strain dataset." />
 
                             <StackPanel Grid.Row="2" Grid.ColumnSpan="8" Orientation="Horizontal" Margin="0,2,0,0">
                                 <Button Content="Add point"
                                         Command="{Binding AddPointCommand}"
+                                        ToolTip="Add a strain/stress point to this dataset."
                                         Style="{StaticResource DialogButtonStyle}" />
                                 <Button Content="Delete point"
                                         Command="{Binding DeletePointCommand}"
+                                        ToolTip="Delete the selected strain/stress point."
                                         Style="{StaticResource DialogButtonStyle}" />
                             </StackPanel>
                         </Grid>
@@ -352,19 +379,19 @@
                 <DockPanel DataContext="{Binding StressRuptureEditor}" Margin="0,6,0,0">
                     <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                            <Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" />
-                            <Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Add table" Command="{Binding AddTableCommand}" ToolTip="Create a new stress-rupture dataset." Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete" Command="{Binding DeleteTableCommand}" ToolTip="Delete the selected stress-rupture dataset." Style="{StaticResource DialogButtonStyle}" />
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}" DisplayMemberPath="DisplayName" />
                     </StackPanel>
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
                             <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,5,0" />
-                            <TextBox Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="0,0,8,0" />
-                            <Button Content="Add point" Command="{Binding AddPointCommand}" Style="{StaticResource DialogButtonStyle}" />
-                            <Button Content="Delete point" Command="{Binding DeletePointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <TextBox Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="0,0,8,0" ToolTip="Test temperature in °C." />
+                            <Button Content="Add point" Command="{Binding AddPointCommand}" ToolTip="Add a rupture-time/stress point at this temperature." Style="{StaticResource DialogButtonStyle}" />
+                            <Button Content="Delete point" Command="{Binding DeletePointCommand}" ToolTip="Delete the selected stress-rupture point." Style="{StaticResource DialogButtonStyle}" />
                         </StackPanel>
-                        <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False" ToolTip="Edit rupture time in hours and corresponding stress in MPa." >
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Rupture time (h)" Binding="{Binding TimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" />
                                 <DataGridTextColumn Header="Stress (MPa)" Binding="{Binding StressMpa, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" />
@@ -377,15 +404,15 @@
             <TabItem Header="Fatigue">
                 <DockPanel DataContext="{Binding FatigueEditor}" Margin="0,6,0,0">
                     <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" ToolTip="Create a new fatigue dataset." Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" ToolTip="Delete the selected fatigue dataset." Style="{StaticResource DialogButtonStyle}" /></StackPanel>
                         <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}" DisplayMemberPath="DisplayName" />
                     </StackPanel>
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
-                            <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,5,0" /><TextBox Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="100" Margin="0,0,8,0" />
-                            <Button Content="Add point" Command="{Binding AddPointCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete point" Command="{Binding DeletePointCommand}" Style="{StaticResource DialogButtonStyle}" />
+                            <TextBlock Text="Temperature °C" VerticalAlignment="Center" Margin="0,0,5,0" /><TextBox Text="{Binding SelectedTable.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="100" Margin="0,0,8,0" ToolTip="Test temperature in °C." />
+                            <Button Content="Add point" Command="{Binding AddPointCommand}" ToolTip="Add a cycle-count/stress-amplitude fatigue point." Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete point" Command="{Binding DeletePointCommand}" ToolTip="Delete the selected fatigue point." Style="{StaticResource DialogButtonStyle}" />
                         </StackPanel>
-                        <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid ItemsSource="{Binding SelectedTable.Points}" SelectedItem="{Binding SelectedPoint}" AutoGenerateColumns="False" CanUserAddRows="False" ToolTip="Enter cycle count and stress amplitude in MPa for each fatigue point." >
                             <DataGrid.Columns><DataGridTextColumn Header="Cycles" Binding="{Binding Cycles, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" /><DataGridTextColumn Header="Stress amplitude (MPa)" Binding="{Binding StressMpa, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" /></DataGrid.Columns>
                         </DataGrid>
                     </DockPanel>
@@ -395,20 +422,20 @@
             <TabItem Header="Cyclic Strain">
                 <DockPanel DataContext="{Binding CyclicEditor}" Margin="0,6,0,0">
                     <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" ToolTip="Create a new cyclic-strain dataset." Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" ToolTip="Delete the selected cyclic-strain dataset." Style="{StaticResource DialogButtonStyle}" /></StackPanel>
                         <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding Selected}" />
                     </StackPanel>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel>
                             <WrapPanel Margin="0,0,0,8">
-                                <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0,0,8,0" />
-                                <TextBlock Text="Kcss" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Kcss, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="0,0,8,0" />
-                                <TextBlock Text="Ncss" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Ncss, UpdateSourceTrigger=PropertyChanged}" Width="80" />
+                                <TextBlock Text="Temperature °C" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0,0,8,0" ToolTip="Test temperature in °C." />
+                                <TextBlock Text="Kcss" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Kcss, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="0,0,8,0" ToolTip="Cyclic stress coefficient for this dataset." />
+                                <TextBlock Text="Ncss" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Ncss, UpdateSourceTrigger=PropertyChanged}" Width="80" ToolTip="Cyclic strain-hardening exponent for this dataset." />
                             </WrapPanel>
                             <TextBlock Text="Stress amplitude / strain amplitude" FontWeight="Bold" Margin="0,0,0,4" />
-                            <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True" Height="150" Margin="0,0,0,8"><DataGrid.Columns><DataGridTextColumn Header="Stress amplitude" Binding="{Binding X, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Strain amplitude" Binding="{Binding Y, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                            <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True" Height="150" Margin="0,0,0,8" ToolTip="Enter corresponding stress-amplitude and strain-amplitude pairs."><DataGrid.Columns><DataGridTextColumn Header="Stress amplitude" Binding="{Binding X, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Strain amplitude" Binding="{Binding Y, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
                             <TextBlock Text="Stress range / strain range" FontWeight="Bold" Margin="0,0,0,4" />
-                            <DataGrid ItemsSource="{Binding Selected.HysteresisPoints}" AutoGenerateColumns="False" CanUserAddRows="True" Height="150"><DataGrid.Columns><DataGridTextColumn Header="Stress range" Binding="{Binding X, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Strain range" Binding="{Binding Y, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                            <DataGrid ItemsSource="{Binding Selected.HysteresisPoints}" AutoGenerateColumns="False" CanUserAddRows="True" Height="150" ToolTip="Enter corresponding stress-range and strain-range pairs."><DataGrid.Columns><DataGridTextColumn Header="Stress range" Binding="{Binding X, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Strain range" Binding="{Binding Y, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
                         </StackPanel>
                     </ScrollViewer>
                 </DockPanel>
@@ -417,16 +444,16 @@
             <TabItem Header="External Pressure">
                 <DockPanel DataContext="{Binding ExternalPressureEditor}" Margin="0,6,0,0">
                     <StackPanel DockPanel.Dock="Left" Width="190" Margin="0,0,8,0">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add table" Command="{Binding AddTableCommand}" ToolTip="Create an external-pressure table for this material." Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteTableCommand}" ToolTip="Delete the selected external-pressure table." Style="{StaticResource DialogButtonStyle}" /></StackPanel>
                         <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding Selected}" />
                     </StackPanel>
                     <DockPanel>
                         <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
-                            <TextBlock Text="Temperature C" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="85" Margin="0,0,8,0" />
-                            <TextBlock Text="Duration h" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.DurationHours, UpdateSourceTrigger=PropertyChanged}" Width="85" Margin="0,0,8,0" />
-                            <TextBlock Text="Reduction" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.ReductionFactor, UpdateSourceTrigger=PropertyChanged}" Width="85" />
+                            <TextBlock Text="Temperature °C" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.Temperature, UpdateSourceTrigger=PropertyChanged}" Width="85" Margin="0,0,8,0" ToolTip="Reference temperature in °C." />
+                            <TextBlock Text="Duration h" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.DurationHours, UpdateSourceTrigger=PropertyChanged}" Width="85" Margin="0,0,8,0" ToolTip="Duration used by this external-pressure dataset, in hours." />
+                            <TextBlock Text="Reduction" VerticalAlignment="Center" Margin="0,0,4,0" /><TextBox Text="{Binding Selected.ReductionFactor, UpdateSourceTrigger=PropertyChanged}" Width="85" ToolTip="Reduction factor applied to this external-pressure dataset." />
                         </WrapPanel>
-                        <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True"><DataGrid.Columns><DataGridTextColumn Header="Factor A" Binding="{Binding FactorA, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Factor B / stress MPa" Binding="{Binding CompressiveStress, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                        <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True" ToolTip="Enter dimensionless factor A and compressive stress/factor B in MPa for each chart point."><DataGrid.Columns><DataGridTextColumn Header="Factor A" Binding="{Binding FactorA, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Factor B / stress MPa" Binding="{Binding CompressiveStress, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
                     </DockPanel>
                 </DockPanel>
             </TabItem>
@@ -434,15 +461,15 @@
             <TabItem Header="Larson-Miller">
                 <DockPanel DataContext="{Binding LarsonMillerEditor}" Margin="0,6,0,0">
                     <StackPanel DockPanel.Dock="Left" Width="210" Margin="0,0,8,0">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add curve" Command="{Binding AddCurveCommand}" Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteCurveCommand}" Style="{StaticResource DialogButtonStyle}" /></StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6"><Button Content="Add curve" Command="{Binding AddCurveCommand}" ToolTip="Create a Larson-Miller curve for this material." Style="{StaticResource DialogButtonStyle}" /><Button Content="Delete" Command="{Binding DeleteCurveCommand}" ToolTip="Delete the selected Larson-Miller curve." Style="{StaticResource DialogButtonStyle}" /></StackPanel>
                         <ListBox ItemsSource="{Binding Curves}" SelectedItem="{Binding Selected}" DisplayMemberPath="Description" />
                     </StackPanel>
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
-                            <TextBlock Text="Material" Margin="0,0,0,2" /><TextBox Text="{Binding Selected.Material, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5" />
-                            <TextBlock Text="Description" Margin="0,0,0,2" /><TextBox Text="{Binding Selected.Description, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Material" Margin="0,0,0,2" /><TextBox Text="{Binding Selected.Material, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5" ToolTip="Material or source designation associated with this curve." />
+                            <TextBlock Text="Description" Margin="0,0,0,2" /><TextBox Text="{Binding Selected.Description, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional description for the Larson-Miller curve." />
                         </StackPanel>
-                        <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True"><DataGrid.Columns><DataGridTextColumn Header="Larson-Miller parameter" Binding="{Binding Parameter, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Stress (MPa)" Binding="{Binding Stress, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
+                        <DataGrid ItemsSource="{Binding Selected.Points}" AutoGenerateColumns="False" CanUserAddRows="True" ToolTip="Enter Larson-Miller parameter and corresponding stress in MPa."><DataGrid.Columns><DataGridTextColumn Header="Larson-Miller parameter" Binding="{Binding Parameter, Mode=TwoWay}" Width="*" /><DataGridTextColumn Header="Stress (MPa)" Binding="{Binding Stress, Mode=TwoWay}" Width="*" /></DataGrid.Columns></DataGrid>
                     </DockPanel>
                 </DockPanel>
             </TabItem>

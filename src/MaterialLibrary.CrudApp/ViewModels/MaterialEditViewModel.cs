@@ -1,5 +1,6 @@
 using System.Globalization;
 using MaterialLibraryCrudApp.Interop;
+using MaterialLibraryCrudApp.Services;
 using MaterialLibrary.Domain;
 using Microsoft.FSharp.Core;
 
@@ -33,6 +34,7 @@ public sealed class MaterialEditViewModel : ObservableObject
     /// tables, ASME code lists, timestamps) live here and are carried through to the saved record.
     /// </summary>
     private readonly MaterialDraft _draft;
+    private readonly ApplicationOptions _options;
 
     private MaterialFamilyChoice _selectedFamily = MaterialFamilyChoice.For(null);
     private string _id = string.Empty;
@@ -51,9 +53,11 @@ public sealed class MaterialEditViewModel : ObservableObject
 
     /// <summary>Creates an editing buffer.</summary>
     /// <param name="existing">Material to edit, or <c>null</c> to start a new one.</param>
-    public MaterialEditViewModel(Material? existing)
+    /// <param name="options">Preferences containing the product-form choices.</param>
+    public MaterialEditViewModel(Material? existing, ApplicationOptions? options = null)
     {
         _existing = existing;
+        _options = options ?? new ApplicationOptions();
         _draft = existing is null ? new MaterialDraft() : new MaterialDraft(existing);
 
         if (existing is null)
@@ -125,8 +129,21 @@ public sealed class MaterialEditViewModel : ObservableObject
     public string ProductForm
     {
         get => _productForm;
-        set => SetProperty(ref _productForm, value);
+        set
+        {
+            if (SetProperty(ref _productForm, value))
+            {
+                RaisePropertyChanged(nameof(ProductFormChoices));
+            }
+        }
     }
+
+    /// <summary>Configured product forms plus the current value when it is not in the options list.</summary>
+    public IReadOnlyList<string> ProductFormChoices =>
+        _options.ProductForms
+            .Concat(string.IsNullOrWhiteSpace(ProductForm) ? [] : [ProductForm])
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
     /// <summary>Nominal composition (free text).</summary>
     public string NominalComposition

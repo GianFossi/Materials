@@ -18,10 +18,16 @@ module Asme2025Crud =
     /// <summary>Add editor metadata and an append-only change journal without modifying source documents or notes.</summary>
     let ensureSchema (db: SqliteConnection) =
         run db """CREATE TABLE IF NOT EXISTS Property_Curve_Metadata (
-                Code TEXT NOT NULL,CurveId INTEGER NOT NULL,SizeAxis TEXT,UserNotes TEXT,PRIMARY KEY(Code,CurveId));
+                Code TEXT NOT NULL,CurveId INTEGER NOT NULL,SizeAxis TEXT,UserNotes TEXT,
+                UserNoteItemsJson TEXT NOT NULL DEFAULT '[]',S1StressLevel TEXT,PRIMARY KEY(Code,CurveId));
             CREATE TABLE IF NOT EXISTS Property_Edit_History (
                 Id INTEGER PRIMARY KEY,MaterialId INTEGER NOT NULL,Code TEXT NOT NULL,CurveId INTEGER NOT NULL,
                 EditedUtc TEXT NOT NULL,Operation TEXT NOT NULL,BeforeJson TEXT,AfterJson TEXT);""" []
+        let columns = Asme2025Data.query db "PRAGMA table_info(Property_Curve_Metadata)" [] |> List.map (fun row -> string row[1])
+        if not (columns |> List.contains "UserNoteItemsJson") then
+            run db "ALTER TABLE Property_Curve_Metadata ADD COLUMN UserNoteItemsJson TEXT NOT NULL DEFAULT '[]'" []
+        if not (columns |> List.contains "S1StressLevel") then
+            run db "ALTER TABLE Property_Curve_Metadata ADD COLUMN S1StressLevel TEXT" []
 
     /// <summary>Open an existing working copy and reject reference files and unsupported schemas.</summary>
     let private writable (path: string) action =
@@ -51,6 +57,7 @@ module Asme2025Crud =
         elif curve.SizeMinimum.HasValue && (not (Double.IsFinite curve.SizeMinimum.Value) || curve.SizeMinimum.Value<0.) || curve.SizeMaximum.HasValue && (not (Double.IsFinite curve.SizeMaximum.Value) || curve.SizeMaximum.Value<0.) then Error "Size bounds must be finite nonnegative mm."
         elif curve.SizeMinimum.HasValue && curve.SizeMaximum.HasValue && (curve.SizeMinimum.Value>curve.SizeMaximum.Value || (curve.SizeMinimum.Value=curve.SizeMaximum.Value && not (curve.MinimumIncluded && curve.MaximumIncluded))) then Error "Size bounds do not describe a nonempty interval."
         elif code<>"S1" && code<>"S2" && not (String.IsNullOrWhiteSpace curve.ProductForm) then Error "Product form applies only to S1/S2."
+        elif code="S1" && not (["Normal";"High"] |> List.contains curve.S1StressLevel) then Error "Select Normal Stress or High Stress (G5) for S1."
         elif not (["Sy";"Su";"S1";"S2";"Sb1";"Sb2"] |> List.contains code) && (curve.SizeMinimum.HasValue || curve.SizeMaximum.HasValue) then Error "Physical properties do not have size bounds."
         else Ok {curve with Code=code;Points=curve.Points |> Array.sortBy (fun p -> p.Temperature)}
 
@@ -94,7 +101,12 @@ module Asme2025Crud =
                 let table,key,value = if mechanical then "Property_Values","id_property","StressValue" else "Physical_Property_Values","id_physical_property","PropertyValue"
                 run db $"DELETE FROM {table} WHERE {key}=$id" ["$id",box id]
                 for point in curve.Points do run db $"INSERT INTO {table}({key},Temperature,{value}) VALUES($id,$t,$v)" ["$id",box id;"$t",box point.Temperature;"$v",box point.Value]
-                run db "INSERT INTO Property_Curve_Metadata(Code,CurveId,SizeAxis,UserNotes) VALUES($c,$id,$axis,$notes) ON CONFLICT(Code,CurveId) DO UPDATE SET SizeAxis=excluded.SizeAxis,UserNotes=excluded.UserNotes" ["$c",box curve.Code;"$id",box id;"$axis",box curve.SizeAxis;"$notes",box curve.UserNotes]
+                let notesJson = if isNull curve.UserNoteItems then "[]" else JsonSerializer.Serialize curve.UserNoteItems
+                run db """INSERT INTO Property_Curve_Metadata(Code,CurveId,SizeAxis,UserNotes,UserNoteItemsJson,S1StressLevel)
+                    VALUES($c,$id,$axis,$notes,$items,$stress)
+                    ON CONFLICT(Code,CurveId) DO UPDATE SET SizeAxis=excluded.SizeAxis,UserNotes=excluded.UserNotes,
+                    UserNoteItemsJson=excluded.UserNoteItemsJson,S1StressLevel=excluded.S1StressLevel"""
+                    ["$c",box curve.Code;"$id",box id;"$axis",box curve.SizeAxis;"$notes",box curve.UserNotes;"$items",box notesJson;"$stress",(if curve.Code="S1" then box curve.S1StressLevel else box DBNull.Value)]
                 let saved = {curve with Id=id}
                 audit db (if curve.Id=0L then "Create" else "Update") existing saved
                 tx.Commit()

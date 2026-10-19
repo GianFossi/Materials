@@ -46,6 +46,15 @@ public interface IDialogService
     /// <returns>The chosen absolute path, or <c>null</c> when the user cancelled.</returns>
     string? AskOpenPath(string title, string filter);
 
+    /// <summary>Asks the user to pick an existing file, starting from a preferred location.</summary>
+    /// <param name="title">Dialog caption.</param>
+    /// <param name="filter">File-type filter, from <see cref="FileFilters"/>.</param>
+    /// <param name="initialDirectory">Directory to show first, or <c>null</c> for the system default.</param>
+    /// <param name="fileName">File name to preselect, or <c>null</c> for none.</param>
+    /// <returns>The chosen absolute path, or <c>null</c> when the user cancelled.</returns>
+    string? AskOpenPath(string title, string filter, string? initialDirectory, string? fileName) =>
+        AskOpenPath(title, filter);
+
     /// <summary>Asks the user where to write a file.</summary>
     /// <param name="title">Dialog caption.</param>
     /// <param name="filter">File-type filter, from <see cref="FileFilters"/>.</param>

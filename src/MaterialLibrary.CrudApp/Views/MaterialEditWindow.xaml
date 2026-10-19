@@ -47,36 +47,45 @@
         <TextBox Grid.Row="0" Grid.Column="1"
                  Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding IsIdEditable}"
+                 ToolTip="Required unique identifier for this material. It cannot be changed after creation."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Specification" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="1" Grid.Column="1"
                  Text="{Binding Specification, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="ASME or other governing material specification, for example SA-516."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Grade" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="2" Grid.Column="1"
                  Text="{Binding Grade, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Grade or class designation from the material specification."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Product form" Style="{StaticResource FieldLabelStyle}" />
-        <TextBox Grid.Row="3" Grid.Column="1"
-                 Text="{Binding ProductForm, UpdateSourceTrigger=PropertyChanged}"
-                 Style="{StaticResource FieldInputStyle}" />
+        <ComboBox Grid.Row="3" Grid.Column="1"
+                  ItemsSource="{Binding ProductFormChoices}"
+                  SelectedItem="{Binding ProductForm, UpdateSourceTrigger=PropertyChanged}"
+                  ToolTip="Choose the material's product form. Edit the available choices under Options."
+                  Margin="4"
+                  Padding="4,2" />
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Nominal composition" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="4" Grid.Column="1"
                  Text="{Binding NominalComposition, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Nominal chemical composition or a concise composition description."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="5" Grid.Column="0" Text="Class/Condition/Tempering" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="5" Grid.Column="1"
                  Text="{Binding ClassConditionTempering, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Optional class, heat-treatment condition, or temper designation from the specification."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="6" Grid.Column="0" Text="Alloy (UNS)" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="6" Grid.Column="1"
                  Text="{Binding AlloyIdentificationUns, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Unified Numbering System (UNS) alloy identifier, when available."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="7" Grid.Column="0" Text="Family (ASME)" Style="{StaticResource FieldLabelStyle}" />
@@ -85,7 +94,8 @@
                   Padding="4,2"
                   ItemsSource="{Binding FamilyChoices}"
                   SelectedItem="{Binding SelectedFamily, Mode=TwoWay}"
-                  DisplayMemberPath="Display" />
+                  DisplayMemberPath="Display"
+                  ToolTip="Optional ASME material family classification. Choose Not assigned when unknown." />
 
         <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="4,8" />
 
@@ -102,28 +112,31 @@
         <TextBlock Grid.Row="10" Grid.Column="0" Text="Elongation, longitudinal (%)" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="10" Grid.Column="1"
                  Text="{Binding ElongationLongitudinalPercent, UpdateSourceTrigger=PropertyChanged}"
-                 ToolTip="Leave blank when the source does not report this direction."
+                 ToolTip="Room-temperature tensile elongation parallel to the rolling direction, in percent. Leave blank if not reported."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="11" Grid.Column="0" Text="Elongation, transverse (%)" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="11" Grid.Column="1"
                  Text="{Binding ElongationTransversePercent, UpdateSourceTrigger=PropertyChanged}"
-                 ToolTip="Leave blank when the source does not report this direction."
+                 ToolTip="Room-temperature tensile elongation transverse to the rolling direction, in percent. Leave blank if not reported."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="12" Grid.Column="0" Text="Reduction of area (%)" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="12" Grid.Column="1"
                  Text="{Binding ReductionOfAreaPercent, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Room-temperature reduction of area at fracture, in percent."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="13" Grid.Column="0" Text="SMYS (MPa)" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="13" Grid.Column="1"
                  Text="{Binding SpecifiedMinimumYieldStrength, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Specified minimum yield strength (SMYS) at room temperature, in MPa."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="14" Grid.Column="0" Text="SMUTS (MPa)" Style="{StaticResource FieldLabelStyle}" />
         <TextBox Grid.Row="14" Grid.Column="1"
                  Text="{Binding SpecifiedMinimumUltimateStrength, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Specified minimum ultimate tensile strength (SMUTS) at room temperature, in MPa."
                  Style="{StaticResource FieldInputStyle}" />
 
         <TextBlock Grid.Row="15" Grid.Column="0" Text="Notes" Style="{StaticResource FieldLabelStyle}" />
@@ -134,7 +147,8 @@
                  AcceptsReturn="True"
                  TextWrapping="Wrap"
                  VerticalContentAlignment="Top"
-                 VerticalScrollBarVisibility="Auto" />
+                 VerticalScrollBarVisibility="Auto"
+                 ToolTip="Optional notes about the material identity or the source of its basic properties." />
 
         <StackPanel Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2"
                     Orientation="Horizontal"
@@ -147,9 +161,11 @@
             <Button Content="OK"
                     IsDefault="True"
                     Click="OnConfirm"
+                    ToolTip="Validate the entered values and apply the material changes."
                     Style="{StaticResource DialogButtonStyle}" />
             <Button Content="Cancel"
                     IsCancel="True"
+                    ToolTip="Close without applying changes."
                     Style="{StaticResource DialogButtonStyle}" />
         </StackPanel>
 

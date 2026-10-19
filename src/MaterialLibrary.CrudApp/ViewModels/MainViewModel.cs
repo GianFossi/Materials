@@ -21,6 +21,7 @@ public sealed class MainViewModel : ObservableObject
     private const string DefaultLibraryVersion = "1.0.2";
 
     private readonly IDialogService _dialogService;
+    private readonly ApplicationOptions _options;
 
     private MaterialCrudRepository _repository = new();
     private string? _currentFilePath;
@@ -29,10 +30,12 @@ public sealed class MainViewModel : ObservableObject
 
     /// <summary>Creates the main view model with an empty in-memory library.</summary>
     /// <param name="dialogService">Provider of file pickers, message boxes, and the material editor.</param>
+    /// <param name="options">User preferences used by application-level editors.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="dialogService"/> is <c>null</c>.</exception>
-    public MainViewModel(IDialogService dialogService)
+    public MainViewModel(IDialogService dialogService, ApplicationOptions? options = null)
     {
         _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+        _options = options ?? new ApplicationOptions();
 
         NewLibraryCommand = new RelayCommand(NewLibrary);
         OpenLibraryCommand = new RelayCommand(OpenLibrary);
@@ -47,6 +50,7 @@ public sealed class MainViewModel : ObservableObject
         ImportMaterialXmlCommand = new RelayCommand(ImportMaterialXml);
         ExportMaterialXmlCommand = new RelayCommand(ExportMaterialXml, HasSelection);
         Open2025EditorCommand = new RelayCommand(Open2025Editor);
+        OpenOptionsCommand = new RelayCommand(OpenOptions);
         ManageDatabaseCommand = new RelayCommand(ManageDatabase);
         DeleteMaterialCommand = new RelayCommand(DeleteMaterial, HasSelection);
         CompareMaterialsCommand = new RelayCommand(CompareMaterials, () => Materials.Count > 1);
@@ -124,18 +128,29 @@ public sealed class MainViewModel : ObservableObject
 
     /// <summary>Open the native ASME 2025 property editor on a shared user working copy.</summary>
     public RelayCommand Open2025EditorCommand { get; }
+    /// <summary>Opens application preferences.</summary>
+    public RelayCommand OpenOptionsCommand { get; }
 
     private void Open2025Editor()
     {
         try
         {
             if (!Asme2025Crud.prepareWorkingCopy(Configuration.resolveAsmeDatabasePath(null)).TryUnwrap(out var path, out var error)) { StatusMessage = error; return; }
-            var editor = new Asme2025EditorWindow(new Asme2025EditorViewModel(path));
+            var editor = new Asme2025EditorWindow(new Asme2025EditorViewModel(path, options: _options));
             editor.Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.DataContext == this);
             editor.ShowDialog();
             StatusMessage = $"ASME 2025 working database: {path}";
         }
         catch (Exception ex) { StatusMessage = ex.Message; }
+    }
+
+    private void OpenOptions()
+    {
+        var window = new OptionsWindow(_options)
+        {
+            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.DataContext == this)
+        };
+        window.ShowDialog();
     }
 
     /// <summary>Opens the database manager.</summary>
@@ -441,7 +456,7 @@ public sealed class MainViewModel : ObservableObject
             return;
         }
 
-        var path = _dialogService.AskOpenPath("Import XML data file", FileFilters.DataXml);
+        var path = _dialogService.AskOpenPath("Import XML data file", FileFilters.DataXml, _options.FlexXmlFolder, null);
         if (path is null)
         {
             return;
@@ -554,4 +569,3 @@ public sealed class MainViewModel : ObservableObject
         StatusMessage = message;
     }
 }
-
