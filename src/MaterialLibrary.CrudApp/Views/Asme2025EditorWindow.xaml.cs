@@ -17,7 +17,14 @@ public partial class Asme2025EditorWindow : Window
         InitializeComponent(); DataContext = viewModel;
         Loaded += (_, _) => _loaded = true;
         viewModel.Points.CollectionChanged += (_, _) => { if (_loaded) viewModel.MarkDirty(); };
-        viewModel.CurveNotes.CollectionChanged += (_, _) => { if (_loaded) viewModel.MarkDirty(); };
+        viewModel.SourceNoteRows.CollectionChanged += (_, _) => { if (_loaded) viewModel.MarkDirty(); };
+        // A collapsed TabItem keeps showing its content while selected, so fall back to the first tab.
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(viewModel.ShowCodeLimits) && !viewModel.ShowCodeLimits
+                && CurveDetailTabs.SelectedItem is TabItem { Header: "ASME Code Limits" })
+                CurveDetailTabs.SelectedIndex = 0;
+        };
         AddHandler(ComboBox.SelectionChangedEvent, new SelectionChangedEventHandler((_, args) =>
         {
             if (!_loaded || args.OriginalSource is not ComboBox combo) return;
@@ -25,13 +32,16 @@ public partial class Asme2025EditorWindow : Window
             if (path is nameof(viewModel.SizeAxis) or nameof(viewModel.S1StressLevel)) viewModel.MarkDirty();
         }));
         AddHandler(TextBox.TextChangedEvent, new TextChangedEventHandler((sender, args) => { if (_loaded && args.OriginalSource is TextBox box && !box.IsReadOnly) viewModel.MarkDirty(BindingOperations.GetBinding(box, TextBox.TextProperty)?.Path.Path ?? "curve"); }));
-        AddHandler(CheckBox.CheckedEvent, new RoutedEventHandler((_, _) => { if (_loaded) viewModel.MarkDirty(); }));
-        AddHandler(CheckBox.UncheckedEvent, new RoutedEventHandler((_, _) => { if (_loaded) viewModel.MarkDirty(); }));
+        // The Allow edit toggle only unlocks the notes grid; it is not a data change.
+        bool IsDataCheckBox(object source) => source is not CheckBox box
+            || BindingOperations.GetBinding(box, System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty)?.Path.Path != nameof(viewModel.AllowSourceNoteEdit);
+        AddHandler(CheckBox.CheckedEvent, new RoutedEventHandler((_, args) => { if (_loaded && IsDataCheckBox(args.OriginalSource)) viewModel.MarkDirty(); }));
+        AddHandler(CheckBox.UncheckedEvent, new RoutedEventHandler((_, args) => { if (_loaded && IsDataCheckBox(args.OriginalSource)) viewModel.MarkDirty(); }));
         PreviewMouseDown += (_, args) =>
         {
             if (args.OriginalSource is not DependencyObject target || FindButton(target) is null) return;
             var pointsCommitted = PointGrid.CommitEdit(DataGridEditingUnit.Cell, true) && PointGrid.CommitEdit(DataGridEditingUnit.Row, true);
-            var notesCommitted = CurveNotesGrid.CommitEdit(DataGridEditingUnit.Cell, true) && CurveNotesGrid.CommitEdit(DataGridEditingUnit.Row, true);
+            var notesCommitted = SourceNotesGrid.CommitEdit(DataGridEditingUnit.Cell, true) && SourceNotesGrid.CommitEdit(DataGridEditingUnit.Row, true);
             if (!pointsCommitted || !notesCommitted || HasValidationError(this)) args.Handled = true;
         };
         Closing += (_, e) => e.Cancel = !viewModel.AllowDiscard();
@@ -59,7 +69,7 @@ public partial class Asme2025EditorWindow : Window
     {
         if (_loaded && DataContext is Asme2025EditorViewModel vm) vm.MarkDirty();
     }
-    private void CurveNotesGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+    private void SourceNotesGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
     {
         if (_loaded && DataContext is Asme2025EditorViewModel vm) vm.MarkDirty();
     }

@@ -19,6 +19,21 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 ## History
 
 - Date: 2026-10-19
+- Area: ASME 2025 per-curve code limits (Asme2025Data, Asme2025Crud, Asme2025Repository, CrudApp editor)
+- Change: Added `Asme2025CodeLimits` (P-No., Group No., external chart, max temperature by Section I/III/VIII-1/VIII-2/XII in °C) to `Asme2025Curve`, read per curve from `ASME_Data_Source` via `Property_Source`; added the editable "ASME Code Limits" tab, a dropdown label summary, `CodeLimitsJson` overrides with validation (number, NP, qualifier, blank), and hydration of dataset `MaximumTemperature` from VIII-1/VIII-2. The Native2025 test cleanup now clears SQLite pools and tolerates delete locks.
+- Why: Allowable temperatures and welding P/Group numbers existed only in the flattened per-material `ASME_Data` table (which loses per-row differences) and were not visible in the editor.
+- Impact: Additive schema column (nullable); official tables are not modified; `MaximumTemperature` is now populated for allowable-stress datasets.
+- Files: src/MaterialLibrary/Database.Lookup/Asme2025Data.fs, src/MaterialLibrary/Database.Lookup/Asme2025Repository.fs, src/MaterialLibrary.Crud/Asme2025Crud.fs, src/MaterialLibrary.CrudApp/ViewModels/Properties/Asme2025EditorViewModel.cs, src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml(.cs), tests/MaterialLibrary.Tests/Native2025Tests.fs, tests/MaterialLibrary.CrudApp.Tests/WpfSmokeTests.cs, docs/asme-2025-editor.md
+- Follow-up: Optionally export the limits in Excel `MatPropertyTable`; XmlPhysicalImport test cleanup still hits the Windows file lock.
+
+- Date: 2026-10-19
+- Area: ASME 2025 curve notes
+- Change: The Original ASME Notes tab now lists one row per linked note (table, code, text). An Allow edit checkbox unlocks the rows and the Add, Copy (from the relevant-notes dropdown) and Delete buttons. The former Editable Notes grid became a single free-text User Notes box.
+- Why: Allow curve-specific correction of the notes without altering the official ASME tables, and keep free comments simple.
+- Impact: Edited original rows are stored per curve in `UserNoteItemsJson`; rows identical to the official notes are not stored. `UserNotes` is now the free text loaded as-is, no longer derived from the note rows. Legacy rows tagged `User` are excluded from original notes. S1 G5 inference and lookup references still use the official links.
+- Files: src/MaterialLibrary/Database.Lookup/Asme2025Data.fs, src/MaterialLibrary.CrudApp/ViewModels/Properties/Asme2025EditorViewModel.cs, src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml, src/MaterialLibrary.CrudApp/Views/Asme2025EditorWindow.xaml.cs, tests/MaterialLibrary.CrudApp.Tests/WpfSmokeTests.cs, tests/MaterialLibrary.Tests/Native2025Tests.fs, docs/asme-2025-editor.md, AI_HISTORY.md
+
+- Date: 2026-10-19
 - Area: CRUD application guidance and options
 - Change: Added English explanations and control tooltips across material, table, ASME, XML-import, and database windows. Replaced free-text product-form entry with configured dropdowns and added an Options window persisting product-form choices, default joint efficiency, XML import folder, and SQLite database path in a user-local XML settings file.
 - Why: Clarify data-entry meaning and workflow, standardize product-form values, and let users configure recurring defaults without editing application files.

@@ -66,10 +66,16 @@
                             <ColumnDefinition Width="230" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <TextBlock Text="Default efficiency (joint)"
                                    VerticalAlignment="Center"
                                    ToolTip="Reference efficiency for the longitudinal joint, or the joint most highly stressed by pressure, when no explicit value is found in the ASME notes." />
                         <TextBox Grid.Column="1"
+                                 Width="120"
+                                 HorizontalAlignment="Left"
                                  Text="{Binding DefaultJointEfficiency, UpdateSourceTrigger=PropertyChanged}"
                                  ToolTip="Enter a fraction greater than 0 and no greater than 1 for the longitudinal or pressure-critical joint. The typical default is 0.70." />
                         <TextBlock Grid.Row="1"

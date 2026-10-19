@@ -10,9 +10,34 @@ open Microsoft.Data.Sqlite
 [<CLIMutable>]
 type Asme2025Point = { Temperature: float; Value: float }
 
-/// <summary>A copied or manually authored note attached to one editable property curve.</summary>
+/// <summary>One curve-level override row of the original ASME notes (table, code, text); official note tables are never modified.</summary>
 [<CLIMutable>]
 type Asme2025UserNote = { SourceTable: string; Code: string; Text: string }
+
+/// <summary>
+/// ASME Section II-D code-applicability data of one allowable-stress curve (one source table row).
+/// Temperature limits are °C kept as ASME text: a number, "NP" (not permitted), a qualified Section III value
+/// such as "204 (Cl. 3 only)", or blank when the source table has no column for that Section.
+/// </summary>
+[<CLIMutable>]
+type Asme2025CodeLimits = {
+    /// Welding P-Number (Section IX), e.g. "1" or "5A".
+    PNumber: string
+    /// Welding Group Number within the P-Number, e.g. "1".
+    GroupNumber: string
+    /// External-pressure chart designation (Section II-D Subpart 3), e.g. "CS–2".
+    ExternalPressureChart: string
+    /// Section I applicability and maximum temperature limit, °C as text.
+    MaxTempSectionI: string
+    /// Section III applicability and maximum temperature limit, °C as text (may carry a class qualifier).
+    MaxTempSectionIII: string
+    /// Section VIII Division 1 applicability and maximum temperature limit, °C as text.
+    MaxTempSectionVIII1: string
+    /// Section VIII Division 2 applicability and maximum temperature limit, °C as text.
+    MaxTempSectionVIII2: string
+    /// Section XII applicability and maximum temperature limit, °C as text.
+    MaxTempSectionXII: string
+}
 
 /// <summary>One independently editable 2025 curve; sizes are mm, stresses MPa, temperatures Celsius.</summary>
 [<CLIMutable>]
@@ -28,9 +53,13 @@ type Asme2025Curve = {
     SizeAxis: string
     SourceTable: string
     SourceNotes: string
+    /// Free-text user notes, stored independently of the original ASME notes.
     UserNotes: string
+    /// Curve-level edited copy of the original ASME note rows; empty means the official rows apply unchanged.
     UserNoteItems: Asme2025UserNote array
     S1StressLevel: string
+    /// P-No./Group No., external-pressure chart and Section temperature limits of this curve's source row (or its saved edit).
+    CodeLimits: Asme2025CodeLimits
     Points: Asme2025Point array
     Version: string
 }
@@ -89,6 +118,42 @@ module Asme2025Data =
         query db "SELECT id,Specification,Grade,ClassConditionTemper,AlloyDesignation,NominalComposition FROM Main ORDER BY Specification,Grade,ClassConditionTemper,AlloyDesignation,id" []
         |> List.map (fun row -> { Id=Convert.ToInt64 row[0];Specification=string row[1];Grade=string row[2];Condition=string row[3];UNS=string row[4];NominalComposition=string row[5] })
 
+    /// <summary>Code limits with every field blank (no source row, or a physical-property curve).</summary>
+    let emptyCodeLimits : Asme2025CodeLimits =
+        { PNumber="";GroupNumber="";ExternalPressureChart="";MaxTempSectionI="";MaxTempSectionIII="";MaxTempSectionVIII1="";MaxTempSectionVIII2="";MaxTempSectionXII="" }
+
+    /// <summary>Trim each field and turn null or the ASME "…" placeholder into blank, so equal limits compare equal.</summary>
+    let normalizeCodeLimits (limits: Asme2025CodeLimits) : Asme2025CodeLimits =
+        if obj.ReferenceEquals(limits,null) then emptyCodeLimits
+        else
+            let clean (value: string) = if isNull value then "" else match value.Trim() with "…" | "..." -> "" | v -> v
+            { PNumber=clean limits.PNumber;GroupNumber=clean limits.GroupNumber;ExternalPressureChart=clean limits.ExternalPressureChart
+              MaxTempSectionI=clean limits.MaxTempSectionI;MaxTempSectionIII=clean limits.MaxTempSectionIII
+              MaxTempSectionVIII1=clean limits.MaxTempSectionVIII1;MaxTempSectionVIII2=clean limits.MaxTempSectionVIII2;MaxTempSectionXII=clean limits.MaxTempSectionXII }
+
+    /// <summary>
+    /// Numeric °C limit of a Section column: only a plain number qualifies. "NP", blank and qualified text such as
+    /// "204 (Cl. 3 only)" return null, so a restricted value is never applied as a general limit.
+    /// </summary>
+    let temperatureLimitC (raw: string) : Nullable<float> =
+        match Double.TryParse((if isNull raw then "" else raw.Trim()),Globalization.NumberStyles.Float,Globalization.CultureInfo.InvariantCulture) with
+        | true,value when Double.IsFinite value -> Nullable value
+        | _ -> Nullable()
+
+    /// <summary>Read the original code limits of one curve from its own Section II-D source row (never the per-material flattening).</summary>
+    let sourceCodeLimits (db: SqliteConnection) (curveId: int64) : Asme2025CodeLimits =
+        if (query db "SELECT 1 FROM sqlite_master WHERE type='table' AND name='ASME_Data_Source'" []).IsEmpty then emptyCodeLimits
+        else
+            let fields =
+                query db """SELECT d.FieldName,d.RawValue FROM Property_Source s
+                    JOIN ASME_Data_Source d ON d.File=s.File AND d.CsvLine=s.CsvLine WHERE s.id_property=$id""" ["$id",box curveId]
+                |> List.map (fun r -> string r[0],string r[1]) |> Map.ofList
+            let field name = fields |> Map.tryFind name |> Option.defaultValue ""
+            normalizeCodeLimits
+                { PNumber=field "P_Number";GroupNumber=field "Group_Number";ExternalPressureChart=field "External_Pressure_Chart_No"
+                  MaxTempSectionI=field "Max_Temp_Sect_I";MaxTempSectionIII=field "Max_Temp_Sect_III"
+                  MaxTempSectionVIII1=field "Max_Temp_Sect_VIII_1";MaxTempSectionVIII2=field "Max_Temp_Sect_VIII_2";MaxTempSectionXII=field "Max_Temp_Sect_XII" }
+
     /// <summary>Hash the complete editable curve and its source context for optimistic concurrency checks.</summary>
     let fingerprint (curve: Asme2025Curve) =
         let json = JsonSerializer.Serialize({curve with Version=""})
@@ -104,7 +169,9 @@ module Asme2025Data =
         let hasMetadata = not metadataColumns.IsEmpty
         let hasNoteItems = metadataColumns |> List.contains "UserNoteItemsJson"
         let hasStressLevel = metadataColumns |> List.contains "S1StressLevel"
-        let selectedMetadataColumns = ["SizeAxis";"UserNotes"] @ (if hasNoteItems then ["UserNoteItemsJson"] else []) @ (if hasStressLevel then ["S1StressLevel"] else [])
+        let hasCodeLimits = metadataColumns |> List.contains "CodeLimitsJson"
+        let selectedMetadataColumns = ["SizeAxis";"UserNotes"] @ (if hasNoteItems then ["UserNoteItemsJson"] else []) @ (if hasStressLevel then ["S1StressLevel"] else []) @ (if hasCodeLimits then ["CodeLimitsJson"] else [])
+        let hasLimitColumns = ["S1";"S2";"Sb1";"Sb2"] |> List.contains code
         let rows =
             if mechanical then
                 query db """SELECT p.id,p.ProductForm,z.SizeMin,z.SizeMax,z.SizeMinIncluded,z.SizeMaxIncluded,
@@ -148,12 +215,10 @@ module Asme2025Data =
                 else
                     let decoded = JsonSerializer.Deserialize<Asme2025UserNote array>(noteItemsJson)
                     if isNull decoded then [||] else decoded
-            let effectiveNoteItems =
-                if userNoteItems.Length > 0 || String.IsNullOrWhiteSpace legacyUserNotes then userNoteItems
-                else [|{SourceTable="User";Code="";Text=legacyUserNotes}|]
-            let userNotes =
-                if effectiveNoteItems.Length > 0 then effectiveNoteItems |> Array.map (fun note -> note.Text) |> String.concat "\n\n"
-                else legacyUserNotes
+            // UserNoteItems are curve-level overrides of the original ASME note rows; legacy free-text rows
+            // tagged "User" belong to the separate UserNotes text and are not treated as original notes.
+            let effectiveNoteItems = userNoteItems |> Array.filter (fun note -> not (String.Equals(note.SourceTable,"User",StringComparison.OrdinalIgnoreCase)))
+            let userNotes = legacyUserNotes
             let axisValue = metadataValue "SizeAxis"
             let axis = if isNull axisValue then string row[6] else string axisValue
             let inferredStressLevel =
@@ -164,7 +229,14 @@ module Asme2025Data =
                 let stored = metadataValue "S1StressLevel"
                 if isNull stored || String.IsNullOrWhiteSpace(string stored) then inferredStressLevel else string stored
             let nullable (value: obj) = if isNull value then Nullable() else Nullable(Convert.ToDouble value)
-            let curve = { Id=id;MaterialId=materialId;Code=code;ProductForm=string row[1];SizeMinimum=nullable row[2];SizeMaximum=nullable row[3];MinimumIncluded=Convert.ToBoolean row[4];MaximumIncluded=Convert.ToBoolean row[5];SizeAxis=axis;SourceTable=string row[7];SourceNotes=(if mechanical then sourceNotes else xmlProvenance);UserNotes=userNotes;UserNoteItems=effectiveNoteItems;S1StressLevel=stressLevel;Points=points;Version="" }
+            // A saved per-curve edit replaces the source-row limits; otherwise the curve's own source row is used.
+            let codeLimits =
+                if not hasLimitColumns then emptyCodeLimits
+                else
+                    let stored = metadataValue "CodeLimitsJson"
+                    if isNull stored || String.IsNullOrWhiteSpace(string stored) then sourceCodeLimits db id
+                    else normalizeCodeLimits (JsonSerializer.Deserialize<Asme2025CodeLimits>(string stored))
+            let curve = { Id=id;MaterialId=materialId;Code=code;ProductForm=string row[1];SizeMinimum=nullable row[2];SizeMaximum=nullable row[3];MinimumIncluded=Convert.ToBoolean row[4];MaximumIncluded=Convert.ToBoolean row[5];SizeAxis=axis;SourceTable=string row[7];SourceNotes=(if mechanical then sourceNotes else xmlProvenance);UserNotes=userNotes;UserNoteItems=effectiveNoteItems;S1StressLevel=stressLevel;CodeLimits=codeLimits;Points=points;Version="" }
             {curve with Version=fingerprint curve})
 
     /// <summary>Interpolate only inside the selected curve; ambiguous variants require an explicit curve ID.</summary>

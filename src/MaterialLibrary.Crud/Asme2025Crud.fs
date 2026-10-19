@@ -28,6 +28,9 @@ module Asme2025Crud =
             run db "ALTER TABLE Property_Curve_Metadata ADD COLUMN UserNoteItemsJson TEXT NOT NULL DEFAULT '[]'" []
         if not (columns |> List.contains "S1StressLevel") then
             run db "ALTER TABLE Property_Curve_Metadata ADD COLUMN S1StressLevel TEXT" []
+        if not (columns |> List.contains "CodeLimitsJson") then
+            // NULL means the curve uses its own Section II-D source-row limits unchanged.
+            run db "ALTER TABLE Property_Curve_Metadata ADD COLUMN CodeLimitsJson TEXT" []
 
     /// <summary>Open an existing working copy and reject reference files and unsupported schemas.</summary>
     let private writable (path: string) action =
@@ -45,10 +48,19 @@ module Asme2025Crud =
                     action db
         with ex -> Error ex.Message
 
+    /// <summary>A Section limit is blank, "NP", or a °C number between -273.15 and 1200, optionally followed by a qualifier such as "(Cl. 3 only)".</summary>
+    let private validTemperatureLimit (raw: string) =
+        let text = if isNull raw then "" else raw.Trim()
+        if text="" || String.Equals(text,"NP",StringComparison.OrdinalIgnoreCase) then true
+        else
+            let m = Text.RegularExpressions.Regex.Match(text,@"^(-?\d+(?:\.\d+)?)(\s*\(.+\))?$")
+            m.Success && (let v = Double.Parse(m.Groups[1].Value,Globalization.CultureInfo.InvariantCulture) in v >= -273.15 && v <= 1200.)
+
     /// <summary>Validate fixed units, finite values, unique temperatures, and legal product-form/size metadata.</summary>
     let validate (curve: Asme2025Curve) =
         let code = Asme2025Data.canonicalCode curve.Code
         let positive = ["Sy";"Su";"S1";"S2";"Sb1";"Sb2";"E";"c";"k";"a";"density"] |> List.contains code
+        let limits = Asme2025Data.normalizeCodeLimits curve.CodeLimits
         if not (Asme2025Data.families |> Array.exists (fun (c,_) -> c=code)) then Error "Unsupported property family."
         elif isNull curve.Points || curve.Points.Length=0 then Error "Enter at least one temperature/value point."
         elif curve.Points |> Array.exists (fun p -> not (Double.IsFinite p.Temperature && Double.IsFinite p.Value)) then Error "All temperatures and values must be finite."
@@ -59,7 +71,10 @@ module Asme2025Crud =
         elif code<>"S1" && code<>"S2" && not (String.IsNullOrWhiteSpace curve.ProductForm) then Error "Product form applies only to S1/S2."
         elif code="S1" && not (["Normal";"High"] |> List.contains curve.S1StressLevel) then Error "Select Normal Stress or High Stress (G5) for S1."
         elif not (["Sy";"Su";"S1";"S2";"Sb1";"Sb2"] |> List.contains code) && (curve.SizeMinimum.HasValue || curve.SizeMaximum.HasValue) then Error "Physical properties do not have size bounds."
-        else Ok {curve with Code=code;Points=curve.Points |> Array.sortBy (fun p -> p.Temperature)}
+        elif [limits.MaxTempSectionI;limits.MaxTempSectionIII;limits.MaxTempSectionVIII1;limits.MaxTempSectionVIII2;limits.MaxTempSectionXII] |> List.exists (validTemperatureLimit >> not) then
+            Error "Section temperature limits must be blank, NP, or a °C value (-273.15 to 1200), optionally followed by a qualifier in parentheses."
+        elif not (["S1";"S2";"Sb1";"Sb2"] |> List.contains code) && limits <> Asme2025Data.emptyCodeLimits then Error "P-No., Group No. and Section limits apply only to S1, S2, Sb1 and Sb2 curves."
+        else Ok {curve with Code=code;CodeLimits=limits;Points=curve.Points |> Array.sortBy (fun p -> p.Temperature)}
 
     /// <summary>Record a complete before/after snapshot in the same transaction as the property modification.</summary>
     let private audit db operation (before: Asme2025Curve option) (after: Asme2025Curve) =
@@ -102,11 +117,15 @@ module Asme2025Crud =
                 run db $"DELETE FROM {table} WHERE {key}=$id" ["$id",box id]
                 for point in curve.Points do run db $"INSERT INTO {table}({key},Temperature,{value}) VALUES($id,$t,$v)" ["$id",box id;"$t",box point.Temperature;"$v",box point.Value]
                 let notesJson = if isNull curve.UserNoteItems then "[]" else JsonSerializer.Serialize curve.UserNoteItems
-                run db """INSERT INTO Property_Curve_Metadata(Code,CurveId,SizeAxis,UserNotes,UserNoteItemsJson,S1StressLevel)
-                    VALUES($c,$id,$axis,$notes,$items,$stress)
+                // Store limits only when they differ from the curve's source row, so reference corrections still flow through.
+                let limitsJson =
+                    if curve.CodeLimits = Asme2025Data.sourceCodeLimits db id then box DBNull.Value
+                    else box (JsonSerializer.Serialize curve.CodeLimits)
+                run db """INSERT INTO Property_Curve_Metadata(Code,CurveId,SizeAxis,UserNotes,UserNoteItemsJson,S1StressLevel,CodeLimitsJson)
+                    VALUES($c,$id,$axis,$notes,$items,$stress,$limits)
                     ON CONFLICT(Code,CurveId) DO UPDATE SET SizeAxis=excluded.SizeAxis,UserNotes=excluded.UserNotes,
-                    UserNoteItemsJson=excluded.UserNoteItemsJson,S1StressLevel=excluded.S1StressLevel"""
-                    ["$c",box curve.Code;"$id",box id;"$axis",box curve.SizeAxis;"$notes",box curve.UserNotes;"$items",box notesJson;"$stress",(if curve.Code="S1" then box curve.S1StressLevel else box DBNull.Value)]
+                    UserNoteItemsJson=excluded.UserNoteItemsJson,S1StressLevel=excluded.S1StressLevel,CodeLimitsJson=excluded.CodeLimitsJson"""
+                    ["$c",box curve.Code;"$id",box id;"$axis",box curve.SizeAxis;"$notes",box curve.UserNotes;"$items",box notesJson;"$stress",(if curve.Code="S1" then box curve.S1StressLevel else box DBNull.Value);"$limits",limitsJson]
                 let saved = {curve with Id=id}
                 audit db (if curve.Id=0L then "Create" else "Update") existing saved
                 tx.Commit()

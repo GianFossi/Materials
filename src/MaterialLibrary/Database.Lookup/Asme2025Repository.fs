@@ -58,7 +58,8 @@ module Asme2025Repository =
                 { DatabaseRowId=c.Id;Source=source c;Case=(if c.Code="S1" && c.S1StressLevel="High" then HighStrengthAllowableStress else StandardStrengthAllowableStress);Table=t;
                   SizeMinimum=if c.SizeMinimum.HasValue then Some c.SizeMinimum.Value else None;
                   SizeMaximum=if c.SizeMaximum.HasValue then Some c.SizeMaximum.Value else None;
-                  MaximumTemperature=None;CreepTemperature=None;AsmeNoteReferences=references c;Notes=Some(c.SourceNotes + "\n" + c.UserNotes) })))
+                  MaximumTemperature=Asme2025Data.temperatureLimitC (if c.Code="S1" || c.Code="Sb1" then c.CodeLimits.MaxTempSectionVIII1 else c.CodeLimits.MaxTempSectionVIII2) |> Option.ofNullable;
+                  CreepTemperature=None;AsmeNoteReferences=references c;Notes=Some(c.SourceNotes + "\n" + c.UserNotes) })))
         let regulatory = Asme2025Data.query db "SELECT P_Number,Group_Number,Max_Temp_Sect_I,Max_Temp_Sect_VIII_1,Max_Temp_Sect_VIII_2 FROM ASME_Data WHERE id_main=$id" ["$id",box identity.Id] |> List.tryHead
         let temperature index = regulatory |> Option.bind (fun r -> if isNull r[index] then None else Some(Convert.ToDouble r[index]))
         let pressure = Asme2025Data.pressureCurves db identity.Id |> List.choose (fun (_,name,temperature,points) ->

@@ -21,14 +21,14 @@ public sealed class PropertyPointRow
     public double? Value { get; set; }
 }
 
-/// <summary>One editable user note, optionally copied from an ASME source note.</summary>
+/// <summary>One original ASME note row shown for a curve; edits are stored as a curve-level override.</summary>
 public sealed class PropertyNoteRow
 {
-    /// <summary>ASME source table, or User for a manually entered note.</summary>
-    public string SourceTable { get; set; } = "User";
-    /// <summary>ASME note code when copied from a source note.</summary>
+    /// <summary>ASME source table (for example 1A), or Manual for a row added by the user.</summary>
+    public string SourceTable { get; set; } = "Manual";
+    /// <summary>ASME note code (for example G5); blank for manual rows.</summary>
     public string Code { get; set; } = "";
-    /// <summary>Editable note body.</summary>
+    /// <summary>Note body.</summary>
     public string Text { get; set; } = "";
 }
 
@@ -69,8 +69,23 @@ public sealed record PropertyCurveChoice(Asme2025Curve Curve)
             return $"Size: {range} · Axis: {AxisLabel}";
         }
     }
-    /// <summary>Source table and number of temperature/value points.</summary>
-    public string SourceLabel => $"Table {Curve.SourceTable} · {Curve.Points.Length} points";
+    /// <summary>Source table, number of points and, when available, the welding P-No./Group and the design-Section temperature limit (°C).</summary>
+    public string SourceLabel
+    {
+        get
+        {
+            var label = $"Table {Curve.SourceTable} · {Curve.Points.Length} points";
+            var limits = Curve.CodeLimits;
+            if (limits is null) return label;
+            if (!string.IsNullOrWhiteSpace(limits.PNumber))
+                label += $" · P-No. {limits.PNumber}" + (string.IsNullOrWhiteSpace(limits.GroupNumber) ? "" : $" Gr. {limits.GroupNumber}");
+            // S1/Sb1 belong to Section VIII-1; S2/Sb2 to Section VIII-2.
+            var (section, limit) = Curve.Code is "S1" or "Sb1" ? ("VIII-1", limits.MaxTempSectionVIII1) : ("VIII-2", limits.MaxTempSectionVIII2);
+            if (!string.IsNullOrWhiteSpace(limit))
+                label += string.Equals(limit, "NP", StringComparison.OrdinalIgnoreCase) ? $" · {section}: not permitted" : $" · {section} max {limit} °C";
+            return label;
+        }
+    }
 
     private string ProductFormLabel
     {
@@ -113,6 +128,9 @@ public sealed class Asme2025EditorViewModel : ObservableObject
     private PropertyCurveChoice? _curve;
     private string _family = "Sy", _search = "", _status = "Select a material and property family.", _productForm = "", _s1StressLevel = "Normal";
     private CommonAsmeNote? _selectedCommonNote;
+    private PropertyNoteRow? _selectedSourceNoteRow;
+    private bool _allowSourceNoteEdit;
+    private string _userNotesText = "";
     private bool _loading, _curveDirty, _constantsDirty, _identityDirty;
     private bool _hasBoltingCurves, _hasNonBoltingCurves;
     private readonly List<CommonAsmeNote> _noteCatalog = [];
@@ -131,8 +149,9 @@ public sealed class Asme2025EditorViewModel : ObservableObject
         SaveCurveCommand = new RelayCommand(SaveCurve, () => SelectedMaterial is not null);
         NewCurveCommand = new RelayCommand(NewCurve, () => SelectedMaterial is not null);
         DeleteCurveCommand = new RelayCommand(DeleteCurve, () => _curve is not null);
-        AddNoteCommand = new RelayCommand(() => CurveNotes.Add(new()));
-        CopyCommonNoteCommand = new RelayCommand(CopyCommonNote, () => SelectedCommonNote is not null);
+        AddNoteCommand = new RelayCommand(() => { var row = new PropertyNoteRow(); SourceNoteRows.Add(row); SelectedSourceNoteRow = row; }, () => AllowSourceNoteEdit);
+        CopyCommonNoteCommand = new RelayCommand(CopyCommonNote, () => AllowSourceNoteEdit && SelectedCommonNote is not null);
+        DeleteNoteCommand = new RelayCommand(DeleteSourceNote, () => AllowSourceNoteEdit && SelectedSourceNoteRow is not null);
         ReloadCommand = new RelayCommand(() => { if (AllowCurveChange()) ReloadCurves(); });
         SaveConstantsCommand = new RelayCommand(SaveConstants, () => SelectedMaterial is not null);
         SaveIdentityCommand = new RelayCommand(SaveIdentity);
@@ -166,7 +185,7 @@ public sealed class Asme2025EditorViewModel : ObservableObject
         !(_hasBoltingCurves && !_hasNonBoltingCurves && (family is "S1" or "S2"))
         && !(_hasNonBoltingCurves && !_hasBoltingCurves && (family is "Sb1" or "Sb2"))).ToArray();
     /// <summary>Selected property family.</summary>
-    public string Family { get => _family; set { if (value == _family) return; if (!AvailableFamilies.Contains(value) || !AllowCurveChange()) { RaisePropertyChanged(); return; } _family = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(Unit)); RaisePropertyChanged(nameof(CanEditForm)); RaisePropertyChanged(nameof(IsMechanical)); RaisePropertyChanged(nameof(ShowS1StressLevel)); RaisePropertyChanged(nameof(ShowJointEfficiency)); ReloadCurves(); } }
+    public string Family { get => _family; set { if (value == _family) return; if (!AvailableFamilies.Contains(value) || !AllowCurveChange()) { RaisePropertyChanged(); return; } _family = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(Unit)); RaisePropertyChanged(nameof(CanEditForm)); RaisePropertyChanged(nameof(IsMechanical)); RaisePropertyChanged(nameof(ShowS1StressLevel)); RaisePropertyChanged(nameof(ShowJointEfficiency)); RaisePropertyChanged(nameof(ShowCodeLimits)); ReloadCurves(); } }
     /// <summary>Fixed property unit; temperatures are always Celsius.</summary>
     public string Unit => Asme2025Data.families.First(f => f.Item1 == Family).Item2;
     /// <summary>Product form applies only to S1 and S2.</summary>
@@ -196,11 +215,38 @@ public sealed class Asme2025EditorViewModel : ObservableObject
     public PropertyCurveChoice? SelectedCurve { get => _curve; set { if (value == _curve) return; if (!AllowCurveChange()) { RaisePropertyChanged(); return; } _curve = value; RaisePropertyChanged(); LoadCurve(); } }
     /// <summary>Editable temperature/value rows.</summary>
     public ObservableCollection<PropertyPointRow> Points { get; } = [];
-    /// <summary>Editable per-curve notes, separate from immutable source notes.</summary>
-    public ObservableCollection<PropertyNoteRow> CurveNotes { get; } = [];
+    /// <summary>Original ASME note rows for the selected curve: the official rows, or the saved curve-level override.</summary>
+    public ObservableCollection<PropertyNoteRow> SourceNoteRows { get; } = [];
+    /// <summary>Selected original-note row, the target of the Delete command.</summary>
+    public PropertyNoteRow? SelectedSourceNoteRow
+    {
+        get => _selectedSourceNoteRow;
+        set { if (SetProperty(ref _selectedSourceNoteRow, value)) DeleteNoteCommand?.RaiseCanExecuteChanged(); }
+    }
+    /// <summary>Unlocks the original-note grid and its Add/Copy/Delete commands; this UI toggle is not saved.</summary>
+    public bool AllowSourceNoteEdit
+    {
+        get => _allowSourceNoteEdit;
+        set
+        {
+            if (!SetProperty(ref _allowSourceNoteEdit, value)) return;
+            RaisePropertyChanged(nameof(SourceNotesReadOnly));
+            AddNoteCommand?.RaiseCanExecuteChanged(); CopyCommonNoteCommand?.RaiseCanExecuteChanged(); DeleteNoteCommand?.RaiseCanExecuteChanged();
+        }
+    }
+    /// <summary>Inverse of <see cref="AllowSourceNoteEdit"/> for the grid's read-only binding.</summary>
+    public bool SourceNotesReadOnly => !AllowSourceNoteEdit;
+    /// <summary>Whether the curve currently shows a saved curve-level override instead of the official notes.</summary>
+    public bool HasSourceNoteOverride => _curve?.Curve.UserNoteItems is { Length: > 0 };
+    /// <summary>Explains whether the grid shows the official notes or an edited curve-level copy.</summary>
+    public string SourceNoteOrigin => HasSourceNoteOverride
+        ? "Showing this curve's edited copy of the original ASME notes. The official ASME note tables are unchanged."
+        : "Showing the official ASME notes linked to this curve. Check \"Allow edit\" to change them for this curve only.";
+    /// <summary>Free-text user notes for the selected curve.</summary>
+    public string UserNotesText { get => _userNotesText; set => SetProperty(ref _userNotesText, value ?? ""); }
     /// <summary>ASME notes relevant to the current table, available for copying.</summary>
     public ObservableCollection<CommonAsmeNote> CommonNotes { get; } = [];
-    /// <summary>Selected reusable note before it is copied into the editable notes grid.</summary>
+    /// <summary>Selected ASME note in the dropdown, copied into the original-note rows by the Copy command.</summary>
     public CommonAsmeNote? SelectedCommonNote
     {
         get => _selectedCommonNote;
@@ -243,6 +289,24 @@ public sealed class Asme2025EditorViewModel : ObservableObject
     public string SizeAxis { get; set; } = "thickness-or-unspecified";
     /// <summary>Full general and specific ASME note texts for the source variant.</summary>
     public string SourceNotes => _curve?.Curve.SourceNotes ?? "";
+    /// <summary>P-No., Group No. and Section temperature limits apply to the allowable-stress families only.</summary>
+    public bool ShowCodeLimits => Family is "S1" or "S2" or "Sb1" or "Sb2";
+    /// <summary>Welding P-Number (ASME Section IX) of this curve's source row.</summary>
+    public string PNumber { get; set; } = "";
+    /// <summary>Welding Group Number within the P-Number.</summary>
+    public string GroupNumber { get; set; } = "";
+    /// <summary>External-pressure chart designation, for example CS–2.</summary>
+    public string ExternalPressureChart { get; set; } = "";
+    /// <summary>Section I maximum temperature limit, °C as ASME text (number, NP, or blank).</summary>
+    public string MaxTempSectionI { get; set; } = "";
+    /// <summary>Section III maximum temperature limit, °C as ASME text; may include a qualifier such as "(Cl. 3 only)".</summary>
+    public string MaxTempSectionIII { get; set; } = "";
+    /// <summary>Section VIII Division 1 maximum temperature limit, °C as ASME text.</summary>
+    public string MaxTempSectionVIII1 { get; set; } = "";
+    /// <summary>Section VIII Division 2 maximum temperature limit, °C as ASME text.</summary>
+    public string MaxTempSectionVIII2 { get; set; } = "";
+    /// <summary>Section XII maximum temperature limit, °C as ASME text.</summary>
+    public string MaxTempSectionXII { get; set; } = "";
     /// <summary>Constant density in kg/m³; blank means absent.</summary>
     public double? ConstantDensity { get; set; }
     /// <summary>Constant dimensionless Poisson ratio; blank means absent.</summary>
@@ -276,10 +340,12 @@ public sealed class Asme2025EditorViewModel : ObservableObject
     public RelayCommand NewCurveCommand { get; }
     /// <summary>Delete the selected variant, retaining an audit snapshot.</summary>
     public RelayCommand DeleteCurveCommand { get; }
-    /// <summary>Add a blank editable note.</summary>
+    /// <summary>Add a blank original-note row (requires Allow edit).</summary>
     public RelayCommand AddNoteCommand { get; }
-    /// <summary>Copy the selected source note into the editable user-note list.</summary>
+    /// <summary>Copy the selected ASME note from the dropdown into the original-note rows (requires Allow edit).</summary>
     public RelayCommand CopyCommonNoteCommand { get; }
+    /// <summary>Remove the selected original-note row from this curve (requires Allow edit).</summary>
+    public RelayCommand DeleteNoteCommand { get; }
     /// <summary>Reload the current family from the working copy.</summary>
     public RelayCommand ReloadCommand { get; }
     /// <summary>Save or clear the two scalar physical constants.</summary>
@@ -367,14 +433,45 @@ public sealed class Asme2025EditorViewModel : ObservableObject
     private void CopyCommonNote()
     {
         if (SelectedCommonNote is not { } note) return;
-        if (CurveNotes.Any(existing => existing.SourceTable == note.SourceTable && existing.Code == note.Code))
+        if (SourceNoteRows.Any(existing => existing.SourceTable == note.SourceTable && existing.Code == note.Code))
         {
-            Status = $"Note {note.SourceTable}/{note.Code} is already in the editable notes.";
+            Status = $"Note {note.SourceTable}/{note.Code} is already listed for this curve.";
             return;
         }
-        CurveNotes.Add(new() { SourceTable = note.SourceTable, Code = note.Code, Text = note.Text });
-        Status = $"Copied note {note.SourceTable}/{note.Code}. Edit this copy without changing the original ASME note.";
+        var row = new PropertyNoteRow { SourceTable = note.SourceTable, Code = note.Code, Text = note.Text };
+        SourceNoteRows.Add(row); SelectedSourceNoteRow = row;
+        Status = $"Copied note {note.SourceTable}/{note.Code}. Save the curve to keep this change; the official ASME table is unchanged.";
     }
+
+    private void DeleteSourceNote()
+    {
+        if (SelectedSourceNoteRow is not { } row) return;
+        SourceNoteRows.Remove(row); SelectedSourceNoteRow = null;
+        Status = "Note removed from this curve. Save the curve to keep this change; the official ASME table is unchanged.";
+    }
+
+    /// <summary>
+    /// Splits the formatted source-note text ("table / code (kind): text", blank-line separated) into rows.
+    /// Pure function: the regex anchors on each note header so multi-paragraph note bodies stay intact.
+    /// </summary>
+    public static IReadOnlyList<PropertyNoteRow> ParseSourceNotes(string? sourceNotes)
+    {
+        if (string.IsNullOrWhiteSpace(sourceNotes)) return [];
+        var headers = Regex.Matches(sourceNotes, @"^(?<table>[^\s/]+) / (?<code>\S+) \((?<kind>[^)\r\n]*)\): ", RegexOptions.Multiline);
+        if (headers.Count == 0) return [new PropertyNoteRow { SourceTable = "Source", Text = sourceNotes.Trim() }];
+        var rows = new List<PropertyNoteRow>(headers.Count);
+        // Each body runs from the end of its header to the start of the next header.
+        for (var i = 0; i < headers.Count; i++)
+        {
+            var start = headers[i].Index + headers[i].Length;
+            var end = i + 1 < headers.Count ? headers[i + 1].Index : sourceNotes.Length;
+            rows.Add(new PropertyNoteRow { SourceTable = headers[i].Groups["table"].Value, Code = headers[i].Groups["code"].Value, Text = sourceNotes[start..end].Trim() });
+        }
+        return rows;
+    }
+
+    private static bool SameNotes(IReadOnlyList<PropertyNoteRow> left, IReadOnlyList<Asme2025UserNote> right) =>
+        left.Count == right.Count && left.Zip(right).All(pair => pair.First.SourceTable == pair.Second.SourceTable && pair.First.Code == pair.Second.Code && pair.First.Text.Trim() == pair.Second.Text.Trim());
 
     private static bool IsWelded(string productForm) =>
         productForm.Contains("WLD", StringComparison.OrdinalIgnoreCase)
@@ -389,15 +486,20 @@ public sealed class Asme2025EditorViewModel : ObservableObject
     }
     private void LoadCurve()
     {
-        _loading = true; _curveDirty = false; Points.Clear(); CurveNotes.Clear();
+        _loading = true; _curveDirty = false; Points.Clear(); SourceNoteRows.Clear(); SelectedSourceNoteRow = null;
         var c = _curve?.Curve;
         ProductForm = c?.ProductForm ?? ""; SizeMinimum = c?.SizeMinimum; SizeMaximum = c?.SizeMaximum; MinimumIncluded = c?.MinimumIncluded ?? false; MaximumIncluded = c?.MaximumIncluded ?? true; SizeAxis = c?.SizeAxis ?? "thickness-or-unspecified"; S1StressLevel = c?.S1StressLevel ?? "Normal";
         if (c is not null) foreach (var p in c.Points) Points.Add(new() { Temperature = p.Temperature, Value = p.Value });
         if (c is not null && c.UserNoteItems is { Length: > 0 })
-            foreach (var note in c.UserNoteItems) CurveNotes.Add(new() { SourceTable = note.SourceTable, Code = note.Code, Text = note.Text });
-        else if (!string.IsNullOrWhiteSpace(c?.UserNotes))
-            CurveNotes.Add(new() { SourceTable = "User", Text = c.UserNotes });
-        foreach (var name in new[] { nameof(ProductForm), nameof(SizeMinimum), nameof(SizeMaximum), nameof(MinimumIncluded), nameof(MaximumIncluded), nameof(SizeAxis), nameof(S1StressLevel), nameof(SourceNotes), nameof(ShowJointEfficiency), nameof(JointEfficiencySummary) }) RaisePropertyChanged(name);
+            foreach (var note in c.UserNoteItems) SourceNoteRows.Add(new() { SourceTable = note.SourceTable, Code = note.Code, Text = note.Text });
+        else
+            foreach (var row in ParseSourceNotes(c?.SourceNotes)) SourceNoteRows.Add(row);
+        UserNotesText = c?.UserNotes ?? "";
+        var limits = c?.CodeLimits;
+        PNumber = limits?.PNumber ?? ""; GroupNumber = limits?.GroupNumber ?? ""; ExternalPressureChart = limits?.ExternalPressureChart ?? "";
+        MaxTempSectionI = limits?.MaxTempSectionI ?? ""; MaxTempSectionIII = limits?.MaxTempSectionIII ?? ""; MaxTempSectionVIII1 = limits?.MaxTempSectionVIII1 ?? ""; MaxTempSectionVIII2 = limits?.MaxTempSectionVIII2 ?? ""; MaxTempSectionXII = limits?.MaxTempSectionXII ?? "";
+        foreach (var name in new[] { nameof(PNumber), nameof(GroupNumber), nameof(ExternalPressureChart), nameof(MaxTempSectionI), nameof(MaxTempSectionIII), nameof(MaxTempSectionVIII1), nameof(MaxTempSectionVIII2), nameof(MaxTempSectionXII), nameof(ShowCodeLimits) }) RaisePropertyChanged(name);
+        foreach (var name in new[] { nameof(ProductForm), nameof(SizeMinimum), nameof(SizeMaximum), nameof(MinimumIncluded), nameof(MaximumIncluded), nameof(SizeAxis), nameof(S1StressLevel), nameof(SourceNotes), nameof(HasSourceNoteOverride), nameof(SourceNoteOrigin), nameof(ShowJointEfficiency), nameof(JointEfficiencySummary) }) RaisePropertyChanged(name);
         RefreshCommonNotes();
         RefreshCommands(); _loading = false;
     }
@@ -408,9 +510,15 @@ public sealed class Asme2025EditorViewModel : ObservableObject
         {
             if (_material is null) return;
             if (Points.Any(p => p.Temperature is null || p.Value is null)) { Status = "Complete all temperature/value cells or remove empty rows."; return; }
-            var noteItems = CurveNotes.Where(note => !string.IsNullOrWhiteSpace(note.Text)).Select(note => new Asme2025UserNote { SourceTable = note.SourceTable, Code = note.Code, Text = note.Text.Trim() }).ToArray();
-            var userNotes = string.Join(Environment.NewLine + Environment.NewLine, noteItems.Select(note => note.Text).Where(text => !string.IsNullOrWhiteSpace(text)));
-            var c = new Asme2025Curve { Id = _curve?.Curve.Id ?? 0, MaterialId = _material.Id, Code = Family, ProductForm = CanEditForm ? ProductForm : "", SizeMinimum = IsMechanical ? SizeMinimum : null, SizeMaximum = IsMechanical ? SizeMaximum : null, MinimumIncluded = MinimumIncluded, MaximumIncluded = MaximumIncluded, SizeAxis = SizeAxis, SourceTable = _curve?.Curve.SourceTable ?? "User", SourceNotes = SourceNotes, UserNotes = userNotes, UserNoteItems = noteItems, S1StressLevel = Family == "S1" ? S1StressLevel : "Normal", Version = _curve?.Curve.Version ?? "", Points = Points.Select(p => new Asme2025Point(p.Temperature!.Value, p.Value!.Value)).ToArray() };
+            // Rows identical to the official notes are not stored, so future official updates still apply.
+            var editedRows = SourceNoteRows.Where(note => !string.IsNullOrWhiteSpace(note.Text))
+                .Select(note => new Asme2025UserNote { SourceTable = string.Equals(note.SourceTable, "User", StringComparison.OrdinalIgnoreCase) || string.IsNullOrWhiteSpace(note.SourceTable) ? "Manual" : note.SourceTable.Trim(), Code = note.Code?.Trim() ?? "", Text = note.Text.Trim() }).ToArray();
+            var noteItems = SameNotes(ParseSourceNotes(SourceNotes), editedRows) ? [] : editedRows;
+            var userNotes = UserNotesText.Trim();
+            var codeLimits = ShowCodeLimits
+                ? new Asme2025CodeLimits { PNumber = PNumber, GroupNumber = GroupNumber, ExternalPressureChart = ExternalPressureChart, MaxTempSectionI = MaxTempSectionI, MaxTempSectionIII = MaxTempSectionIII, MaxTempSectionVIII1 = MaxTempSectionVIII1, MaxTempSectionVIII2 = MaxTempSectionVIII2, MaxTempSectionXII = MaxTempSectionXII }
+                : Asme2025Data.emptyCodeLimits;
+            var c = new Asme2025Curve { Id = _curve?.Curve.Id ?? 0, MaterialId = _material.Id, Code = Family, ProductForm = CanEditForm ? ProductForm : "", SizeMinimum = IsMechanical ? SizeMinimum : null, SizeMaximum = IsMechanical ? SizeMaximum : null, MinimumIncluded = MinimumIncluded, MaximumIncluded = MaximumIncluded, SizeAxis = SizeAxis, SourceTable = _curve?.Curve.SourceTable ?? "User", SourceNotes = SourceNotes, UserNotes = userNotes, UserNoteItems = noteItems, S1StressLevel = Family == "S1" ? S1StressLevel : "Normal", CodeLimits = codeLimits, Version = _curve?.Curve.Version ?? "", Points = Points.Select(p => new Asme2025Point(p.Temperature!.Value, p.Value!.Value)).ToArray() };
             if (!Asme2025Crud.saveCurve(_path, c).TryUnwrap(out var id, out var error)) { Status = error; return; }
             ReloadCurves(id); Status = $"Saved {Family} curve #{id}. Source notes preserved.";
         }

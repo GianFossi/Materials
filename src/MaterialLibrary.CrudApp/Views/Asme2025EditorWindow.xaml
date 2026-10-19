@@ -53,29 +53,68 @@
        <TextBlock Text="Create a separate curve for each product-form and size-range variant. Temperatures are in °C; stress and elastic modulus values use the unit shown above. Original ASME notes are preserved." TextWrapping="Wrap" Foreground="#52616F" Margin="0,0,0,8"/>
       </StackPanel>
       <Grid>
-       <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="230"/></Grid.RowDefinitions>
+       <Grid.RowDefinitions>       <RowDefinition Height="*"/><RowDefinition Height="280"/></Grid.RowDefinitions>
        <DataGrid x:Name="PointGrid" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" RowEditEnding="PointGrid_RowEditEnding" ToolTip="Edit temperature/value pairs. Use the new-row placeholder to add points and select a row before pressing Delete to remove it.">
         <DataGrid.Columns><DataGridTextColumn Header="Temperature (°C)" Binding="{Binding Temperature,UpdateSourceTrigger=PropertyChanged,ValidatesOnExceptions=True}" Width="*"/><DataGridTextColumn Header="Value (unit shown above)" Binding="{Binding Value,UpdateSourceTrigger=PropertyChanged,ValidatesOnExceptions=True}" Width="*"/></DataGrid.Columns>
        </DataGrid>
-       <TabControl Grid.Row="1" Margin="0,8,0,0">
-        <TabItem Header="Original ASME Notes"><TextBox Text="{Binding SourceNotes,Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" ToolTip="Read-only source notes linked to this curve. These notes are never changed by editing user notes."/></TabItem>
-        <TabItem Header="Editable Notes">
+       <TabControl x:Name="CurveDetailTabs" Grid.Row="1" Margin="0,8,0,0">
+        <TabItem Header="Original ASME Notes" ToolTip="General and specific ASME notes linked to this curve. Editing is optional and stays local to this curve.">
          <DockPanel Margin="6">
+          <TextBlock DockPanel.Dock="Top" Text="{Binding SourceNoteOrigin}" TextWrapping="Wrap" Foreground="DimGray" Margin="0,0,0,6"/>
           <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-           <ComboBox ItemsSource="{Binding CommonNotes}" SelectedItem="{Binding SelectedCommonNote}" DisplayMemberPath="Label" TextSearch.TextPath="Label" Width="350" IsTextSearchEnabled="True" MaxDropDownHeight="300">
+           <CheckBox Content="Allow edit" IsChecked="{Binding AllowSourceNoteEdit}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="Unlock the note rows and the Add, Copy and Delete buttons. Changes are saved with the curve as a curve-level copy; the official ASME note tables are never modified."/>
+           <ComboBox ItemsSource="{Binding CommonNotes}" SelectedItem="{Binding SelectedCommonNote}" DisplayMemberPath="Label" TextSearch.TextPath="Label" Width="350" IsTextSearchEnabled="True" MaxDropDownHeight="300" IsEnabled="{Binding AllowSourceNoteEdit}" ToolTip="ASME notes of the tables relevant to this property family. Select one, then press Copy to add it to this curve.">
             <ComboBox.ItemContainerStyle><Style TargetType="ComboBoxItem"><Setter Property="ToolTip" Value="{Binding Text}"/></Style></ComboBox.ItemContainerStyle>
            </ComboBox>
-           <Button Content="Copy source note" Command="{Binding CopyCommonNoteCommand}" Margin="6,0,0,0" Padding="8,3" ToolTip="Copy the selected source note into this curve's editable notes; the original remains unchanged."/>
-           <Button Content="Add note" Command="{Binding AddNoteCommand}" Margin="6,0,0,0" Padding="8,3" ToolTip="Add a blank user note to this curve."/>
+           <Button Content="Add" Command="{Binding AddNoteCommand}" Margin="6,0,0,0" Padding="10,3" ToolTip="Add a blank note row to this curve. Requires Allow edit."/>
+           <Button Content="Copy" Command="{Binding CopyCommonNoteCommand}" Margin="6,0,0,0" Padding="10,3" ToolTip="Copy the ASME note selected in the dropdown into this curve's note rows. Requires Allow edit."/>
+           <Button Content="Delete" Command="{Binding DeleteNoteCommand}" Margin="6,0,0,0" Padding="10,3" ToolTip="Remove the selected note row from this curve only. Requires Allow edit and a selected row."/>
           </WrapPanel>
-          <DataGrid x:Name="CurveNotesGrid" ItemsSource="{Binding CurveNotes}" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" RowEditEnding="CurveNotesGrid_RowEditEnding">
+          <DataGrid x:Name="SourceNotesGrid" ItemsSource="{Binding SourceNoteRows}" SelectedItem="{Binding SelectedSourceNoteRow}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="{Binding SourceNotesReadOnly}" RowEditEnding="SourceNotesGrid_RowEditEnding" ToolTip="Notes that apply to this curve. Check Allow edit to change the table, code or text of a row.">
            <DataGrid.Columns>
-            <DataGridTextColumn Header="Source table" Binding="{Binding SourceTable}" IsReadOnly="True" Width="90"/>
-            <DataGridTextColumn Header="Code" Binding="{Binding Code}" IsReadOnly="True" Width="75"/>
-            <DataGridTextColumn Header="Editable note text" Binding="{Binding Text,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+            <DataGridTextColumn Header="Source table" Binding="{Binding SourceTable,UpdateSourceTrigger=PropertyChanged}" Width="90"/>
+            <DataGridTextColumn Header="Code" Binding="{Binding Code,UpdateSourceTrigger=PropertyChanged}" Width="75"/>
+            <DataGridTextColumn Header="Note text" Binding="{Binding Text,UpdateSourceTrigger=PropertyChanged}" Width="*">
+             <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style></DataGridTextColumn.ElementStyle>
+             <DataGridTextColumn.EditingElementStyle><Style TargetType="TextBox"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="AcceptsReturn" Value="True"/></Style></DataGridTextColumn.EditingElementStyle>
+            </DataGridTextColumn>
            </DataGrid.Columns>
           </DataGrid>
          </DockPanel>
+        </TabItem>
+        <TabItem Header="User Notes" ToolTip="Free-text notes for this curve, saved with the curve.">
+         <DockPanel Margin="6">
+          <TextBlock DockPanel.Dock="Top" Text="Write any free-text comment about this curve (review status, design assumptions, references). It is saved with the curve and kept separate from the ASME notes." TextWrapping="Wrap" Foreground="DimGray" Margin="0,0,0,6"/>
+          <TextBox Text="{Binding UserNotesText,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" ToolTip="Free-text user notes for this curve. Press Save curve to store them."/>
+         </DockPanel>
+        </TabItem>
+        <TabItem Header="ASME Code Limits" ToolTip="Welding P-No./Group No., external-pressure chart and maximum temperature limits by ASME Section for this curve.">
+         <TabItem.Style><Style TargetType="TabItem"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding ShowCodeLimits}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TabItem.Style>
+         <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="6">
+           <TextBlock Text="Values from this curve's own ASME Section II-D table row (each product form or size variant can differ). Temperatures are in °C. Enter NP when the material is not permitted for that Section, and leave a field blank when the source table has no such column. Edits are saved with the curve; restoring the source values removes the edit." TextWrapping="Wrap" Foreground="DimGray" Margin="0,0,0,8"/>
+           <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="120"/><ColumnDefinition Width="24"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <TextBlock Text="P-No. (welding)" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Column="1" Text="{Binding PNumber,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="ASME Section IX P-Number used for welding procedure and welder qualification grouping, for example 1, 5A or 8."/>
+            <TextBlock Grid.Column="3" Text="Max temp. Section I (°C)" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Column="4" Text="{Binding MaxTempSectionI,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="Section I (power boilers) applicability and maximum temperature in °C: a number, NP if not permitted, or blank."/>
+            <TextBlock Grid.Row="1" Text="Group No. (welding)" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GroupNumber,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="ASME Section IX Group Number within the P-Number (impact-test grouping), for example 1 or 2. Blank when the source does not assign one."/>
+            <TextBlock Grid.Row="1" Grid.Column="3" Text="Max temp. Section III (°C)" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding MaxTempSectionIII,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="Section III (nuclear) applicability and maximum temperature in °C. A qualifier in parentheses is allowed, for example 204 (Cl. 3 only)."/>
+            <TextBlock Grid.Row="2" Text="External-pressure chart" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ExternalPressureChart,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="Section II-D Subpart 3 external-pressure chart designation, for example CS–2 or HA–1."/>
+            <TextBlock Grid.Row="2" Grid.Column="3" Text="Max temp. Section VIII-1 (°C)" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding MaxTempSectionVIII1,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="Section VIII Division 1 applicability and maximum temperature in °C: a number, NP if not permitted, or blank. Used as the maximum temperature of S1 and Sb1 datasets."/>
+            <TextBlock Grid.Row="3" Grid.Column="3" Text="Max temp. Section VIII-2 (°C)" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Row="3" Grid.Column="4" Text="{Binding MaxTempSectionVIII2,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="Section VIII Division 2 applicability and maximum temperature in °C: a number, NP if not permitted, or blank. Used as the maximum temperature of S2 and Sb2 datasets."/>
+            <TextBlock Grid.Row="4" Grid.Column="3" Text="Max temp. Section XII (°C)" VerticalAlignment="Center" Margin="0,0,8,4"/>
+            <TextBox Grid.Row="4" Grid.Column="4" Text="{Binding MaxTempSectionXII,UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" ToolTip="Section XII (transport tanks) applicability and maximum temperature in °C: a number, NP if not permitted, or blank."/>
+           </Grid>
+          </StackPanel>
+         </ScrollViewer>
         </TabItem>
        </TabControl>
       </Grid>

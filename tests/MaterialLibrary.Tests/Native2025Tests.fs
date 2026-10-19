@@ -20,12 +20,16 @@ let private working action =
     Directory.CreateDirectory folder |> ignore
     let path = Path.Combine(folder,"asme_materials_2025.working.db")
     File.Copy(reference,path)
-    try action path finally Directory.Delete(folder,true)
+    try action path
+    finally
+        // Pooled SQLite handles keep the file locked on Windows; release them and never let cleanup mask the test outcome.
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools()
+        try Directory.Delete(folder,true) with :? IOException | :? UnauthorizedAccessException -> ()
 
 /// <summary>Create a new curve in MPa or the selected physical family's fixed unit.</summary>
 let private curve materialId code =
     { Id=0L;MaterialId=materialId;Code=code;ProductForm="";SizeMinimum=Nullable();SizeMaximum=Nullable();MinimumIncluded=false;MaximumIncluded=true;
-      SizeAxis="thickness-or-unspecified";SourceTable="User";SourceNotes="";UserNotes="User comment";UserNoteItems=[||];S1StressLevel="Normal";Version="";
+      SizeAxis="thickness-or-unspecified";SourceTable="User";SourceNotes="";UserNotes="User comment";UserNoteItems=[||];S1StressLevel="Normal";CodeLimits=Asme2025Data.emptyCodeLimits;Version="";
       Points=[|{Temperature=20.;Value=100.};{Temperature=100.;Value=80.}|] }
 
 [<Fact>]
@@ -41,6 +45,40 @@ let ``native 2025 reads every identity and preserves both bolting families and n
     let json = MaterialSerialization.toJsonString material
     let roundTrip = MaterialSerialization.fromJsonStringComplete json |> ok
     Assert.Equal<AllowableStressDataset list>(material.StrengthProperties.AllowableStressDatasets,roundTrip.StrengthProperties.AllowableStressDatasets)
+
+[<Fact>]
+let ``native allowable curves expose their own P-No and Section limits and persist edits`` () = working (fun path ->
+    // Material 9 has S1 variants whose VIII-1 limits differ (NP and 538), which the per-material ASME_Data row cannot represent.
+    let identity,variants =
+        use db = Asme2025Data.openRead path
+        let identity = Asme2025Data.materials db |> List.find (fun m -> m.Id=9L)
+        identity,Asme2025Data.curves db identity.Id "S1"
+    let limitsVIII1 = variants |> List.map (fun c -> c.CodeLimits.MaxTempSectionVIII1) |> List.distinct
+    Assert.Contains("NP",limitsVIII1)
+    Assert.Contains("538",limitsVIII1)
+    Assert.All(variants,fun c -> Assert.False(String.IsNullOrWhiteSpace c.CodeLimits.PNumber))
+    Assert.Equal(Nullable 538.,Asme2025Data.temperatureLimitC "538")
+    Assert.False((Asme2025Data.temperatureLimitC "NP").HasValue)
+    Assert.False((Asme2025Data.temperatureLimitC "204 (Cl. 3 only)").HasValue)
+    let chosen = variants |> List.find (fun c -> c.CodeLimits.MaxTempSectionVIII1="538")
+    let hydrated = AsmeMaterialRepository.findById path identity.Id |> ok
+    Assert.Contains(hydrated.StrengthProperties.AllowableStressDatasets,fun d -> d.DatabaseRowId=chosen.Id && d.MaximumTemperature=Some 538.)
+    let invalid = {chosen with CodeLimits={chosen.CodeLimits with MaxTempSectionVIII1="hot"}}
+    Assert.True(Asme2025Crud.saveCurve path invalid |> Result.isError)
+    let edited = {chosen with CodeLimits={chosen.CodeLimits with MaxTempSectionVIII1="500";GroupNumber="2";MaxTempSectionIII="204 (Cl. 3 only)"}}
+    Asme2025Crud.saveCurve path edited |> ok |> ignore
+    let saved =
+        use db = Asme2025Data.openRead path
+        Asme2025Data.curves db identity.Id "S1" |> List.find (fun c -> c.Id=chosen.Id)
+    Assert.Equal("500",saved.CodeLimits.MaxTempSectionVIII1)
+    Assert.Equal("2",saved.CodeLimits.GroupNumber)
+    Assert.Equal("204 (Cl. 3 only)",saved.CodeLimits.MaxTempSectionIII)
+    // Restoring the source values clears the stored override; the reference source row is never modified.
+    Asme2025Crud.saveCurve path {saved with CodeLimits=chosen.CodeLimits} |> ok |> ignore
+    use check = Asme2025Data.openRead path
+    let stored = Asme2025Data.query check "SELECT CodeLimitsJson FROM Property_Curve_Metadata WHERE Code='S1' AND CurveId=$id" ["$id",box chosen.Id] |> List.head |> Array.head
+    Assert.Null(stored)
+    Assert.Equal(chosen.CodeLimits,Asme2025Data.sourceCodeLimits check chosen.Id))
 
 [<Fact>]
 let ``native S1 curves classify G5 as high stress and persist editable note rows`` () = working (fun path ->
@@ -64,12 +102,12 @@ let ``native S1 curves classify G5 as high stress and persist editable note rows
         Assert.Equal("Normal",normalCurve.S1StressLevel)
         identity,selected
     let note = {SourceTable="1A";Code="G5";Text="Copied and reviewed note"}
-    let requested = {selected with UserNotes=note.Text;UserNoteItems=[|note|];S1StressLevel="High"}
+    let requested = {selected with UserNotes="Free user text";UserNoteItems=[|note;{SourceTable="User";Code="";Text="Legacy row"}|];S1StressLevel="High"}
     let id = Asme2025Crud.saveCurve path requested |> ok
     use savedDb = Asme2025Data.openRead path
     let saved = Asme2025Data.curves savedDb identity.Id "S1" |> List.find (fun c -> c.Id=id)
     Assert.Equal("High",saved.S1StressLevel)
-    Assert.Equal(note.Text,saved.UserNotes)
+    Assert.Equal("Free user text",saved.UserNotes)
     Assert.Equal<Asme2025UserNote array>([|note|],saved.UserNoteItems)
     let hydrated = Asme2025Repository.hydrate savedDb identity
     savedDb.Close()

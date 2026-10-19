@@ -98,6 +98,19 @@ public sealed class WpfSmokeTests
     }
 
     [Fact]
+    public void ParseSourceNotesSplitsFormattedNotesIntoRows()
+    {
+        var text = "1A / G5 (Specific): Due to the relatively low yield strength...\n\nSecond paragraph.\n\n1A / T1 (General): Joint efficiency factor of 0.85.";
+        var rows = Asme2025EditorViewModel.ParseSourceNotes(text);
+        Assert.Equal(2, rows.Count);
+        Assert.Equal(("1A", "G5"), (rows[0].SourceTable, rows[0].Code));
+        Assert.Equal("Due to the relatively low yield strength...\n\nSecond paragraph.", rows[0].Text);
+        Assert.Equal(("1A", "T1", "Joint efficiency factor of 0.85."), (rows[1].SourceTable, rows[1].Code, rows[1].Text));
+        Assert.Empty(Asme2025EditorViewModel.ParseSourceNotes(""));
+        Assert.Equal("Source", Asme2025EditorViewModel.ParseSourceNotes("XML: file.xml\nfree text").Single().SourceTable);
+    }
+
+    [Fact]
     public void PropertyCurveChoiceShowsUnboundedAndOpenSizeLimitsClearly()
     {
         var unbounded = new PropertyCurveChoice(new Asme2025Curve
@@ -143,6 +156,25 @@ public sealed class WpfSmokeTests
         Assert.Equal(seamless.SizeRangeLabel, welded.SizeRangeLabel);
         Assert.Equal("Curve #104 · Seamless (SMLS. PIPE)", seamless.Title);
         Assert.Equal("Curve #105 · Welded (WLD. PIPE)", welded.Title);
+
+        var limited = new PropertyCurveChoice(new Asme2025Curve
+        {
+            Id = 106,
+            Code = "S1",
+            SourceTable = "1A",
+            CodeLimits = new Asme2025CodeLimits { PNumber = "1", GroupNumber = "2", MaxTempSectionVIII1 = "538" },
+            Points = Array.Empty<Asme2025Point>()
+        });
+        Assert.Equal("Table 1A · 0 points · P-No. 1 Gr. 2 · VIII-1 max 538 °C", limited.SourceLabel);
+        var notPermitted = new PropertyCurveChoice(new Asme2025Curve
+        {
+            Id = 107,
+            Code = "S2",
+            SourceTable = "2A",
+            CodeLimits = new Asme2025CodeLimits { MaxTempSectionVIII2 = "NP" },
+            Points = Array.Empty<Asme2025Point>()
+        });
+        Assert.Equal("Table 2A · 0 points · VIII-2: not permitted", notPermitted.SourceLabel);
     }
 
     private static Button? FindButton(DependencyObject root, string content)
