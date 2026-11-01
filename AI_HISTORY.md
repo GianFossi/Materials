@@ -1212,3 +1212,8 @@ Replaced database/data/asme_materials_2025.db (removed from the repository) with
 ## 2026-11-01 - Working copy renamed to materials_2025.working.db
 
 Asme2025Crud.prepareWorkingCopy now creates %LOCALAPPDATA%\MaterialLibrary\ASME2025\materials_2025.working.db (was asme_materials_2025.working.db); tests and docs updated. On request the previous working copy (unmodified: no edit history, no metadata, no physical data) was deleted and replaced by a byte-identical copy of database/data/materials_2025.db. The hardening is applied to the new copy the first time the app or the editor opens it.
+
+
+## 2026-11-01 - Spot-check script
+
+Added tools/SpotCheck/Spot-Check.fsx: prints the product data sheet for materials chosen by identity, id or random sample (--random N --seed S) and, for each, the ASME source-row comparison of every imported curve and the XML provenance of physical data with an identity-match verdict. Uses the libraries built into tools/ProductSheet/bin. No code change.

@@ -1448,6 +1448,8 @@ rifiutato: perderebbe l'identità delle curve e le varianti della fonte.
 - [Backup e rilascio](release-safety.md) descrive i controlli prima di sostituire un riferimento.
 - [Generate-ProductSheet.ps1](../tools/Generate-ProductSheet.ps1) scrive la **scheda prodotto** di un materiale (tutte le proprietà per ogni
   dimensione, temperature Room/Design/Operating, note): vedere §10.8.
+- [Spot-Check.fsx](../tools/SpotCheck/Spot-Check.fsx) per i **controlli a campione**: stampa la scheda prodotto di uno o più materiali (per identità, per id o a caso con `--random N --seed S`) e, per ciascuno,
+  confronta le curve meccaniche con la riga ASME stampata e mostra da quale record XML arrivano i dati fisici, segnalando le differenze di UNS o composizione.
 - [Build-Reference.ps1](../tools/Build-Reference.ps1) **ricostruisce `materials_2025.db`**: DatabaseUpdater su `database/sources`, poi importazione degli XML fisici senza
   revisione manuale e con un solo candidato per materiale e famiglia; dettagli in [DatabaseUpdater](database-updater.md#rigenerare-il-riferimento-distribuito).
 - [Generate-DatabaseCatalog.ps1](../tools/Generate-DatabaseCatalog.ps1) ricostruisce il codice e **rigenera il capitolo 2**
