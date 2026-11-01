@@ -4,7 +4,7 @@
 
 The packaged file is located at:
 
-- Repository: `src/MaterialLibrary/data/ASME_Materials.db`
+- Repository: `database/data/ASME_Materials.db`
 - NuGet content file: `contentFiles/any/any/data/ASME_Materials.db`
 
 The default configuration now points to `ASME_Materials.db`. The desktop app still works on a copied `*.working.db` file before saving/exporting changes.

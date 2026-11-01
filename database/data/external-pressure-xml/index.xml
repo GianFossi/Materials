@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ExternalPressureTables sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1328" sourcePageEnd="1375" status="review-before-database-import" count="76">
+<ExternalPressureTables sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1326" sourcePageEnd="1375" status="review-before-database-import" count="77">
+  <Table name="G" figure="G" pdfPage="1326" pdfPageEnd="1327" file="G.xml" kind="geometric"/>
   <Table name="CS-1" figure="CS-1" pdfPage="1328" file="CS-1.xml"/>
   <Table name="CS-2" figure="CS-2" pdfPage="1329" file="CS-2.xml"/>
   <Table name="CS-3" figure="CS-3" pdfPage="1330" file="CS-3.xml"/>

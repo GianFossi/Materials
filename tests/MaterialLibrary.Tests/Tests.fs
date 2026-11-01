@@ -440,7 +440,7 @@ let ``material library search uses ASME identity criteria`` () =
 [<Fact>]
 let ``requested database library loads six materials and classifies allowable stress sources`` () =
     let databasePath =
-        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../database/data/archive/2023/ASME_Materials_2023.db"))
 
     let materials = RequestedMaterialLibrary.loadMaterials databasePath |> expectOk
 
@@ -1667,7 +1667,7 @@ let ``thermal diffusivity round-trips through JSON`` () =
 [<Fact>]
 let ``reference hydration fills the physical properties and welding info`` () =
     let databasePath =
-        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../database/data/archive/2023/ASME_Materials_2023.db"))
 
     let material = AsmeMaterialRepository.findById databasePath 1L |> expectOk
     let physical = material.PhysicalProperties
@@ -1688,7 +1688,7 @@ let ``reference hydration fills the physical properties and welding info`` () =
 [<Fact>]
 let ``allowable-stress datasets expose their division and case as labels`` () =
     let databasePath =
-        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../database/data/archive/2023/ASME_Materials_2023.db"))
 
     // SA-334 7 carries note G5, which is what marks the higher alternative stress values.
     let material = AsmeMaterialRepository.findById databasePath 736L |> expectOk
@@ -1724,7 +1724,7 @@ let ``allowable-stress datasets expose their division and case as labels`` () =
 [<Fact>]
 let ``Sy and Su keep one column per published size band`` () =
     let databasePath =
-        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db"))
+        Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../database/data/archive/2023/ASME_Materials_2023.db"))
 
     // SA-325 bolting publishes two diameter bands and derates the heavier one.
     let material = AsmeMaterialRepository.findById databasePath 260L |> expectOk

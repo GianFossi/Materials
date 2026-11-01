@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExternalPressureTableImport name="CD-1" figure="CD-1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" pdfPage="1340" printedPage="1290" units="A=dimensionless; B=MPa; Temperature=degC" status="normalized-points-review-required">
+  <ReferenceData>CD-1</ReferenceData>
+  <Notes>Normalized from the ASME BPVC II-D Metric 2025 extracted values. Each point has explicit A and B values in scientific notation; review against the source before database import.</Notes>
+  <Curves>
+    <Curve temperatureC="40" temperatureQualifier="upTo">
+      <Point A="1.00E-05" B="8.41E-01" />
+      <Point A="1.24E-03" B="1.03E+02" />
+      <Point A="2.00E-03" B="1.09E+02" />
+      <Point A="4.00E-03" B="1.19E+02" />
+      <Point A="1.00E-02" B="1.32E+02" />
+      <Point A="2.50E-02" B="1.43E+02" />
+    </Curve>
+    <Curve temperatureC="205">
+      <Point A="1.00E-05" B="8.41E-01" />
+      <Point A="1.07E-03" B="8.96E+01" />
+      <Point A="2.00E-03" B="1.02E+02" />
+      <Point A="3.00E-03" B="1.08E+02" />
+      <Point A="4.00E-03" B="1.13E+02" />
+      <Point A="1.00E-02" B="1.24E+02" />
+      <Point A="2.00E-02" B="1.34E+02" />
+      <Point A="6.00E-02" B="1.40E+02" />
+    </Curve>
+    <Curve temperatureC="345">
+      <Point A="1.00E-05" B="7.72E-01" />
+      <Point A="8.92E-04" B="6.77E+01" />
+      <Point A="2.00E-03" B="8.20E+01" />
+      <Point A="4.00E-03" B="9.51E+01" />
+      <Point A="6.00E-03" B="1.01E+02" />
+      <Point A="8.00E-03" B="1.05E+02" />
+      <Point A="1.00E-02" B="1.07E+02" />
+      <Point A="2.00E-02" B="1.12E+02" />
+      <Point A="4.00E-02" B="1.17E+02" />
+    </Curve>
+  </Curves>
+</ExternalPressureTableImport>

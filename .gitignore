@@ -37,7 +37,7 @@
 *.db-shm
 *.db-wal
 *.db-journal
-/src/MaterialLibrary/data/*.working.db
+/database/data/*.working.db
 
 # WPF temporary compilation projects
 *_wpftmp.csproj

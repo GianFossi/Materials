@@ -34,7 +34,7 @@
 ## Project Layout | Struttura Progetto
 
 - `src/MaterialLibrary` - main DLL project
-- `src/MaterialLibrary/data/ASME_Materials.db` - packaged ASME SQLite material database
+- `database/data/asme_materials_2025.db` - ASME SQLite material database and staged XML data
 - `src/MaterialLibrary/builders/StressStrainTableBuilder.fs` - time-independent and isochronous stress-strain builders
 - `src/MaterialLibrary/builders/CreepTableBuilder.fs` - validated creep-table construction and model generation
 - `src/MaterialLibrary/builders/ExternalPressureTableBuilder.fs` - database and Code Case 2964 table construction
@@ -45,4 +45,3 @@
 - `tests/MaterialLibrary.Examples` - compiled usage examples
 - `.vscode/tasks.json` - build/test/pack tasks
 - `publish/nuget` - generated NuGet packages
-

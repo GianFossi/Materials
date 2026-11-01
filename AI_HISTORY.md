@@ -18,6 +18,34 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 
 ## History
 
+- Date: 2026-11-01
+- Area: Figure G external-pressure geometry
+- Change: Added G.xml with 24 Do/t curves and 393 dimensionless L/Do-A points from ASME II-D Metric 2025 Table G, preserving source references and explicit exponents.
+- Why: Complete the missing geometric chart without confusing it with temperature-dependent material A/B curves.
+- Impact: Added the geometric entry to the XML index; no material importer or calculation API behavior changed.
+- Files: database/data/external-pressure-xml/G.xml, database/data/external-pressure-xml/index.xml, docs/xml-physical-import.md
+
+- Date: 2026-11-01
+- Area: CD-1 external-pressure chart XML
+- Change: Replaced split raw tokens with temperature-grouped numeric curves and explicit scientific-notation A/B points while preserving source metadata.
+- Why: Make the extracted chart values directly readable as coordinate pairs without implicit exponents.
+- Impact: CD-1 now contains three review-required curves at up to 40 °C, 205 °C, and 345 °C; source verification is still required before database import.
+- Files: database/data/external-pressure-xml/CD-1.xml
+
+- Date: 2026-11-01
+- Area: External-pressure XML staging data
+- Change: Added XML raw-data records for PVElite chart sections NFN-21, 2244-2, 2245-1, and 2497-2.
+- Why: Preserve source sections that were missing from the staged chart XML folder.
+- Impact: Adds four review-required XML files; source values and precision are retained without converting units or interpreting fields.
+- Files: database/data/external-pressure-xml/NFN-21.xml, database/data/external-pressure-xml/2244-2.xml, database/data/external-pressure-xml/2245-1.xml, database/data/external-pressure-xml/2497-2.xml
+
+- Date: 2026-11-01
+- Area: Material database layout
+- Change: Moved the repository database and staged XML data from `src/MaterialLibrary/data` to `database/data`, updating packaging, runtime discovery, tests, and docs.
+- Why: Keep material data in the repository-level database directory.
+- Impact: Packaged/output paths remain `data`; repository consumers now resolve data from `database/data`.
+- Files: src/MaterialLibrary/MaterialLibrary.fsproj, src/MaterialLibrary/Serialization/MaterialLibraryDataXml.fs, tests/MaterialLibrary.Tests, .vscode/tasks.json, docs, .gitignore
+
 - Date: 2026-10-19
 - Area: ASME 2025 per-curve code limits (Asme2025Data, Asme2025Crud, Asme2025Repository, CrudApp editor)
 - Change: Added `Asme2025CodeLimits` (P-No., Group No., external chart, max temperature by Section I/III/VIII-1/VIII-2/XII in °C) to `Asme2025Curve`, read per curve from `ASME_Data_Source` via `Property_Source`; added the editable "ASME Code Limits" tab, a dropdown label summary, `CodeLimitsJson` overrides with validation (number, NP, qualifier, blank), and hydration of dataset `MaximumTemperature` from VIII-1/VIII-2. The Native2025 test cleanup now clears SQLite pools and tolerates delete locks.

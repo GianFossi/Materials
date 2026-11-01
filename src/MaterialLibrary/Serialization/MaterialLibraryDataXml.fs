@@ -77,9 +77,9 @@ module MaterialLibraryDataXml =
         [ Path.Combine(baseDirectory, "data")
           Path.Combine(baseDirectory, "contentFiles", "any", "any", "data")
           Path.Combine(currentDirectory, "data")
-          Path.Combine(currentDirectory, "src", "MaterialLibrary", "data") ]
+          Path.Combine(currentDirectory, "database", "data") ]
 
-    /// <summary>Finds the first existing MaterialLibrary/data folder near the app base directory or current working directory.</summary>
+    /// <summary>Finds the first existing data folder near the app base directory or current working directory.</summary>
     let tryFindDefaultDataRoot () : string option =
         candidateDataRoots ()
         |> List.tryFind Directory.Exists

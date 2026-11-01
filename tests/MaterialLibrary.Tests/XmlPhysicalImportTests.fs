@@ -13,7 +13,7 @@ let private workspace action =
     let folder=Path.Combine(Path.GetTempPath(),"xml-properties-"+Guid.NewGuid().ToString("N"))
     Directory.CreateDirectory folder |> ignore
     let path=Path.Combine(folder,"materials.working.db")
-    File.Copy(Path.Combine(__SOURCE_DIRECTORY__,"../../src/MaterialLibrary/data/asme_materials_2025.db"),path)
+    File.Copy(Path.Combine(__SOURCE_DIRECTORY__,"../../database/data/asme_materials_2025.db"),path)
     try action folder path finally Directory.Delete(folder,true)
 /// <summary>Write an explicit physical record in GPa; the reader converts it to MPa.</summary>
 let private xml folder =
@@ -96,7 +96,7 @@ let ``pressure charts are versioned shared safely and linked through native char
 
 [<Fact>]
 let ``existing staged XML extracts mean instantaneous modulus and density as reviewable independent records`` () =
-    let folder=Path.Combine(__SOURCE_DIRECTORY__,"../../src/MaterialLibrary/data/physical-properties-xml")
+    let folder=Path.Combine(__SOURCE_DIRECTORY__,"../../database/data/physical-properties-xml")
     let records,errors=XmlPropertyReader.readFolder folder
     Assert.Empty(errors)
     Assert.Contains(records,fun r -> r.PropertyCode="Alpha" && r.Points.Length>10)
@@ -134,7 +134,7 @@ let ``density constants populate Extension and switch to tabulated only through 
 
 [<Fact>]
 let ``raw pressure XML never silently guesses carried PDF exponents`` () =
-    let folder=Path.Combine(__SOURCE_DIRECTORY__,"../../src/MaterialLibrary/data/external-pressure-xml")
+    let folder=Path.Combine(__SOURCE_DIRECTORY__,"../../database/data/external-pressure-xml")
     let records,errors=XmlPropertyReader.readFolder folder
     Assert.Empty(errors)
     let charts=records |> Array.filter (fun r -> r.PropertyCode="EP")

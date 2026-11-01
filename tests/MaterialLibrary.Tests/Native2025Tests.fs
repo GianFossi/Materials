@@ -12,7 +12,7 @@ open MaterialLibrary.Domain.Database.Lookup
 let private ok = function Ok value -> value | Error error -> failwithf "%A" error
 
 /// <summary>The real published 2025 reference fixture, never opened for writing.</summary>
-let private reference = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__,"../../src/MaterialLibrary/data/asme_materials_2025.db"))
+let private reference = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__,"../../database/data/asme_materials_2025.db"))
 
 /// <summary>Run a mutation on an isolated explicit working copy and clean up all journal files.</summary>
 let private working action =

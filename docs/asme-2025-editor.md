@@ -1,6 +1,6 @@
 # Editor ASME 2025 per CRUD ed Excel
 
-Il database predefinito è `src/MaterialLibrary/data/asme_materials_2025.db`, nello schema normalizzato MAIN/Material_Properties/Physical_Properties. Il precedente database è archiviato in `src/MaterialLibrary/data/archive/2023/ASME_Materials_2023.db`: resta leggibile se aperto esplicitamente, ma non viene copiato nell'output o scelto come ripiego.
+Il database predefinito è `database/data/asme_materials_2025.db`, nello schema normalizzato MAIN/Material_Properties/Physical_Properties. Il precedente database è archiviato in `database/data/archive/2023/ASME_Materials_2023.db`: resta leggibile se aperto esplicitamente, ma non viene copiato nell'output o scelto come ripiego.
 
 ## Applicazione CRUD
 

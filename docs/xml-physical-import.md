@@ -50,6 +50,14 @@ Le cartelle `data/physical-properties-xml` e `data/external-pressure-xml` conten
 
 Per i diagrammi EP grezzi gli esponenti possono essere omessi nelle righe successive del PDF. Non vengono ricostruiti automaticamente: il record è disponibile per associazione e consultazione, ma occorre inserire punti T/A/B verificati oppure fornire un XML strutturato. Nessuna proprietà mancante viene calcolata o copiata dal database 2023.
 
+## Figura G: diagramma geometrico
+
+Il file [G.xml](../database/data/external-pressure-xml/G.xml) contiene le 24 curve e i 393 punti della Table G ASME II-D Metric 2025 (pagine PDF 1326-1327, pagine stampate 1276-1277). Le figure sono alle pagine PDF 1247-1248. Il file è registrato nell'indice con `kind="geometric"`.
+
+La radice è `ExternalPressureGeometricChart`. Ogni `Curve` ha un `diameterThicknessRatio` (Do/t) costante; ogni `Point` contiene `lengthDiameterRatio` (L/Do) e `A`. Tutti questi valori sono adimensionali. A è sempre espresso in notazione scientifica con esponente esplicito. Le continuazioni fra colonne e pagine sono riunite nella stessa curva.
+
+Non si tratta di curve del materiale T/A/B: non sono presenti temperatura o fattore B, e il file non è un record `property="EP"` importabile come proprietà del materiale. I punti sono leggibili direttamente da un parser XML per un successivo calcolo geometrico; questo intervento non aggiunge un interpolatore o funzioni di calcolo. Verificare applicabilità e dati prima dell'uso ingegneristico; l'estrapolazione non è consentita salvo quanto espressamente ammesso dal Construction Code applicabile.
+
 ## Provenienza e aggiornamenti
 
 L'importazione conserva documento XML completo, SHA-256 dei byte sorgenti, percorso, note e record numerico effettivamente approvato. `Xml_Import_Documents`, `Xml_Property_Associations` e `Xml_Import_History` registrano fonti, associazioni e snapshot prima/dopo. Il documento XML conservato è serializzato dal parser; l'hash identifica il file originale. Note e provenienza delle curve fisiche sono consultabili nell'editor e in `MatPropertyTable`.
