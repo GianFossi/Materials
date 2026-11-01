@@ -34,7 +34,7 @@ Seguire le policy aziendali per add-in scaricati e percorsi attendibili.
 ## 1. Scegliere il database
 
 Il default deriva da `MaterialLibrary.config.xml` accanto all'add-in o da
-`data/asme_materials_2025.db` nella directory runtime.
+`data/materials_2025.db` nella directory runtime.
 
 ```text
 =MatOpenDatabase("C:\percorso\asme_materials_2025.working.db")

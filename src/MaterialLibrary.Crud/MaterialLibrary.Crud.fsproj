@@ -25,6 +25,10 @@
     <Compile Include="XmlDataCrud.fs" />
     <Compile Include="MaterialRepository.fs" />
     <Compile Include="MaterialTableCrud.fs" />
+    <Compile Include="WorkingCopyHardening.fs" />
+    <Compile Include="SqlAudit.fs" />
+    <Compile Include="SourceRowComparison.fs" />
+    <Compile Include="ProductSheet.fs" />
     <Compile Include="Asme2025Crud.fs" />
     <Compile Include="XmlPropertyTypes.fs" />
     <Compile Include="XmlPropertyReader.fs" />

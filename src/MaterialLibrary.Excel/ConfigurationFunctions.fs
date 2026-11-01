@@ -22,7 +22,7 @@ module ConfigurationFunctions =
     [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the configuration file path this add-in uses by default (next to the add-in's runtime folder).")>]
     let MatConfigPath () : string = Configuration.resolveConfigPath (Some(AddInPaths.runtimeDirectory ()))
 
-    [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the default ASME database path: from the configuration file if present, otherwise data/asme_materials_2025.db next to the add-in.")>]
+    [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the default ASME database path: from the configuration file if present, otherwise data/materials_2025.db next to the add-in.")>]
     let MatDefaultAsmeDatabasePath () : string = LibraryCache.defaultDatabasePath ()
 
     [<ExcelFunction(Category = "MaterialLibrary.Config", Description = "Resolves the default EN database path: from the configuration file if present, otherwise a sibling en_materials.db.")>]

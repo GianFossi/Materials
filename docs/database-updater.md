@@ -212,3 +212,21 @@ L'importazione verifica edizione e unità, sequenza delle parti denominate `Expo
 ## Compatibilità
 
 Il nuovo database usa lo schema normalizzato richiesto e le tabelle di audit del tool. La libreria, la CRUD ed Excel leggono lo schema 2025 nativamente; vedere [editor ASME 2025](asme-2025-editor.md). Lo schema precedente `Materials` rimane disponibile solo aprendo esplicitamente il database archiviato. Il tool non trasferisce o ricostruisce le altre proprietà del vecchio database.
+
+## Rigenerare il riferimento distribuito
+
+`database/data/materials_2025.db` si ricostruisce con un solo comando, che esegue il DatabaseUpdater sui CSV di `database/sources`
+(escluse le tabelle 6A–6D) e poi importa, con l'importatore del progetto, **solo** gli XML fisici di `database/data/physical-properties-xml`
+che non richiedono revisione manuale e hanno un solo candidato per materiale e famiglia (nessuna revisione viene dichiarata):
+
+```text
+pwsh tools/Build-Reference.ps1 -Output "$env:TEMP/materials_2025.db"     # prova: scrive fuori dal repository
+pwsh tools/Build-Reference.ps1 -Force                                    # sostituisce database/data/materials_2025.db
+```
+
+Lo script copia nel database pulito solo i dati e la provenienza (`Physical_*`, `Extension`, `Xml_Import_Documents`, `Xml_Property_Associations`);
+tabelle dell'editor, rafforzamento e registri restano nelle copie di lavoro. Esegue `VACUUM`, `integrity_check` e `foreign_key_check`
+e stampa un riepilogo (hash, conteggi). Dopo una sostituzione: aggiornare [asme-2025-import-verification.json](asme-2025-import-verification.json),
+rigenerare il catalogo con `tools/Generate-DatabaseCatalog.ps1` e rieseguire i test. Due rigenerazioni producono gli stessi dati; l'hash del file
+può cambiare perché `Xml_Property_Associations.ImportedUtc` contiene l'istante dell'importazione. Gli id di `Main` dipendono dall'ordine di
+identità (specifica, grado, condizione, UNS): la rigenerazione del 2026-11-01 ha rinumerato `Main`, non gli id delle curve.

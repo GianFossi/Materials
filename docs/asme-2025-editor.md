@@ -13,6 +13,8 @@ L'editor scrive solo in `.working.db`. La copia predefinita è condivisa sotto
 `%LOCALAPPDATA%\MaterialLibrary\ASME2025\`; una copia esplicita esistente viene usata direttamente.
 Aprire il riferimento non aggiorna una copia locale già esistente.
 
+All'apertura della copia di lavoro l'app applica un rafforzamento idempotente (indici, regole sui valori, pulizia automatica degli orfani, vista `VW_Integrity_Report`); il riferimento non viene modificato. Dettagli in [database](asme-materials-db.md#133-rafforzamento-della-copia-di-lavoro-implementato).
+
 1. Cercare specifica, grado, condizione o UNS e selezionare l'identità Main.
 2. Scegliere la famiglia; le unità sono mostrate nell'editor.
 3. Scegliere la variante dal menu, controllando CurveId, forma, dimensioni,

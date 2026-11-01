@@ -28,11 +28,11 @@ let inspectDatabase path =
         printfn "%d | %s | %s | %s | %s"
             material.Id material.Specification material.Grade material.Condition material.UNS
 
-inspectDatabase @"database\data\asme_materials_2025.db"
+inspectDatabase @"database\data\materials_2025.db"
 ```
 
 Il percorso è quello del repository; a runtime il riferimento distribuito è normalmente
-`data/asme_materials_2025.db`. Gestire le eccezioni di apertura al confine I/O dell'applicazione.
+`data/materials_2025.db`. Gestire le eccezioni di apertura al confine I/O dell'applicazione.
 Per il lookup passare una selezione verificata:
 
 ```fsharp
@@ -102,6 +102,11 @@ Il pacchetto [MaterialLibrary.Crud](../src/MaterialLibrary.Crud/README-NUGET.md)
 - `Asme2025Crud`: copia di lavoro, salvataggio identità/curve/costanti;
 - `XmlPropertyReader` / `XmlPropertyMatching`: lettura e proposte di associazione;
 - `XmlPropertyImport.apply`: lotto di associazioni approvate in transazione;
+- `WorkingCopyHardening`: rafforzamento idempotente delle copie di lavoro (applicato da `Asme2025Crud.ensureSchema`), `integrityReport` (rapporto delle incoerenze), `removeEmptyCurves` (cancella le curve senza punti);
+- `SqlAudit`: registro opzionale delle modifiche fatte con SQL diretto (`enable`, `read`, `disable`, `purgeOlderThan`);
+- `ProductSheet.build`: scheda prodotto Markdown di un materiale (`Result<string,string>`), con colonne Room, Design (max 3) e Operating (max 3), tutte le dimensioni e tutte le note;
+- `SourceRowComparison`: affianca una curva alla riga ASME stampata (`compare`, `findInconsistent`);
+- dettagli, esempi e limiti in [database §13](asme-materials-db.md#13-rendere-larchitettura-più-robusta);
 - `MaterialCrudRepository`: CRUD di oggetti Material in memoria;
 - `MaterialDatabaseCrud`: percorso generico/legacy, con protezioni specifiche per il nativo.
 

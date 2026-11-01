@@ -10,7 +10,7 @@ dotnet add package MaterialLibrary.Crud --version 1.0.2
 ```
 
 The core `MaterialLibrary` dependency supplies the domain model and packaged
-`data/asme_materials_2025.db` / XML content.
+`data/materials_2025.db` / XML content.
 
 ## 1. Database structure
 
@@ -45,7 +45,7 @@ Handle errors before continuing; creating a working copy does not import XML dat
 ```fsharp
 open MaterialLibrary.Crud
 
-match Asme2025Crud.prepareWorkingCopy @"data\asme_materials_2025.db" with
+match Asme2025Crud.prepareWorkingCopy @"data\materials_2025.db" with
 | Ok path -> printfn "Working database: %s" path
 | Error error -> eprintfn "Cannot open working database: %s" error
 ```

@@ -31,6 +31,8 @@ module Asme2025Crud =
         if not (columns |> List.contains "CodeLimitsJson") then
             // NULL means the curve uses its own Section II-D source-row limits unchanged.
             run db "ALTER TABLE Property_Curve_Metadata ADD COLUMN CodeLimitsJson TEXT" []
+        // Integrity guards and orphan cleanup depend on the metadata table created above; idempotent and working-copy only.
+        WorkingCopyHardening.apply db
 
     /// <summary>Open an existing working copy and reject reference files and unsupported schemas.</summary>
     let private writable (path: string) action =

@@ -1112,3 +1112,98 @@ Fixed the importer leaving ASME_Data empty despite regulatory fields being prese
 Switched the active packaged/default database to asme_materials_2025.db and archived the previous reference under data/archive/2023 without modifying its bytes. Added native normalized readers for MAIN, mechanical/physical variants, constants, regulatory metadata and full source note text. Added a shared WPF property editor for CRUD and the Excel ribbon covering Sy/Su/S1/S2/Sb1/Sb2/E/Alpha/c/k/a/density/Nu, curve/point creation and deletion, exact mm boundaries, separate user notes and MAIN identity editing. Edits target explicit working copies, preserve source records and notes, validate atomically, reject stale curves and retain audit snapshots. Added explicit native worksheet functions and removed silent bolting/first-curve substitution. JSON schema 17 distinguishes Table 4/Sb2 while retaining read support for 15/16. Legacy whole-document export into native rows is rejected to prevent provenance loss. Core regression tests exercise the real 2025 reference on isolated working copies; Windows UI execution remains a platform-specific check.
 
 Validation for this integration: 63 core/CRUD tests passed, including real-reference reads and isolated native edits; Release Excel/CRUD builds succeeded for x86 and x64. WPF test sources compile, but Windows UI/Excel execution cannot run in this Linux environment. Nullable-reference warnings remain visible. The 2025 reference SHA-256 is unchanged, and the archived 2023 file is byte-for-byte identical to its previous tracked version.
+
+
+## 2026-11-01 - Table structures in asme-materials-db.md
+
+Documented columns, types, units and reference row counts for every table and view of the native ASME 2025 schema (identity, mechanical curves, physical, external pressure, regulatory, notes, audit, unused models) and for the working-copy and XML-import tables, derived from the reference database and the CRUD/XML source. Documentation only; no code changed.
+
+
+## 2026-11-01 - Relationship diagrams in asme-materials-db.md
+
+Replaced the ASCII relationship tree with Mermaid diagrams (overview map, mechanical-curve ER, physical/external-pressure/regulatory ER, logical links of working-copy and XML tables) plus cardinality explanations and a lookup walk-through. Documentation only.
+
+
+## 2026-11-01 - Practical examples in asme-materials-db.md
+
+Added section 8 with worked examples drawn from the real 2025 reference (SA-516 Gr.70 curves, interpolation, notes, ASME_Data limits, multi-curve SA-312 TP316L, Sb1 sizes, availability views, counts per family). Documentation only.
+
+
+## 2026-11-01 - New-material walk-through in asme-materials-db.md
+
+Added section 9: creating a material from scratch (identity, Sy/Su over two thickness ranges, E, Alpha, external pressure chart) with the editor workflow and a transactional SQL equivalent, verified on a scratch copy of the 2025 reference (foreign_key_check clean). Documentation only.
+
+
+## 2026-11-01 - Delete-material walk-through in asme-materials-db.md
+
+Added section 10: what Main deletion cascades to, which rows remain orphaned (Sizes, unshared EP charts, Property_Curve_Metadata) and a transactional SQL cleanup script verified on a scratch copy (counts return to baseline, foreign_key_check clean). Documentation only.
+
+
+## 2026-11-01 - Edit-data walk-through in asme-materials-db.md
+
+Added section 11: how to modify each kind of datum (identity, scalars, constants, curve points, size ranges, product form, physical curves, EP charts, ASME_Data and per-curve limit overrides, notes, bolting sizes, history) with a data/tool/caveat table and SQL blocks executed in sequence on a scratch copy of the 2025 reference (foreign_key_check clean); lists read-only provenance/audit tables. Documentation only.
+
+
+## 2026-11-01 - Design-philosophy prologue in asme-materials-db.md
+
+Added a prologue explaining the normalized three-level model (identity, curve, points, plus provenance) and its pros/cons against a flat clone of the PDF tables (per-property temperatures, per-property size ranges as in EN, variants, missing values, units, extensibility, editing, integrity costs). Documentation only.
+
+
+## 2026-11-01 - XML population guide per property family
+
+Added "Popolare il database: guida per famiglia" to xml-physical-import.md: files, target tables and keys for E, Alpha, AlphaInstantaneous, k, a, density, Nu and external-pressure charts; measured record/point/proposal counts of the distributed XML; GUI procedure; tested F# batch script; no XML provides c; distributed EP XML are raw (0 numeric points) so a structured EP record is required (verified on a scratch copy). Cross-link added in asme-materials-db.md. Documentation only.
+
+
+## 2026-11-01 - Robustness section in asme-materials-db.md
+
+Added section 12: audit of constraints actually enforced by the 2025 reference, remedies for each listed drawback (flat view, PDF-like pivot, hardening script with unique temperature indexes, missing indexes, value guard triggers, immutable Sizes, Sb coherence, orphan-cleanup triggers, VW_Integrity_Report), 20,000-random-operation comparison before/after hardening, and a table of the effects of adding/removing points and curves. Hardening verified against real editor CRUD operations and the XML batch import on scratch copies. Documentation only; no schema file changed.
+
+
+## 2026-11-01 - Robustness check summary in asme-materials-db.md
+
+Added section 13: one-page summary of the robustness check (what was checked, results, constraints deliberately not imposed, recommended actions, limits). Documentation only.
+
+
+## 2026-11-01 - Working-copy hardening implemented
+
+Added WorkingCopyHardening.fs (Crud project) and call it from Asme2025Crud.ensureSchema: unique (curve, temperature) indexes (skipped, not fatal, when legacy duplicates exist), missing FK indexes, value/code guard triggers, immutable Sizes, Sb1/Sb2 consistency, orphan cleanup for Sizes/EP charts/Property_Curve_Metadata, VW_Curve_Points and VW_Integrity_Report, versioned with PRAGMA user_version=1. Reference database and its hash are untouched. Four new tests in Native2025Tests.fs; XmlPhysicalImportTests workspace cleanup now clears SQLite pools (pre-existing file-lock failure). Docs updated (asme-materials-db.md sections 10-13, asme-2025-editor.md). Not done: optional schema for empty tables (needs reference regeneration), audit triggers, CI hook.
+
+
+## 2026-11-01 - Explicit empty-curve removal
+
+Added WorkingCopyHardening.removeEmptyCurves (atomic, working-copy and foreign-keys guarded, writes DeleteEmpty rows to Property_Edit_History, relies on cleanup triggers for Sizes/metadata) with one test; documented in asme-materials-db.md section 12.6 (no periodic cleanup needed, when to read VW_Integrity_Report, VACUUM only after mass deletions). No editor UI command added.
+
+
+## 2026-11-01 - Import gate, SQL change journal, source-row comparison
+
+Added: (1) post-import integrity gate in XmlPropertyImport.apply (foreign_key_check + only newly introduced VW_Integrity_Report findings roll the batch back); (2) SqlAudit.fs, opt-in row-level journal (Sql_Change_Log) for direct SQL edits on 15 tables; (3) SourceRowComparison.fs, compares each curve with its printed ASME row from Property_Source.RawFieldsJson (all 9,390 curves consistent, decimal commas and placeholders handled); (4) tests: import gate, journal, source-row comparison, golden counts against asme-2025-import-verification.json. Decided not to move the 9 empty model tables out of the reference (source archive not in repo, hash and verification would change, unused by code). No CI pipeline exists in the repo; the test command is documented. Docs: asme-materials-db.md sections 12.7-12.10, xml-physical-import.md.
+
+
+## 2026-11-01 - Documentation corrections
+
+asme-materials-db.md: fixed encoding corruption in the embedded SQL (section 9 and 10 scripts), fixed the NaturalKey escaping example, made the Property_Source cardinality optional in the ER diagram, moved the table-group summary next to the general map, added an index, aligned statements superseded by the hardening (orphan cleanup in 10.2, Sb1 updates in 11.11, journal in 11.12/12.4), added working-copy objects to section 5, and extended the section 13 summary. library-api.md lists WorkingCopyHardening, SqlAudit and SourceRowComparison; overview.md describes the expanded database page. XmlPropertyImport gate message reworded. All relative links and anchors in docs/*.md checked.
+
+
+## 2026-11-01 - Table catalog chapter
+
+asme-materials-db.md: inserted chapter 2 "Catalogo delle tabelle" between the file chapter and identity: all 34 reference tables, 5 working-copy tables, the optional change log, 9 views, triggers and indexes with purpose, columns (types, PK/FK/NOT NULL, defaults, units), constraints, row counts and writer; generated from the real schema. Chapters renumbered (old 2-13 are now 3-14), cross-references and the index updated, duplicate column lists removed from the identity and working-copy sections, chapter 4 renamed "Relazioni fra le tabelle". Anchors updated in asme-2025-editor.md, library-api.md, xml-physical-import.md.
+
+
+## 2026-11-01 - Catalog generator moved into tools
+
+Added tools/Generate-DatabaseCatalog.ps1 and tools/DatabaseCatalog/Generate-Catalog.fsx: rebuild the Crud project, create a temporary working copy of the reference, run the real project code (Asme2025Crud.ensureSchema, SqlAudit.enable, one XML probe import), read the real schema and regenerate chapter 2 of docs/asme-materials-db.md between catalog markers (-Check exits 1 when the chapter is out of date; fails if a table, view or trigger has no description). Chapter regenerated (40 tables, 10 views); the Sql_Change_Log and Xml_* tables now come from the real DDL. Documented in asme-materials-db.md chapter 8 and overview.md. Full test suites re-run: 101 + 32 passed.
+
+
+## 2026-11-01 - S1/S2, Sb1/Sb2 and product sheet examples
+
+Added ProductSheet.fs (Crud): Markdown product data sheet with Room/Design(max 3)/Operating(max 3) columns for every size range (curves valid for the whole range), all mechanical and physical properties, external pressure, per-curve code limits (flag above the Section limit), curve register and numbered notes (ASME, edited copies, user, XML). CLI: tools/Generate-ProductSheet.ps1 + tools/ProductSheet/Generate-ProductSheet.fsx. Examples in docs/asme-materials-db.md 10.6 (S1/S2 with sizes and product forms), 10.7 (Sb1/Sb2 with diameters), 10.8 (sheet); SQL scripts in docs/examples/sql (embedded verbatim, enforced by a test) and generated sheets in docs/examples. Tests: 5 new (106 total passing). No schema change.
+
+
+## 2026-11-01 - Unbounded sizes, Low/High stress and weld efficiency examples
+
+Clarified in asme-materials-db.md section 5.1 that SizeMin and SizeMax both NULL means any dimension for S1, S2, Sb1, Sb2 (and Sy/Su) while a NULL Material_Properties.id_size hides the curve from the readers; counts from the reference (6,630 unbounded curves share Sizes row 1). Hardening version 2: Guard_MaterialProperties_Size_Insert trigger and CurveWithoutSize report row. S1/S2 example gained an unbounded S2 BAR curve; new section 10.9 with the real SA-312 TP316L curves (Low/High stress via note G5, welded forms include the 0.85 factor per G24, W12/W14 do not) and a double-counting comparison. Catalog regenerated. Tests: 108 in the main suite.
+
+
+## 2026-11-01 - Reference database regenerated as materials_2025.db
+
+Replaced database/data/asme_materials_2025.db (removed from the repository) with database/data/materials_2025.db, rebuilt from database/sources via MaterialLibrary.DatabaseUpdater plus the physical-property XML of database/data that need no manual review and have a single candidate per material and family (10,967 associations, 213,999 points, 1,087 density/Poisson constants; 2,400 review-required proposals and the raw external-pressure XML not imported; no review declared). Main ids are now assigned in identity order (curve ids unchanged). Added tools/Build-Reference.ps1 + tools/ReferenceBuild/Build-Reference.fsx (reproducible build, checks, summary). Fixed provenance bloat: XmlPropertyImport now stores a compact record (no full XML, raw text or points) in Xml_Property_Associations and its history. All file references renamed (config, fsproj, tasks, tests, docs); the working-copy file name asme_materials_2025.working.db is unchanged on purpose so existing user copies keep working. Catalog, verification JSON and docs updated; tests adjusted for the populated physical tables and new ids.

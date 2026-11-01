@@ -177,7 +177,7 @@ module Configuration =
               ExportFolder = "./export"
               AutoCreateFolders = true
               MaterialDatabaseFolder = Path.Combine(AppContext.BaseDirectory, "data")
-              AsmeMaterialDatabaseFile = "asme_materials_2025.db"
+              AsmeMaterialDatabaseFile = "materials_2025.db"
               EnMaterialDatabaseFile = "en_materials.db" } }
 
     /// <summary>
@@ -304,9 +304,9 @@ module Configuration =
         else
             Path.Combine(baseDir, fallbackFileName)
 
-    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>asme_materials_2025.db</c>).</summary>
+    /// <summary>Resolves the default ASME database path (configuration file if present, else a sibling <c>materials_2025.db</c>).</summary>
     let resolveAsmeDatabasePath (baseDirectory: string option) : string =
-        resolveDatabasePath baseDirectory getAsmeDatabasePath (Path.Combine("data", "asme_materials_2025.db"))
+        resolveDatabasePath baseDirectory getAsmeDatabasePath (Path.Combine("data", "materials_2025.db"))
 
     /// <summary>Resolves the default EN database path (configuration file if present, else a sibling <c>en_materials.db</c>).</summary>
     let resolveEnDatabasePath (baseDirectory: string option) : string =

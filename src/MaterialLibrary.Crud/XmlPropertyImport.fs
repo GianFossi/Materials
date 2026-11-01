@@ -53,6 +53,12 @@ module XmlPropertyImport =
         elif record.Points |> Array.distinctBy (fun p -> p.Temperature) |> Array.length <> record.Points.Length then Error "Temperature duplicate nel record."
         elif record.Points |> Array.exists (fun p -> if record.PropertyCode="Nu" then p.Y <= -1. || p.Y>=0.5 else record.PropertyCode<>"Alpha" && record.PropertyCode<>"AlphaInstantaneous" && p.Y<0.) then Error "Valori fisici non validi."
         else Ok ()
+    /// <summary>
+    /// Record as stored in the provenance tables: the complete XML document is kept once in <c>Xml_Import_Documents</c> (keyed by SHA-256)
+    /// and the extraction text and the numeric points are dropped (the points live in the target tables), so thousands of associations
+    /// that share one document do not each repeat them.
+    /// </summary>
+    let private compact (record: XmlPropertyRecord) = {record with Xml=""; RawText=""; Points=[||]}
     /// <summary>Import a batch atomically; replacement requires explicit consent and repeated imports reuse their own target.</summary>
     let apply (path: string) (assignments: XmlPropertyAssignment array) =
         try
@@ -62,6 +68,8 @@ module XmlPropertyImport =
             db.Open()
             if not (Asme2025Data.isNormalized db) then failwith "Database 2025 richiesto."
             schema db
+            // Findings that already existed (for example unused size intervals) must not block this import; only new ones do.
+            let baseline = WorkingCopyHardening.integrityReport db
             use tx = db.BeginTransaction()
             let duplicate = assignments |> Array.countBy (fun a -> a.MaterialId,a.Record.PropertyCode) |> Array.exists (fun (_,count) -> count>1)
             if duplicate then failwith "Più record selezionati per lo stesso materiale/proprietà: risolvere l'ambiguità."
@@ -113,8 +121,16 @@ module XmlPropertyImport =
                             for p in r.Points |> Array.sortBy (fun p -> p.Temperature) do run db "INSERT INTO Physical_Property_Values(id_physical_property,Temperature,PropertyValue) VALUES($id,$t,$v)" ["$id",box id;"$t",box p.Temperature;"$v",box p.Y]
                             id
                 run db "INSERT OR IGNORE INTO Xml_Import_Documents(SHA256,File,Contents) VALUES($sha,$file,$xml)" ["$sha",box r.SHA256;"$file",box r.File;"$xml",box r.Xml]
-                run db "INSERT INTO Xml_Property_Associations(id_main,PropertyCode,RecordKey,DocumentSHA256,TargetId,RecordJson,ImportedUtc) VALUES($m,$c,$key,$sha,$id,$json,$utc) ON CONFLICT(id_main,PropertyCode,RecordKey) DO UPDATE SET DocumentSHA256=excluded.DocumentSHA256,TargetId=excluded.TargetId,RecordJson=excluded.RecordJson,ImportedUtc=excluded.ImportedUtc" ["$m",box a.MaterialId;"$c",box r.PropertyCode;"$key",box r.Key;"$sha",box r.SHA256;"$id",box target;"$json",box (JsonSerializer.Serialize r);"$utc",box (DateTime.UtcNow.ToString("O"))]
-                run db "INSERT INTO Xml_Import_History(ImportedUtc,MaterialId,PropertyCode,RecordKey,BeforeJson,AfterJson) VALUES($utc,$m,$c,$key,$before,$after)" ["$utc",box (DateTime.UtcNow.ToString("O"));"$m",box a.MaterialId;"$c",box r.PropertyCode;"$key",box r.Key;"$before",box before;"$after",box (JsonSerializer.Serialize a)]
+                run db "INSERT INTO Xml_Property_Associations(id_main,PropertyCode,RecordKey,DocumentSHA256,TargetId,RecordJson,ImportedUtc) VALUES($m,$c,$key,$sha,$id,$json,$utc) ON CONFLICT(id_main,PropertyCode,RecordKey) DO UPDATE SET DocumentSHA256=excluded.DocumentSHA256,TargetId=excluded.TargetId,RecordJson=excluded.RecordJson,ImportedUtc=excluded.ImportedUtc" ["$m",box a.MaterialId;"$c",box r.PropertyCode;"$key",box r.Key;"$sha",box r.SHA256;"$id",box target;"$json",box (JsonSerializer.Serialize (compact r));"$utc",box (DateTime.UtcNow.ToString("O"))]
+                run db "INSERT INTO Xml_Import_History(ImportedUtc,MaterialId,PropertyCode,RecordKey,BeforeJson,AfterJson) VALUES($utc,$m,$c,$key,$before,$after)" ["$utc",box (DateTime.UtcNow.ToString("O"));"$m",box a.MaterialId;"$c",box r.PropertyCode;"$key",box r.Key;"$before",box before;"$after",box (JsonSerializer.Serialize {a with Record=compact a.Record})]
+            // Post-import integrity gate: roll back (no Commit) if the batch introduced a foreign-key violation or a new inconsistency.
+            let violations = WorkingCopyHardening.foreignKeyViolations db
+            if violations > 0 then failwith $"Importazione annullata: {violations} violazioni di chiavi esterne."
+            match WorkingCopyHardening.newProblems baseline db with
+            | [] -> ()
+            | introduced ->
+                let summary = introduced |> List.truncate 5 |> List.map (fun p -> $"{p.Problem}#{p.RowId}") |> String.concat ", "
+                failwith $"Importazione annullata: il lotto introdurrebbe nuove incoerenze ({introduced.Length}: {summary})."
             tx.Commit()
             Ok assignments.Length
         with ex -> Error ex.Message

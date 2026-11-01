@@ -11,6 +11,7 @@ vedere [app desktop](desktop-app.md).
 | Esigenza | Sezione |
 |---|---|
 | Importare dalla schermata | [Procedura grafica](#procedura-grafica) |
+| Popolare E, Alpha, Nu, densità, k, c, a e diagramma EP: quale file, quali passi, cosa aspettarsi | [Guida per famiglia](#popolare-il-database-guida-per-famiglia) |
 | Preparare un XML associabile a più materiali | [XML strutturati](#xml-strutturati) e [curve condivise TM](#tm-1tm-5-curve-del-modulo-elastico-per-materiale) |
 | Densità e Poisson | [PRD](#prd-densità-e-coefficiente-di-poisson-per-materiale) |
 | Modulo elastico | [TM-1–TM-5](#tm-1tm-5-curve-del-modulo-elastico-per-materiale) |
@@ -37,6 +38,226 @@ descritti non sono conteggi di materiali già completi nella copia SQLite.
 7. Confermare la verifica di record, unità e note. Per sostituire dati preesistenti non appartenenti alla stessa importazione, abilitare **Sostituisci esplicitamente…**. Il messaggio finale indica famiglia, numero di punti e numero di materiali prima della scrittura.
 
 Le proposte automatiche non scrivono nel database. Se più record dello stesso folder potrebbero applicarsi allo stesso materiale/famiglia, la scelta resta manuale. Se il database cambia dopo l'anteprima, l'importazione viene rifiutata: aggiornare le associazioni e controllare di nuovo.
+
+## Popolare il database: guida per famiglia
+
+Questa sezione risponde a «da quali file leggo cosa, e come arriva nel database». I numeri
+descrivono i file distribuiti e il riferimento `materials_2025.db` rigenerato con essi (vedere «Cosa contiene già il riferimento»).
+
+### Prima di cominciare
+
+1. Lavorare su una copia di lavoro `*.working.db` (l'importatore rifiuta altri file). Vedere
+   [app desktop](desktop-app.md) e [backup](release-safety.md).
+2. Gli XML stanno in `database/data/physical-properties-xml` (E, Alpha, k, a, densità, Nu) e
+   `database/data/external-pressure-xml` (diagrammi EP). Si può scegliere la cartella
+   padre `database/data`: vengono letti tutti gli XML sotto di essa.
+3. Ogni famiglia segue lo stesso ciclo **leggi → proponi → rivedi → importa**; nulla è scritto
+   prima dell'ultimo passo. Ordine suggerito: prima E, Alpha/AlphaInstantaneous, k, a, poi
+   densità e Nu, infine il diagramma EP.
+
+### Cosa contiene ogni famiglia
+
+| Famiglia (codice editor) | Tabella SQLite di destinazione | File sorgente | Chiave di associazione | Note |
+|---|---|---|---|---|
+| E (modulo elastico, MPa) | `Physical_Properties` `E` + `Physical_Property_Values` | `ElasticModulus/TM-1…TM-5.xml`, Code Cases | UNS o composizione nominale esatta | Le curve sono condivise: una curva TM può andare a più materiali |
+| Alpha (medio, 1/°C) | `Alpha` | `ThermalExpansion/TE-1…TE-5.xml`, Code Cases | UNS o composizione | Riferimento 20 °C dichiarato negli XML |
+| AlphaInstantaneous (1/°C) | `AlphaInstantaneous` | stessi TE | UNS o composizione | Famiglia indipendente da Alpha |
+| k (W/(m·K)) | `TC` | `ThermalConductivity/TCD-ThermalConductivity.xml`, Code Cases | UNS o composizione | Limiti di temperatura per identità (es. 425 °C) |
+| a (m²/s) | `TD` | `ThermalDiffusivity/TCD-ThermalDiffusivity.xml`, Code Cases | UNS o composizione | Valori già moltiplicati per 1E-6 |
+| density (kg/m³) | `Extension.ConstantDensity` (costante) oppure curva `Density` | `Density/PRD-Density.xml`, Code Cases | UNS (16 voci manuali) | Costante senza temperatura |
+| Nu | `Extension.ConstantPoissonRatio` oppure curva `Nu` | `Density/PRD-Density.xml` (stesso file della densità), Code Cases | UNS | La cartella `PoissonRatio/` è vuota: il Poisson sta in `PRD-Density.xml` |
+| c (J/(kg·K)) | `Cp` | **nessun XML** | — | Vedere [Calore specifico](#calore-specifico-c) |
+| External Pressure Chart | `External_Pressure_Charts` + `EP_Chart_Curves` + `EP_Chart_Points` + `Material_EP_Charts` | `external-pressure-xml/` | Riferimento al diagramma (`External_Pressure_Chart_No`) o identità XML | Vedere [Diagramma EP](#diagramma-ep) |
+
+Risultato della lettura dei file distribuiti (cartelle `physical-properties-xml` ed
+`external-pressure-xml`, 1.536 record, nessun file illeggibile):
+
+| Famiglia | Record | Punti | Record da rivedere | Candidati (materiali) |
+|---|---:|---:|---:|---:|
+| E | 248 | 3.059 | 32 | 1.877 (1.865) |
+| Alpha | 213 | 5.372 | 41 | 1.796 (1.770) |
+| AlphaInstantaneous | 197 | 5.239 | 25 | 1.787 (1.761) |
+| k | 208 | 5.041 | 31 | 1.771 (1.759) |
+| a | 194 | 4.857 | 23 | 1.721 (1.709) |
+| density | 192 (188 costanti) | 219 | 50 | 1.108 (1.099) |
+| Nu | 185 (176 costanti) | 268 | 43 | 1.106 (1.097) |
+| EP | 79 | **0** | 79 | 2.201 (2.176) |
+| c | **0** | — | — | — |
+
+«Candidati» sono proposte di associazione, non materiali approvati (vedere l'avviso in testa).
+Un record «da rivedere» richiede la conferma esplicita nella schermata.
+
+### Procedura dalla schermata (E, Alpha, AlphaInstantaneous, k, a, density, Nu)
+
+1. **Cartella**: scegliere `database/data/physical-properties-xml`. Lo stato elenca file non
+   leggibili (qui nessuno).
+2. **Famiglia**: nell'elenco controllare unità, punti, note e XML originale. Il grafico mostra
+   in blu i punti XML e in grigio i dati già nel materiale.
+3. **Trova associazioni**: per ogni record l'app propone i materiali con lo stesso UNS o
+   la stessa composizione nominale (punteggio e motivazione visibili).
+4. **Seleziona univoche**: marca solo le proposte senza concorrenti. Per le altre scegliere a mano. Il riferimento contiene già
+   le 10.967 associazioni univoche che non richiedono revisione: sui materiali che hanno già la proprietà serve «Sostituisci».
+5. **Verifica**: per i record «da rivedere» (testo estratto da PDF, Code Case) spuntare la
+   conferma. Non spuntarla senza aver letto note e limiti di applicabilità.
+6. **Importa**. Se un materiale ha già quella proprietà, serve **Sostituisci esplicitamente…**.
+   L'importazione è transazionale: un errore annulla tutto.
+
+### Cosa contiene già il riferimento
+
+`materials_2025.db` è stato rigenerato dai CSV di `database/sources` e dagli XML di `database/data`. Dagli XML sono stati importati **solo i record che non
+richiedono revisione manuale** e che hanno **un solo candidato per materiale e famiglia**; non è stata data nessuna conferma di revisione.
+
+| Famiglia | Materiali con dati |
+|---|---:|
+| E | 1.850 |
+| Alpha | 1.746 |
+| AlphaInstantaneous | 1.746 |
+| TC (k) | 1.750 |
+| TD (a) | 1.701 |
+| Densità costante | 1.087 |
+| Poisson costante | 1.087 |
+| c (calore specifico) | nessun XML sorgente |
+| Diagramma EP | nessuno: gli XML EP sono estrazioni grezze |
+
+In totale 10.967 associazioni e 213.999 punti in `Physical_Property_Values`. **Non importati**: 2.400 proposte di record che richiedono
+revisione (Code Case e simili) e i diagrammi di pressione esterna. L'associazione è per UNS o composizione nominale esatta: non prova l'applicabilità al prodotto,
+al trattamento termico o alla Section; ogni curva riporta nelle note la fonte da verificare. Le associazioni sono in `Xml_Property_Associations`
+(record compatto) e i documenti XML sorgente, una sola volta ciascuno, in `Xml_Import_Documents`; `Xml_Import_History` è vuota e si riempie
+quando si importa da una copia di lavoro. La provenienza riporta il percorso del file nella macchina che ha generato il riferimento.
+
+### Importazione in batch (script F#)
+
+Per ripetere l'operazione senza interfaccia, per esempio su un database appena
+generato, si usano le stesse funzioni della schermata: lettura, proposta, versione di
+controllo e `apply`. Lo script seguente è stato eseguito con `dotnet fsi`; le due righe `#r`
+puntano alle DLL compilate del progetto (`MaterialLibrary.dll` e `MaterialLibrary.Crud.dll`).
+
+```fsharp
+#r @"<cartella build>\MaterialLibrary.dll"
+#r @"<cartella build>\MaterialLibrary.Crud.dll"
+#r "nuget: Microsoft.Data.Sqlite, 10.0.13"
+open System
+open Microsoft.Data.Sqlite
+open MaterialLibrary.Crud
+
+let work = @"C:\Dati\asme_materials_2025.working.db"   // solo copia di lavoro
+let cs = SqliteConnectionStringBuilder(DataSource = work, Mode = SqliteOpenMode.ReadWrite, Pooling = false).ConnectionString
+
+// 1. Leggere tutti gli XML della cartella (errori per file, nessuna scrittura)
+let records, errors = XmlPropertyReader.readFolder @"database\data\physical-properties-xml"
+errors |> Array.iter (printfn "ERRORE %s")
+
+// 2. Proporre le associazioni (nessuna scrittura)
+let db = new SqliteConnection(cs)
+db.Open()
+let proposals = XmlPropertyMatching.propose db records
+let byKey = records |> Array.map (fun r -> r.Key, r) |> dict
+
+// 3. Tenere solo le proposte univoche per (materiale, famiglia) con punti numerici
+let chosen =
+    proposals
+    |> Array.groupBy (fun p -> p.MaterialId, p.PropertyCode)
+    |> Array.filter (fun (_, ps) -> ps.Length = 1)
+    |> Array.map (fun (_, ps) -> ps.[0])
+    |> Array.filter (fun p -> byKey.[p.RecordKey].Points.Length > 0 && not byKey.[p.RecordKey].RequiresReview)
+
+// 4. Costruire le assegnazioni. Si importano solo record che NON richiedono revisione; per gli altri
+//    Reviewed = true sarebbe una DICHIARAZIONE di revisione eseguita da una persona.
+//    ExpectedVersion protegge da modifiche avvenute dopo l'anteprima.
+let assignments =
+    chosen |> Array.map (fun p ->
+        let r = byKey.[p.RecordKey]
+        { MaterialId = p.MaterialId; Record = r; Reviewed = false; ReplaceExisting = false
+          ExpectedVersion = XmlPropertyImport.version db p.MaterialId r.PropertyCode })
+db.Close()
+
+// 5. Scrivere in un'unica transazione
+match XmlPropertyImport.apply work assignments with
+| Ok n -> printfn "Importate %d associazioni" n
+| Error e -> printfn "Importazione rifiutata: %s" e
+```
+
+Regole del batch: più record per lo stesso materiale e la stessa famiglia nello stesso lotto
+sono rifiutati (si risolve a monte, scegliendo la fonte); se il database cambia fra
+anteprima e scrittura la versione non coincide e il lotto è rifiutato; con
+`ReplaceExisting = false` i dati già presenti non vengono sovrascritti.
+
+### Calore specifico (c)
+
+**Nessun XML distribuito contiene `property="c"`.** Il calore specifico non è importabile
+dagli XML e non viene ricavato da altri dati. Opzioni:
+
+- inserire la curva `c` a mano nell'[editor](asme-2025-editor.md) (famiglia **c**, J/(kg·K),
+  codice di storage `Cp`);
+- fornire un XML strutturato con `property="c"` e unità `J/(kg*K)` (stesso formato di
+  [XML strutturati](#xml-strutturati)), da sottoporre a revisione e associazione come le altre famiglie.
+
+La colonna C delle tabelle TE (dilatazione lineare in mm/m) **non** è il calore specifico.
+La vista `VW_ThermalCapacity_Calculated` calcola `TC / (Density · TD)` solo quando le
+tre curve fisiche (`TC`, `TD`, `Density`) esistono alle stesse temperature. La densità importata
+dagli XML è una **costante** in `Extension`, non una curva `Density`: nel riferimento la
+vista restituisce 0 righe, quindi non è una sorgente utilizzabile per `c`.
+
+### Diagramma EP
+
+I 79 XML EP distribuiti (CS-*, HA-*, HT-*, NFA-*, NFC-*, ecc.) sono **estrazioni grezze**
+(`status="raw-tokenized-review-required"`): contengono il testo del PDF e i token, ma
+**nessun punto numerico verificato** (gli esponenti sono omessi nelle righe successive del
+PDF). Il lettore li propone per l'associazione, ma non si importano così come sono. Altri
+file (Figura G, diagrammi dei Code Case) non sono diagrammi materiali T/A/B.
+
+Per popolare un diagramma:
+
+1. **Estrarre e verificare** i punti `temperatura, A, B` dal PDF o dai token (A adimensionale,
+   B in MPa, temperature in °C; esponente scritto per esteso).
+2. **Scrivere un XML strutturato** `property="EP"` in una cartella di lavoro dedicata:
+
+```xml
+<Properties>
+  <Record id="ep-cs-demo" property="EP" chart="CS-DEMO" unit="MPa"
+          specification="SA-516" grade="70" description="Verificato dal PDF">
+    <Point temperature="100" A="1e-5" B="1.32" />
+    <Point temperature="100" A="1e-4" B="13.2" />
+    <Point temperature="300" A="1e-5" B="1.24" />
+    <Point temperature="300" A="1e-4" B="12.4" />
+  </Record>
+</Properties>
+```
+
+3. **Importare**: schermata come sopra, con la cartella dedicata. Per EP l'app propone i materiali il
+   cui riferimento originale `External_Pressure_Chart_No` (in `ASME_Data_Source`) corrisponde
+   al nome, oppure quelli con `specification`/`grade` dichiarati. La scrittura crea il
+   diagramma, una curva per temperatura, i punti ordinati per A e il collegamento in `Material_EP_Charts`.
+
+Verificato su una copia: un record con 2 temperature e 6 punti ha creato 1 diagramma, 2 curve,
+6 punti e il collegamento a SA-516 Gr. 70. Il nome è diventato `CS-DEMO [XML <hash>]`:
+l'hash del contenuto evita di cambiare un diagramma condiviso con altri materiali. Un
+materiale ha **un solo** diagramma: sostituirlo richiede **Sostituisci esplicitamente…**.
+`Elastic_Modulus` delle curve non viene valorizzato dall'importatore XML.
+
+### Dopo l'importazione: controlli
+
+```sql
+-- Famiglie fisiche presenti e materiali coperti
+SELECT PropertyCode, COUNT(DISTINCT id_main) AS materiali, COUNT(*) AS curve
+FROM Physical_Properties GROUP BY PropertyCode;
+
+-- Costanti densità/Poisson
+SELECT COUNT(ConstantDensity), COUNT(ConstantPoissonRatio) FROM Extension;
+
+-- Provenienza di ogni curva importata
+SELECT a.id_main, a.PropertyCode, a.RecordKey, d.File, d.SHA256
+FROM Xml_Property_Associations a JOIN Xml_Import_Documents d ON d.SHA256 = a.DocumentSHA256;
+
+-- Diagrammi EP collegati
+SELECT m.Specification, m.Grade, ch.Chart_Name
+FROM Material_EP_Charts l JOIN Main m ON m.id = l.id_main
+JOIN External_Pressure_Charts ch ON ch.id = l.id_ep_chart;
+```
+
+Poi controllare nell'[editor](asme-2025-editor.md) le curve di un campione di materiali. Per
+tornare indietro, ripristinare il backup della copia di lavoro: l'importazione non ha un
+«annulla» (`Xml_Import_History` conserva solo il prima/dopo).
 
 ## XML strutturati
 
@@ -246,6 +467,6 @@ I record PVElite 2245-1 e 2497-2 restano separati: questi identificativi non son
 
 L'importazione conserva documento XML completo, SHA-256 dei byte sorgenti, percorso, note e record numerico effettivamente approvato. `Xml_Import_Documents`, `Xml_Property_Associations` e `Xml_Import_History` registrano fonti, associazioni e snapshot prima/dopo. Il documento XML conservato è serializzato dal parser; l'hash identifica il file originale. Note e provenienza delle curve fisiche sono consultabili nell'editor e in `MatPropertyTable`.
 
-Ripetere l'importazione dello stesso record aggiorna la sua curva senza duplicarla. Un lotto è transazionale: un errore annulla tutte le sue scritture. I diagrammi EP sono versionati in base al contenuto, così aggiornare un materiale non modifica il diagramma usato da altri materiali. DTD ed entità esterne XML sono disabilitate.
+Prima del salvataggio l'importazione controlla le chiavi esterne e le incoerenze che il lotto introdurrebbe (rapporto `VW_Integrity_Report`, vedere [database §13.7](asme-materials-db.md#137-controllo-automatico-a-fine-importazione-e-test-di-regressione)): in caso di problemi il lotto viene annullato; le incoerenze già presenti non lo bloccano. Ripetere l'importazione dello stesso record aggiorna la sua curva senza duplicarla. Un lotto è transazionale: un errore annulla tutte le sue scritture. I diagrammi EP sono versionati in base al contenuto, così aggiornare un materiale non modifica il diagramma usato da altri materiali. DTD ed entità esterne XML sono disabilitate.
 
 Excel ricarica il database dopo la chiusura della finestra. Usare `MatPropertyValue`/`MatPropertyTable` con `Alpha` o `AlphaInstantaneous`; `MatExternalPressureImportedTable(materialId)` elenca CurveId, nome diagramma, temperatura, A e B importati. Le funzioni di pressione esterna preesistenti accedono anche alle curve native attraverso il repository.

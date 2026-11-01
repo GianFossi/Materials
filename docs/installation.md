@@ -40,7 +40,7 @@ dotnet pack .\src\MaterialLibrary.Crud\MaterialLibrary.Crud.fsproj -c Release -o
 ```
 
 Il core include il riferimento come
-`contentFiles/any/any/data/asme_materials_2025.db` e gli XML previsti dal progetto.
+`contentFiles/any/any/data/materials_2025.db` e gli XML previsti dal progetto.
 Controllare che il consumatore conservi i dati nel proprio output.
 
 ## Excel e DatabaseUpdater

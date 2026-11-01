@@ -15,7 +15,7 @@ module AddInPaths =
         let directory = if System.String.IsNullOrWhiteSpace directory then System.AppContext.BaseDirectory else directory
         let parent = Directory.GetParent directory
         if Path.GetFileName(directory).Equals("packed",System.StringComparison.OrdinalIgnoreCase) && not (isNull parent)
-           && File.Exists(Path.Combine(parent.FullName,"data","asme_materials_2025.db")) then parent.FullName
+           && File.Exists(Path.Combine(parent.FullName,"data","materials_2025.db")) then parent.FullName
         else directory
 
 /// <summary>

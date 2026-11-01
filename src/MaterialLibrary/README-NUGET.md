@@ -15,7 +15,7 @@ The WPF editor and Excel add-in are separate applications, not part of this core
 
 ## 1. Database and data model
 
-- The package includes `data/asme_materials_2025.db` as a NuGet content file, plus
+- The package includes `data/materials_2025.db` as a NuGet content file, plus
   physical-property and external-pressure XML datasets and configuration.
 - The active database uses native `Main`, mechanical curves, physical-property and
   provenance tables. A material can have multiple independent curve variants.

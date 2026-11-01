@@ -55,7 +55,7 @@
     <ExportFolder>./export</ExportFolder>
     <AutoCreateFolders>true</AutoCreateFolders>
     <MaterialDatabaseFolder>./data</MaterialDatabaseFolder>
-    <AsmeMaterialDatabaseFile>asme_materials_2025.db</AsmeMaterialDatabaseFile>
+    <AsmeMaterialDatabaseFile>materials_2025.db</AsmeMaterialDatabaseFile>
     <EnMaterialDatabaseFile>en_materials.db</EnMaterialDatabaseFile>
   </Io>
 </LibraryConfiguration>

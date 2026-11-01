@@ -5,7 +5,7 @@ Questa pagina serve a orientarsi, non a descrivere ogni API.
 ## Percorso 1: capire il database
 
 1. [Struttura del database](asme-materials-db.md): quale file usare, come si identifica un materiale,
-   come sono collegate curve, limiti e note.
+   come sono collegate curve, limiti e note; catalogo di tutte le tabelle; esempi di creazione, modifica e cancellazione; controlli di integrità.
 2. [Modelli e tabelle](material-models.md): oggetti di calcolo della libreria, distinti dalle tabelle SQLite.
 3. [API](library-api.md): accesso dai programmi.
 
@@ -27,12 +27,15 @@ Per usare gli stessi dati nei fogli di calcolo: [Excel](excel-addin.md).
 
 | Posizione | Contenuto | Quando modificarlo |
 |---|---|---|
-| `database/data/asme_materials_2025.db` | Riferimento SQLite distribuito | Solo dopo creazione, confronto e verifica di un nuovo riferimento |
+| `database/data/materials_2025.db` | Riferimento SQLite distribuito | Solo dopo creazione, confronto e verifica di un nuovo riferimento |
 | `database/data/physical-properties-xml/` | Costanti e curve fisiche con provenienza | Durante manutenzione dei dataset; importazione successiva esplicita |
 | `database/data/external-pressure-xml/` | Diagrammi materiali, geometrici e Code Cases | Dopo verifica della fonte e del tipo di diagramma |
 | `%LOCALAPPDATA%\MaterialLibrary\ASME2025\` | Copia SQLite locale dell'utente | Dall'editor e dal gestore database |
 | `src/` | Librerie, WPF ed Excel | Sviluppo applicativo |
 | `tools/MaterialLibrary.DatabaseUpdater/` | Importazione degli export meccanici ASME | Manutenzione del processo di creazione/confronto |
+| `database/sources/` e `tools/Build-Reference.ps1` | CSV ASME di partenza e script che ricostruisce `materials_2025.db` (con gli XML fisici senza revisione manuale) | Quando cambiano i CSV, gli XML o le regole di importazione |
+| `tools/Generate-ProductSheet.ps1` | Scheda prodotto Markdown di un materiale (tutte le dimensioni, temperature di progetto/esercizio, note) | Quando serve il documento di un materiale |
+| `tools/Generate-DatabaseCatalog.ps1` | Rigenera il catalogo delle tabelle in `docs/asme-materials-db.md` (capitolo 2) | Dopo ogni modifica dello schema o delle sue regole |
 | `tests/` | Test e progetto esempi | Verifica delle modifiche |
 | `database/data/archive/2023/` | Database precedente | Solo consultazione/confronto esplicito |
 

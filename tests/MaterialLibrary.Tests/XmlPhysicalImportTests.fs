@@ -16,8 +16,9 @@ let private workspace action =
     let folder=Path.Combine(Path.GetTempPath(),"xml-properties-"+Guid.NewGuid().ToString("N"))
     Directory.CreateDirectory folder |> ignore
     let path=Path.Combine(folder,"materials.working.db")
-    File.Copy(Path.Combine(__SOURCE_DIRECTORY__,"../../database/data/asme_materials_2025.db"),path)
-    try action folder path finally Directory.Delete(folder,true)
+    File.Copy(Path.Combine(__SOURCE_DIRECTORY__,"../../database/data/materials_2025.db"),path)
+    // Pooled SQLite handles keep the working copy locked on Windows; release them before deleting the folder.
+    try action folder path finally (Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools(); Directory.Delete(folder,true))
 /// <summary>Write an explicit physical record in GPa; the reader converts it to MPa.</summary>
 let private xml folder =
     let file=Path.Combine(folder,"modulus.xml")
@@ -628,11 +629,13 @@ let ``structured XML converts units and preserves full source content`` () = wor
     Assert.False(record.RequiresReview)
     use db=Asme2025Data.openRead path
     let id=(Asme2025Data.materials db).Head.Id
+    // The reference already carries the documents of the shipped XML import; this import adds exactly one more.
+    let documentsBefore=Asme2025Data.query db "SELECT count(*) FROM Xml_Import_Documents" [] |> List.head |> Array.head |> Convert.ToInt32
     XmlPropertyImport.apply path [|assignment db id record true false|] |> ok |> ignore
     let saved=Asme2025Data.curves db id "E" |> List.exactlyOne
     Assert.Equal(200000.,saved.Points[0].Value)
     Assert.Contains("Full source note",saved.SourceNotes)
-    Assert.Equal(1,Asme2025Data.query db "SELECT count(*) FROM Xml_Import_Documents" [] |> List.head |> Array.head |> Convert.ToInt32)
+    Assert.Equal(documentsBefore+1,Asme2025Data.query db "SELECT count(*) FROM Xml_Import_Documents" [] |> List.head |> Array.head |> Convert.ToInt32)
     Assert.Empty(Asme2025Data.query db "PRAGMA foreign_key_check" []))
 
 [<Fact>]
@@ -741,3 +744,33 @@ let ``raw pressure XML never silently guesses carried PDF exponents`` () =
     let charts=records |> Array.filter (fun r -> r.PropertyCode="EP")
     Assert.NotEmpty(charts)
     Assert.All(charts,fun r -> Assert.Empty(r.Points); Assert.True(XmlPropertyImport.validate r true |> Result.isError))
+
+/// <summary>Run raw SQL on a working copy (foreign keys on).</summary>
+let private rawSql (path: string) (sql: string) =
+    use db = new Microsoft.Data.Sqlite.SqliteConnection(Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(DataSource=path,Mode=Microsoft.Data.Sqlite.SqliteOpenMode.ReadWrite,ForeignKeys=Nullable true,Pooling=false).ConnectionString)
+    db.Open()
+    use command = db.CreateCommand()
+    command.CommandText <- sql
+    command.ExecuteNonQuery() |> ignore
+
+[<Fact>]
+let ``import gate ignores earlier findings but rolls back a batch that introduces a new inconsistency`` () = workspace (fun folder path ->
+    let record = xml folder
+    // A fresh identity: the reference already carries imported physical curves for many materials.
+    let id = Asme2025Crud.saveIdentity path {Id=0L;Specification="TEST-GATE";Grade="A";Condition="";UNS="";NominalComposition="Test"} |> ok
+    // A finding that existed before the import (an unused size interval) must not block it.
+    rawSql path "INSERT INTO Sizes(SizeMin,SizeMinIncluded,SizeMax,SizeMaxIncluded) VALUES(1,0,2,1)"
+    use db = Asme2025Data.openRead path
+    // The first call creates the hardening objects; the version check below needs them, so provision them first.
+    Assert.True(MaterialDatabaseCrud.ensureSchema path |> Result.isOk)
+    let first = XmlPropertyImport.apply path [| assignment db id record true false |]
+    Assert.Equal(Ok 1,first)
+    // A sabotage trigger makes every imported point also create an empty curve, which is a new finding.
+    rawSql path "CREATE TRIGGER Sabotage AFTER INSERT ON Physical_Property_Values BEGIN INSERT INTO Physical_Properties(id_main,PropertyCode) SELECT id_main,'TD' FROM Physical_Properties WHERE id=NEW.id_physical_property; END"
+    let second = XmlPropertyImport.apply path [| assignment db id record true true |]
+    match second with
+    | Error message -> Assert.Contains("annullata",message)
+    | Ok _ -> failwith "The batch introducing an inconsistency must be rejected."
+    // Rolled back: the earlier successful import is untouched and no empty TD curve was committed.
+    Assert.Single(Asme2025Data.curves db id "E") |> ignore
+    Assert.Equal(0,Asme2025Data.query db "SELECT 1 FROM Physical_Properties WHERE PropertyCode='TD' AND id_main=$id" ["$id",box id] |> List.length))
