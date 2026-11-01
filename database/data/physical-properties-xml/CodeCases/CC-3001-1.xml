@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 3001-1 - 12Cr-2W-2Co-B" sourceTable="Code Case 3001-1" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1282" sourcePageEnd="1287" status="normalized-code-case-review-required" codeCase="3001-1" curveCount="5" sourceOnlyCurveCount="0" materialCount="5" pointCount="60">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 3001-1; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited.</SourceNotes>
+  <Curves>
+    <Curve id="cc-3001-1-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="1287" sourceTable="Table 6M" pointCount="15">
+      <Materials>
+        <Material id="12cr-2w-2co-b" name="12Cr-2W-2Co-B" sourceMaterial="12Cr-2W-2Co-B" sourcePdfPage="1287" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-2W-2Co-B" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="218000" temperature="20" />
+        <Point value="217000" temperature="50" />
+        <Point value="213000" temperature="100" />
+        <Point value="210000" temperature="150" />
+        <Point value="206000" temperature="200" />
+        <Point value="202000" temperature="250" />
+        <Point value="197000" temperature="300" />
+        <Point value="193000" temperature="350" />
+        <Point value="188000" temperature="400" />
+        <Point value="183000" temperature="450" />
+        <Point value="177000" temperature="500" />
+        <Point value="171000" temperature="550" />
+        <Point value="164000" temperature="600" />
+        <Point value="156000" temperature="650" />
+        <Point value="145000" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3001-1-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1287" sourceTable="Table 6M" pointCount="15">
+      <Materials>
+        <Material id="12cr-2w-2co-b" name="12Cr-2W-2Co-B" sourceMaterial="12Cr-2W-2Co-B" sourcePdfPage="1287" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-2W-2Co-B" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="20.5" temperature="20" />
+        <Point value="20.9" temperature="50" />
+        <Point value="21.5" temperature="100" />
+        <Point value="21.9" temperature="150" />
+        <Point value="22.2" temperature="200" />
+        <Point value="22.5" temperature="250" />
+        <Point value="22.9" temperature="300" />
+        <Point value="23.4" temperature="350" />
+        <Point value="23.8" temperature="400" />
+        <Point value="24.7" temperature="450" />
+        <Point value="25.5" temperature="500" />
+        <Point value="25.9" temperature="550" />
+        <Point value="25.5" temperature="600" />
+        <Point value="24.9" temperature="650" />
+        <Point value="25.1" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3001-1-alpha-03" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1287" sourceTable="Table 6M" pointCount="14" referenceTemperature="20">
+      <Materials>
+        <Material id="12cr-2w-2co-b" name="12Cr-2W-2Co-B" sourceMaterial="12Cr-2W-2Co-B" sourcePdfPage="1287" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-2W-2Co-B" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="1.05e-05" temperature="50" />
+        <Point value="1.06e-05" temperature="100" />
+        <Point value="1.08e-05" temperature="150" />
+        <Point value="1.09e-05" temperature="200" />
+        <Point value="1.11e-05" temperature="250" />
+        <Point value="1.12e-05" temperature="300" />
+        <Point value="1.14e-05" temperature="350" />
+        <Point value="1.15e-05" temperature="400" />
+        <Point value="1.17e-05" temperature="450" />
+        <Point value="1.18e-05" temperature="500" />
+        <Point value="1.19e-05" temperature="550" />
+        <Point value="1.21e-05" temperature="600" />
+        <Point value="1.22e-05" temperature="650" />
+        <Point value="1.23e-05" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3001-1-nu-04" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1287" sourceTable="Table 6M" pointCount="15">
+      <Materials>
+        <Material id="12cr-2w-2co-b" name="12Cr-2W-2Co-B" sourceMaterial="12Cr-2W-2Co-B" sourcePdfPage="1287" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-2W-2Co-B" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="0.27" temperature="20" />
+        <Point value="0.27" temperature="50" />
+        <Point value="0.27" temperature="100" />
+        <Point value="0.28" temperature="150" />
+        <Point value="0.28" temperature="200" />
+        <Point value="0.28" temperature="250" />
+        <Point value="0.28" temperature="300" />
+        <Point value="0.29" temperature="350" />
+        <Point value="0.29" temperature="400" />
+        <Point value="0.29" temperature="450" />
+        <Point value="0.29" temperature="500" />
+        <Point value="0.3" temperature="550" />
+        <Point value="0.3" temperature="600" />
+        <Point value="0.3" temperature="650" />
+        <Point value="0.3" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3001-1-density-05" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1282" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="12cr-2w-2co-b" name="12Cr-2W-2Co-B" sourceMaterial="12Cr-2W-2Co-B" sourcePdfPage="1282" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-2W-2Co-B" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="7815" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

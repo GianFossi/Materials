@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2496-4 - 27Cr-7.6Ni-1Mo-2.3W-N" sourceTable="Code Case 2496-4" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="314" sourcePageEnd="317" status="normalized-code-case-review-required" codeCase="2496-4" curveCount="4" sourceOnlyCurveCount="1" materialCount="4" pointCount="78">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2496-4; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Divisions 1/2, specified Class 2 solution-annealed duplex products; source directs TM-1 Group B, not an inferred steel family.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2496-4-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="314" sourceTable="Table explicit II-D mapping" pointCount="17" notes="Code Case explicitly directs use of TM-1 curve tm-1-05. II-D source notes: Groups A-J use the compositions in source Notes 1-7 and 9-11. Source Notes 8 and 9 repeat Group H membership; the curve explicitly references Note 9. Note 5 includes variations of 9Cr-Mo, but only the literal composition is an automatic key. Note 13 names 15Cr-5Ni-3Mo for S15500; this is retained as printed, without correcting it to a database alias. Note 14 limits S45000 data to material aged at 480 degC; manual applicability review is required." mappedSourceFile="ElasticModulus/TM-1.xml" mappedSourceCurve="tm-1-05" mappedSourceSha256="bdc20c20f2ae0d9f20b4b1424645fb3273fe8129f15cd83c3a7711eb0c8527d6" mappedSourcePdfPages="1238-1240">
+      <Materials>
+        <Material id="S32808" name="27Cr-7.6Ni-1Mo-2.3W-N" sourceMaterial="27Cr-7.6Ni-1Mo-2.3W-N" sourcePdfPage="314" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed duplex products; source directs TM-1 Group B, not an inferred steel family." uns="S32808" nominalChemicalComposition="27Cr-7.6Ni-1Mo-2.3W-N" />
+      </Materials>
+      <Points>
+        <Point value="204000" temperature="-200" />
+        <Point value="200000" temperature="-125" />
+        <Point value="197000" temperature="-75" />
+        <Point value="191000" temperature="25" />
+        <Point value="187000" temperature="100" />
+        <Point value="184000" temperature="150" />
+        <Point value="181000" temperature="200" />
+        <Point value="178000" temperature="250" />
+        <Point value="174000" temperature="300" />
+        <Point value="171000" temperature="350" />
+        <Point value="167000" temperature="400" />
+        <Point value="163000" temperature="450" />
+        <Point value="158000" temperature="500" />
+        <Point value="153000" temperature="550" />
+        <Point value="147000" temperature="600" />
+        <Point value="141000" temperature="650" />
+        <Point value="133000" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2496-4-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="314" sourceTable="Table explicit II-D mapping" pointCount="30" notes="Code Case explicitly directs use of TCD curve tcd-k-11. II-D source notes: Material Groups A-L use source Notes 1-12 (PDF pages 1236-1237). Group A matches the exact Nominal Composition label Carbon steel. Source Notes 9-11 restrict four compositions to 425 degC; maxTemperature on each identity enforces this limit in the reader. Note 9 prints 15Cr-5Ni-3Mo; retained as printed, not corrected to a different database composition. Note 10 explicitly permits separate S and Se compositions. Notes 10-12 also permit H/L/N/LN grades of austenitic stainless steels. Titanium grade/UNS identities are cross-referenced only from the explicit ASME TM-5 grade/UNS pairs, PDF page 1244. No numerical nominal composition is inferred from qualitative alloy labels or UNS." mappedSourceFile="ThermalConductivity/TCD-ThermalConductivity.xml" mappedSourceCurve="tcd-k-11" mappedSourceSha256="1bb454f3f457681950cc73068312e4b411adf380a89959ca3a044383f73f3e4e" mappedSourcePdfPages="1224-1237">
+      <Materials>
+        <Material id="S32808" name="27Cr-7.6Ni-1Mo-2.3W-N" sourceMaterial="27Cr-7.6Ni-1Mo-2.3W-N" sourcePdfPage="314" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed duplex products; source directs TM-1 Group B, not an inferred steel family." uns="S32808" nominalChemicalComposition="27Cr-7.6Ni-1Mo-2.3W-N" />
+      </Materials>
+      <Points>
+        <Point value="14.8" temperature="20" />
+        <Point value="15.3" temperature="50" />
+        <Point value="15.8" temperature="75" />
+        <Point value="16.2" temperature="100" />
+        <Point value="16.6" temperature="125" />
+        <Point value="17" temperature="150" />
+        <Point value="17.5" temperature="175" />
+        <Point value="17.9" temperature="200" />
+        <Point value="18.3" temperature="225" />
+        <Point value="18.6" temperature="250" />
+        <Point value="19" temperature="275" />
+        <Point value="19.4" temperature="300" />
+        <Point value="19.8" temperature="325" />
+        <Point value="20.1" temperature="350" />
+        <Point value="20.5" temperature="375" />
+        <Point value="20.8" temperature="400" />
+        <Point value="21.2" temperature="425" />
+        <Point value="21.5" temperature="450" />
+        <Point value="21.9" temperature="475" />
+        <Point value="22.2" temperature="500" />
+        <Point value="22.6" temperature="525" />
+        <Point value="22.9" temperature="550" />
+        <Point value="23.3" temperature="575" />
+        <Point value="23.6" temperature="600" />
+        <Point value="24" temperature="625" />
+        <Point value="24.3" temperature="650" />
+        <Point value="24.7" temperature="675" />
+        <Point value="25" temperature="700" />
+        <Point value="25.4" temperature="725" />
+        <Point value="25.7" temperature="750" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2496-4-a-03" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="314" sourceTable="Table explicit II-D mapping" pointCount="30" notes="Code Case explicitly directs use of TCD curve tcd-a-11. II-D source notes: Material Groups A-L use source Notes 1-12 (PDF pages 1236-1237). Group A matches the exact Nominal Composition label Carbon steel. Source Notes 9-11 restrict four compositions to 425 degC; maxTemperature on each identity enforces this limit in the reader. Note 9 prints 15Cr-5Ni-3Mo; retained as printed, not corrected to a different database composition. Note 10 explicitly permits separate S and Se compositions. Notes 10-12 also permit H/L/N/LN grades of austenitic stainless steels. Titanium grade/UNS identities are cross-referenced only from the explicit ASME TM-5 grade/UNS pairs, PDF page 1244. No numerical nominal composition is inferred from qualitative alloy labels or UNS." mappedSourceFile="ThermalDiffusivity/TCD-ThermalDiffusivity.xml" mappedSourceCurve="tcd-a-11" mappedSourceSha256="bad6e3dd0286345a50d1fa2df966b07022b1980ee74199076556e0ce24501280" mappedSourcePdfPages="1224-1237">
+      <Materials>
+        <Material id="S32808" name="27Cr-7.6Ni-1Mo-2.3W-N" sourceMaterial="27Cr-7.6Ni-1Mo-2.3W-N" sourcePdfPage="314" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed duplex products; source directs TM-1 Group B, not an inferred steel family." uns="S32808" nominalChemicalComposition="27Cr-7.6Ni-1Mo-2.3W-N" />
+      </Materials>
+      <Points>
+        <Point value="3.9e-06" temperature="20" />
+        <Point value="3.94e-06" temperature="50" />
+        <Point value="3.99e-06" temperature="75" />
+        <Point value="4.04e-06" temperature="100" />
+        <Point value="4.08e-06" temperature="125" />
+        <Point value="4.14e-06" temperature="150" />
+        <Point value="4.19e-06" temperature="175" />
+        <Point value="4.24e-06" temperature="200" />
+        <Point value="4.3e-06" temperature="225" />
+        <Point value="4.35e-06" temperature="250" />
+        <Point value="4.41e-06" temperature="275" />
+        <Point value="4.46e-06" temperature="300" />
+        <Point value="4.52e-06" temperature="325" />
+        <Point value="4.57e-06" temperature="350" />
+        <Point value="4.63e-06" temperature="375" />
+        <Point value="4.69e-06" temperature="400" />
+        <Point value="4.74e-06" temperature="425" />
+        <Point value="4.8e-06" temperature="450" />
+        <Point value="4.85e-06" temperature="475" />
+        <Point value="4.91e-06" temperature="500" />
+        <Point value="4.97e-06" temperature="525" />
+        <Point value="5.02e-06" temperature="550" />
+        <Point value="5.08e-06" temperature="575" />
+        <Point value="5.13e-06" temperature="600" />
+        <Point value="5.19e-06" temperature="625" />
+        <Point value="5.24e-06" temperature="650" />
+        <Point value="5.3e-06" temperature="675" />
+        <Point value="5.35e-06" temperature="700" />
+        <Point value="5.4e-06" temperature="725" />
+        <Point value="5.45e-06" temperature="750" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2496-4-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="314" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="S32808" name="27Cr-7.6Ni-1Mo-2.3W-N" sourceMaterial="27Cr-7.6Ni-1Mo-2.3W-N" sourcePdfPage="314" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed duplex products; source directs TM-1 Group B, not an inferred steel family." uns="S32808" nominalChemicalComposition="27Cr-7.6Ni-1Mo-2.3W-N" />
+      </Materials>
+      <Points>
+        <Point value="7860" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2496-4-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="317" sourceTable="Table 4" pointCount="7" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="S32808" name="27Cr-7.6Ni-1Mo-2.3W-N" sourceMaterial="27Cr-7.6Ni-1Mo-2.3W-N" sourcePdfPage="317" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed duplex products; source directs TM-1 Group B, not an inferred steel family." uns="S32808" nominalChemicalComposition="27Cr-7.6Ni-1Mo-2.3W-N" />
+      </Materials>
+      <Values>
+        <Value value="1.37e-05" temperatureLabel="RT–100" />
+        <Value value="1.39e-05" temperatureLabel="RT–150" />
+        <Value value="1.4e-05" temperatureLabel="RT–200" />
+        <Value value="1.42e-05" temperatureLabel="RT–250" />
+        <Value value="1.44e-05" temperatureLabel="RT–300" />
+        <Value value="1.45e-05" temperatureLabel="RT–350" />
+        <Value value="1.47e-05" temperatureLabel="RT–400" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="Nu" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="Alpha" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

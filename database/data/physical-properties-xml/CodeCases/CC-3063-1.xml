@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 3063-1 - Hot-isostatically pressed pure isotropic molybdenum" sourceTable="Code Case 3063-1" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1456" sourcePageEnd="1465" status="normalized-code-case-review-required" codeCase="3063-1" curveCount="7" sourceOnlyCurveCount="1" materialCount="7" pointCount="80">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 3063-1; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC.</SourceNotes>
+  <Curves>
+    <Curve id="cc-3063-1-alphainstantaneous-01" property="AlphaInstantaneous" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1463" sourceTable="Table 8M" pointCount="16" referenceTemperature="20">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1463" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Points>
+        <Point value="5.5e-06" temperature="20" />
+        <Point value="5.1e-06" temperature="50" />
+        <Point value="4.7e-06" temperature="75" />
+        <Point value="4.5e-06" temperature="100" />
+        <Point value="4.7e-06" temperature="125" />
+        <Point value="5e-06" temperature="150" />
+        <Point value="5.4e-06" temperature="175" />
+        <Point value="5.8e-06" temperature="200" />
+        <Point value="5.7e-06" temperature="225" />
+        <Point value="5.5e-06" temperature="250" />
+        <Point value="5.4e-06" temperature="275" />
+        <Point value="5.3e-06" temperature="300" />
+        <Point value="5.3e-06" temperature="325" />
+        <Point value="5.5e-06" temperature="350" />
+        <Point value="5.4e-06" temperature="375" />
+        <Point value="5.3e-06" temperature="400" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3063-1-alpha-02" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1463" sourceTable="Table 8M" pointCount="16" referenceTemperature="20">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1463" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Points>
+        <Point value="5.5e-06" temperature="20" />
+        <Point value="5.3e-06" temperature="50" />
+        <Point value="5.2e-06" temperature="75" />
+        <Point value="5.1e-06" temperature="100" />
+        <Point value="5e-06" temperature="125" />
+        <Point value="5e-06" temperature="150" />
+        <Point value="5.1e-06" temperature="175" />
+        <Point value="5.2e-06" temperature="200" />
+        <Point value="5.2e-06" temperature="225" />
+        <Point value="5.2e-06" temperature="250" />
+        <Point value="5.2e-06" temperature="275" />
+        <Point value="5.2e-06" temperature="300" />
+        <Point value="5.2e-06" temperature="325" />
+        <Point value="5.3e-06" temperature="350" />
+        <Point value="5.3e-06" temperature="375" />
+        <Point value="5.3e-06" temperature="400" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3063-1-k-03" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1464" sourceTable="Table 9M" pointCount="20">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1464" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Points>
+        <Point value="143" temperature="20" />
+        <Point value="136" temperature="50" />
+        <Point value="135" temperature="75" />
+        <Point value="134" temperature="100" />
+        <Point value="133" temperature="125" />
+        <Point value="131" temperature="150" />
+        <Point value="132" temperature="175" />
+        <Point value="133" temperature="200" />
+        <Point value="131" temperature="225" />
+        <Point value="128" temperature="250" />
+        <Point value="126" temperature="275" />
+        <Point value="125" temperature="300" />
+        <Point value="124" temperature="325" />
+        <Point value="122" temperature="350" />
+        <Point value="122" temperature="375" />
+        <Point value="121" temperature="400" />
+        <Point value="120" temperature="425" />
+        <Point value="120" temperature="450" />
+        <Point value="119" temperature="475" />
+        <Point value="118" temperature="500" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3063-1-a-04" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1464" sourceTable="Table 9M" pointCount="20">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1464" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Points>
+        <Point value="5.51e-05" temperature="20" />
+        <Point value="5.35e-05" temperature="50" />
+        <Point value="5.23e-05" temperature="75" />
+        <Point value="5.11e-05" temperature="100" />
+        <Point value="5.01e-05" temperature="125" />
+        <Point value="4.92e-05" temperature="150" />
+        <Point value="4.84e-05" temperature="175" />
+        <Point value="4.76e-05" temperature="200" />
+        <Point value="4.68e-05" temperature="225" />
+        <Point value="4.61e-05" temperature="250" />
+        <Point value="4.55e-05" temperature="275" />
+        <Point value="4.5e-05" temperature="300" />
+        <Point value="4.44e-05" temperature="325" />
+        <Point value="4.39e-05" temperature="350" />
+        <Point value="4.34e-05" temperature="375" />
+        <Point value="4.3e-05" temperature="400" />
+        <Point value="4.26e-05" temperature="425" />
+        <Point value="4.21e-05" temperature="450" />
+        <Point value="4.17e-05" temperature="475" />
+        <Point value="4.12e-05" temperature="500" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3063-1-e-05" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="1465" sourceTable="Table 10M" pointCount="6">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1465" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Points>
+        <Point value="300000" temperature="25" />
+        <Point value="298000" temperature="100" />
+        <Point value="296000" temperature="150" />
+        <Point value="294000" temperature="200" />
+        <Point value="292000" temperature="250" />
+        <Point value="290000" temperature="300" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3063-1-density-06" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1459" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Source design density 9.8 g/cm3 converted exactly; not an inferred pure-element density.">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1459" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Points>
+        <Point value="9800" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3063-1-nu-07" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1459" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1459" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Points>
+        <Point value="0.29" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-3063-1-linearexpansion-01" property="LinearExpansion" unit="mm/m" temperatureUnit="degC" sourcePdfPage="1463" sourceTable="Table 8M" pointCount="16" referenceTemperature="20">
+      <Materials>
+        <Material id="hot-isostatically-pressed-pure-isotropic-molybdenum" name="Hot-isostatically pressed pure isotropic molybdenum" sourceMaterial="Hot-isostatically pressed pure isotropic molybdenum" sourcePdfPage="1463" requiresReview="true" applicability="Section VIII Divisions 1/2 Classes 1/2; specified HIP isotropic molybdenum, fracture-mechanics MDMT review; maximum use temperature 300 degC." maxTemperature="300" />
+      </Materials>
+      <Values>
+        <Value value="0" temperature="20" />
+        <Value value="0.16" temperature="50" />
+        <Value value="0.28" temperature="75" />
+        <Value value="0.4" temperature="100" />
+        <Value value="0.53" temperature="125" />
+        <Value value="0.66" temperature="150" />
+        <Value value="0.79" temperature="175" />
+        <Value value="0.93" temperature="200" />
+        <Value value="1.1" temperature="225" />
+        <Value value="1.2" temperature="250" />
+        <Value value="1.3" temperature="275" />
+        <Value value="1.5" temperature="300" />
+        <Value value="1.6" temperature="325" />
+        <Value value="1.7" temperature="350" />
+        <Value value="1.9" temperature="375" />
+        <Value value="2" temperature="400" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties />
+</PhysicalPropertyTableImport>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2831-1 - 24Cr-22Ni-6Mo-2W-Cu-N" sourceTable="Code Case 2831-1" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="862" sourcePageEnd="865" status="normalized-code-case-review-required" codeCase="2831-1" curveCount="7" sourceOnlyCurveCount="0" materialCount="7" pointCount="142">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2831-1; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2831-1-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="865" sourceTable="Table 7M" pointCount="14">
+      <Materials>
+        <Material id="S31266" name="24Cr-22Ni-6Mo-2W-Cu-N" sourceMaterial="24Cr-22Ni-6Mo-2W-Cu-N" sourcePdfPage="865" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC." uns="S31266" nominalChemicalComposition="24Cr-22Ni-6Mo-2W-Cu-N" maxTemperature="426" />
+      </Materials>
+      <Points>
+        <Point value="204000" temperature="-200" />
+        <Point value="198000" temperature="-125" />
+        <Point value="195000" temperature="-75" />
+        <Point value="187000" temperature="25" />
+        <Point value="182000" temperature="100" />
+        <Point value="178000" temperature="150" />
+        <Point value="174000" temperature="200" />
+        <Point value="171000" temperature="250" />
+        <Point value="167000" temperature="300" />
+        <Point value="163000" temperature="350" />
+        <Point value="159000" temperature="400" />
+        <Point value="156000" temperature="450" />
+        <Point value="152000" temperature="500" />
+        <Point value="148000" temperature="550" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2831-1-density-02" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="862" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="S31266" name="24Cr-22Ni-6Mo-2W-Cu-N" sourceMaterial="24Cr-22Ni-6Mo-2W-Cu-N" sourcePdfPage="862" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC." uns="S31266" nominalChemicalComposition="24Cr-22Ni-6Mo-2W-Cu-N" maxTemperature="426" />
+      </Materials>
+      <Points>
+        <Point value="8100" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2831-1-nu-03" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="862" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="S31266" name="24Cr-22Ni-6Mo-2W-Cu-N" sourceMaterial="24Cr-22Ni-6Mo-2W-Cu-N" sourcePdfPage="862" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC." uns="S31266" nominalChemicalComposition="24Cr-22Ni-6Mo-2W-Cu-N" maxTemperature="426" />
+      </Materials>
+      <Points>
+        <Point value="0.31" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2831-1-alphainstantaneous-04" property="AlphaInstantaneous" unit="1/degC" temperatureUnit="degC" sourcePdfPage="862" sourceTable="Table explicit II-D mapping" pointCount="33" referenceTemperature="20" notes="Code Case explicitly directs use of TE-1 curve te-1-12-A. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-1.xml" mappedSourceCurve="te-1-12-A" mappedSourceSha256="636cfd98a897d65d2fadd32b8ed68ad702e4c47abd600fa2501f43b78009df38" mappedSourcePdfPages="1205-1211">
+      <Materials>
+        <Material id="S31266" name="24Cr-22Ni-6Mo-2W-Cu-N" sourceMaterial="24Cr-22Ni-6Mo-2W-Cu-N" sourcePdfPage="862" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC." uns="S31266" nominalChemicalComposition="24Cr-22Ni-6Mo-2W-Cu-N" maxTemperature="426" />
+      </Materials>
+      <Points>
+        <Point value="1.47e-05" temperature="20" />
+        <Point value="1.52e-05" temperature="50" />
+        <Point value="1.56e-05" temperature="75" />
+        <Point value="1.6e-05" temperature="100" />
+        <Point value="1.63e-05" temperature="125" />
+        <Point value="1.65e-05" temperature="150" />
+        <Point value="1.68e-05" temperature="175" />
+        <Point value="1.69e-05" temperature="200" />
+        <Point value="1.71e-05" temperature="225" />
+        <Point value="1.73e-05" temperature="250" />
+        <Point value="1.74e-05" temperature="275" />
+        <Point value="1.76e-05" temperature="300" />
+        <Point value="1.77e-05" temperature="325" />
+        <Point value="1.78e-05" temperature="350" />
+        <Point value="1.8e-05" temperature="375" />
+        <Point value="1.81e-05" temperature="400" />
+        <Point value="1.83e-05" temperature="425" />
+        <Point value="1.84e-05" temperature="450" />
+        <Point value="1.86e-05" temperature="475" />
+        <Point value="1.88e-05" temperature="500" />
+        <Point value="1.9e-05" temperature="525" />
+        <Point value="1.92e-05" temperature="550" />
+        <Point value="1.94e-05" temperature="575" />
+        <Point value="1.96e-05" temperature="600" />
+        <Point value="1.98e-05" temperature="625" />
+        <Point value="2e-05" temperature="650" />
+        <Point value="2.03e-05" temperature="675" />
+        <Point value="2.05e-05" temperature="700" />
+        <Point value="2.07e-05" temperature="725" />
+        <Point value="2.09e-05" temperature="750" />
+        <Point value="2.12e-05" temperature="775" />
+        <Point value="2.14e-05" temperature="800" />
+        <Point value="2.16e-05" temperature="825" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2831-1-alpha-05" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="862" sourceTable="Table explicit II-D mapping" pointCount="33" referenceTemperature="20" notes="Code Case explicitly directs use of TE-1 curve te-1-12-B. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-1.xml" mappedSourceCurve="te-1-12-B" mappedSourceSha256="636cfd98a897d65d2fadd32b8ed68ad702e4c47abd600fa2501f43b78009df38" mappedSourcePdfPages="1205-1211">
+      <Materials>
+        <Material id="S31266" name="24Cr-22Ni-6Mo-2W-Cu-N" sourceMaterial="24Cr-22Ni-6Mo-2W-Cu-N" sourcePdfPage="862" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC." uns="S31266" nominalChemicalComposition="24Cr-22Ni-6Mo-2W-Cu-N" maxTemperature="426" />
+      </Materials>
+      <Points>
+        <Point value="1.47e-05" temperature="20" />
+        <Point value="1.5e-05" temperature="50" />
+        <Point value="1.52e-05" temperature="75" />
+        <Point value="1.54e-05" temperature="100" />
+        <Point value="1.56e-05" temperature="125" />
+        <Point value="1.57e-05" temperature="150" />
+        <Point value="1.59e-05" temperature="175" />
+        <Point value="1.6e-05" temperature="200" />
+        <Point value="1.61e-05" temperature="225" />
+        <Point value="1.63e-05" temperature="250" />
+        <Point value="1.64e-05" temperature="275" />
+        <Point value="1.65e-05" temperature="300" />
+        <Point value="1.66e-05" temperature="325" />
+        <Point value="1.66e-05" temperature="350" />
+        <Point value="1.67e-05" temperature="375" />
+        <Point value="1.68e-05" temperature="400" />
+        <Point value="1.69e-05" temperature="425" />
+        <Point value="1.7e-05" temperature="450" />
+        <Point value="1.71e-05" temperature="475" />
+        <Point value="1.72e-05" temperature="500" />
+        <Point value="1.72e-05" temperature="525" />
+        <Point value="1.73e-05" temperature="550" />
+        <Point value="1.74e-05" temperature="575" />
+        <Point value="1.75e-05" temperature="600" />
+        <Point value="1.76e-05" temperature="625" />
+        <Point value="1.77e-05" temperature="650" />
+        <Point value="1.78e-05" temperature="675" />
+        <Point value="1.79e-05" temperature="700" />
+        <Point value="1.8e-05" temperature="725" />
+        <Point value="1.81e-05" temperature="750" />
+        <Point value="1.82e-05" temperature="775" />
+        <Point value="1.83e-05" temperature="800" />
+        <Point value="1.84e-05" temperature="825" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2831-1-k-06" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="862" sourceTable="Table explicit II-D mapping" pointCount="30" notes="Code Case explicitly directs use of TCD curve tcd-k-13. II-D source notes: Material Groups A-L use source Notes 1-12 (PDF pages 1236-1237). Group A matches the exact Nominal Composition label Carbon steel. Source Notes 9-11 restrict four compositions to 425 degC; maxTemperature on each identity enforces this limit in the reader. Note 9 prints 15Cr-5Ni-3Mo; retained as printed, not corrected to a different database composition. Note 10 explicitly permits separate S and Se compositions. Notes 10-12 also permit H/L/N/LN grades of austenitic stainless steels. Titanium grade/UNS identities are cross-referenced only from the explicit ASME TM-5 grade/UNS pairs, PDF page 1244. No numerical nominal composition is inferred from qualitative alloy labels or UNS." mappedSourceFile="ThermalConductivity/TCD-ThermalConductivity.xml" mappedSourceCurve="tcd-k-13" mappedSourceSha256="1bb454f3f457681950cc73068312e4b411adf380a89959ca3a044383f73f3e4e" mappedSourcePdfPages="1224-1237">
+      <Materials>
+        <Material id="S31266" name="24Cr-22Ni-6Mo-2W-Cu-N" sourceMaterial="24Cr-22Ni-6Mo-2W-Cu-N" sourcePdfPage="862" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC." uns="S31266" nominalChemicalComposition="24Cr-22Ni-6Mo-2W-Cu-N" maxTemperature="426" />
+      </Materials>
+      <Points>
+        <Point value="11.1" temperature="20" />
+        <Point value="11.6" temperature="50" />
+        <Point value="12" temperature="75" />
+        <Point value="12.5" temperature="100" />
+        <Point value="12.9" temperature="125" />
+        <Point value="13.3" temperature="150" />
+        <Point value="13.8" temperature="175" />
+        <Point value="14.2" temperature="200" />
+        <Point value="14.6" temperature="225" />
+        <Point value="15" temperature="250" />
+        <Point value="15.5" temperature="275" />
+        <Point value="15.9" temperature="300" />
+        <Point value="16.3" temperature="325" />
+        <Point value="16.7" temperature="350" />
+        <Point value="17.1" temperature="375" />
+        <Point value="17.5" temperature="400" />
+        <Point value="18" temperature="425" />
+        <Point value="18.4" temperature="450" />
+        <Point value="18.8" temperature="475" />
+        <Point value="19.2" temperature="500" />
+        <Point value="19.6" temperature="525" />
+        <Point value="20" temperature="550" />
+        <Point value="20.4" temperature="575" />
+        <Point value="20.8" temperature="600" />
+        <Point value="21.2" temperature="625" />
+        <Point value="21.6" temperature="650" />
+        <Point value="22" temperature="675" />
+        <Point value="22.4" temperature="700" />
+        <Point value="22.8" temperature="725" />
+        <Point value="23.1" temperature="750" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2831-1-a-07" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="862" sourceTable="Table explicit II-D mapping" pointCount="30" notes="Code Case explicitly directs use of TCD curve tcd-a-13. II-D source notes: Material Groups A-L use source Notes 1-12 (PDF pages 1236-1237). Group A matches the exact Nominal Composition label Carbon steel. Source Notes 9-11 restrict four compositions to 425 degC; maxTemperature on each identity enforces this limit in the reader. Note 9 prints 15Cr-5Ni-3Mo; retained as printed, not corrected to a different database composition. Note 10 explicitly permits separate S and Se compositions. Notes 10-12 also permit H/L/N/LN grades of austenitic stainless steels. Titanium grade/UNS identities are cross-referenced only from the explicit ASME TM-5 grade/UNS pairs, PDF page 1244. No numerical nominal composition is inferred from qualitative alloy labels or UNS." mappedSourceFile="ThermalDiffusivity/TCD-ThermalDiffusivity.xml" mappedSourceCurve="tcd-a-13" mappedSourceSha256="bad6e3dd0286345a50d1fa2df966b07022b1980ee74199076556e0ce24501280" mappedSourcePdfPages="1224-1237">
+      <Materials>
+        <Material id="S31266" name="24Cr-22Ni-6Mo-2W-Cu-N" sourceMaterial="24Cr-22Ni-6Mo-2W-Cu-N" sourcePdfPage="862" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 2 solution-annealed products; maximum use temperature 426 degC." uns="S31266" nominalChemicalComposition="24Cr-22Ni-6Mo-2W-Cu-N" maxTemperature="426" />
+      </Materials>
+      <Points>
+        <Point value="2.95e-06" temperature="20" />
+        <Point value="3.02e-06" temperature="50" />
+        <Point value="3.08e-06" temperature="75" />
+        <Point value="3.14e-06" temperature="100" />
+        <Point value="3.2e-06" temperature="125" />
+        <Point value="3.26e-06" temperature="150" />
+        <Point value="3.33e-06" temperature="175" />
+        <Point value="3.39e-06" temperature="200" />
+        <Point value="3.46e-06" temperature="225" />
+        <Point value="3.53e-06" temperature="250" />
+        <Point value="3.59e-06" temperature="275" />
+        <Point value="3.66e-06" temperature="300" />
+        <Point value="3.73e-06" temperature="325" />
+        <Point value="3.79e-06" temperature="350" />
+        <Point value="3.86e-06" temperature="375" />
+        <Point value="3.93e-06" temperature="400" />
+        <Point value="4e-06" temperature="425" />
+        <Point value="4.06e-06" temperature="450" />
+        <Point value="4.13e-06" temperature="475" />
+        <Point value="4.2e-06" temperature="500" />
+        <Point value="4.27e-06" temperature="525" />
+        <Point value="4.34e-06" temperature="550" />
+        <Point value="4.41e-06" temperature="575" />
+        <Point value="4.47e-06" temperature="600" />
+        <Point value="4.54e-06" temperature="625" />
+        <Point value="4.61e-06" temperature="650" />
+        <Point value="4.67e-06" temperature="675" />
+        <Point value="4.73e-06" temperature="700" />
+        <Point value="4.79e-06" temperature="725" />
+        <Point value="4.84e-06" temperature="750" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties />
+</PhysicalPropertyTableImport>

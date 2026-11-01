@@ -19,6 +19,23 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 ## History
 
 - Date: 2026-11-01
+- Area: Code Case physical-property extensions
+- Change: Added 34 dedicated Code Case XML datasets/index, 177 ordinary shared curves with 2147 XML points and 29 source-only curves with 350 values.
+- Why: Extend source-explicit UNS/composition associations with new metric physical-property tables and explicitly authorized II-D mappings, without inferred alloy equivalence or database writes.
+- Impact: Shared reader now supports density (kg/m3) and Nu (dimensionless) curves/temperatureless constants and minimum/maximum temperature filtering. All Code Case records require applicability review. Dynamic E, undefined RT/Room and expansion references, and linear expansion C remain nonimportable source data. WRC 503 is an unavailable external source, not fabricated data.
+- Files: database/data/physical-properties-xml/CodeCases/*.xml, database/data/physical-properties-xml/index.xml, src/MaterialLibrary/MaterialLibrary.fsproj, src/MaterialLibrary.Crud/XmlPropertyReader.fs, tests/MaterialLibrary.Tests/XmlPhysicalImportTests.fs, docs/xml-physical-import.md
+- Verification: PyMuPDF and Poppler independently agree on all 1516 nonmissing metric source-table cells. Referenced II-D curves retain source file/curve identities and hashes. N08935 Cases 2982-2/3089 preserve distinct Section VIII/I limits (450/550 degC); Case 2881 metric density-unit anomaly is explicit and its stated US value is converted with exact factors.
+- Testing: XML importer/data-helper suite: 29 passed; one pre-existing pressure-chart test fails on cleanup of a locked temporary SQLite copy. All Code Case tests passed, including multi-material native imports. All 35 dataset/index XMLs match their library and test build-output copies byte-for-byte; source-page ownership checked against case headings.
+
+- Date: 2026-11-01
+- Area: ASME thermal diffusivity XML
+- Change: Normalized TCD TD into 58 shared curves, 1146 unique points and 172 material identities, reusing verified source-declared TCD association keys.
+- Why: Provide explicit diffusivity curves in SI without deriving missing values from conductivity.
+- Impact: material-curves-v1 now supports a in m2/s versus degC; source TD is multiplied by 1E-6. Four 425 degC limits remain enforced. Six UNS with no TD data are explicitly listed as unavailable, not importable numeric records.
+- Files: database/data/physical-properties-xml/ThermalDiffusivity/TCD-ThermalDiffusivity.xml, src/MaterialLibrary.Crud/XmlPropertyReader.fs, tests/MaterialLibrary.Tests/XmlPhysicalImportTests.fs, docs/xml-physical-import.md
+- Testing: All 1154 source TD coordinates independently matched Poppler and physical PDF cells; serialized output revalidated. Eighteen focused physical-property tests passed, including SI conversion, missing datasets, temperature limits and multi-target imports. Build-output XML matches source; conductivity unchanged.
+
+- Date: 2026-11-01
 - Area: ASME thermal expansion XML
 - Change: Normalized TE-1 through TE-5 into 108 distinct instantaneous/mean curves and 374 material/property records, retaining source linear expansion separately.
 - Why: Provide numerical expansion points and explicit shared material associations without confusing A/B/C quantities.

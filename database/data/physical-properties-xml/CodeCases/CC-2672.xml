@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2672 - 37Ni-33Fe-25Cr" sourceTable="Code Case 2672" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="492" sourcePageEnd="493" status="normalized-code-case-review-required" codeCase="2672" curveCount="5" sourceOnlyCurveCount="4" materialCount="5" pointCount="35">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2672; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2672-a-01" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table 3M" pointCount="12">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Points>
+        <Point value="3.24e-06" temperature="100" />
+        <Point value="3.48e-06" temperature="200" />
+        <Point value="3.72e-06" temperature="300" />
+        <Point value="3.97e-06" temperature="400" />
+        <Point value="4.22e-06" temperature="500" />
+        <Point value="4.47e-06" temperature="600" />
+        <Point value="4.69e-06" temperature="700" />
+        <Point value="4.81e-06" temperature="800" />
+        <Point value="4.88e-06" temperature="900" />
+        <Point value="5.07e-06" temperature="1000" />
+        <Point value="5.29e-06" temperature="1100" />
+        <Point value="5.55e-06" temperature="1200" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2672-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table 3M" pointCount="11">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Points>
+        <Point value="12.7" temperature="100" />
+        <Point value="14.1" temperature="200" />
+        <Point value="15.4" temperature="300" />
+        <Point value="17.1" temperature="400" />
+        <Point value="18.7" temperature="500" />
+        <Point value="21" temperature="600" />
+        <Point value="23.3" temperature="700" />
+        <Point value="24.9" temperature="800" />
+        <Point value="26.2" temperature="900" />
+        <Point value="28" temperature="1000" />
+        <Point value="29.6" temperature="1100" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2672-alpha-03" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table 3M" pointCount="10" referenceTemperature="25">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Points>
+        <Point value="1.43e-05" temperature="100" />
+        <Point value="1.49e-05" temperature="200" />
+        <Point value="1.53e-05" temperature="300" />
+        <Point value="1.58e-05" temperature="400" />
+        <Point value="1.61e-05" temperature="500" />
+        <Point value="1.64e-05" temperature="600" />
+        <Point value="1.69e-05" temperature="700" />
+        <Point value="1.73e-05" temperature="800" />
+        <Point value="1.76e-05" temperature="900" />
+        <Point value="1.78e-05" temperature="1000" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2672-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Density reported at Room; no numeric room temperature specified.">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Points>
+        <Point value="8070" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2672-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Points>
+        <Point value="0.31" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2672-a-01" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table 3M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Values>
+        <Value value="3.04e-06" temperatureLabel="Room" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2672-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table 3M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Values>
+        <Value value="11.4" temperatureLabel="Room" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2672-dynamice-03" property="DynamicE" unit="MPa" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table 3M" pointCount="10" notes="Dynamic modulus is not ordinary Young modulus.">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Values>
+        <Value value="194000" temperature="100" />
+        <Value value="188000" temperature="200" />
+        <Value value="182000" temperature="300" />
+        <Value value="174000" temperature="400" />
+        <Value value="165000" temperature="500" />
+        <Value value="159000" temperature="600" />
+        <Value value="152000" temperature="700" />
+        <Value value="143000" temperature="800" />
+        <Value value="136000" temperature="900" />
+        <Value value="128000" temperature="1000" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2672-dynamice-04" property="DynamicE" unit="MPa" temperatureUnit="degC" sourcePdfPage="493" sourceTable="Table 3M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N08120" name="37Ni-33Fe-25Cr" sourceMaterial="37Ni-33Fe-25Cr" sourcePdfPage="493" requiresReview="true" applicability="Section VIII Division 1; specified welded construction above 899 degC through 982 degC. Tables contain lower-temperature data; construction-temperature applicability requires review." uns="N08120" nominalChemicalComposition="37Ni-33Fe-25Cr" maxTemperature="982" />
+      </Materials>
+      <Values>
+        <Value value="197000" temperatureLabel="Room" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="E" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

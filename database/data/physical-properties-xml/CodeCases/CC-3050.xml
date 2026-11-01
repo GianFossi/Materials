@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 3050 - EN 34CrMo4+QT (1.7220+QT)" sourceTable="Code Case 3050" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1402" sourcePageEnd="1403" status="normalized-code-case-review-required" codeCase="3050" curveCount="7" sourceOnlyCurveCount="0" materialCount="7" pointCount="148">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 3050; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required.</SourceNotes>
+  <Curves>
+    <Curve id="cc-3050-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="1402" sourceTable="Table explicit II-D mapping" pointCount="17" notes="Code Case explicitly directs use of TM-1 curve tm-1-06. II-D source notes: Groups A-J use the compositions in source Notes 1-7 and 9-11. Source Notes 8 and 9 repeat Group H membership; the curve explicitly references Note 9. Note 5 includes variations of 9Cr-Mo, but only the literal composition is an automatic key. Note 13 names 15Cr-5Ni-3Mo for S15500; this is retained as printed, without correcting it to a database alias. Note 14 limits S45000 data to material aged at 480 degC; manual applicability review is required." mappedSourceFile="ElasticModulus/TM-1.xml" mappedSourceCurve="tm-1-06" mappedSourceSha256="bdc20c20f2ae0d9f20b4b1424645fb3273fe8129f15cd83c3a7711eb0c8527d6" mappedSourcePdfPages="1238-1240">
+      <Materials>
+        <Material id="en-34crmo4-qt-1-7220-qt" name="EN 34CrMo4+QT (1.7220+QT)" sourceMaterial="EN 34CrMo4+QT (1.7220+QT)" sourcePdfPage="1402" requiresReview="true" applicability="Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required." />
+      </Materials>
+      <Points>
+        <Point value="218000" temperature="-200" />
+        <Point value="213000" temperature="-125" />
+        <Point value="210000" temperature="-75" />
+        <Point value="204000" temperature="25" />
+        <Point value="200000" temperature="100" />
+        <Point value="197000" temperature="150" />
+        <Point value="193000" temperature="200" />
+        <Point value="190000" temperature="250" />
+        <Point value="186000" temperature="300" />
+        <Point value="183000" temperature="350" />
+        <Point value="179000" temperature="400" />
+        <Point value="174000" temperature="450" />
+        <Point value="169000" temperature="500" />
+        <Point value="164000" temperature="550" />
+        <Point value="157000" temperature="600" />
+        <Point value="150000" temperature="650" />
+        <Point value="142000" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3050-alphainstantaneous-02" property="AlphaInstantaneous" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1402" sourceTable="Table explicit II-D mapping" pointCount="33" referenceTemperature="20" notes="Code Case explicitly directs use of TE-1 curve te-1-01-A. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-1.xml" mappedSourceCurve="te-1-01-A" mappedSourceSha256="636cfd98a897d65d2fadd32b8ed68ad702e4c47abd600fa2501f43b78009df38" mappedSourcePdfPages="1205-1211">
+      <Materials>
+        <Material id="en-34crmo4-qt-1-7220-qt" name="EN 34CrMo4+QT (1.7220+QT)" sourceMaterial="EN 34CrMo4+QT (1.7220+QT)" sourcePdfPage="1402" requiresReview="true" applicability="Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required." />
+      </Materials>
+      <Points>
+        <Point value="1.15e-05" temperature="20" />
+        <Point value="1.2e-05" temperature="50" />
+        <Point value="1.23e-05" temperature="75" />
+        <Point value="1.27e-05" temperature="100" />
+        <Point value="1.29e-05" temperature="125" />
+        <Point value="1.32e-05" temperature="150" />
+        <Point value="1.35e-05" temperature="175" />
+        <Point value="1.38e-05" temperature="200" />
+        <Point value="1.4e-05" temperature="225" />
+        <Point value="1.43e-05" temperature="250" />
+        <Point value="1.46e-05" temperature="275" />
+        <Point value="1.49e-05" temperature="300" />
+        <Point value="1.51e-05" temperature="325" />
+        <Point value="1.54e-05" temperature="350" />
+        <Point value="1.57e-05" temperature="375" />
+        <Point value="1.59e-05" temperature="400" />
+        <Point value="1.61e-05" temperature="425" />
+        <Point value="1.64e-05" temperature="450" />
+        <Point value="1.65e-05" temperature="475" />
+        <Point value="1.67e-05" temperature="500" />
+        <Point value="1.68e-05" temperature="525" />
+        <Point value="1.69e-05" temperature="550" />
+        <Point value="1.7e-05" temperature="575" />
+        <Point value="1.7e-05" temperature="600" />
+        <Point value="1.71e-05" temperature="625" />
+        <Point value="1.71e-05" temperature="650" />
+        <Point value="1.71e-05" temperature="675" />
+        <Point value="1.71e-05" temperature="700" />
+        <Point value="1.71e-05" temperature="725" />
+        <Point value="1.72e-05" temperature="750" />
+        <Point value="1.74e-05" temperature="775" />
+        <Point value="1.77e-05" temperature="800" />
+        <Point value="1.81e-05" temperature="825" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3050-alpha-03" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1402" sourceTable="Table explicit II-D mapping" pointCount="33" referenceTemperature="20" notes="Code Case explicitly directs use of TE-1 curve te-1-01-B. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-1.xml" mappedSourceCurve="te-1-01-B" mappedSourceSha256="636cfd98a897d65d2fadd32b8ed68ad702e4c47abd600fa2501f43b78009df38" mappedSourcePdfPages="1205-1211">
+      <Materials>
+        <Material id="en-34crmo4-qt-1-7220-qt" name="EN 34CrMo4+QT (1.7220+QT)" sourceMaterial="EN 34CrMo4+QT (1.7220+QT)" sourcePdfPage="1402" requiresReview="true" applicability="Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required." />
+      </Materials>
+      <Points>
+        <Point value="1.15e-05" temperature="20" />
+        <Point value="1.18e-05" temperature="50" />
+        <Point value="1.19e-05" temperature="75" />
+        <Point value="1.21e-05" temperature="100" />
+        <Point value="1.23e-05" temperature="125" />
+        <Point value="1.24e-05" temperature="150" />
+        <Point value="1.26e-05" temperature="175" />
+        <Point value="1.27e-05" temperature="200" />
+        <Point value="1.29e-05" temperature="225" />
+        <Point value="1.3e-05" temperature="250" />
+        <Point value="1.32e-05" temperature="275" />
+        <Point value="1.33e-05" temperature="300" />
+        <Point value="1.34e-05" temperature="325" />
+        <Point value="1.36e-05" temperature="350" />
+        <Point value="1.37e-05" temperature="375" />
+        <Point value="1.38e-05" temperature="400" />
+        <Point value="1.4e-05" temperature="425" />
+        <Point value="1.41e-05" temperature="450" />
+        <Point value="1.42e-05" temperature="475" />
+        <Point value="1.44e-05" temperature="500" />
+        <Point value="1.45e-05" temperature="525" />
+        <Point value="1.46e-05" temperature="550" />
+        <Point value="1.47e-05" temperature="575" />
+        <Point value="1.48e-05" temperature="600" />
+        <Point value="1.49e-05" temperature="625" />
+        <Point value="1.5e-05" temperature="650" />
+        <Point value="1.51e-05" temperature="675" />
+        <Point value="1.51e-05" temperature="700" />
+        <Point value="1.52e-05" temperature="725" />
+        <Point value="1.53e-05" temperature="750" />
+        <Point value="1.53e-05" temperature="775" />
+        <Point value="1.54e-05" temperature="800" />
+        <Point value="1.55e-05" temperature="825" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3050-k-04" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1402" sourceTable="Table explicit II-D mapping" pointCount="30" notes="Code Case explicitly directs use of TCD curve tcd-k-03. II-D source notes: Material Groups A-L use source Notes 1-12 (PDF pages 1236-1237). Group A matches the exact Nominal Composition label Carbon steel. Source Notes 9-11 restrict four compositions to 425 degC; maxTemperature on each identity enforces this limit in the reader. Note 9 prints 15Cr-5Ni-3Mo; retained as printed, not corrected to a different database composition. Note 10 explicitly permits separate S and Se compositions. Notes 10-12 also permit H/L/N/LN grades of austenitic stainless steels. Titanium grade/UNS identities are cross-referenced only from the explicit ASME TM-5 grade/UNS pairs, PDF page 1244. No numerical nominal composition is inferred from qualitative alloy labels or UNS." mappedSourceFile="ThermalConductivity/TCD-ThermalConductivity.xml" mappedSourceCurve="tcd-k-03" mappedSourceSha256="1bb454f3f457681950cc73068312e4b411adf380a89959ca3a044383f73f3e4e" mappedSourcePdfPages="1224-1237">
+      <Materials>
+        <Material id="en-34crmo4-qt-1-7220-qt" name="EN 34CrMo4+QT (1.7220+QT)" sourceMaterial="EN 34CrMo4+QT (1.7220+QT)" sourcePdfPage="1402" requiresReview="true" applicability="Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required." />
+      </Materials>
+      <Points>
+        <Point value="41" temperature="20" />
+        <Point value="40.8" temperature="50" />
+        <Point value="40.7" temperature="75" />
+        <Point value="40.6" temperature="100" />
+        <Point value="40.5" temperature="125" />
+        <Point value="40.4" temperature="150" />
+        <Point value="40.3" temperature="175" />
+        <Point value="40.1" temperature="200" />
+        <Point value="39.8" temperature="225" />
+        <Point value="39.5" temperature="250" />
+        <Point value="39.1" temperature="275" />
+        <Point value="38.7" temperature="300" />
+        <Point value="38.3" temperature="325" />
+        <Point value="37.8" temperature="350" />
+        <Point value="37.3" temperature="375" />
+        <Point value="36.8" temperature="400" />
+        <Point value="36.3" temperature="425" />
+        <Point value="35.8" temperature="450" />
+        <Point value="35.3" temperature="475" />
+        <Point value="34.8" temperature="500" />
+        <Point value="34.4" temperature="525" />
+        <Point value="33.9" temperature="550" />
+        <Point value="33.4" temperature="575" />
+        <Point value="32.8" temperature="600" />
+        <Point value="32.2" temperature="625" />
+        <Point value="31.6" temperature="650" />
+        <Point value="30.7" temperature="675" />
+        <Point value="29.1" temperature="700" />
+        <Point value="27.6" temperature="725" />
+        <Point value="26.7" temperature="750" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3050-a-05" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1402" sourceTable="Table explicit II-D mapping" pointCount="33" notes="Code Case explicitly directs use of TCD curve tcd-a-03. II-D source notes: Material Groups A-L use source Notes 1-12 (PDF pages 1236-1237). Group A matches the exact Nominal Composition label Carbon steel. Source Notes 9-11 restrict four compositions to 425 degC; maxTemperature on each identity enforces this limit in the reader. Note 9 prints 15Cr-5Ni-3Mo; retained as printed, not corrected to a different database composition. Note 10 explicitly permits separate S and Se compositions. Notes 10-12 also permit H/L/N/LN grades of austenitic stainless steels. Titanium grade/UNS identities are cross-referenced only from the explicit ASME TM-5 grade/UNS pairs, PDF page 1244. No numerical nominal composition is inferred from qualitative alloy labels or UNS." mappedSourceFile="ThermalDiffusivity/TCD-ThermalDiffusivity.xml" mappedSourceCurve="tcd-a-03" mappedSourceSha256="bad6e3dd0286345a50d1fa2df966b07022b1980ee74199076556e0ce24501280" mappedSourcePdfPages="1224-1237">
+      <Materials>
+        <Material id="en-34crmo4-qt-1-7220-qt" name="EN 34CrMo4+QT (1.7220+QT)" sourceMaterial="EN 34CrMo4+QT (1.7220+QT)" sourcePdfPage="1402" requiresReview="true" applicability="Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required." />
+      </Materials>
+      <Points>
+        <Point value="1.187e-05" temperature="20" />
+        <Point value="1.147e-05" temperature="50" />
+        <Point value="1.116e-05" temperature="75" />
+        <Point value="1.088e-05" temperature="100" />
+        <Point value="1.06e-05" temperature="125" />
+        <Point value="1.033e-05" temperature="150" />
+        <Point value="1.008e-05" temperature="175" />
+        <Point value="9.82e-06" temperature="200" />
+        <Point value="9.57e-06" temperature="225" />
+        <Point value="9.32e-06" temperature="250" />
+        <Point value="9.07e-06" temperature="275" />
+        <Point value="8.82e-06" temperature="300" />
+        <Point value="8.57e-06" temperature="325" />
+        <Point value="8.32e-06" temperature="350" />
+        <Point value="8.06e-06" temperature="375" />
+        <Point value="7.81e-06" temperature="400" />
+        <Point value="7.55e-06" temperature="425" />
+        <Point value="7.29e-06" temperature="450" />
+        <Point value="7.03e-06" temperature="475" />
+        <Point value="6.77e-06" temperature="500" />
+        <Point value="6.5e-06" temperature="525" />
+        <Point value="6.24e-06" temperature="550" />
+        <Point value="5.97e-06" temperature="575" />
+        <Point value="5.69e-06" temperature="600" />
+        <Point value="5.42e-06" temperature="625" />
+        <Point value="5.14e-06" temperature="650" />
+        <Point value="4.78e-06" temperature="675" />
+        <Point value="4.37e-06" temperature="700" />
+        <Point value="3.83e-06" temperature="725" />
+        <Point value="2.69e-06" temperature="750" />
+        <Point value="1.26e-06" temperature="775" />
+        <Point value="5.06e-06" temperature="800" />
+        <Point value="7.74e-06" temperature="825" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3050-density-06" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1403" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Explicit Code Case mapping to PRD 1/2Cr to 11/4Cr steels; II-D PDF page 1244; source file SHA256 c9cf0ce3ccd42a1eff2673b607b6d50ba050955674a20f28f47f571701492952." mappedSourceFile="Density/PRD-Density.xml" mappedSourceMaterial="1-2cr-to-11-4cr-steels">
+      <Materials>
+        <Material id="en-34crmo4-qt-1-7220-qt" name="EN 34CrMo4+QT (1.7220+QT)" sourceMaterial="EN 34CrMo4+QT (1.7220+QT)" sourcePdfPage="1403" requiresReview="true" applicability="Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required." />
+      </Materials>
+      <Points>
+        <Point value="7750" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3050-nu-07" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1403" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Explicit Code Case mapping to PRD 1/2Cr to 11/4Cr steels; II-D PDF page 1244; source file SHA256 c9cf0ce3ccd42a1eff2673b607b6d50ba050955674a20f28f47f571701492952." mappedSourceFile="Density/PRD-Density.xml" mappedSourceMaterial="1-2cr-to-11-4cr-steels">
+      <Materials>
+        <Material id="en-34crmo4-qt-1-7220-qt" name="EN 34CrMo4+QT (1.7220+QT)" sourceMaterial="EN 34CrMo4+QT (1.7220+QT)" sourcePdfPage="1403" requiresReview="true" applicability="Section VIII Division 3; EN 10083-3:2006, quenched and tempered; no welding. Explicit TM-1 Group C, TE-1 Group 1, TCD Group C, PRD 1/2Cr to 1-1/4Cr direction. No UNS or exact nominal chemistry is supplied: manual identity assignment required." />
+      </Materials>
+      <Points>
+        <Point value="0.3" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties />
+</PhysicalPropertyTableImport>

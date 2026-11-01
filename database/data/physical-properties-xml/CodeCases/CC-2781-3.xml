@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2781-3 - 12Cr-1.5W-1.6Co-B" sourceTable="Code Case 2781-3" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="738" sourcePageEnd="743" status="normalized-code-case-review-required" codeCase="2781-3" curveCount="4" sourceOnlyCurveCount="0" materialCount="4" pointCount="24">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2781-3; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2781-3-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="743" sourceTable="Table 6M" pointCount="8">
+      <Materials>
+        <Material id="12cr-1-5w-1-6co-b" name="12Cr-1.5W-1.6Co-B" sourceMaterial="12Cr-1.5W-1.6Co-B" sourcePdfPage="743" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-1.5W-1.6Co-B" />
+      </Materials>
+      <Points>
+        <Point value="220000" temperature="20" />
+        <Point value="215000" temperature="100" />
+        <Point value="208000" temperature="200" />
+        <Point value="200000" temperature="300" />
+        <Point value="190000" temperature="400" />
+        <Point value="179000" temperature="500" />
+        <Point value="166000" temperature="600" />
+        <Point value="158000" temperature="650" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2781-3-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="743" sourceTable="Table 6M" pointCount="8">
+      <Materials>
+        <Material id="12cr-1-5w-1-6co-b" name="12Cr-1.5W-1.6Co-B" sourceMaterial="12Cr-1.5W-1.6Co-B" sourcePdfPage="743" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-1.5W-1.6Co-B" />
+      </Materials>
+      <Points>
+        <Point value="24.2" temperature="20" />
+        <Point value="25.2" temperature="100" />
+        <Point value="26.2" temperature="200" />
+        <Point value="27.1" temperature="300" />
+        <Point value="27.9" temperature="400" />
+        <Point value="28.5" temperature="500" />
+        <Point value="29.1" temperature="600" />
+        <Point value="29.3" temperature="650" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2781-3-alpha-03" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="743" sourceTable="Table 6M" pointCount="7" referenceTemperature="20">
+      <Materials>
+        <Material id="12cr-1-5w-1-6co-b" name="12Cr-1.5W-1.6Co-B" sourceMaterial="12Cr-1.5W-1.6Co-B" sourcePdfPage="743" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-1.5W-1.6Co-B" />
+      </Materials>
+      <Points>
+        <Point value="1.05e-05" temperature="100" />
+        <Point value="1.09e-05" temperature="200" />
+        <Point value="1.12e-05" temperature="300" />
+        <Point value="1.15e-05" temperature="400" />
+        <Point value="1.18e-05" temperature="500" />
+        <Point value="1.21e-05" temperature="600" />
+        <Point value="1.22e-05" temperature="650" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2781-3-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="739" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="12cr-1-5w-1-6co-b" name="12Cr-1.5W-1.6Co-B" sourceMaterial="12Cr-1.5W-1.6Co-B" sourcePdfPage="739" requiresReview="true" applicability="Section I; CSEF steel, prescribed normalized and tempered condition; external pressure design prohibited." nominalChemicalComposition="12Cr-1.5W-1.6Co-B" />
+      </Materials>
+      <Points>
+        <Point value="7810" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="Nu" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

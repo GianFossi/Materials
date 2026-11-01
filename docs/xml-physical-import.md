@@ -50,6 +50,42 @@ Oltre ai dati PRD, TM, TC e TE normalizzati descritti di seguito, le cartelle `d
 
 Per i diagrammi EP grezzi gli esponenti possono essere omessi nelle righe successive del PDF. Non vengono ricostruiti automaticamente: il record è disponibile per associazione e consultazione, ma occorre inserire punti T/A/B verificati oppure fornire un XML strutturato. Nessuna proprietà mancante viene calcolata o copiata dal database 2023.
 
+## Estensioni delle proprietà fisiche dai Code Cases 2025
+
+La cartella [CodeCases](../database/data/physical-properties-xml/CodeCases) contiene **34 XML dedicati**, elencati nell'[indice](../database/data/physical-properties-xml/CodeCases/index.xml). Sono disponibili **177 curve/record ordinari e 2147 punti XML**, compresi 48 valori costanti di densità/Poisson e le copie delle curve II-D espressamente richiamate dai Cases. Il lettore limita i punti importabili all'intervallo dichiarato per il materiale: i conteggi XML comprendono anche punti fonte oltre tali limiti, che restano conservati ma non proposti per l'importazione.
+
+Cases inclusi: 2196-5, 2353-2, 2496-4, 2672, 2684-5, 2702-8, 2735, 2737-2, 2780-1, 2781-3, 2783, 2794, 2831-1, 2839-3, 2859, 2881, 2890-4, 2903-1, 2914, 2982-2, 2983, 2991, 3001-1, 3006, 3007, 3024, 3037-1, 3049-1, 3050, 3052, 3056, 3058, 3063-1 e 3089. Nome, fonte, hash del PDF, pagine, riferimenti e note di applicabilità restano in testa al file; ogni curva conserva la propria tabella e pagina fonte.
+
+Il formato riusa `material-curves-v1`: `E` in MPa, `k` in W/(m*K), `a` in m2/s, `Alpha`/`AlphaInstantaneous` in 1/degC, `density` in kg/m3 e `Nu` adimensionale. Densità e Poisson possono essere curve dipendenti dalla temperatura, come nel [Case 3007](../database/data/physical-properties-xml/CodeCases/CC-3007.xml). Una costante usa `constant="true"` e un solo `<Point value="..."/>`, **senza temperatura fonte**. I 20 degC del punto interno sono esclusivamente la convenzione già usata dal lettore PRD. Per una proprietà fornita a una temperatura numerica specifica, come densità a 20 degC nel Case 2783, si conserva invece un punto tabulato a quella temperatura.
+
+**Tutti i record Code Cases richiedono revisione**, anche con UNS esatto: l'UNS non certifica accettazione del Case, specifica/prodotto, trattamento termico o sezione di costruzione. Non vengono inventati UNS/composizioni per i materiali identificati solo da un grado EN o da una descrizione HIP. Le famiglie PRD originali restano manuali; nuove chiavi sono assegnate ai valori di una famiglia solamente quando il Case dirige esplicitamente tale equivalenza. Le copie II-D conservano file, ID della curva, hash e pagine originali. Nessun valore viene scritto automaticamente nel database.
+
+### Dati conservati separatamente
+
+`SourceCurves/Curve/Values/Value` contiene **29 curve e 350 valori fonte**, esclusi dai record di importazione:
+
+- `DynamicE` rimane modulo **dinamico**, mai trasformato in E ordinario (Cases 2672, 2983, 2991, 3024 e 3058).
+- `RT`/`Room` senza una definizione numerica conserva `temperatureLabel`; nessun punto a 20 o 25 degC viene inventato. Questo vale anche per un valore RT di E, k o a.
+- Dilatazioni medie senza riferimento numerico esplicito restano fonte-only, anche quando le temperature dei punti sono numeriche (Cases 3024 e 3058). Le dilatazioni con riferimento esplicito conservano quel riferimento, ad esempio **25 degC** nei Cases 2672/2983 e **30 degC** nei Cases 2914/2982-2/3089.
+- L'allungamento C resta `LinearExpansion` in mm/m e non diventa calore specifico. Un coefficiente di dilatazione non qualificato, come quello del Case 2783, non viene dichiarato arbitrariamente medio o istantaneo.
+
+`UnavailableProperties` distingue proprietà assenti dalle proprietà presenti solo come dati fonte non importabili. Non si calcola una diffusività mancante da densità, conducibilità o calore specifico.
+
+### Limiti e anomalie
+
+`minTemperature` e `maxTemperature` filtrano le curve numeriche per identità materiale; limiti non numerici/invertiti o un intervallo senza punti producono un errore. Non trasformano le costanti in dati misurati a una temperatura. Le note restano necessarie per i vincoli costruttivi non rappresentabili come un semplice intervallo.
+
+- Per **N08935**, il Case **2982-2** riguarda Section VIII con limite **450 degC**; il Case **3089** riguarda Section I con limite **550 degC**. Non sono duplicati intercambiabili.
+- Per **S83071**, il limite del Case 2914 è **316 degC**, sebbene la tabella fisica arrivi a 400 degC.
+- Per **P690QL2**, il Case 3052 dichiara **-40 a 93 degC**.
+- Il Case **2881** stampa una densità metrica con unità incoerente `kg/mm3`. L'XML conserva l'anomalia e converte esclusivamente il valore esplicito **0.307 lb/in3** usando i fattori esatti lb/kg e inch/m; resta richiesta revisione.
+
+Leggere insieme XML II-D e Code Cases può produrre più candidati per lo stesso materiale/proprietà, anche se i valori coincidono: è una scelta esplicita di fonte e applicabilità, non un motivo per sovrascrivere o scegliere automaticamente un Case. La copertura precedente non va interpretata come percentuale aggiornata di materiali approvati/completi.
+
+Il **Case 3102**, pagina PDF 1572, è registrato nell'indice come riferimento a **WRC Bulletin 503, seconda edizione giugno 2023**, non disponibile tra le fonti fornite: nessun dato WRC è generato. L'autorizzazione riguarda Section VIII Division 2 e richiede, per a di N07718/N10003 sopra 540 degC, accordo entro 10% con II-D, altrimenti si usa II-D. Rimandi generici senza una riga fisica univocamente identificata, valori di qualificazione di polimeri/ceramiche e costanti usate solo in formule/fatica non generano curve di materiale.
+
+La verifica indipendente PyMuPDF/Poppler ha confrontato **1516 celle numeriche non mancanti** delle tabelle metriche selezionate, inclusi i valori C e le colonne non importate. I test confrontano anche le curve II-D richiamate, costanti/curve density-Nu, riferimento e limiti, esclusione dei dati fonte-only e importazione revisionata della stessa curva su più materiali. Gli XML sono distribuiti anche in build/publish/NuGet sotto `data/physical-properties-xml/CodeCases`.
+
 ## PRD: densità e coefficiente di Poisson per materiale
 
 [PRD-Density.xml](../database/data/physical-properties-xml/Density/PRD-Density.xml) contiene 158 voci materiale ricavate dalle 115 righe della Table PRD ASME II-D Metric 2025 (pagine PDF 1244-1245). Gli elenchi UNS espliciti sono espansi in voci distinte; le famiglie generiche restano gruppi con il nome originale. Le voci sono ordinate per categoria, sottogruppo e nome. `name`, `sourceTable`, `sourcePdf`, pagine, riferimento e note restano in testa.
@@ -109,13 +145,23 @@ Il lettore espande le 60 curve in 220 record associabili, con chiavi `{percorso}
 
 [TCD-ThermalConductivity.xml](../database/data/physical-properties-xml/ThermalConductivity/TCD-ThermalConductivity.xml) normalizza tutte le 65 colonne TC della Table TCD ASME II-D Metric 2025 (pagine PDF 1224-1235; note 1236-1237). Il formato `material-curves-v1` riusa 63 curve, con 1361 punti unici e 178 identità materiale. Tutti i 1390 punti delle colonne fonte sono preservati; le curve identiche non sono duplicate.
 
-Ogni curva dichiara `property="k"`, `unit="W/(m*K)"` e `temperatureUnit="degC"`. I valori ASME in W/(m·°C) restano numericamente invariati in W/(m·K). I punti hanno attributi numerici `temperature` e `value`; nessuna cella mancante è trasformata in zero, interpolata o estrapolata. Il file di diffusività TD rimane separato e invariato.
+Ogni curva dichiara `property="k"`, `unit="W/(m*K)"` e `temperatureUnit="degC"`. I valori ASME in W/(m·°C) restano numericamente invariati in W/(m·K). I punti hanno attributi numerici `temperature` e `value`; nessuna cella mancante è trasformata in zero, interpolata o estrapolata. La diffusività TD è normalizzata separatamente come descritto di seguito.
 
 Le identità includono 108 composizioni nominali esplicite dalle note dei gruppi A–L e 69 UNS. Un'unica famiglia (ghisa sferoidale) richiede associazione manuale. La nota 1 definisce il gruppo A tramite il valore esatto `Carbon steel` nella colonna Nominal Composition: questa chiave è quindi associabile senza inventare percentuali. I gradi di titanio sono associati agli UNS solo mediante le coppie esplicite della Table TM-5, pagina PDF 1244; la fonte aggiuntiva è dichiarata negli attributi `identitySourceTable`/`identitySourcePdfPage`. Nessuna composizione quantitativa è dedotta da un UNS o da denominazioni qualitative delle leghe.
 
 Le note 9–11 limitano quattro composizioni a **425 °C**: `15Cr-5Ni-3Mo`, `15Cr-6Ni-Cu-Mo`, `17Cr-7Ni-1Al`, `13Cr-8Ni-2Mo`. Ogni identità conserva `maxTemperature="425"` e l'applicabilità. La curva fonte rimane completa nel documento, ma il lettore produce per quella identità solo punti entro il limite. Limiti non validi o che escludono tutti i punti generano un errore esplicito. Chi usa direttamente l'XML deve rispettare `maxTemperature`; il limite non autorizza extrapolazione oltre l'ultimo punto disponibile.
 
 Sono mantenuti l'incertezza **±10%** della General Note (b), il testo originale delle composizioni, le note sui gradi H/L/N/LN e la variante Se esplicitamente ammessa dalla nota 10. `15Cr-5Ni-3Mo` resta la composizione stampata nella fonte, senza sostituirla con un alias del database. Il lettore genera record `k` associabili per UNS/composizione esatta; ciascuno può essere importato in più materiali. Le ambiguità restano da confermare manualmente.
+
+## TCD: diffusività termica per materiale
+
+[TCD-ThermalDiffusivity.xml](../database/data/physical-properties-xml/ThermalDiffusivity/TCD-ThermalDiffusivity.xml) normalizza le 65 colonne TD della Table TCD, pagine PDF 1224-1235, con note alle pagine 1236-1237. Le 59 colonne con dati diventano 58 curve condivise, 1146 punti unici e 172 record associabili. Tutti i 1154 valori fonte non mancanti sono preservati.
+
+Ogni curva dichiara `property="a"`, `unit="m2/s"`, `temperatureUnit="degC"`. I valori fonte in **10⁻⁶ m²/s** sono moltiplicati esplicitamente per `1E-6`; ad esempio `18.10` diventa `0.00001810`. Non si ricava TD da conduttività, densità o calore specifico.
+
+Sono riutilizzate le identità TCD verificate: composizioni nominali esplicite, UNS e coppie grado/UNS del titanio dichiarate in TM-5. Le quattro limitazioni a 425 °C sono conservate ed applicate dal lettore; ghisa sferoidale resta una famiglia manuale. Sono mantenute l'incertezza ±10%, la fonte e le note originali di applicabilità. Ogni record può essere associato a più materiali.
+
+**Dati mancanti nella fonte:** N02200, N02201, N04405, N06022, N06030 e N10276 hanno tutte le celle TD mancanti. Sono elencati in `UnavailableMaterials` con motivazione, senza curva o record numerico importabile. Non sono sostituiti con zero o con proprietà di altri materiali. Il file di conduttività rimane invariato.
 
 ## TE-1–TE-5: dilatazione termica per materiale
 

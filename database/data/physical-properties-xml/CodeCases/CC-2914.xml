@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2914 - 30Cr-7Ni-3.5Mo-N" sourceTable="Code Case 2914" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1060" sourcePageEnd="1063" status="normalized-code-case-review-required" codeCase="2914" curveCount="6" sourceOnlyCurveCount="0" materialCount="6" pointCount="45">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2914; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Divisions 1/2; specified duplex products and annealing; maximum design temperature 316 degC.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2914-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1062" sourceTable="Table 8M" pointCount="8" referenceTemperature="30">
+      <Materials>
+        <Material id="S83071" name="30Cr-7Ni-3.5Mo-N" sourceMaterial="30Cr-7Ni-3.5Mo-N" sourcePdfPage="1062" requiresReview="true" applicability="Section VIII Divisions 1/2; specified duplex products and annealing; maximum design temperature 316 degC." uns="S83071" nominalChemicalComposition="30Cr-7Ni-3.5Mo-N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="1.15e-05" temperature="50" />
+        <Point value="1.21e-05" temperature="100" />
+        <Point value="1.24e-05" temperature="150" />
+        <Point value="1.27e-05" temperature="200" />
+        <Point value="1.29e-05" temperature="250" />
+        <Point value="1.31e-05" temperature="300" />
+        <Point value="1.33e-05" temperature="350" />
+        <Point value="1.35e-05" temperature="400" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2914-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1063" sourceTable="Table 9M" pointCount="9">
+      <Materials>
+        <Material id="S83071" name="30Cr-7Ni-3.5Mo-N" sourceMaterial="30Cr-7Ni-3.5Mo-N" sourcePdfPage="1063" requiresReview="true" applicability="Section VIII Divisions 1/2; specified duplex products and annealing; maximum design temperature 316 degC." uns="S83071" nominalChemicalComposition="30Cr-7Ni-3.5Mo-N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="12.3" temperature="23" />
+        <Point value="12.9" temperature="50" />
+        <Point value="13.9" temperature="100" />
+        <Point value="14.8" temperature="150" />
+        <Point value="15.8" temperature="200" />
+        <Point value="16.7" temperature="250" />
+        <Point value="17.6" temperature="300" />
+        <Point value="18.6" temperature="350" />
+        <Point value="19.6" temperature="400" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2914-a-03" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1063" sourceTable="Table 9M" pointCount="9">
+      <Materials>
+        <Material id="S83071" name="30Cr-7Ni-3.5Mo-N" sourceMaterial="30Cr-7Ni-3.5Mo-N" sourcePdfPage="1063" requiresReview="true" applicability="Section VIII Divisions 1/2; specified duplex products and annealing; maximum design temperature 316 degC." uns="S83071" nominalChemicalComposition="30Cr-7Ni-3.5Mo-N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="3.41e-06" temperature="23" />
+        <Point value="3.51e-06" temperature="50" />
+        <Point value="3.64e-06" temperature="100" />
+        <Point value="3.75e-06" temperature="150" />
+        <Point value="3.86e-06" temperature="200" />
+        <Point value="3.96e-06" temperature="250" />
+        <Point value="4.05e-06" temperature="300" />
+        <Point value="4.14e-06" temperature="350" />
+        <Point value="4.22e-06" temperature="400" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2914-e-04" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="1063" sourceTable="Table 10M" pointCount="9">
+      <Materials>
+        <Material id="S83071" name="30Cr-7Ni-3.5Mo-N" sourceMaterial="30Cr-7Ni-3.5Mo-N" sourcePdfPage="1063" requiresReview="true" applicability="Section VIII Divisions 1/2; specified duplex products and annealing; maximum design temperature 316 degC." uns="S83071" nominalChemicalComposition="30Cr-7Ni-3.5Mo-N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="191000" temperature="20" />
+        <Point value="189000" temperature="50" />
+        <Point value="185000" temperature="100" />
+        <Point value="181000" temperature="150" />
+        <Point value="178000" temperature="200" />
+        <Point value="174000" temperature="250" />
+        <Point value="170000" temperature="300" />
+        <Point value="166000" temperature="350" />
+        <Point value="163000" temperature="400" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2914-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1063" sourceTable="Table 10M" pointCount="9">
+      <Materials>
+        <Material id="S83071" name="30Cr-7Ni-3.5Mo-N" sourceMaterial="30Cr-7Ni-3.5Mo-N" sourcePdfPage="1063" requiresReview="true" applicability="Section VIII Divisions 1/2; specified duplex products and annealing; maximum design temperature 316 degC." uns="S83071" nominalChemicalComposition="30Cr-7Ni-3.5Mo-N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="0.39" temperature="20" />
+        <Point value="0.39" temperature="50" />
+        <Point value="0.4" temperature="100" />
+        <Point value="0.41" temperature="150" />
+        <Point value="0.42" temperature="200" />
+        <Point value="0.43" temperature="250" />
+        <Point value="0.44" temperature="300" />
+        <Point value="0.45" temperature="350" />
+        <Point value="0.46" temperature="400" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2914-density-06" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1060" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Source 7.741 g/cm3 converted exactly to kg/m3.">
+      <Materials>
+        <Material id="S83071" name="30Cr-7Ni-3.5Mo-N" sourceMaterial="30Cr-7Ni-3.5Mo-N" sourcePdfPage="1060" requiresReview="true" applicability="Section VIII Divisions 1/2; specified duplex products and annealing; maximum design temperature 316 degC." uns="S83071" nominalChemicalComposition="30Cr-7Ni-3.5Mo-N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="7741" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

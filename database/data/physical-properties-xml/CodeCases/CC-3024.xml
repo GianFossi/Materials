@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 3024 - Ni-Cr-Co-Mo-Ti precipitation hardened" sourceTable="Code Case 3024" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1330" sourcePageEnd="1338" status="normalized-code-case-review-required" codeCase="3024" curveCount="4" sourceOnlyCurveCount="2" materialCount="4" pointCount="90">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 3024; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I / Section VIII Division 1; prescribed solution annealing and aging; dynamic E is source-only.</SourceNotes>
+  <Curves>
+    <Curve id="cc-3024-a-01" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1335" sourceTable="Table 7M" pointCount="44">
+      <Materials>
+        <Material id="N07208" name="Ni-Cr-Co-Mo-Ti precipitation hardened" sourceMaterial="Ni-Cr-Co-Mo-Ti precipitation hardened" sourcePdfPage="1335" requiresReview="true" applicability="Section I / Section VIII Division 1; prescribed solution annealing and aging; dynamic E is source-only." uns="N07208" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="2.86e-06" temperature="20" />
+        <Point value="2.94e-06" temperature="50" />
+        <Point value="3.01e-06" temperature="75" />
+        <Point value="3.09e-06" temperature="100" />
+        <Point value="3.16e-06" temperature="125" />
+        <Point value="3.24e-06" temperature="150" />
+        <Point value="3.32e-06" temperature="175" />
+        <Point value="3.39e-06" temperature="200" />
+        <Point value="3.46e-06" temperature="225" />
+        <Point value="3.52e-06" temperature="250" />
+        <Point value="3.59e-06" temperature="275" />
+        <Point value="3.65e-06" temperature="300" />
+        <Point value="3.71e-06" temperature="325" />
+        <Point value="3.78e-06" temperature="350" />
+        <Point value="3.84e-06" temperature="375" />
+        <Point value="3.9e-06" temperature="400" />
+        <Point value="3.96e-06" temperature="425" />
+        <Point value="4.03e-06" temperature="450" />
+        <Point value="4.1e-06" temperature="475" />
+        <Point value="4.17e-06" temperature="500" />
+        <Point value="4.23e-06" temperature="525" />
+        <Point value="4.3e-06" temperature="550" />
+        <Point value="4.37e-06" temperature="575" />
+        <Point value="4.44e-06" temperature="600" />
+        <Point value="4.51e-06" temperature="625" />
+        <Point value="4.57e-06" temperature="650" />
+        <Point value="4.63e-06" temperature="675" />
+        <Point value="4.68e-06" temperature="700" />
+        <Point value="4.72e-06" temperature="725" />
+        <Point value="4.76e-06" temperature="750" />
+        <Point value="4.79e-06" temperature="775" />
+        <Point value="4.81e-06" temperature="800" />
+        <Point value="4.82e-06" temperature="825" />
+        <Point value="4.82e-06" temperature="850" />
+        <Point value="4.81e-06" temperature="875" />
+        <Point value="4.8e-06" temperature="900" />
+        <Point value="4.79e-06" temperature="925" />
+        <Point value="4.77e-06" temperature="950" />
+        <Point value="4.76e-06" temperature="975" />
+        <Point value="4.77e-06" temperature="1000" />
+        <Point value="4.79e-06" temperature="1025" />
+        <Point value="4.84e-06" temperature="1050" />
+        <Point value="4.93e-06" temperature="1075" />
+        <Point value="5.08e-06" temperature="1100" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3024-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1336" sourceTable="Table 8M" pointCount="44">
+      <Materials>
+        <Material id="N07208" name="Ni-Cr-Co-Mo-Ti precipitation hardened" sourceMaterial="Ni-Cr-Co-Mo-Ti precipitation hardened" sourcePdfPage="1336" requiresReview="true" applicability="Section I / Section VIII Division 1; prescribed solution annealing and aging; dynamic E is source-only." uns="N07208" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="10.2" temperature="20" />
+        <Point value="10.7" temperature="50" />
+        <Point value="11.1" temperature="75" />
+        <Point value="11.5" temperature="100" />
+        <Point value="12" temperature="125" />
+        <Point value="12.4" temperature="150" />
+        <Point value="12.9" temperature="175" />
+        <Point value="13.3" temperature="200" />
+        <Point value="13.7" temperature="225" />
+        <Point value="14.1" temperature="250" />
+        <Point value="14.4" temperature="275" />
+        <Point value="14.8" temperature="300" />
+        <Point value="15.2" temperature="325" />
+        <Point value="15.5" temperature="350" />
+        <Point value="15.9" temperature="375" />
+        <Point value="16.3" temperature="400" />
+        <Point value="16.6" temperature="425" />
+        <Point value="17" temperature="450" />
+        <Point value="17.4" temperature="475" />
+        <Point value="17.8" temperature="500" />
+        <Point value="18.2" temperature="525" />
+        <Point value="18.6" temperature="550" />
+        <Point value="19" temperature="575" />
+        <Point value="19.4" temperature="600" />
+        <Point value="19.8" temperature="625" />
+        <Point value="20.2" temperature="650" />
+        <Point value="20.5" temperature="675" />
+        <Point value="20.9" temperature="700" />
+        <Point value="21.2" temperature="725" />
+        <Point value="21.4" temperature="750" />
+        <Point value="21.7" temperature="775" />
+        <Point value="21.9" temperature="800" />
+        <Point value="22" temperature="825" />
+        <Point value="22.1" temperature="850" />
+        <Point value="22.2" temperature="875" />
+        <Point value="22.2" temperature="900" />
+        <Point value="22.2" temperature="925" />
+        <Point value="22.2" temperature="950" />
+        <Point value="22.2" temperature="975" />
+        <Point value="22.3" temperature="1000" />
+        <Point value="22.5" temperature="1025" />
+        <Point value="22.8" temperature="1050" />
+        <Point value="23.3" temperature="1075" />
+        <Point value="23.8" temperature="1100" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3024-density-03" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1330" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N07208" name="Ni-Cr-Co-Mo-Ti precipitation hardened" sourceMaterial="Ni-Cr-Co-Mo-Ti precipitation hardened" sourcePdfPage="1330" requiresReview="true" applicability="Section I / Section VIII Division 1; prescribed solution annealing and aging; dynamic E is source-only." uns="N07208" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="8300" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3024-nu-04" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1330" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N07208" name="Ni-Cr-Co-Mo-Ti precipitation hardened" sourceMaterial="Ni-Cr-Co-Mo-Ti precipitation hardened" sourcePdfPage="1330" requiresReview="true" applicability="Section I / Section VIII Division 1; prescribed solution annealing and aging; dynamic E is source-only." uns="N07208" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="0.31" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-3024-dynamice-01" property="DynamicE" unit="MPa" temperatureUnit="degC" sourcePdfPage="1337" sourceTable="Table 9M" pointCount="23" notes="Dynamic modulus is not ordinary Young modulus.">
+      <Materials>
+        <Material id="N07208" name="Ni-Cr-Co-Mo-Ti precipitation hardened" sourceMaterial="Ni-Cr-Co-Mo-Ti precipitation hardened" sourcePdfPage="1337" requiresReview="true" applicability="Section I / Section VIII Division 1; prescribed solution annealing and aging; dynamic E is source-only." uns="N07208" maxTemperature="870" />
+      </Materials>
+      <Values>
+        <Value value="218000" temperature="25" />
+        <Value value="214000" temperature="100" />
+        <Value value="211000" temperature="150" />
+        <Value value="208000" temperature="200" />
+        <Value value="205000" temperature="250" />
+        <Value value="202000" temperature="300" />
+        <Value value="199000" temperature="350" />
+        <Value value="196000" temperature="400" />
+        <Value value="193000" temperature="450" />
+        <Value value="189000" temperature="500" />
+        <Value value="186000" temperature="550" />
+        <Value value="182000" temperature="600" />
+        <Value value="177000" temperature="650" />
+        <Value value="172000" temperature="700" />
+        <Value value="167000" temperature="750" />
+        <Value value="161000" temperature="800" />
+        <Value value="155000" temperature="850" />
+        <Value value="148000" temperature="900" />
+        <Value value="140000" temperature="950" />
+        <Value value="132000" temperature="1000" />
+        <Value value="123000" temperature="1050" />
+        <Value value="114000" temperature="1100" />
+        <Value value="102000" temperature="1150" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-3024-alpha-02" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1338" sourceTable="Table 10M" pointCount="44" notes="Numeric expansion reference not stated; retained without an invented reference.">
+      <Materials>
+        <Material id="N07208" name="Ni-Cr-Co-Mo-Ti precipitation hardened" sourceMaterial="Ni-Cr-Co-Mo-Ti precipitation hardened" sourcePdfPage="1338" requiresReview="true" applicability="Section I / Section VIII Division 1; prescribed solution annealing and aging; dynamic E is source-only." uns="N07208" maxTemperature="870" />
+      </Materials>
+      <Values>
+        <Value value="1.16e-05" temperature="20" />
+        <Value value="1.19e-05" temperature="50" />
+        <Value value="1.21e-05" temperature="75" />
+        <Value value="1.23e-05" temperature="100" />
+        <Value value="1.24e-05" temperature="125" />
+        <Value value="1.25e-05" temperature="150" />
+        <Value value="1.26e-05" temperature="175" />
+        <Value value="1.26e-05" temperature="200" />
+        <Value value="1.27e-05" temperature="225" />
+        <Value value="1.28e-05" temperature="250" />
+        <Value value="1.28e-05" temperature="275" />
+        <Value value="1.29e-05" temperature="300" />
+        <Value value="1.3e-05" temperature="325" />
+        <Value value="1.3e-05" temperature="350" />
+        <Value value="1.31e-05" temperature="375" />
+        <Value value="1.32e-05" temperature="400" />
+        <Value value="1.33e-05" temperature="425" />
+        <Value value="1.33e-05" temperature="450" />
+        <Value value="1.34e-05" temperature="475" />
+        <Value value="1.35e-05" temperature="500" />
+        <Value value="1.36e-05" temperature="525" />
+        <Value value="1.36e-05" temperature="550" />
+        <Value value="1.37e-05" temperature="575" />
+        <Value value="1.38e-05" temperature="600" />
+        <Value value="1.39e-05" temperature="625" />
+        <Value value="1.4e-05" temperature="650" />
+        <Value value="1.41e-05" temperature="675" />
+        <Value value="1.43e-05" temperature="700" />
+        <Value value="1.44e-05" temperature="725" />
+        <Value value="1.46e-05" temperature="750" />
+        <Value value="1.48e-05" temperature="775" />
+        <Value value="1.5e-05" temperature="800" />
+        <Value value="1.52e-05" temperature="825" />
+        <Value value="1.54e-05" temperature="850" />
+        <Value value="1.57e-05" temperature="875" />
+        <Value value="1.6e-05" temperature="900" />
+        <Value value="1.62e-05" temperature="925" />
+        <Value value="1.65e-05" temperature="950" />
+        <Value value="1.68e-05" temperature="975" />
+        <Value value="1.7e-05" temperature="1000" />
+        <Value value="1.72e-05" temperature="1025" />
+        <Value value="1.73e-05" temperature="1050" />
+        <Value value="1.73e-05" temperature="1075" />
+        <Value value="1.73e-05" temperature="1100" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="E" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="Alpha" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

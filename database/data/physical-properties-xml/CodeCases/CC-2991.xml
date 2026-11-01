@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2991 - Ni-Fe-Cr-Mo-Cu low carbon" sourceTable="Code Case 2991" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1268" sourcePageEnd="1271" status="normalized-code-case-review-required" codeCase="2991" curveCount="5" sourceOnlyCurveCount="4" materialCount="5" pointCount="29">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2991; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2991-a-01" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1271" sourceTable="Table 4M" pointCount="9">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1271" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="3.04e-06" temperature="50" />
+        <Point value="3.23e-06" temperature="100" />
+        <Point value="3.4e-06" temperature="150" />
+        <Point value="3.57e-06" temperature="200" />
+        <Point value="3.73e-06" temperature="250" />
+        <Point value="3.89e-06" temperature="300" />
+        <Point value="4.05e-06" temperature="350" />
+        <Point value="4.21e-06" temperature="400" />
+        <Point value="4.36e-06" temperature="450" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2991-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1271" sourceTable="Table 4M" pointCount="9">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1271" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="10.8" temperature="50" />
+        <Point value="11.6" temperature="100" />
+        <Point value="12.5" temperature="150" />
+        <Point value="13.4" temperature="200" />
+        <Point value="14.1" temperature="250" />
+        <Point value="14.9" temperature="300" />
+        <Point value="15.6" temperature="350" />
+        <Point value="16.3" temperature="400" />
+        <Point value="17" temperature="450" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2991-alpha-03" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1271" sourceTable="Table 4M" pointCount="9" referenceTemperature="20">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1271" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="1.47e-05" temperature="50" />
+        <Point value="1.48e-05" temperature="100" />
+        <Point value="1.51e-05" temperature="150" />
+        <Point value="1.54e-05" temperature="200" />
+        <Point value="1.57e-05" temperature="250" />
+        <Point value="1.6e-05" temperature="300" />
+        <Point value="1.62e-05" temperature="350" />
+        <Point value="1.63e-05" temperature="400" />
+        <Point value="1.63e-05" temperature="450" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2991-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1268" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1268" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="8076" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2991-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1268" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1268" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="0.31" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2991-a-01" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1271" sourceTable="Table 4M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1271" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Values>
+        <Value value="2.94e-06" temperatureLabel="Room" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2991-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1271" sourceTable="Table 4M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1271" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Values>
+        <Value value="10.3" temperatureLabel="Room" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2991-dynamice-03" property="DynamicE" unit="MPa" temperatureUnit="degC" sourcePdfPage="1271" sourceTable="Table 4M" pointCount="9" notes="Dynamic modulus is not ordinary Young modulus.">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1271" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Values>
+        <Value value="198000" temperature="50" />
+        <Value value="195000" temperature="100" />
+        <Value value="192000" temperature="150" />
+        <Value value="189000" temperature="200" />
+        <Value value="185000" temperature="250" />
+        <Value value="181000" temperature="300" />
+        <Value value="178000" temperature="350" />
+        <Value value="174000" temperature="400" />
+        <Value value="171000" temperature="450" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2991-dynamice-04" property="DynamicE" unit="MPa" temperatureUnit="degC" sourcePdfPage="1271" sourceTable="Table 4M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N08034" name="Ni-Fe-Cr-Mo-Cu low carbon" sourceMaterial="Ni-Fe-Cr-Mo-Cu low carbon" sourcePdfPage="1271" requiresReview="true" applicability="Section VIII Divisions 1/2, specified Class 1 solution-annealed products; dynamic E is source-only." uns="N08034" maxTemperature="450" />
+      </Materials>
+      <Values>
+        <Value value="199000" temperatureLabel="Room" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="E" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

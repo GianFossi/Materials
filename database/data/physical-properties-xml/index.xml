@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Index physical-property XML datasets and their source pages. -->
 <PhysicalPropertyTables sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC SEC II-D (METRIC).pdf" sourcePageStart="1205" sourcePageEnd="1245" status="review-before-database-import" count="14">
+  <AdditionalIndex name="ASME 2025 Code Case physical properties" file="CodeCases/index.xml" status="review-before-database-import" />
   <Table name="TE-1" sourceTable="TE-1" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1205" sourcePageEnd="1211" file="ThermalExpansion/TE-1.xml"/>
   <Table name="TE-2" sourceTable="TE-2" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1211" sourcePageEnd="1211" file="ThermalExpansion/TE-2.xml"/>
   <Table name="TE-3" sourceTable="TE-3" targetTable="ThermalExpansionTable" targetQuantity="ThermalExpansionFactor" sourcePageStart="1212" sourcePageEnd="1212" file="ThermalExpansion/TE-3.xml"/>

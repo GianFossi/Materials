@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2890-4 - Fe-10.5Cr-0.5Mo-V-Nb" sourceTable="Code Case 2890-4" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1006" sourcePageEnd="1011" status="normalized-code-case-review-required" codeCase="2890-4" curveCount="7" sourceOnlyCurveCount="1" materialCount="7" pointCount="91">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2890-4; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2890-4-alphainstantaneous-01" property="AlphaInstantaneous" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1010" sourceTable="Table 7M" pointCount="15" referenceTemperature="20">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1010" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="1.04e-05" temperature="20" />
+        <Point value="1.05e-05" temperature="50" />
+        <Point value="1.09e-05" temperature="100" />
+        <Point value="1.13e-05" temperature="150" />
+        <Point value="1.17e-05" temperature="200" />
+        <Point value="1.22e-05" temperature="250" />
+        <Point value="1.24e-05" temperature="300" />
+        <Point value="1.27e-05" temperature="350" />
+        <Point value="1.3e-05" temperature="400" />
+        <Point value="1.31e-05" temperature="450" />
+        <Point value="1.32e-05" temperature="500" />
+        <Point value="1.34e-05" temperature="550" />
+        <Point value="1.33e-05" temperature="600" />
+        <Point value="1.31e-05" temperature="650" />
+        <Point value="1.27e-05" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2890-4-alpha-02" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1010" sourceTable="Table 7M" pointCount="15" referenceTemperature="20">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1010" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="1.04e-05" temperature="20" />
+        <Point value="1.04e-05" temperature="50" />
+        <Point value="1.06e-05" temperature="100" />
+        <Point value="1.08e-05" temperature="150" />
+        <Point value="1.1e-05" temperature="200" />
+        <Point value="1.12e-05" temperature="250" />
+        <Point value="1.14e-05" temperature="300" />
+        <Point value="1.16e-05" temperature="350" />
+        <Point value="1.17e-05" temperature="400" />
+        <Point value="1.19e-05" temperature="450" />
+        <Point value="1.2e-05" temperature="500" />
+        <Point value="1.21e-05" temperature="550" />
+        <Point value="1.23e-05" temperature="600" />
+        <Point value="1.23e-05" temperature="650" />
+        <Point value="1.24e-05" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2890-4-k-03" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1010" sourceTable="Table 8M" pointCount="15">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1010" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="23.1" temperature="20" />
+        <Point value="23.5" temperature="50" />
+        <Point value="24.1" temperature="100" />
+        <Point value="24.5" temperature="150" />
+        <Point value="24.9" temperature="200" />
+        <Point value="25.3" temperature="250" />
+        <Point value="25.5" temperature="300" />
+        <Point value="25.7" temperature="350" />
+        <Point value="25.9" temperature="400" />
+        <Point value="26" temperature="450" />
+        <Point value="26" temperature="500" />
+        <Point value="25.9" temperature="550" />
+        <Point value="25.8" temperature="600" />
+        <Point value="25.6" temperature="650" />
+        <Point value="25.4" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2890-4-a-04" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1010" sourceTable="Table 8M" pointCount="15">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1010" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="6.69e-06" temperature="20" />
+        <Point value="6.61e-06" temperature="50" />
+        <Point value="6.64e-06" temperature="100" />
+        <Point value="6.63e-06" temperature="150" />
+        <Point value="6.61e-06" temperature="200" />
+        <Point value="6.59e-06" temperature="250" />
+        <Point value="6.4e-06" temperature="300" />
+        <Point value="6.35e-06" temperature="350" />
+        <Point value="6.18e-06" temperature="400" />
+        <Point value="5.89e-06" temperature="450" />
+        <Point value="5.61e-06" temperature="500" />
+        <Point value="5.18e-06" temperature="550" />
+        <Point value="4.81e-06" temperature="600" />
+        <Point value="4.35e-06" temperature="650" />
+        <Point value="3.74e-06" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2890-4-e-05" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="1011" sourceTable="Table 9M" pointCount="15">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1011" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="216000" temperature="20" />
+        <Point value="214000" temperature="50" />
+        <Point value="211000" temperature="100" />
+        <Point value="208000" temperature="150" />
+        <Point value="204000" temperature="200" />
+        <Point value="200000" temperature="250" />
+        <Point value="196000" temperature="300" />
+        <Point value="191000" temperature="350" />
+        <Point value="187000" temperature="400" />
+        <Point value="181000" temperature="450" />
+        <Point value="175000" temperature="500" />
+        <Point value="168000" temperature="550" />
+        <Point value="161000" temperature="600" />
+        <Point value="152000" temperature="650" />
+        <Point value="136000" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2890-4-nu-06" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1011" sourceTable="Table 9M" pointCount="15">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1011" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="0.284" temperature="20" />
+        <Point value="0.285" temperature="50" />
+        <Point value="0.288" temperature="100" />
+        <Point value="0.29" temperature="150" />
+        <Point value="0.293" temperature="200" />
+        <Point value="0.295" temperature="250" />
+        <Point value="0.298" temperature="300" />
+        <Point value="0.3" temperature="350" />
+        <Point value="0.303" temperature="400" />
+        <Point value="0.305" temperature="450" />
+        <Point value="0.308" temperature="500" />
+        <Point value="0.31" temperature="550" />
+        <Point value="0.313" temperature="600" />
+        <Point value="0.315" temperature="650" />
+        <Point value="0.318" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2890-4-density-07" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1006" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1006" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Points>
+        <Point value="7750" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2890-4-linearexpansion-01" property="LinearExpansion" unit="mm/m" temperatureUnit="degC" sourcePdfPage="1010" sourceTable="Table 7M" pointCount="15" referenceTemperature="20">
+      <Materials>
+        <Material id="K91060" name="Fe-10.5Cr-0.5Mo-V-Nb" sourceMaterial="Fe-10.5Cr-0.5Mo-V-Nb" sourcePdfPage="1010" requiresReview="true" applicability="Section I; specified CSEF products and heat treatment; maximum use temperature 650 degC." uns="K91060" nominalChemicalComposition="Fe-10.5Cr-0.5Mo-V-Nb" maxTemperature="650" />
+      </Materials>
+      <Values>
+        <Value value="0" temperature="20" />
+        <Value value="0.3" temperature="50" />
+        <Value value="0.8" temperature="100" />
+        <Value value="1.4" temperature="150" />
+        <Value value="2" temperature="200" />
+        <Value value="2.6" temperature="250" />
+        <Value value="3.2" temperature="300" />
+        <Value value="3.8" temperature="350" />
+        <Value value="4.5" temperature="400" />
+        <Value value="5.1" temperature="450" />
+        <Value value="5.8" temperature="500" />
+        <Value value="6.4" temperature="550" />
+        <Value value="7.1" temperature="600" />
+        <Value value="7.8" temperature="650" />
+        <Value value="8.4" temperature="700" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties />
+</PhysicalPropertyTableImport>

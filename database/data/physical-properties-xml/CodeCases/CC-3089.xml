@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 3089 - 35Ni-30Fe-27Cr-6.5Mo-N" sourceTable="Code Case 3089" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1544" sourcePageEnd="1547" status="normalized-code-case-review-required" codeCase="3089" curveCount="6" sourceOnlyCurveCount="0" materialCount="6" pointCount="60">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 3089; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I; specified annealed nickel alloy products; maximum design temperature 550 degC, unlike Case 2982-2 (450 degC).</SourceNotes>
+  <Curves>
+    <Curve id="cc-3089-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1546" sourceTable="Table 5M" pointCount="11" referenceTemperature="30">
+      <Materials>
+        <Material id="N08935" name="35Ni-30Fe-27Cr-6.5Mo-N" sourceMaterial="35Ni-30Fe-27Cr-6.5Mo-N" sourcePdfPage="1546" requiresReview="true" applicability="Section I; specified annealed nickel alloy products; maximum design temperature 550 degC, unlike Case 2982-2 (450 degC)." uns="N08935" nominalChemicalComposition="35Ni-30Fe-27Cr-6.5Mo-N" maxTemperature="550" />
+      </Materials>
+      <Points>
+        <Point value="1.31e-05" temperature="50" />
+        <Point value="1.41e-05" temperature="100" />
+        <Point value="1.44e-05" temperature="150" />
+        <Point value="1.47e-05" temperature="200" />
+        <Point value="1.49e-05" temperature="250" />
+        <Point value="1.51e-05" temperature="300" />
+        <Point value="1.52e-05" temperature="350" />
+        <Point value="1.54e-05" temperature="400" />
+        <Point value="1.56e-05" temperature="450" />
+        <Point value="1.57e-05" temperature="500" />
+        <Point value="1.58e-05" temperature="550" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3089-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1546" sourceTable="Table 6M" pointCount="12">
+      <Materials>
+        <Material id="N08935" name="35Ni-30Fe-27Cr-6.5Mo-N" sourceMaterial="35Ni-30Fe-27Cr-6.5Mo-N" sourcePdfPage="1546" requiresReview="true" applicability="Section I; specified annealed nickel alloy products; maximum design temperature 550 degC, unlike Case 2982-2 (450 degC)." uns="N08935" nominalChemicalComposition="35Ni-30Fe-27Cr-6.5Mo-N" maxTemperature="550" />
+      </Materials>
+      <Points>
+        <Point value="10.1" temperature="23" />
+        <Point value="10.7" temperature="50" />
+        <Point value="11.8" temperature="100" />
+        <Point value="12.8" temperature="150" />
+        <Point value="13.7" temperature="200" />
+        <Point value="14.5" temperature="250" />
+        <Point value="15.4" temperature="300" />
+        <Point value="16.3" temperature="350" />
+        <Point value="17.2" temperature="400" />
+        <Point value="18.1" temperature="450" />
+        <Point value="18.7" temperature="500" />
+        <Point value="19.3" temperature="550" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3089-a-03" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1546" sourceTable="Table 6M" pointCount="12">
+      <Materials>
+        <Material id="N08935" name="35Ni-30Fe-27Cr-6.5Mo-N" sourceMaterial="35Ni-30Fe-27Cr-6.5Mo-N" sourcePdfPage="1546" requiresReview="true" applicability="Section I; specified annealed nickel alloy products; maximum design temperature 550 degC, unlike Case 2982-2 (450 degC)." uns="N08935" nominalChemicalComposition="35Ni-30Fe-27Cr-6.5Mo-N" maxTemperature="550" />
+      </Materials>
+      <Points>
+        <Point value="2.83e-06" temperature="23" />
+        <Point value="2.92e-06" temperature="50" />
+        <Point value="3.09e-06" temperature="100" />
+        <Point value="3.26e-06" temperature="150" />
+        <Point value="3.42e-06" temperature="200" />
+        <Point value="3.57e-06" temperature="250" />
+        <Point value="3.73e-06" temperature="300" />
+        <Point value="3.88e-06" temperature="350" />
+        <Point value="4.04e-06" temperature="400" />
+        <Point value="4.18e-06" temperature="450" />
+        <Point value="4.31e-06" temperature="500" />
+        <Point value="4.44e-06" temperature="550" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3089-e-04" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="1547" sourceTable="Table 7M" pointCount="12">
+      <Materials>
+        <Material id="N08935" name="35Ni-30Fe-27Cr-6.5Mo-N" sourceMaterial="35Ni-30Fe-27Cr-6.5Mo-N" sourcePdfPage="1547" requiresReview="true" applicability="Section I; specified annealed nickel alloy products; maximum design temperature 550 degC, unlike Case 2982-2 (450 degC)." uns="N08935" nominalChemicalComposition="35Ni-30Fe-27Cr-6.5Mo-N" maxTemperature="550" />
+      </Materials>
+      <Points>
+        <Point value="192000" temperature="20" />
+        <Point value="190000" temperature="50" />
+        <Point value="187000" temperature="100" />
+        <Point value="184000" temperature="150" />
+        <Point value="180000" temperature="200" />
+        <Point value="177000" temperature="250" />
+        <Point value="174000" temperature="300" />
+        <Point value="171000" temperature="350" />
+        <Point value="168000" temperature="400" />
+        <Point value="164000" temperature="450" />
+        <Point value="161000" temperature="500" />
+        <Point value="158000" temperature="550" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3089-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1547" sourceTable="Table 7M" pointCount="12">
+      <Materials>
+        <Material id="N08935" name="35Ni-30Fe-27Cr-6.5Mo-N" sourceMaterial="35Ni-30Fe-27Cr-6.5Mo-N" sourcePdfPage="1547" requiresReview="true" applicability="Section I; specified annealed nickel alloy products; maximum design temperature 550 degC, unlike Case 2982-2 (450 degC)." uns="N08935" nominalChemicalComposition="35Ni-30Fe-27Cr-6.5Mo-N" maxTemperature="550" />
+      </Materials>
+      <Points>
+        <Point value="0.291" temperature="20" />
+        <Point value="0.292" temperature="50" />
+        <Point value="0.294" temperature="100" />
+        <Point value="0.296" temperature="150" />
+        <Point value="0.298" temperature="200" />
+        <Point value="0.3" temperature="250" />
+        <Point value="0.302" temperature="300" />
+        <Point value="0.304" temperature="350" />
+        <Point value="0.306" temperature="400" />
+        <Point value="0.308" temperature="450" />
+        <Point value="0.31" temperature="500" />
+        <Point value="0.312" temperature="550" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3089-density-06" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1544" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Source 8.05 g/cm3 converted exactly to kg/m3.">
+      <Materials>
+        <Material id="N08935" name="35Ni-30Fe-27Cr-6.5Mo-N" sourceMaterial="35Ni-30Fe-27Cr-6.5Mo-N" sourcePdfPage="1544" requiresReview="true" applicability="Section I; specified annealed nickel alloy products; maximum design temperature 550 degC, unlike Case 2982-2 (450 degC)." uns="N08935" nominalChemicalComposition="35Ni-30Fe-27Cr-6.5Mo-N" maxTemperature="550" />
+      </Materials>
+      <Points>
+        <Point value="8050" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

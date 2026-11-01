@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2859 - Annealed copper O25" sourceTable="Code Case 2859" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="946" sourcePageEnd="946" status="normalized-code-case-review-required" codeCase="2859" curveCount="5" sourceOnlyCurveCount="0" materialCount="5" pointCount="35">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2859; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 1; SB-152 C10100 O25 temper; explicit use of C10200 TE-3, TM-3 and PRD values. No TCD mapping is stated.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2859-alphainstantaneous-01" property="AlphaInstantaneous" unit="1/degC" temperatureUnit="degC" sourcePdfPage="946" sourceTable="Table explicit II-D mapping" pointCount="13" referenceTemperature="20" notes="Code Case explicitly directs use of TE-3 curve te-3-01-A. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-3.xml" mappedSourceCurve="te-3-01-A" mappedSourceSha256="2ae1db0b72788abe4c9cebf9efa5a9bc974197f2b6dab41129509a708f62bb4c" mappedSourcePdfPages="1212-1212">
+      <Materials>
+        <Material id="C10100" name="Annealed copper O25" sourceMaterial="Annealed copper O25" sourcePdfPage="946" requiresReview="true" applicability="Section VIII Division 1; SB-152 C10100 O25 temper; explicit use of C10200 TE-3, TM-3 and PRD values. No TCD mapping is stated." uns="C10100" />
+      </Materials>
+      <Points>
+        <Point value="1.67e-05" temperature="20" />
+        <Point value="1.72e-05" temperature="50" />
+        <Point value="1.74e-05" temperature="75" />
+        <Point value="1.76e-05" temperature="100" />
+        <Point value="1.78e-05" temperature="125" />
+        <Point value="1.8e-05" temperature="150" />
+        <Point value="1.82e-05" temperature="175" />
+        <Point value="1.84e-05" temperature="200" />
+        <Point value="1.85e-05" temperature="225" />
+        <Point value="1.86e-05" temperature="250" />
+        <Point value="1.86e-05" temperature="275" />
+        <Point value="1.86e-05" temperature="300" />
+        <Point value="1.89e-05" temperature="325" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2859-alpha-02" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="946" sourceTable="Table explicit II-D mapping" pointCount="13" referenceTemperature="20" notes="Code Case explicitly directs use of TE-3 curve te-3-01-B. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-3.xml" mappedSourceCurve="te-3-01-B" mappedSourceSha256="2ae1db0b72788abe4c9cebf9efa5a9bc974197f2b6dab41129509a708f62bb4c" mappedSourcePdfPages="1212-1212">
+      <Materials>
+        <Material id="C10100" name="Annealed copper O25" sourceMaterial="Annealed copper O25" sourcePdfPage="946" requiresReview="true" applicability="Section VIII Division 1; SB-152 C10100 O25 temper; explicit use of C10200 TE-3, TM-3 and PRD values. No TCD mapping is stated." uns="C10100" />
+      </Materials>
+      <Points>
+        <Point value="1.67e-05" temperature="20" />
+        <Point value="1.7e-05" temperature="50" />
+        <Point value="1.72e-05" temperature="75" />
+        <Point value="1.73e-05" temperature="100" />
+        <Point value="1.74e-05" temperature="125" />
+        <Point value="1.75e-05" temperature="150" />
+        <Point value="1.76e-05" temperature="175" />
+        <Point value="1.77e-05" temperature="200" />
+        <Point value="1.78e-05" temperature="225" />
+        <Point value="1.78e-05" temperature="250" />
+        <Point value="1.79e-05" temperature="275" />
+        <Point value="1.8e-05" temperature="300" />
+        <Point value="1.8e-05" temperature="325" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2859-e-03" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="946" sourceTable="Table explicit II-D mapping" pointCount="7" notes="Code Case explicitly directs use of TM-3 curve tm-3-05. II-D source notes: " mappedSourceFile="ElasticModulus/TM-3.xml" mappedSourceCurve="tm-3-05" mappedSourceSha256="8a7b2fdc1d987008b47cd8e782deac7230664f61d72f1d15d106a2ea8d5a892c" mappedSourcePdfPages="1242-1242">
+      <Materials>
+        <Material id="C10100" name="Annealed copper O25" sourceMaterial="Annealed copper O25" sourcePdfPage="946" requiresReview="true" applicability="Section VIII Division 1; SB-152 C10100 O25 temper; explicit use of C10200 TE-3, TM-3 and PRD values. No TCD mapping is stated." uns="C10100" />
+      </Materials>
+      <Points>
+        <Point value="124000" temperature="-200" />
+        <Point value="122000" temperature="-125" />
+        <Point value="121000" temperature="-75" />
+        <Point value="117000" temperature="25" />
+        <Point value="114000" temperature="100" />
+        <Point value="112000" temperature="150" />
+        <Point value="110000" temperature="200" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2859-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="946" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Explicit Code Case mapping to PRD C10200; II-D PDF page 1245; source file SHA256 c9cf0ce3ccd42a1eff2673b607b6d50ba050955674a20f28f47f571701492952." mappedSourceFile="Density/PRD-Density.xml" mappedSourceMaterial="C10200">
+      <Materials>
+        <Material id="C10100" name="Annealed copper O25" sourceMaterial="Annealed copper O25" sourcePdfPage="946" requiresReview="true" applicability="Section VIII Division 1; SB-152 C10100 O25 temper; explicit use of C10200 TE-3, TM-3 and PRD values. No TCD mapping is stated." uns="C10100" />
+      </Materials>
+      <Points>
+        <Point value="8940" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2859-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="946" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Explicit Code Case mapping to PRD C10200; II-D PDF page 1245; source file SHA256 c9cf0ce3ccd42a1eff2673b607b6d50ba050955674a20f28f47f571701492952." mappedSourceFile="Density/PRD-Density.xml" mappedSourceMaterial="C10200">
+      <Materials>
+        <Material id="C10100" name="Annealed copper O25" sourceMaterial="Annealed copper O25" sourcePdfPage="946" requiresReview="true" applicability="Section VIII Division 1; SB-152 C10100 O25 temper; explicit use of C10200 TE-3, TM-3 and PRD values. No TCD mapping is stated." uns="C10100" />
+      </Materials>
+      <Points>
+        <Point value="0.33" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="k" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

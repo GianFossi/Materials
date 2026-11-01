@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2839-3 - 9Cr-3W-3Co-Nd-B" sourceTable="Code Case 2839-3" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="896" sourcePageEnd="900" status="normalized-code-case-review-required" codeCase="2839-3" curveCount="5" sourceOnlyCurveCount="0" materialCount="5" pointCount="25">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2839-3; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I; CSEF material with prescribed normalization and tempering; external pressure design prohibited.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2839-3-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="900" sourceTable="Table 6M" pointCount="8">
+      <Materials>
+        <Material id="9cr-3w-3co-nd-b" name="9Cr-3W-3Co-Nd-B" sourceMaterial="9Cr-3W-3Co-Nd-B" sourcePdfPage="900" requiresReview="true" applicability="Section I; CSEF material with prescribed normalization and tempering; external pressure design prohibited." nominalChemicalComposition="9Cr-3W-3Co-Nd-B" />
+      </Materials>
+      <Points>
+        <Point value="218000" temperature="20" />
+        <Point value="215000" temperature="100" />
+        <Point value="210000" temperature="200" />
+        <Point value="203000" temperature="300" />
+        <Point value="194000" temperature="400" />
+        <Point value="182000" temperature="500" />
+        <Point value="167000" temperature="600" />
+        <Point value="143000" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2839-3-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="900" sourceTable="Table 6M" pointCount="8">
+      <Materials>
+        <Material id="9cr-3w-3co-nd-b" name="9Cr-3W-3Co-Nd-B" sourceMaterial="9Cr-3W-3Co-Nd-B" sourcePdfPage="900" requiresReview="true" applicability="Section I; CSEF material with prescribed normalization and tempering; external pressure design prohibited." nominalChemicalComposition="9Cr-3W-3Co-Nd-B" />
+      </Materials>
+      <Points>
+        <Point value="22.5" temperature="20" />
+        <Point value="23.3" temperature="100" />
+        <Point value="24.7" temperature="200" />
+        <Point value="25.5" temperature="300" />
+        <Point value="25.8" temperature="400" />
+        <Point value="26.2" temperature="500" />
+        <Point value="26.1" temperature="600" />
+        <Point value="26.6" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2839-3-alpha-03" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="900" sourceTable="Table 6M" pointCount="7" referenceTemperature="20">
+      <Materials>
+        <Material id="9cr-3w-3co-nd-b" name="9Cr-3W-3Co-Nd-B" sourceMaterial="9Cr-3W-3Co-Nd-B" sourcePdfPage="900" requiresReview="true" applicability="Section I; CSEF material with prescribed normalization and tempering; external pressure design prohibited." nominalChemicalComposition="9Cr-3W-3Co-Nd-B" />
+      </Materials>
+      <Points>
+        <Point value="1.04e-05" temperature="100" />
+        <Point value="1.06e-05" temperature="200" />
+        <Point value="1.1e-05" temperature="300" />
+        <Point value="1.14e-05" temperature="400" />
+        <Point value="1.17e-05" temperature="500" />
+        <Point value="1.21e-05" temperature="600" />
+        <Point value="1.24e-05" temperature="700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2839-3-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="897" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="9cr-3w-3co-nd-b" name="9Cr-3W-3Co-Nd-B" sourceMaterial="9Cr-3W-3Co-Nd-B" sourcePdfPage="897" requiresReview="true" applicability="Section I; CSEF material with prescribed normalization and tempering; external pressure design prohibited." nominalChemicalComposition="9Cr-3W-3Co-Nd-B" />
+      </Materials>
+      <Points>
+        <Point value="7900" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2839-3-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="897" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="9cr-3w-3co-nd-b" name="9Cr-3W-3Co-Nd-B" sourceMaterial="9Cr-3W-3Co-Nd-B" sourcePdfPage="897" requiresReview="true" applicability="Section I; CSEF material with prescribed normalization and tempering; external pressure design prohibited." nominalChemicalComposition="9Cr-3W-3Co-Nd-B" />
+      </Materials>
+      <Points>
+        <Point value="0.29" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 3058 - Ni-Cr-Mo-Cu" sourceTable="Code Case 3058" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1424" sourcePageEnd="1434" status="normalized-code-case-review-required" codeCase="3058" curveCount="4" sourceOnlyCurveCount="4" materialCount="4" pointCount="90">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 3058; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only.</SourceNotes>
+  <Curves>
+    <Curve id="cc-3058-a-01" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1429" sourceTable="Table 4M" pointCount="44">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1429" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="2.78e-06" temperature="20" />
+        <Point value="2.89e-06" temperature="50" />
+        <Point value="2.96e-06" temperature="75" />
+        <Point value="3.02e-06" temperature="100" />
+        <Point value="3.08e-06" temperature="125" />
+        <Point value="3.14e-06" temperature="150" />
+        <Point value="3.2e-06" temperature="175" />
+        <Point value="3.26e-06" temperature="200" />
+        <Point value="3.32e-06" temperature="225" />
+        <Point value="3.38e-06" temperature="250" />
+        <Point value="3.45e-06" temperature="275" />
+        <Point value="3.52e-06" temperature="300" />
+        <Point value="3.59e-06" temperature="325" />
+        <Point value="3.67e-06" temperature="350" />
+        <Point value="3.74e-06" temperature="375" />
+        <Point value="3.82e-06" temperature="400" />
+        <Point value="3.9e-06" temperature="425" />
+        <Point value="3.97e-06" temperature="450" />
+        <Point value="4.05e-06" temperature="475" />
+        <Point value="4.12e-06" temperature="500" />
+        <Point value="4.19e-06" temperature="525" />
+        <Point value="4.26e-06" temperature="550" />
+        <Point value="4.32e-06" temperature="575" />
+        <Point value="4.38e-06" temperature="600" />
+        <Point value="4.43e-06" temperature="625" />
+        <Point value="4.48e-06" temperature="650" />
+        <Point value="4.52e-06" temperature="675" />
+        <Point value="4.56e-06" temperature="700" />
+        <Point value="4.6e-06" temperature="725" />
+        <Point value="4.63e-06" temperature="750" />
+        <Point value="4.66e-06" temperature="775" />
+        <Point value="4.69e-06" temperature="800" />
+        <Point value="4.72e-06" temperature="825" />
+        <Point value="4.74e-06" temperature="850" />
+        <Point value="4.77e-06" temperature="875" />
+        <Point value="4.8e-06" temperature="900" />
+        <Point value="4.83e-06" temperature="925" />
+        <Point value="4.86e-06" temperature="950" />
+        <Point value="4.9e-06" temperature="975" />
+        <Point value="4.94e-06" temperature="1000" />
+        <Point value="4.99e-06" temperature="1025" />
+        <Point value="5.04e-06" temperature="1050" />
+        <Point value="5.09e-06" temperature="1075" />
+        <Point value="5.15e-06" temperature="1100" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3058-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1430" sourceTable="Table 5M" pointCount="44">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1430" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="10" temperature="20" />
+        <Point value="10.5" temperature="50" />
+        <Point value="10.9" temperature="75" />
+        <Point value="11.3" temperature="100" />
+        <Point value="11.6" temperature="125" />
+        <Point value="12" temperature="150" />
+        <Point value="12.4" temperature="175" />
+        <Point value="12.7" temperature="200" />
+        <Point value="13.1" temperature="225" />
+        <Point value="13.5" temperature="250" />
+        <Point value="13.9" temperature="275" />
+        <Point value="14.3" temperature="300" />
+        <Point value="14.7" temperature="325" />
+        <Point value="15.1" temperature="350" />
+        <Point value="15.5" temperature="375" />
+        <Point value="15.9" temperature="400" />
+        <Point value="16.4" temperature="425" />
+        <Point value="16.8" temperature="450" />
+        <Point value="17.2" temperature="475" />
+        <Point value="17.6" temperature="500" />
+        <Point value="18" temperature="525" />
+        <Point value="18.4" temperature="550" />
+        <Point value="18.8" temperature="575" />
+        <Point value="19.2" temperature="600" />
+        <Point value="19.5" temperature="625" />
+        <Point value="19.9" temperature="650" />
+        <Point value="20.2" temperature="675" />
+        <Point value="20.5" temperature="700" />
+        <Point value="20.8" temperature="725" />
+        <Point value="21.1" temperature="750" />
+        <Point value="21.3" temperature="775" />
+        <Point value="21.6" temperature="800" />
+        <Point value="21.9" temperature="825" />
+        <Point value="22.1" temperature="850" />
+        <Point value="22.4" temperature="875" />
+        <Point value="22.7" temperature="900" />
+        <Point value="22.9" temperature="925" />
+        <Point value="23.2" temperature="950" />
+        <Point value="23.5" temperature="975" />
+        <Point value="23.8" temperature="1000" />
+        <Point value="24.1" temperature="1025" />
+        <Point value="24.4" temperature="1050" />
+        <Point value="24.8" temperature="1075" />
+        <Point value="25.1" temperature="1100" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3058-density-03" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1434" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1434" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="8160" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3058-nu-04" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1434" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1434" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Points>
+        <Point value="0.32" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-3058-alphainstantaneous-01" property="AlphaInstantaneous" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1432" sourceTable="Table 6M" pointCount="44" notes="Numeric expansion reference not stated; retained without an invented reference.">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1432" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Values>
+        <Value value="1.14e-05" temperature="20" />
+        <Value value="1.22e-05" temperature="50" />
+        <Value value="1.24e-05" temperature="75" />
+        <Value value="1.26e-05" temperature="100" />
+        <Value value="1.27e-05" temperature="125" />
+        <Value value="1.29e-05" temperature="150" />
+        <Value value="1.31e-05" temperature="175" />
+        <Value value="1.33e-05" temperature="200" />
+        <Value value="1.35e-05" temperature="225" />
+        <Value value="1.37e-05" temperature="250" />
+        <Value value="1.39e-05" temperature="275" />
+        <Value value="1.41e-05" temperature="300" />
+        <Value value="1.43e-05" temperature="325" />
+        <Value value="1.45e-05" temperature="350" />
+        <Value value="1.47e-05" temperature="375" />
+        <Value value="1.49e-05" temperature="400" />
+        <Value value="1.52e-05" temperature="425" />
+        <Value value="1.54e-05" temperature="450" />
+        <Value value="1.56e-05" temperature="475" />
+        <Value value="1.59e-05" temperature="500" />
+        <Value value="1.61e-05" temperature="525" />
+        <Value value="1.64e-05" temperature="550" />
+        <Value value="1.66e-05" temperature="575" />
+        <Value value="1.69e-05" temperature="600" />
+        <Value value="1.71e-05" temperature="625" />
+        <Value value="1.74e-05" temperature="650" />
+        <Value value="1.76e-05" temperature="675" />
+        <Value value="1.79e-05" temperature="700" />
+        <Value value="1.82e-05" temperature="725" />
+        <Value value="1.85e-05" temperature="750" />
+        <Value value="1.87e-05" temperature="775" />
+        <Value value="1.9e-05" temperature="800" />
+        <Value value="1.93e-05" temperature="825" />
+        <Value value="1.96e-05" temperature="850" />
+        <Value value="1.99e-05" temperature="875" />
+        <Value value="2.02e-05" temperature="900" />
+        <Value value="2.05e-05" temperature="925" />
+        <Value value="2.08e-05" temperature="950" />
+        <Value value="2.11e-05" temperature="975" />
+        <Value value="2.14e-05" temperature="1000" />
+        <Value value="2.17e-05" temperature="1025" />
+        <Value value="2.21e-05" temperature="1050" />
+        <Value value="2.24e-05" temperature="1075" />
+        <Value value="2.27e-05" temperature="1100" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-3058-alpha-02" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1432" sourceTable="Table 6M" pointCount="44" notes="Numeric expansion reference not stated; retained without an invented reference.">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1432" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Values>
+        <Value value="1.14e-05" temperature="20" />
+        <Value value="1.18e-05" temperature="50" />
+        <Value value="1.2e-05" temperature="75" />
+        <Value value="1.23e-05" temperature="100" />
+        <Value value="1.25e-05" temperature="125" />
+        <Value value="1.26e-05" temperature="150" />
+        <Value value="1.27e-05" temperature="175" />
+        <Value value="1.29e-05" temperature="200" />
+        <Value value="1.3e-05" temperature="225" />
+        <Value value="1.3e-05" temperature="250" />
+        <Value value="1.31e-05" temperature="275" />
+        <Value value="1.32e-05" temperature="300" />
+        <Value value="1.33e-05" temperature="325" />
+        <Value value="1.33e-05" temperature="350" />
+        <Value value="1.34e-05" temperature="375" />
+        <Value value="1.35e-05" temperature="400" />
+        <Value value="1.35e-05" temperature="425" />
+        <Value value="1.36e-05" temperature="450" />
+        <Value value="1.37e-05" temperature="475" />
+        <Value value="1.38e-05" temperature="500" />
+        <Value value="1.39e-05" temperature="525" />
+        <Value value="1.4e-05" temperature="550" />
+        <Value value="1.41e-05" temperature="575" />
+        <Value value="1.42e-05" temperature="600" />
+        <Value value="1.43e-05" temperature="625" />
+        <Value value="1.45e-05" temperature="650" />
+        <Value value="1.46e-05" temperature="675" />
+        <Value value="1.47e-05" temperature="700" />
+        <Value value="1.48e-05" temperature="725" />
+        <Value value="1.5e-05" temperature="750" />
+        <Value value="1.51e-05" temperature="775" />
+        <Value value="1.52e-05" temperature="800" />
+        <Value value="1.54e-05" temperature="825" />
+        <Value value="1.55e-05" temperature="850" />
+        <Value value="1.56e-05" temperature="875" />
+        <Value value="1.58e-05" temperature="900" />
+        <Value value="1.59e-05" temperature="925" />
+        <Value value="1.6e-05" temperature="950" />
+        <Value value="1.61e-05" temperature="975" />
+        <Value value="1.62e-05" temperature="1000" />
+        <Value value="1.64e-05" temperature="1025" />
+        <Value value="1.65e-05" temperature="1050" />
+        <Value value="1.66e-05" temperature="1075" />
+        <Value value="1.67e-05" temperature="1100" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-3058-linearexpansion-03" property="LinearExpansion" unit="mm/m" temperatureUnit="degC" sourcePdfPage="1432" sourceTable="Table 6M" pointCount="44">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1432" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Values>
+        <Value value="0" temperature="20" />
+        <Value value="0.35" temperature="50" />
+        <Value value="0.66" temperature="75" />
+        <Value value="1" temperature="100" />
+        <Value value="1.3" temperature="125" />
+        <Value value="1.6" temperature="150" />
+        <Value value="2" temperature="175" />
+        <Value value="2.3" temperature="200" />
+        <Value value="2.7" temperature="225" />
+        <Value value="3" temperature="250" />
+        <Value value="3.3" temperature="275" />
+        <Value value="3.7" temperature="300" />
+        <Value value="4" temperature="325" />
+        <Value value="4.4" temperature="350" />
+        <Value value="4.8" temperature="375" />
+        <Value value="5.1" temperature="400" />
+        <Value value="5.5" temperature="425" />
+        <Value value="5.9" temperature="450" />
+        <Value value="6.2" temperature="475" />
+        <Value value="6.6" temperature="500" />
+        <Value value="7" temperature="525" />
+        <Value value="7.4" temperature="550" />
+        <Value value="7.8" temperature="575" />
+        <Value value="8.2" temperature="600" />
+        <Value value="8.7" temperature="625" />
+        <Value value="9.1" temperature="650" />
+        <Value value="9.6" temperature="675" />
+        <Value value="10" temperature="700" />
+        <Value value="10.5" temperature="725" />
+        <Value value="10.9" temperature="750" />
+        <Value value="11.4" temperature="775" />
+        <Value value="11.9" temperature="800" />
+        <Value value="12.4" temperature="825" />
+        <Value value="12.9" temperature="850" />
+        <Value value="13.4" temperature="875" />
+        <Value value="13.9" temperature="900" />
+        <Value value="14.4" temperature="925" />
+        <Value value="14.9" temperature="950" />
+        <Value value="15.4" temperature="975" />
+        <Value value="15.9" temperature="1000" />
+        <Value value="16.4" temperature="1025" />
+        <Value value="17" temperature="1050" />
+        <Value value="17.5" temperature="1075" />
+        <Value value="18.1" temperature="1100" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-3058-dynamice-04" property="DynamicE" unit="MPa" temperatureUnit="degC" sourcePdfPage="1433" sourceTable="Table 7M" pointCount="22" notes="Dynamic modulus is not ordinary Young modulus.">
+      <Materials>
+        <Material id="N06235" name="Ni-Cr-Mo-Cu" sourceMaterial="Ni-Cr-Mo-Cu" sourcePdfPage="1433" requiresReview="true" applicability="Section VIII Division 1; prescribed solution annealing and permitted weld processes; dynamic E is source-only." uns="N06235" nominalChemicalComposition="Ni-Cr-Mo-Cu" maxTemperature="870" />
+      </Materials>
+      <Values>
+        <Value value="194000" temperature="25" />
+        <Value value="194000" temperature="100" />
+        <Value value="189000" temperature="150" />
+        <Value value="187000" temperature="200" />
+        <Value value="184000" temperature="250" />
+        <Value value="182000" temperature="300" />
+        <Value value="179000" temperature="350" />
+        <Value value="176000" temperature="400" />
+        <Value value="173000" temperature="450" />
+        <Value value="170000" temperature="500" />
+        <Value value="166000" temperature="550" />
+        <Value value="163000" temperature="600" />
+        <Value value="159000" temperature="650" />
+        <Value value="155000" temperature="700" />
+        <Value value="151000" temperature="750" />
+        <Value value="146000" temperature="800" />
+        <Value value="142000" temperature="850" />
+        <Value value="137000" temperature="900" />
+        <Value value="132000" temperature="950" />
+        <Value value="127000" temperature="1000" />
+        <Value value="121000" temperature="1050" />
+        <Value value="115000" temperature="1100" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="E" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="Alpha" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

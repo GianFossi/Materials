@@ -94,7 +94,7 @@ module XmlPropertyReader =
                 let record = structured baseRecord node
                 {record with RequiresReview=manual;
                              Diagnostic=(if manual then "PRD: famiglia senza UNS/composizione esatta; associazione manuale e verifica richieste." else "PRD: chiave UNS/composizione esplicita; verificare applicabilità e associazione.")}))
-    /// <summary>Expand shared physical curves (E in MPa, k in W/(m*K), expansion in 1/degC) into material records with declared limits.</summary>
+    /// <summary>Expand shared SI curves and constants (E MPa, k W/(m*K), a m2/s, expansion 1/degC, density kg/m3, Nu dimensionless) with declared limits.</summary>
     let private materialCurves (baseRecord: XmlPropertyRecord) (root: XElement) =
         let curves = root.Elements(XName.Get "Curves") |> Seq.collect (fun n -> n.Elements(XName.Get "Curve")) |> Seq.toList
         if curves.IsEmpty then raise (FormatException("XML material-curves-v1: nessuna curva presente."))
@@ -104,18 +104,29 @@ module XmlPropertyReader =
         curves |> List.collect (fun curve ->
             let id = value "id" curve
             let propertyCode = value "property" curve
-            let expectedUnit = if propertyCode="E" then "MPa" elif propertyCode="k" then "W/(m*K)" else "1/degC"
-            if not (["E"; "k"; "Alpha"; "AlphaInstantaneous"] |> List.contains propertyCode) || value "unit" curve<>expectedUnit || value "temperatureUnit" curve<>"degC" then
+            let expectedUnit =
+                match propertyCode with
+                | "E" -> "MPa" | "k" -> "W/(m*K)" | "a" -> "m2/s"
+                | "density" -> "kg/m3" | "Nu" -> "dimensionless"
+                | _ -> "1/degC"
+            if not (["E"; "k"; "a"; "Alpha"; "AlphaInstantaneous"; "density"; "Nu"] |> List.contains propertyCode) || value "unit" curve<>expectedUnit || value "temperatureUnit" curve<>"degC" then
                 raise (FormatException($"Curva {id}: proprietà/unità non supportate; temperatura richiesta in degC."))
+            let constantText = value "constant" curve
+            let constant = constantText="true"
+            if (constantText<>"" && constantText<>"true" && constantText<>"false") || (constant && propertyCode<>"density" && propertyCode<>"Nu") then
+                raise (FormatException($"Curva {id}: constant è consentito solo per densità e Poisson."))
             let expansion = propertyCode="Alpha" || propertyCode="AlphaInstantaneous"
             let referenceText = value "referenceTemperature" curve
             if expansion && (number referenceText |> Option.exists (fun t -> t>= -273.15) |> not) then
                 raise (FormatException($"Curva {id}: temperatura di riferimento mancante o non valida."))
             let points = curve.Elements(XName.Get "Points") |> Seq.collect (fun n -> n.Elements()) |> Seq.toArray
             if points.Length=0 then raise (FormatException($"Curva {id}: nessun punto presente."))
+            if constant && (points.Length<>1 || value "temperature" points[0]<>"") then
+                raise (FormatException($"Curva {id}: una costante richiede un unico valore senza temperatura."))
             let temperatures = points |> Array.map (fun point ->
-                match number (value "temperature" point), number (value "value" point) with
-                | Some t, Some e when point.Name.LocalName="Point" && t>= -273.15 && e>0. -> t
+                let temperature = if constant then Some 20. else number (value "temperature" point)
+                match temperature, number (value "value" point) with
+                | Some t, Some e when point.Name.LocalName="Point" && t>= -273.15 && e>0. && (propertyCode<>"Nu" || e<0.5) -> t
                 | _ -> raise (FormatException($"Curva {id}: temperatura o valore della proprietà non validi.")))
             if temperatures |> Array.pairwise |> Array.exists (fun (a,b) -> b<=a) then
                 raise (FormatException($"Curva {id}: temperature duplicate o non crescenti."))
@@ -127,22 +138,31 @@ module XmlPropertyReader =
                     raise (FormatException($"Curva {id}: ogni materiale richiede id e name."))
                 let sourceMaterial, sourcePage = value "sourceMaterial" material, value "sourcePdfPage" material
                 let applicability, grade = value "applicability" material, value "sourceGrade" material
-                let maximumText = value "maxTemperature" material
-                let maximum =
-                    if maximumText="" then None
+                let maximumText, minimumText = value "maxTemperature" material, value "minTemperature" material
+                let limit text =
+                    if text="" then None
                     else
-                        match number maximumText with
+                        match number text with
                         | Some t when t>= -273.15 -> Some t
                         | _ -> raise (FormatException($"Curva {id}, materiale {name}: limite di temperatura non valido."))
+                let maximum, minimum = limit maximumText, limit minimumText
+                let inverted = match minimum,maximum with Some a,Some b -> a>b | _ -> false
+                if inverted then
+                    raise (FormatException($"Curva {id}, materiale {name}: intervallo di temperatura invertito."))
                 let applicablePoints = points |> Array.filter (fun point ->
-                    maximum |> Option.forall (fun limit -> (number (value "temperature" point) |> Option.get)<=limit))
+                    if constant then true
+                    else
+                        let temperature = number (value "temperature" point) |> Option.get
+                        (maximum |> Option.forall (fun bound -> temperature<=bound)) &&
+                        (minimum |> Option.forall (fun bound -> temperature>=bound)))
                 if applicablePoints.Length=0 then raise (FormatException($"Curva {id}, materiale {name}: nessun punto entro il limite dichiarato."))
                 let notes = String.concat " " [baseRecord.Notes; value "SourceNotes" root; value "notes" curve; value "notes" material;
-                                               $"Source material: {sourceMaterial}; PDF page {sourcePage}; grade label: {grade}; applicability: {applicability}; maxTemperature (degC): {maximumText}; referenceTemperature (degC): {referenceText}."]
+                                               $"Source material: {sourceMaterial}; PDF page {sourcePage}; grade label: {grade}; applicability: {applicability}; minTemperature (degC): {minimumText}; maxTemperature (degC): {maximumText}; referenceTemperature (degC): {referenceText}."; if constant then "Constant: no source temperature; internal 20 degC is a reader convention, not a source datum." else ""]
                 let node = XElement(XName.Get "Record",
                     XAttribute(XName.Get "id", id+"/"+materialId),
                     XAttribute(XName.Get "property", propertyCode),
                     XAttribute(XName.Get "unit", expectedUnit),
+                    XAttribute(XName.Get "constant", if constant then "true" else "false"),
                     XAttribute(XName.Get "description", name),
                     XElement(XName.Get "notes", notes))
                 for field in ["uns"; "nominalChemicalComposition"; "specification"; "grade"; "condition"] do
@@ -150,7 +170,7 @@ module XmlPropertyReader =
                 for point in applicablePoints do node.Add(XElement(point))
                 let record = structured baseRecord node
                 let manual = String.IsNullOrWhiteSpace record.UNS && String.IsNullOrWhiteSpace record.Composition
-                let review = manual || value "requiresReview" material="true"
+                let review = manual || value "requiresReview" material="true" || value "codeCase" root<>""
                 {record with RequiresReview=review;
                              Diagnostic=(if manual then $"Curva {propertyCode}: famiglia senza UNS/composizione esatta; associazione manuale richiesta."
                                          elif review then $"Curva {propertyCode}: chiavi esplicite, ma verificare la condizione di applicabilità dichiarata."

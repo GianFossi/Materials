@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 3006 - Ni-44Cr-1Mo" sourceTable="Code Case 3006" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="1294" sourcePageEnd="1299" status="normalized-code-case-review-required" codeCase="3006" curveCount="6" sourceOnlyCurveCount="0" materialCount="6" pointCount="30">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 3006; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 1; specified solution-annealed nickel alloy products; maximum use temperature 427 degC.</SourceNotes>
+  <Curves>
+    <Curve id="cc-3006-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="1298" sourceTable="Table 6M" pointCount="5" referenceTemperature="20">
+      <Materials>
+        <Material id="N06044" name="Ni-44Cr-1Mo" sourceMaterial="Ni-44Cr-1Mo" sourcePdfPage="1298" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed nickel alloy products; maximum use temperature 427 degC." uns="N06044" nominalChemicalComposition="Ni-44Cr-1Mo" maxTemperature="427" />
+      </Materials>
+      <Points>
+        <Point value="1.29e-05" temperature="100" />
+        <Point value="1.33e-05" temperature="200" />
+        <Point value="1.37e-05" temperature="300" />
+        <Point value="1.41e-05" temperature="400" />
+        <Point value="1.44e-05" temperature="500" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3006-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="1299" sourceTable="Table 8M" pointCount="6">
+      <Materials>
+        <Material id="N06044" name="Ni-44Cr-1Mo" sourceMaterial="Ni-44Cr-1Mo" sourcePdfPage="1299" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed nickel alloy products; maximum use temperature 427 degC." uns="N06044" nominalChemicalComposition="Ni-44Cr-1Mo" maxTemperature="427" />
+      </Materials>
+      <Points>
+        <Point value="10.4" temperature="20" />
+        <Point value="12.1" temperature="100" />
+        <Point value="14.3" temperature="200" />
+        <Point value="16.3" temperature="300" />
+        <Point value="18.2" temperature="400" />
+        <Point value="20" temperature="500" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3006-e-03" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="1299" sourceTable="Table 9M" pointCount="6">
+      <Materials>
+        <Material id="N06044" name="Ni-44Cr-1Mo" sourceMaterial="Ni-44Cr-1Mo" sourcePdfPage="1299" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed nickel alloy products; maximum use temperature 427 degC." uns="N06044" nominalChemicalComposition="Ni-44Cr-1Mo" maxTemperature="427" />
+      </Materials>
+      <Points>
+        <Point value="190000" temperature="20" />
+        <Point value="189000" temperature="100" />
+        <Point value="186000" temperature="200" />
+        <Point value="182000" temperature="300" />
+        <Point value="177000" temperature="400" />
+        <Point value="174000" temperature="500" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3006-nu-04" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="1299" sourceTable="Table 9M" pointCount="6">
+      <Materials>
+        <Material id="N06044" name="Ni-44Cr-1Mo" sourceMaterial="Ni-44Cr-1Mo" sourcePdfPage="1299" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed nickel alloy products; maximum use temperature 427 degC." uns="N06044" nominalChemicalComposition="Ni-44Cr-1Mo" maxTemperature="427" />
+      </Materials>
+      <Points>
+        <Point value="0.38" temperature="20" />
+        <Point value="0.38" temperature="100" />
+        <Point value="0.38" temperature="200" />
+        <Point value="0.38" temperature="300" />
+        <Point value="0.38" temperature="400" />
+        <Point value="0.38" temperature="500" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3006-a-05" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="1299" sourceTable="Table 10M" pointCount="6">
+      <Materials>
+        <Material id="N06044" name="Ni-44Cr-1Mo" sourceMaterial="Ni-44Cr-1Mo" sourcePdfPage="1299" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed nickel alloy products; maximum use temperature 427 degC." uns="N06044" nominalChemicalComposition="Ni-44Cr-1Mo" maxTemperature="427" />
+      </Materials>
+      <Points>
+        <Point value="2.95e-06" temperature="20" />
+        <Point value="3.23e-06" temperature="100" />
+        <Point value="3.6e-06" temperature="200" />
+        <Point value="3.96e-06" temperature="300" />
+        <Point value="4.3e-06" temperature="400" />
+        <Point value="4.61e-06" temperature="500" />
+      </Points>
+    </Curve>
+    <Curve id="cc-3006-density-06" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="1294" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N06044" name="Ni-44Cr-1Mo" sourceMaterial="Ni-44Cr-1Mo" sourcePdfPage="1294" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed nickel alloy products; maximum use temperature 427 degC." uns="N06044" nominalChemicalComposition="Ni-44Cr-1Mo" maxTemperature="427" />
+      </Materials>
+      <Points>
+        <Point value="7970" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2737-2 - 7% Ni TMCP steel plate" sourceTable="Code Case 2737-2" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="638" sourcePageEnd="642" status="normalized-code-case-review-required" codeCase="2737-2" curveCount="5" sourceOnlyCurveCount="1" materialCount="5" pointCount="31">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2737-2; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 2 Class 2; specified cryogenic TMCP plate, butt joints only; maximum design temperature 65 degC.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2737-2-k-01" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="641" sourceTable="Table 6M" pointCount="7">
+      <Materials>
+        <Material id="7-ni-tmcp-steel-plate" name="7% Ni TMCP steel plate" sourceMaterial="7% Ni TMCP steel plate" sourcePdfPage="641" requiresReview="true" applicability="Section VIII Division 2 Class 2; specified cryogenic TMCP plate, butt joints only; maximum design temperature 65 degC." nominalChemicalComposition="7Ni" maxTemperature="65" />
+      </Materials>
+      <Points>
+        <Point value="22.2" temperature="-200" />
+        <Point value="24.3" temperature="-150" />
+        <Point value="26.4" temperature="-100" />
+        <Point value="28.5" temperature="-50" />
+        <Point value="30.5" temperature="0" />
+        <Point value="31.4" temperature="20" />
+        <Point value="32.6" temperature="50" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2737-2-a-02" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="642" sourceTable="Table 7M" pointCount="7">
+      <Materials>
+        <Material id="7-ni-tmcp-steel-plate" name="7% Ni TMCP steel plate" sourceMaterial="7% Ni TMCP steel plate" sourcePdfPage="642" requiresReview="true" applicability="Section VIII Division 2 Class 2; specified cryogenic TMCP plate, butt joints only; maximum design temperature 65 degC." nominalChemicalComposition="7Ni" maxTemperature="65" />
+      </Materials>
+      <Points>
+        <Point value="7.8e-06" temperature="-200" />
+        <Point value="8e-06" temperature="-150" />
+        <Point value="8.2e-06" temperature="-100" />
+        <Point value="8.4e-06" temperature="-50" />
+        <Point value="8.6e-06" temperature="0" />
+        <Point value="8.7e-06" temperature="20" />
+        <Point value="8.8e-06" temperature="50" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2737-2-density-03" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="638" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="7-ni-tmcp-steel-plate" name="7% Ni TMCP steel plate" sourceMaterial="7% Ni TMCP steel plate" sourcePdfPage="638" requiresReview="true" applicability="Section VIII Division 2 Class 2; specified cryogenic TMCP plate, butt joints only; maximum design temperature 65 degC." nominalChemicalComposition="7Ni" maxTemperature="65" />
+      </Materials>
+      <Points>
+        <Point value="7900" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2737-2-nu-04" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="638" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="7-ni-tmcp-steel-plate" name="7% Ni TMCP steel plate" sourceMaterial="7% Ni TMCP steel plate" sourcePdfPage="638" requiresReview="true" applicability="Section VIII Division 2 Class 2; specified cryogenic TMCP plate, butt joints only; maximum design temperature 65 degC." nominalChemicalComposition="7Ni" maxTemperature="65" />
+      </Materials>
+      <Points>
+        <Point value="0.34" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2737-2-e-05" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="638" sourceTable="Table explicit II-D mapping" pointCount="15" notes="Code Case explicitly directs use of TM-1 curve tm-1-09. II-D source notes: Groups A-J use the compositions in source Notes 1-7 and 9-11. Source Notes 8 and 9 repeat Group H membership; the curve explicitly references Note 9. Note 5 includes variations of 9Cr-Mo, but only the literal composition is an automatic key. Note 13 names 15Cr-5Ni-3Mo for S15500; this is retained as printed, without correcting it to a database alias. Note 14 limits S45000 data to material aged at 480 degC; manual applicability review is required." mappedSourceFile="ElasticModulus/TM-1.xml" mappedSourceCurve="tm-1-09" mappedSourceSha256="bdc20c20f2ae0d9f20b4b1424645fb3273fe8129f15cd83c3a7711eb0c8527d6" mappedSourcePdfPages="1238-1240">
+      <Materials>
+        <Material id="7-ni-tmcp-steel-plate" name="7% Ni TMCP steel plate" sourceMaterial="7% Ni TMCP steel plate" sourcePdfPage="638" requiresReview="true" applicability="Section VIII Division 2 Class 2; specified cryogenic TMCP plate, butt joints only; maximum design temperature 65 degC." nominalChemicalComposition="7Ni" maxTemperature="65" />
+      </Materials>
+      <Points>
+        <Point value="215000" temperature="-200" />
+        <Point value="212000" temperature="-125" />
+        <Point value="208000" temperature="-75" />
+        <Point value="201000" temperature="25" />
+        <Point value="195000" temperature="100" />
+        <Point value="192000" temperature="150" />
+        <Point value="189000" temperature="200" />
+        <Point value="186000" temperature="250" />
+        <Point value="182000" temperature="300" />
+        <Point value="178000" temperature="350" />
+        <Point value="173000" temperature="400" />
+        <Point value="166000" temperature="450" />
+        <Point value="157000" temperature="500" />
+        <Point value="145000" temperature="550" />
+        <Point value="131000" temperature="600" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2737-2-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="641" sourceTable="Table 5M" pointCount="8" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="7-ni-tmcp-steel-plate" name="7% Ni TMCP steel plate" sourceMaterial="7% Ni TMCP steel plate" sourcePdfPage="641" requiresReview="true" applicability="Section VIII Division 2 Class 2; specified cryogenic TMCP plate, butt joints only; maximum design temperature 65 degC." nominalChemicalComposition="7Ni" maxTemperature="65" />
+      </Materials>
+      <Values>
+        <Value value="5e-06" temperatureLabel="−196–RT" />
+        <Value value="5.7e-06" temperatureLabel="−170–RT" />
+        <Value value="6.3e-06" temperatureLabel="−150–RT" />
+        <Value value="7.8e-06" temperatureLabel="−100–RT" />
+        <Value value="9.2e-06" temperatureLabel="−50–RT" />
+        <Value value="1.07e-05" temperatureLabel="0–RT" />
+        <Value value="1.13e-05" temperatureLabel="RT–20" />
+        <Value value="1.22e-05" temperatureLabel="RT–150" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="Alpha" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

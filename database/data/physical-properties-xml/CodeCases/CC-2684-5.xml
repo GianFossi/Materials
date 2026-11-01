@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2684-5 - 47Ni-23Cr-23Fe-7W" sourceTable="Code Case 2684-5" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="526" sourcePageEnd="528" status="normalized-code-case-review-required" codeCase="2684-5" curveCount="5" sourceOnlyCurveCount="4" materialCount="5" pointCount="32">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2684-5; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2684-5-k-01" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="527" sourceTable="Table 3M" pointCount="10">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="527" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="12.7" temperature="100" />
+        <Point value="15.1" temperature="200" />
+        <Point value="17.4" temperature="300" />
+        <Point value="19.9" temperature="400" />
+        <Point value="23.4" temperature="500" />
+        <Point value="26.1" temperature="600" />
+        <Point value="31.2" temperature="700" />
+        <Point value="33.3" temperature="800" />
+        <Point value="33.5" temperature="900" />
+        <Point value="34.3" temperature="1000" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2684-5-a-02" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="528" sourceTable="Table 4M" pointCount="10">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="528" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="3.11e-06" temperature="100" />
+        <Point value="3.43e-06" temperature="200" />
+        <Point value="3.75e-06" temperature="300" />
+        <Point value="4.07e-06" temperature="400" />
+        <Point value="4.35e-06" temperature="500" />
+        <Point value="4.63e-06" temperature="600" />
+        <Point value="4.93e-06" temperature="700" />
+        <Point value="5.15e-06" temperature="800" />
+        <Point value="5.5e-06" temperature="900" />
+        <Point value="5.7e-06" temperature="1000" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2684-5-e-03" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="528" sourceTable="Table 5M" pointCount="10">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="528" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="188000" temperature="100" />
+        <Point value="182000" temperature="200" />
+        <Point value="175000" temperature="300" />
+        <Point value="169000" temperature="400" />
+        <Point value="164000" temperature="500" />
+        <Point value="156000" temperature="600" />
+        <Point value="149000" temperature="700" />
+        <Point value="143000" temperature="800" />
+        <Point value="137000" temperature="900" />
+        <Point value="129000" temperature="1000" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2684-5-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="526" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="526" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="8460" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2684-5-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="526" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="526" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="0.26" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2684-5-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="527" sourceTable="Table 2M" pointCount="10" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="527" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Values>
+        <Value value="1.36e-05" temperatureLabel="RT–100" />
+        <Value value="1.42e-05" temperatureLabel="RT–200" />
+        <Value value="1.45e-05" temperatureLabel="RT–300" />
+        <Value value="1.49e-05" temperatureLabel="RT–400" />
+        <Value value="1.51e-05" temperatureLabel="RT–500" />
+        <Value value="1.52e-05" temperatureLabel="RT–600" />
+        <Value value="1.58e-05" temperatureLabel="RT–700" />
+        <Value value="1.62e-05" temperatureLabel="RT–800" />
+        <Value value="1.64e-05" temperatureLabel="RT–900" />
+        <Value value="1.68e-05" temperatureLabel="RT–1000" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2684-5-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="527" sourceTable="Table 3M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="527" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Values>
+        <Value value="10.8" temperatureLabel="RT" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2684-5-a-03" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="528" sourceTable="Table 4M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="528" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Values>
+        <Value value="2.89e-06" temperatureLabel="RT" />
+      </Values>
+    </Curve>
+    <Curve id="cc-source-2684-5-e-04" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="528" sourceTable="Table 5M" pointCount="1" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N06674" name="47Ni-23Cr-23Fe-7W" sourceMaterial="47Ni-23Cr-23Fe-7W" sourcePdfPage="528" requiresReview="true" applicability="Section I / Section VIII Division 1; specified seamless pipe, tube and forgings; Code Case heat treatment and welding requirements apply." uns="N06674" nominalChemicalComposition="47Ni-23Cr-23Fe-7W" maxTemperature="800" />
+      </Materials>
+      <Values>
+        <Value value="192000" temperatureLabel="RT" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="Alpha" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

@@ -28,6 +28,163 @@ let private assignment db id record reviewed replace =
     {MaterialId=id;Record=record;Reviewed=reviewed;ReplaceExisting=replace;ExpectedVersion=XmlPropertyImport.version db id record.PropertyCode}
 
 [<Fact>]
+let ``Code Case shared curves support density Nu constants and temperature bounds`` () =
+    let file = Path.Combine(Path.GetTempPath(), "cc-curves-" + Guid.NewGuid().ToString("N") + ".xml")
+    try
+        File.WriteAllText(file, """<PhysicalPropertyTableImport schema="material-curves-v1" codeCase="TEST">
+          <Notes>Code Case applicability.</Notes><Curves>
+            <Curve id="rho" property="density" unit="kg/m3" temperatureUnit="degC">
+              <Materials><Material id="one" name="Test" uns="N08935" minTemperature="0" maxTemperature="100" requiresReview="true" /></Materials>
+              <Points><Point temperature="-20" value="8100" /><Point temperature="20" value="8050" /><Point temperature="100" value="8000" /><Point temperature="150" value="7950" /></Points>
+            </Curve>
+            <Curve id="nu" property="Nu" unit="dimensionless" temperatureUnit="degC">
+              <Materials><Material id="one" name="Test" uns="N08935" /></Materials>
+              <Points><Point temperature="20" value="0.291" /><Point temperature="100" value="0.294" /></Points>
+            </Curve>
+            <Curve id="constant" property="density" unit="kg/m3" temperatureUnit="degC" constant="true">
+              <Materials><Material id="one" name="Test" uns="N08120" minTemperature="899" maxTemperature="982" requiresReview="true" /></Materials>
+              <Points><Point value="8070" /></Points>
+            </Curve>
+          </Curves><SourceCurves>
+            <Curve id="dynamic" property="DynamicE" unit="MPa"><Values><Value temperature="25" value="197000" /></Values></Curve>
+            <Curve id="rt" property="Alpha" unit="1/degC"><Values><Value temperatureLabel="RT-100" value="0.0000136" /></Values></Curve>
+          </SourceCurves></PhysicalPropertyTableImport>""")
+        let records = XmlPropertyReader.readFile file |> List.toArray
+        Assert.Equal(3, records.Length)
+        Assert.Equal<float array>([|20.; 100.|], records[0].Points |> Array.map (fun p -> p.Temperature))
+        Assert.Equal<float array>([|8050.; 8000.|], records[0].Points |> Array.map (fun p -> p.Y))
+        Assert.False(records[0].IsConstant)
+        Assert.Equal("Nu", records[1].PropertyCode)
+        Assert.Equal(0.294, records[1].Points[1].Y)
+        Assert.True(records[2].IsConstant)
+        Assert.Single(records[2].Points) |> ignore
+        Assert.Equal(8070., records[2].Points[0].Y)
+        Assert.Contains("reader convention", records[2].Notes)
+        Assert.Contains("minTemperature (degC): 899", records[2].Notes)
+        Assert.All(records, fun r ->
+            Assert.True(r.RequiresReview)
+            Assert.True(XmlPropertyImport.validate r false |> Result.isError)
+            Assert.True(XmlPropertyImport.validate r true |> Result.isOk))
+        Assert.DoesNotContain(records, fun r -> r.PropertyCode="DynamicE" || r.PropertyCode="Alpha")
+    finally
+        File.Delete file
+
+[<Fact>]
+let ``Code Case shared curves reject invalid Poisson constants and ranges`` () =
+    let file = Path.Combine(Path.GetTempPath(), "cc-invalid-" + Guid.NewGuid().ToString("N") + ".xml")
+    let write property unit attributes material points =
+        File.WriteAllText(file, $"<PhysicalPropertyTableImport schema=\"material-curves-v1\"><Curves><Curve id=\"one\" property=\"{property}\" unit=\"{unit}\" temperatureUnit=\"degC\" {attributes}><Materials><Material id=\"one\" name=\"Test\" uns=\"N08935\" {material}/></Materials><Points>{points}</Points></Curve></Curves></PhysicalPropertyTableImport>")
+    try
+        for property,unit,attributes,material,points in [
+            "Nu","dimensionless","","","""<Point temperature="20" value="0.5"/>"""
+            "Nu","dimensionless","","","""<Point temperature="20" value="-0.1"/>"""
+            "density","kg/m3","","","""<Point temperature="20" value="0"/>"""
+            "density","kg/m3","constant=\"true\"","","""<Point temperature="20" value="8050"/>"""
+            "density","kg/m3","constant=\"true\"","","""<Point value="8050"/><Point value="8000"/>"""
+            "density","kg/m3","constant=\"yes\"","","""<Point value="8050"/>"""
+            "E","MPa","constant=\"true\"","","""<Point value="200000"/>"""
+            "DynamicE","MPa","","","""<Point temperature="20" value="200000"/>"""
+            "Nu","dimensionless","","minTemperature=\"200\" maxTemperature=\"100\"","""<Point temperature="20" value="0.3"/>"""
+            "Nu","dimensionless","","minTemperature=\"50\"","""<Point temperature="20" value="0.3"/>"""
+            "Nu","dimensionless","","minTemperature=\"NaN\"","""<Point temperature="20" value="0.3"/>"""
+        ] do
+            write property unit attributes material points
+            Assert.Throws<FormatException>(fun () -> XmlPropertyReader.readFile file |> ignore) |> ignore
+    finally
+        File.Delete file
+
+[<Fact>]
+let ``Code Case datasets retain source-only data provenance and independently reviewable records`` () =
+    let folder = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "database", "data", "physical-properties-xml", "CodeCases")
+    let records, errors = XmlPropertyReader.readFolder folder
+    Assert.Empty(errors)
+    Assert.Equal(177, records.Length)
+    Assert.Equal(records.Length, records |> Array.map (fun r -> r.Key) |> Array.distinct |> Array.length)
+    Assert.All(records, fun r ->
+        Assert.True(r.RequiresReview)
+        Assert.NotEmpty(r.Points)
+        Assert.True(XmlPropertyImport.validate r true |> Result.isOk)
+        Assert.Contains("Code Case", r.Notes))
+    let index = System.Xml.Linq.XDocument.Load(Path.Combine(folder, "index.xml"))
+    let datasets = index.Root.Elements(System.Xml.Linq.XName.Get "Dataset") |> Seq.toArray
+    Assert.Equal(34, datasets.Length)
+    Assert.Empty(XmlPropertyReader.readFile(Path.Combine(folder, "index.xml")))
+    let mutable sourceOnly = 0
+    let mutable rawPoints = 0
+    for dataset in datasets do
+        let file = Path.Combine(folder, XmlPropertyReader.value "file" dataset)
+        let document = System.Xml.Linq.XDocument.Load file
+        let root = document.Root
+        let curves = root.Element(System.Xml.Linq.XName.Get "Curves").Elements() |> Seq.toArray
+        let original = root.Element(System.Xml.Linq.XName.Get "SourceCurves").Elements() |> Seq.toArray
+        sourceOnly <- sourceOnly + original.Length
+        Assert.Equal(int (XmlPropertyReader.value "curveCount" root), curves.Length)
+        Assert.Equal(64, (XmlPropertyReader.value "sourcePdfSha256" root).Length)
+        Assert.All(original, fun c -> Assert.Empty(c.Descendants(System.Xml.Linq.XName.Get "Point")))
+        for c in curves do
+            let points = c.Element(System.Xml.Linq.XName.Get "Points").Elements() |> Seq.toArray
+            rawPoints <- rawPoints + points.Length
+            Assert.Equal(int (XmlPropertyReader.value "pointCount" c), points.Length)
+            Assert.NotEqual<string>("DynamicE", XmlPropertyReader.value "property" c)
+            Assert.DoesNotContain(points, fun p -> XmlPropertyReader.value "temperatureLabel" p<>"")
+            if XmlPropertyReader.value "constant" c="true" then
+                Assert.All(points, fun p -> Assert.Equal("", XmlPropertyReader.value "temperature" p))
+            let sourceFile = XmlPropertyReader.value "mappedSourceFile" c
+            let sourceCurve = XmlPropertyReader.value "mappedSourceCurve" c
+            if sourceCurve<>"" then
+                let sourcePath = Path.Combine(folder, "..", sourceFile.Replace('/', Path.DirectorySeparatorChar))
+                let source = System.Xml.Linq.XDocument.Load sourcePath
+                let expected = source.Root.Element(System.Xml.Linq.XName.Get "Curves").Elements()
+                               |> Seq.find (fun n -> XmlPropertyReader.value "id" n=sourceCurve)
+                let coordinates (node: System.Xml.Linq.XElement) =
+                    node.Element(System.Xml.Linq.XName.Get "Points").Elements()
+                    |> Seq.map (fun p -> XmlPropertyReader.number (XmlPropertyReader.value "temperature" p) |> Option.get,
+                                         XmlPropertyReader.number (XmlPropertyReader.value "value" p) |> Option.get)
+                    |> Seq.toArray
+                Assert.Equal<(float*float) array>(coordinates expected, coordinates c)
+                Assert.Equal(XmlPropertyReader.value "referenceTemperature" expected, XmlPropertyReader.value "referenceTemperature" c)
+    Assert.Equal(2147, rawPoints)
+    Assert.True(sourceOnly>0)
+    let read number = XmlPropertyReader.readFile(Path.Combine(folder, "CC-" + number + ".xml")) |> List.toArray
+    let ni = read "2983"
+    Assert.Equal(0.33, (ni |> Array.find (fun r -> r.PropertyCode="Nu")).Points[0].Y)
+    Assert.DoesNotContain(ni, fun r -> r.PropertyCode="E")
+    Assert.Contains(ni, fun r -> r.PropertyCode="Alpha" && r.Notes.Contains("referenceTemperature (degC): 25"))
+    let duplex = read "2914"
+    Assert.All(duplex |> Array.filter (fun r -> not r.IsConstant), fun r -> Assert.All(r.Points, fun p -> Assert.True(p.Temperature<=316.)))
+    Assert.Contains(duplex, fun r -> r.PropertyCode="Alpha" && r.Notes.Contains("referenceTemperature (degC): 30"))
+    let nickel = read "2684-5"
+    Assert.DoesNotContain(nickel, fun r -> r.PropertyCode="Alpha")
+    Assert.All(nickel |> Array.filter (fun r -> not r.IsConstant), fun r -> Assert.All(r.Points, fun p -> Assert.True(p.Temperature<=800.)))
+    let sectionI, sectionVIII = read "3089", read "2982-2"
+    Assert.Equal(550., (sectionI |> Array.find (fun r -> r.PropertyCode="E")).Points |> Array.last |> fun p -> p.Temperature)
+    Assert.Equal(450., (sectionVIII |> Array.find (fun r -> r.PropertyCode="E")).Points |> Array.last |> fun p -> p.Temperature)
+    let density = read "3007" |> Array.find (fun r -> r.PropertyCode="density")
+    Assert.False(density.IsConstant)
+    Assert.Equal(7670., density.Points[0].Y)
+    Assert.Equal(7470., density.Points |> Array.last |> fun p -> p.Y)
+
+[<Fact>]
+let ``Code Case reviewed source records import into multiple explicitly matched materials`` () = workspace (fun _ path ->
+    let folder = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "database", "data", "physical-properties-xml", "CodeCases")
+    let records = XmlPropertyReader.readFile(Path.Combine(folder, "CC-3007.xml")) |> List.toArray
+    let create grade = Asme2025Crud.saveIdentity path {Id=0L;Specification="TEST-CC";Grade=grade;Condition="";UNS="";NominalComposition="9Cr-2Si-1Cu"} |> ok
+    let ids = [|create "A"; create "B"|]
+    let proposals, assignments =
+        use db = Asme2025Data.openRead path
+        XmlPropertyMatching.propose db records |> Array.filter (fun p -> ids |> Array.contains p.MaterialId),
+        ids |> Array.collect (fun id -> records |> Array.map (fun record -> assignment db id record true false))
+    Assert.Equal(12, proposals.Length)
+    Assert.All(proposals, fun p -> Assert.Equal(85,p.Score))
+    XmlPropertyImport.apply path assignments |> ok |> ignore
+    use db = Asme2025Data.openRead path
+    for id in ids do
+        for record in records do
+            let actual = Asme2025Data.curves db id record.PropertyCode |> List.exactlyOne
+            Assert.Equal(record.Points.Length, actual.Points.Length)
+            Assert.Equal(record.Points[0].Y, actual.Points[0].Value))
+
+[<Fact>]
 let ``compact PRD rejects incomplete invalid and duplicate material constants`` () =
     let file = Path.Combine(Path.GetTempPath(), "compact-prd-" + Guid.NewGuid().ToString("N") + ".xml")
     let write units rows =
@@ -399,6 +556,71 @@ let ``expansion shared curves require reference temperature and import distinct 
         Assert.Equal(0.0000170,instant.Points[1].Value))
 
 [<Fact>]
+let ``ASME diffusivity preserves SI points identities limits and explicitly missing datasets`` () =
+    let file = Path.Combine(__SOURCE_DIRECTORY__,"..","..","database","data","physical-properties-xml","ThermalDiffusivity","TCD-ThermalDiffusivity.xml")
+    let root = System.Xml.Linq.XDocument.Load(file).Root
+    let curves = root.Descendants(System.Xml.Linq.XName.Get "Curve") |> Seq.toArray
+    let records = XmlPropertyReader.readFile file |> List.toArray
+    Assert.Equal(58,curves.Length)
+    Assert.Equal(172,records.Length)
+    Assert.Equal("1154",XmlPropertyReader.value "sourcePointCount" root)
+    Assert.Equal(1146,root.Descendants(System.Xml.Linq.XName.Get "Point") |> Seq.length)
+    Assert.Empty(root.Descendants(System.Xml.Linq.XName.Get "RawText"))
+    Assert.Equal(records.Length,records |> Array.map (fun r -> r.Key) |> Array.distinct |> Array.length)
+    for curve in curves do
+        let curveId = XmlPropertyReader.value "id" curve
+        let points = curve.Descendants(System.Xml.Linq.XName.Get "Point") |> Seq.toArray
+        for material in curve.Descendants(System.Xml.Linq.XName.Get "Material") do
+            let key = "/"+curveId+"/"+XmlPropertyReader.value "id" material
+            let record = records |> Array.find (fun r -> r.Key.EndsWith key)
+            let maximum = XmlPropertyReader.number (XmlPropertyReader.value "maxTemperature" material)
+            let applicable = points |> Array.filter (fun p -> maximum |> Option.forall (fun limit ->
+                (XmlPropertyReader.number (XmlPropertyReader.value "temperature" p) |> Option.get)<=limit))
+            Assert.Equal("a",record.PropertyCode)
+            Assert.Equal("m2/s",record.Unit)
+            Assert.Equal(XmlPropertyReader.value "uns" material,record.UNS)
+            Assert.Equal(XmlPropertyReader.value "nominalChemicalComposition" material,record.Composition)
+            Assert.True(XmlPropertyImport.validate record true |> Result.isOk)
+            Assert.Equal(applicable.Length,record.Points.Length)
+            for i in 0..applicable.Length-1 do
+                Assert.Equal(XmlPropertyReader.number (XmlPropertyReader.value "temperature" applicable[i]) |> Option.get,record.Points[i].Temperature)
+                Assert.Equal(XmlPropertyReader.number (XmlPropertyReader.value "value" applicable[i]) |> Option.get,record.Points[i].Y)
+    let unavailable = root.Element(System.Xml.Linq.XName.Get "UnavailableMaterials").Elements() |> Seq.toArray
+    Assert.Equal(6,unavailable.Length)
+    for uns in ["N02200";"N02201";"N04405";"N06022";"N06030";"N10276"] do
+        Assert.Contains(unavailable,fun m -> XmlPropertyReader.value "uns" m=uns)
+        Assert.DoesNotContain(records,fun r -> r.UNS=uns)
+    let carbon = records |> Array.find (fun r -> r.Composition="Carbon steel")
+    Assert.Equal(0.00001810,carbon.Points[0].Y)
+    Assert.Single(records |> Array.filter (fun r -> r.RequiresReview)) |> ignore
+    Assert.Equal(4,records |> Array.filter (fun r -> r.Notes.Contains("maxTemperature (degC): 425")) |> Array.length)
+
+[<Fact>]
+let ``diffusivity imports shared SI curves to multiple materials and rejects wrong units`` () = workspace (fun folder path ->
+    let file = Path.Combine(folder,"diffusivity.xml")
+    let original = """<PhysicalPropertyTableImport schema="material-curves-v1"><Curves><Curve id="a" property="a" unit="m2/s" temperatureUnit="degC">
+      <Materials><Material id="member" name="Group" nominalChemicalComposition="18Cr-8Ni" maxTemperature="425" /></Materials>
+      <Points><Point temperature="20" value="0.00000390" /><Point temperature="425" value="0.000004" /><Point temperature="450" value="0.0000041" /></Points>
+      </Curve></Curves></PhysicalPropertyTableImport>"""
+    for invalid in [original.Replace("m2/s","mm2/s");original.Replace("0.00000390","0");original.Replace("0.00000390","NaN")] do
+        File.WriteAllText(file,invalid)
+        Assert.Throws<FormatException>(fun () -> XmlPropertyReader.readFile file |> ignore) |> ignore
+    File.WriteAllText(file,original)
+    let record = XmlPropertyReader.readFile file |> List.exactlyOne
+    Assert.Equal(2,record.Points.Length)
+    let ids = [
+        Asme2025Crud.saveIdentity path {Id=0L;Specification="TEST-TD-ONE";Grade="A";Condition="";UNS="S30400";NominalComposition="18Cr-8Ni"} |> ok
+        Asme2025Crud.saveIdentity path {Id=0L;Specification="TEST-TD-TWO";Grade="B";Condition="";UNS="S30409";NominalComposition="18Cr-8Ni"} |> ok
+    ]
+    use db = Asme2025Data.openRead path
+    Assert.Equal(2,XmlPropertyMatching.propose db [|record|] |> Array.filter (fun p -> List.contains p.MaterialId ids) |> Array.length)
+    XmlPropertyImport.apply path (ids |> List.map (fun id -> assignment db id record true false) |> List.toArray) |> ok |> ignore
+    for id in ids do
+        let curve = Asme2025Data.curves db id "a" |> List.exactlyOne
+        Assert.Equal(2,curve.Points.Length)
+        Assert.Equal(0.00000390,curve.Points[0].Value))
+
+[<Fact>]
 let ``structured XML converts units and preserves full source content`` () = workspace (fun folder path ->
     let record=xml folder
     Assert.Equal("MPa",record.Unit)
@@ -480,7 +702,8 @@ let ``existing staged XML extracts raw curves and structured PRD as independent 
     Assert.Contains(records,fun r -> r.PropertyCode="Nu" && r.IsConstant && r.Points[0].Y=0.30)
     Assert.All(records |> Array.filter (fun r -> r.Points.Length>0 && r.RawText<>""),fun r -> Assert.True(r.RequiresReview))
     Assert.All(records |> Array.filter (fun r -> r.PropertyCode="density" || r.PropertyCode="Nu"),fun r ->
-        Assert.Equal(String.IsNullOrWhiteSpace r.UNS && String.IsNullOrWhiteSpace r.Composition, r.RequiresReview)
+        let codeCase = XmlPropertyReader.value "codeCase" (System.Xml.Linq.XDocument.Parse(r.Xml).Root)
+        Assert.Equal(codeCase<>"" || (String.IsNullOrWhiteSpace r.UNS && String.IsNullOrWhiteSpace r.Composition), r.RequiresReview)
         Assert.True(XmlPropertyImport.validate r true |> Result.isOk))
     Assert.True(XmlPropertyImport.validate (records |> Array.find (fun r -> r.PropertyCode="Alpha" && r.RequiresReview)) false |> Result.isError)
 

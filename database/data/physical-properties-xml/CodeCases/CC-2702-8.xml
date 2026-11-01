@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2702-8 - Ni-25Cr-20Co" sourceTable="Code Case 2702-8" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="564" sourcePageEnd="570" status="normalized-code-case-review-required" codeCase="2702-8" curveCount="4" sourceOnlyCurveCount="0" materialCount="4" pointCount="30">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2702-8; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I; precipitation-hardened material; modulus source aged at 800 degC for 4 h, air cooled. External pressure design prohibited.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2702-8-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="570" sourceTable="Table 10M" pointCount="9">
+      <Materials>
+        <Material id="N07740" name="Ni-25Cr-20Co" sourceMaterial="Ni-25Cr-20Co" sourcePdfPage="570" requiresReview="true" applicability="Section I; precipitation-hardened material; modulus source aged at 800 degC for 4 h, air cooled. External pressure design prohibited." uns="N07740" nominalChemicalComposition="Ni-25Cr-20Co" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="221000" temperature="22" />
+        <Point value="218000" temperature="100" />
+        <Point value="212000" temperature="200" />
+        <Point value="206000" temperature="300" />
+        <Point value="200000" temperature="400" />
+        <Point value="193000" temperature="500" />
+        <Point value="186000" temperature="600" />
+        <Point value="178000" temperature="700" />
+        <Point value="169000" temperature="800" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2702-8-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="570" sourceTable="Table 10M" pointCount="12">
+      <Materials>
+        <Material id="N07740" name="Ni-25Cr-20Co" sourceMaterial="Ni-25Cr-20Co" sourcePdfPage="570" requiresReview="true" applicability="Section I; precipitation-hardened material; modulus source aged at 800 degC for 4 h, air cooled. External pressure design prohibited." uns="N07740" nominalChemicalComposition="Ni-25Cr-20Co" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="10.2" temperature="22" />
+        <Point value="11.7" temperature="100" />
+        <Point value="13" temperature="200" />
+        <Point value="14.5" temperature="300" />
+        <Point value="15.7" temperature="400" />
+        <Point value="17.1" temperature="500" />
+        <Point value="18.4" temperature="600" />
+        <Point value="20.2" temperature="700" />
+        <Point value="22.1" temperature="800" />
+        <Point value="23.8" temperature="900" />
+        <Point value="25.4" temperature="1000" />
+        <Point value="27.3" temperature="1100" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2702-8-alpha-03" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="570" sourceTable="Table 10M" pointCount="8" referenceTemperature="20">
+      <Materials>
+        <Material id="N07740" name="Ni-25Cr-20Co" sourceMaterial="Ni-25Cr-20Co" sourcePdfPage="570" requiresReview="true" applicability="Section I; precipitation-hardened material; modulus source aged at 800 degC for 4 h, air cooled. External pressure design prohibited." uns="N07740" nominalChemicalComposition="Ni-25Cr-20Co" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="1.238e-05" temperature="100" />
+        <Point value="1.304e-05" temperature="200" />
+        <Point value="1.35e-05" temperature="300" />
+        <Point value="1.393e-05" temperature="400" />
+        <Point value="1.427e-05" temperature="500" />
+        <Point value="1.457e-05" temperature="600" />
+        <Point value="1.503e-05" temperature="700" />
+        <Point value="1.572e-05" temperature="800" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2702-8-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="565" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N07740" name="Ni-25Cr-20Co" sourceMaterial="Ni-25Cr-20Co" sourcePdfPage="565" requiresReview="true" applicability="Section I; precipitation-hardened material; modulus source aged at 800 degC for 4 h, air cooled. External pressure design prohibited." uns="N07740" nominalChemicalComposition="Ni-25Cr-20Co" maxTemperature="800" />
+      </Materials>
+      <Points>
+        <Point value="8072" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="Nu" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

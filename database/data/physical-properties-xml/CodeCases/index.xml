@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<CodeCasePhysicalPropertyIndex name="ASME 2025 Code Case physical-property extensions" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" count="34" status="review-before-database-import">
+  <Dataset codeCase="2196-5" name="18Cr-11Ni-Cb-N (347LN)" file="CC-2196-5.xml" sourcePageStart="130" sourcePageEnd="130" curveCount="6" pointCount="144" sourceOnlyCurveCount="0" uns="S34751" />
+  <Dataset codeCase="2353-2" name="1.15Ni-0.65Cu-Mo-Cb" file="CC-2353-2.xml" sourcePageStart="222" sourcePageEnd="224" curveCount="4" pointCount="28" sourceOnlyCurveCount="0" uns="K21001" />
+  <Dataset codeCase="2496-4" name="27Cr-7.6Ni-1Mo-2.3W-N" file="CC-2496-4.xml" sourcePageStart="314" sourcePageEnd="317" curveCount="4" pointCount="78" sourceOnlyCurveCount="1" uns="S32808" />
+  <Dataset codeCase="2672" name="37Ni-33Fe-25Cr" file="CC-2672.xml" sourcePageStart="492" sourcePageEnd="493" curveCount="5" pointCount="35" sourceOnlyCurveCount="4" uns="N08120" />
+  <Dataset codeCase="2684-5" name="47Ni-23Cr-23Fe-7W" file="CC-2684-5.xml" sourcePageStart="526" sourcePageEnd="528" curveCount="5" pointCount="32" sourceOnlyCurveCount="4" uns="N06674" />
+  <Dataset codeCase="2702-8" name="Ni-25Cr-20Co" file="CC-2702-8.xml" sourcePageStart="564" sourcePageEnd="570" curveCount="4" pointCount="30" sourceOnlyCurveCount="0" uns="N07740" />
+  <Dataset codeCase="2735" name="UNS S82011 duplex stainless steel" file="CC-2735.xml" sourcePageStart="630" sourcePageEnd="630" curveCount="7" pointCount="138" sourceOnlyCurveCount="0" uns="S82011" />
+  <Dataset codeCase="2737-2" name="7% Ni TMCP steel plate" file="CC-2737-2.xml" sourcePageStart="638" sourcePageEnd="642" curveCount="5" pointCount="31" sourceOnlyCurveCount="1" />
+  <Dataset codeCase="2780-1" name="24Cr-4Ni-3Mn-1.6Mo-0.27N" file="CC-2780-1.xml" sourcePageStart="732" sourcePageEnd="732" curveCount="4" pointCount="7" sourceOnlyCurveCount="1" uns="S82441" />
+  <Dataset codeCase="2781-3" name="12Cr-1.5W-1.6Co-B" file="CC-2781-3.xml" sourcePageStart="738" sourcePageEnd="743" curveCount="4" pointCount="24" sourceOnlyCurveCount="0" />
+  <Dataset codeCase="2783" name="Cu-13Zn-1.1Ni-Si-Al" file="CC-2783.xml" sourcePageStart="746" sourcePageEnd="746" curveCount="2" pointCount="3" sourceOnlyCurveCount="1" uns="C69100" />
+  <Dataset codeCase="2794" name="Ni-24Fe-23Cr-6Mo-3Cu" file="CC-2794.xml" sourcePageStart="768" sourcePageEnd="775" curveCount="5" pointCount="99" sourceOnlyCurveCount="1" uns="N06845" />
+  <Dataset codeCase="2831-1" name="24Cr-22Ni-6Mo-2W-Cu-N" file="CC-2831-1.xml" sourcePageStart="862" sourcePageEnd="865" curveCount="7" pointCount="142" sourceOnlyCurveCount="0" uns="S31266" />
+  <Dataset codeCase="2839-3" name="9Cr-3W-3Co-Nd-B" file="CC-2839-3.xml" sourcePageStart="896" sourcePageEnd="900" curveCount="5" pointCount="25" sourceOnlyCurveCount="0" />
+  <Dataset codeCase="2859" name="Annealed copper O25" file="CC-2859.xml" sourcePageStart="946" sourcePageEnd="946" curveCount="5" pointCount="35" sourceOnlyCurveCount="0" uns="C10100" />
+  <Dataset codeCase="2881" name="ASTM B16 C36000 H02 brass" file="CC-2881.xml" sourcePageStart="990" sourcePageEnd="990" curveCount="5" pointCount="43" sourceOnlyCurveCount="0" uns="C36000" />
+  <Dataset codeCase="2890-4" name="Fe-10.5Cr-0.5Mo-V-Nb" file="CC-2890-4.xml" sourcePageStart="1006" sourcePageEnd="1011" curveCount="7" pointCount="91" sourceOnlyCurveCount="1" uns="K91060" />
+  <Dataset codeCase="2903-1" name="20Cr-8.5Ni-0.7Mo-0.2N" file="CC-2903-1.xml" sourcePageStart="1038" sourcePageEnd="1038" curveCount="5" pointCount="9" sourceOnlyCurveCount="0" uns="S31655" />
+  <Dataset codeCase="2914" name="30Cr-7Ni-3.5Mo-N" file="CC-2914.xml" sourcePageStart="1060" sourcePageEnd="1063" curveCount="6" pointCount="45" sourceOnlyCurveCount="0" uns="S83071" />
+  <Dataset codeCase="2982-2" name="35Ni-30Fe-27Cr-6.5Mo-N" file="CC-2982-2.xml" sourcePageStart="1242" sourcePageEnd="1248" curveCount="6" pointCount="50" sourceOnlyCurveCount="0" uns="N08935" />
+  <Dataset codeCase="2983" name="Ni-Cr-Mo" file="CC-2983.xml" sourcePageStart="1250" sourcePageEnd="1253" curveCount="5" pointCount="29" sourceOnlyCurveCount="4" uns="N06058" />
+  <Dataset codeCase="2991" name="Ni-Fe-Cr-Mo-Cu low carbon" file="CC-2991.xml" sourcePageStart="1268" sourcePageEnd="1271" curveCount="5" pointCount="29" sourceOnlyCurveCount="4" uns="N08034" />
+  <Dataset codeCase="3001-1" name="12Cr-2W-2Co-B" file="CC-3001-1.xml" sourcePageStart="1282" sourcePageEnd="1287" curveCount="5" pointCount="60" sourceOnlyCurveCount="0" />
+  <Dataset codeCase="3006" name="Ni-44Cr-1Mo" file="CC-3006.xml" sourcePageStart="1294" sourcePageEnd="1299" curveCount="6" pointCount="30" sourceOnlyCurveCount="0" uns="N06044" />
+  <Dataset codeCase="3007" name="9Cr-2Si-1Cu" file="CC-3007.xml" sourcePageStart="1300" sourcePageEnd="1305" curveCount="6" pointCount="89" sourceOnlyCurveCount="0" />
+  <Dataset codeCase="3024" name="Ni-Cr-Co-Mo-Ti precipitation hardened" file="CC-3024.xml" sourcePageStart="1330" sourcePageEnd="1338" curveCount="4" pointCount="90" sourceOnlyCurveCount="2" uns="N07208" />
+  <Dataset codeCase="3037-1" name="1.15Ni-0.65Cu-Mo-Cb" file="CC-3037-1.xml" sourcePageStart="1368" sourcePageEnd="1372" curveCount="4" pointCount="32" sourceOnlyCurveCount="0" uns="K21001" />
+  <Dataset codeCase="3049-1" name="ASTM A351 HG10MnN" file="CC-3049-1.xml" sourcePageStart="1398" sourcePageEnd="1398" curveCount="7" pointCount="145" sourceOnlyCurveCount="0" uns="J92604" />
+  <Dataset codeCase="3050" name="EN 34CrMo4+QT (1.7220+QT)" file="CC-3050.xml" sourcePageStart="1402" sourcePageEnd="1403" curveCount="7" pointCount="148" sourceOnlyCurveCount="0" />
+  <Dataset codeCase="3052" name="EN P690QL2 tube/flat products" file="CC-3052.xml" sourcePageStart="1406" sourcePageEnd="1406" curveCount="6" pointCount="146" sourceOnlyCurveCount="0" />
+  <Dataset codeCase="3056" name="Ni-25Cr-20Co" file="CC-3056.xml" sourcePageStart="1414" sourcePageEnd="1420" curveCount="4" pointCount="30" sourceOnlyCurveCount="0" uns="N07740" />
+  <Dataset codeCase="3058" name="Ni-Cr-Mo-Cu" file="CC-3058.xml" sourcePageStart="1424" sourcePageEnd="1434" curveCount="4" pointCount="90" sourceOnlyCurveCount="4" uns="N06235" />
+  <Dataset codeCase="3063-1" name="Hot-isostatically pressed pure isotropic molybdenum" file="CC-3063-1.xml" sourcePageStart="1456" sourcePageEnd="1465" curveCount="7" pointCount="80" sourceOnlyCurveCount="1" />
+  <Dataset codeCase="3089" name="35Ni-30Fe-27Cr-6.5Mo-N" file="CC-3089.xml" sourcePageStart="1544" sourcePageEnd="1547" curveCount="6" pointCount="60" sourceOnlyCurveCount="0" uns="N08935" />
+  <ExternalSource codeCase="3102" sourcePdfPage="1572" name="WRC Bulletin 503, second edition, June 2023" status="source-not-supplied" applicability="Section VIII Division 2; TD above 540 degC for N07718/N10003 must agree with II-D within 10%, otherwise II-D applies." />
+  <Scope>Metric physical tables and explicit group/UNS mappings. Dynamic modulus, undefined RT/Room, expansion without a numeric reference and linear expansion C remain source-only. Generic II-D applicability statements with no uniquely identified table row, polymers/ceramic qualification values, design-formula/fatigue-normalization constants and unrelated density terms are not used to invent material curves.</Scope>
+</CodeCasePhysicalPropertyIndex>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2794 - Ni-24Fe-23Cr-6Mo-3Cu" sourceTable="Code Case 2794" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="768" sourcePageEnd="775" status="normalized-code-case-review-required" codeCase="2794" curveCount="5" sourceOnlyCurveCount="1" materialCount="5" pointCount="99">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2794; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 1; specified solution-annealed product forms; maximum design temperature 450 degC.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2794-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="773" sourceTable="Table 5M" pointCount="17">
+      <Materials>
+        <Material id="N06845" name="Ni-24Fe-23Cr-6Mo-3Cu" sourceMaterial="Ni-24Fe-23Cr-6Mo-3Cu" sourcePdfPage="773" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed product forms; maximum design temperature 450 degC." uns="N06845" nominalChemicalComposition="Ni-24Fe-23Cr-6Mo-3Cu" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="199000" temperature="25" />
+        <Point value="195000" temperature="100" />
+        <Point value="192000" temperature="150" />
+        <Point value="190000" temperature="200" />
+        <Point value="188000" temperature="250" />
+        <Point value="185000" temperature="300" />
+        <Point value="182000" temperature="350" />
+        <Point value="179000" temperature="400" />
+        <Point value="176000" temperature="450" />
+        <Point value="174000" temperature="500" />
+        <Point value="172000" temperature="550" />
+        <Point value="169000" temperature="600" />
+        <Point value="165000" temperature="650" />
+        <Point value="161000" temperature="700" />
+        <Point value="157000" temperature="750" />
+        <Point value="153000" temperature="800" />
+        <Point value="148000" temperature="850" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2794-k-02" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="775" sourceTable="Table 7M" pointCount="40">
+      <Materials>
+        <Material id="N06845" name="Ni-24Fe-23Cr-6Mo-3Cu" sourceMaterial="Ni-24Fe-23Cr-6Mo-3Cu" sourcePdfPage="775" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed product forms; maximum design temperature 450 degC." uns="N06845" nominalChemicalComposition="Ni-24Fe-23Cr-6Mo-3Cu" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="9.3" temperature="20" />
+        <Point value="10" temperature="50" />
+        <Point value="10.7" temperature="75" />
+        <Point value="11.3" temperature="100" />
+        <Point value="11.8" temperature="125" />
+        <Point value="12.2" temperature="150" />
+        <Point value="12.6" temperature="175" />
+        <Point value="13" temperature="200" />
+        <Point value="13.5" temperature="225" />
+        <Point value="14.1" temperature="250" />
+        <Point value="14.7" temperature="275" />
+        <Point value="15.3" temperature="300" />
+        <Point value="15.9" temperature="325" />
+        <Point value="16.4" temperature="350" />
+        <Point value="16.9" temperature="375" />
+        <Point value="17.4" temperature="400" />
+        <Point value="17.9" temperature="425" />
+        <Point value="18.3" temperature="450" />
+        <Point value="18.8" temperature="475" />
+        <Point value="19.4" temperature="500" />
+        <Point value="20.1" temperature="525" />
+        <Point value="20.9" temperature="550" />
+        <Point value="21.7" temperature="575" />
+        <Point value="22.6" temperature="600" />
+        <Point value="23.5" temperature="625" />
+        <Point value="24.3" temperature="650" />
+        <Point value="25" temperature="675" />
+        <Point value="25.5" temperature="700" />
+        <Point value="25.7" temperature="725" />
+        <Point value="25.8" temperature="750" />
+        <Point value="25.8" temperature="775" />
+        <Point value="25.8" temperature="800" />
+        <Point value="26" temperature="825" />
+        <Point value="26.3" temperature="850" />
+        <Point value="26.6" temperature="875" />
+        <Point value="27" temperature="900" />
+        <Point value="27.3" temperature="925" />
+        <Point value="27.6" temperature="950" />
+        <Point value="27.9" temperature="975" />
+        <Point value="28.2" temperature="1000" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2794-a-03" property="a" unit="m2/s" temperatureUnit="degC" sourcePdfPage="775" sourceTable="Table 7M" pointCount="40">
+      <Materials>
+        <Material id="N06845" name="Ni-24Fe-23Cr-6Mo-3Cu" sourceMaterial="Ni-24Fe-23Cr-6Mo-3Cu" sourcePdfPage="775" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed product forms; maximum design temperature 450 degC." uns="N06845" nominalChemicalComposition="Ni-24Fe-23Cr-6Mo-3Cu" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="2.7e-06" temperature="20" />
+        <Point value="2.86e-06" temperature="50" />
+        <Point value="3e-06" temperature="75" />
+        <Point value="3.12e-06" temperature="100" />
+        <Point value="3.21e-06" temperature="125" />
+        <Point value="3.28e-06" temperature="150" />
+        <Point value="3.35e-06" temperature="175" />
+        <Point value="3.41e-06" temperature="200" />
+        <Point value="3.49e-06" temperature="225" />
+        <Point value="3.57e-06" temperature="250" />
+        <Point value="3.66e-06" temperature="275" />
+        <Point value="3.74e-06" temperature="300" />
+        <Point value="3.83e-06" temperature="325" />
+        <Point value="3.92e-06" temperature="350" />
+        <Point value="4e-06" temperature="375" />
+        <Point value="4.09e-06" temperature="400" />
+        <Point value="4.17e-06" temperature="425" />
+        <Point value="4.25e-06" temperature="450" />
+        <Point value="4.33e-06" temperature="475" />
+        <Point value="4.4e-06" temperature="500" />
+        <Point value="4.46e-06" temperature="525" />
+        <Point value="4.52e-06" temperature="550" />
+        <Point value="4.59e-06" temperature="575" />
+        <Point value="4.68e-06" temperature="600" />
+        <Point value="4.79e-06" temperature="625" />
+        <Point value="4.92e-06" temperature="650" />
+        <Point value="5.02e-06" temperature="675" />
+        <Point value="5.1e-06" temperature="700" />
+        <Point value="5.12e-06" temperature="725" />
+        <Point value="5.1e-06" temperature="750" />
+        <Point value="5.12e-06" temperature="775" />
+        <Point value="5.06e-06" temperature="800" />
+        <Point value="5.08e-06" temperature="825" />
+        <Point value="5.11e-06" temperature="850" />
+        <Point value="5.16e-06" temperature="875" />
+        <Point value="5.21e-06" temperature="900" />
+        <Point value="5.26e-06" temperature="925" />
+        <Point value="5.29e-06" temperature="950" />
+        <Point value="5.33e-06" temperature="975" />
+        <Point value="5.36e-06" temperature="1000" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2794-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="768" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Density reported at room temperature; no numeric room temperature specified.">
+      <Materials>
+        <Material id="N06845" name="Ni-24Fe-23Cr-6Mo-3Cu" sourceMaterial="Ni-24Fe-23Cr-6Mo-3Cu" sourcePdfPage="768" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed product forms; maximum design temperature 450 degC." uns="N06845" nominalChemicalComposition="Ni-24Fe-23Cr-6Mo-3Cu" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="8410" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2794-nu-05" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="768" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="N06845" name="Ni-24Fe-23Cr-6Mo-3Cu" sourceMaterial="Ni-24Fe-23Cr-6Mo-3Cu" sourcePdfPage="768" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed product forms; maximum design temperature 450 degC." uns="N06845" nominalChemicalComposition="Ni-24Fe-23Cr-6Mo-3Cu" maxTemperature="450" />
+      </Materials>
+      <Points>
+        <Point value="0.31" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2794-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="774" sourceTable="Table 6M" pointCount="29" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="N06845" name="Ni-24Fe-23Cr-6Mo-3Cu" sourceMaterial="Ni-24Fe-23Cr-6Mo-3Cu" sourcePdfPage="774" requiresReview="true" applicability="Section VIII Division 1; specified solution-annealed product forms; maximum design temperature 450 degC." uns="N06845" nominalChemicalComposition="Ni-24Fe-23Cr-6Mo-3Cu" maxTemperature="450" />
+      </Materials>
+      <Values>
+        <Value value="1.39e-05" temperatureLabel="RT–100" />
+        <Value value="1.39e-05" temperatureLabel="RT–125" />
+        <Value value="1.4e-05" temperatureLabel="RT–150" />
+        <Value value="1.4e-05" temperatureLabel="RT–175" />
+        <Value value="1.41e-05" temperatureLabel="RT–200" />
+        <Value value="1.42e-05" temperatureLabel="RT–225" />
+        <Value value="1.43e-05" temperatureLabel="RT–250" />
+        <Value value="1.43e-05" temperatureLabel="RT–275" />
+        <Value value="1.44e-05" temperatureLabel="RT–300" />
+        <Value value="1.45e-05" temperatureLabel="RT–325" />
+        <Value value="1.45e-05" temperatureLabel="RT–350" />
+        <Value value="1.46e-05" temperatureLabel="RT–375" />
+        <Value value="1.46e-05" temperatureLabel="RT–400" />
+        <Value value="1.47e-05" temperatureLabel="RT–425" />
+        <Value value="1.47e-05" temperatureLabel="RT–450" />
+        <Value value="1.48e-05" temperatureLabel="RT–475" />
+        <Value value="1.48e-05" temperatureLabel="RT–500" />
+        <Value value="1.48e-05" temperatureLabel="RT–525" />
+        <Value value="1.48e-05" temperatureLabel="RT–550" />
+        <Value value="1.47e-05" temperatureLabel="RT–575" />
+        <Value value="1.47e-05" temperatureLabel="RT–600" />
+        <Value value="1.48e-05" temperatureLabel="RT–625" />
+        <Value value="1.49e-05" temperatureLabel="RT–650" />
+        <Value value="1.51e-05" temperatureLabel="RT–675" />
+        <Value value="1.53e-05" temperatureLabel="RT–700" />
+        <Value value="1.55e-05" temperatureLabel="RT–725" />
+        <Value value="1.56e-05" temperatureLabel="RT–750" />
+        <Value value="1.57e-05" temperatureLabel="RT–775" />
+        <Value value="1.58e-05" temperatureLabel="RT–800" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="Alpha" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

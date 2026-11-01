@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2353-2 - 1.15Ni-0.65Cu-Mo-Cb" sourceTable="Code Case 2353-2" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="222" sourcePageEnd="224" status="normalized-code-case-review-required" codeCase="2353-2" curveCount="4" sourceOnlyCurveCount="0" materialCount="4" pointCount="28">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2353-2; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section I; specified seamless pipe, tube, plate, forgings and fittings; source class and PWHT requirements apply.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2353-2-e-01" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="224" sourceTable="Table 3M" pointCount="7">
+      <Materials>
+        <Material id="K21001" name="1.15Ni-0.65Cu-Mo-Cb" sourceMaterial="1.15Ni-0.65Cu-Mo-Cb" sourcePdfPage="224" requiresReview="true" applicability="Section I; specified seamless pipe, tube, plate, forgings and fittings; source class and PWHT requirements apply." uns="K21001" nominalChemicalComposition="1.15Ni-0.65Cu-Mo-Cb" />
+      </Materials>
+      <Points>
+        <Point value="191000" temperature="21" />
+        <Point value="187000" temperature="93" />
+        <Point value="184000" temperature="149" />
+        <Point value="181000" temperature="204" />
+        <Point value="177000" temperature="260" />
+        <Point value="173000" temperature="316" />
+        <Point value="169000" temperature="371" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2353-2-alpha-02" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="224" sourceTable="Table 3M" pointCount="7" referenceTemperature="20">
+      <Materials>
+        <Material id="K21001" name="1.15Ni-0.65Cu-Mo-Cb" sourceMaterial="1.15Ni-0.65Cu-Mo-Cb" sourcePdfPage="224" requiresReview="true" applicability="Section I; specified seamless pipe, tube, plate, forgings and fittings; source class and PWHT requirements apply." uns="K21001" nominalChemicalComposition="1.15Ni-0.65Cu-Mo-Cb" />
+      </Materials>
+      <Points>
+        <Point value="1.15e-05" temperature="21" />
+        <Point value="1.21e-05" temperature="93" />
+        <Point value="1.24e-05" temperature="149" />
+        <Point value="1.27e-05" temperature="204" />
+        <Point value="1.31e-05" temperature="260" />
+        <Point value="1.33e-05" temperature="316" />
+        <Point value="1.37e-05" temperature="371" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2353-2-nu-03" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="224" sourceTable="Table 3M" pointCount="7">
+      <Materials>
+        <Material id="K21001" name="1.15Ni-0.65Cu-Mo-Cb" sourceMaterial="1.15Ni-0.65Cu-Mo-Cb" sourcePdfPage="224" requiresReview="true" applicability="Section I; specified seamless pipe, tube, plate, forgings and fittings; source class and PWHT requirements apply." uns="K21001" nominalChemicalComposition="1.15Ni-0.65Cu-Mo-Cb" />
+      </Materials>
+      <Points>
+        <Point value="0.3" temperature="21" />
+        <Point value="0.3" temperature="93" />
+        <Point value="0.3" temperature="149" />
+        <Point value="0.3" temperature="204" />
+        <Point value="0.3" temperature="260" />
+        <Point value="0.3" temperature="316" />
+        <Point value="0.3" temperature="371" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2353-2-density-04" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="224" sourceTable="Table 3M" pointCount="7">
+      <Materials>
+        <Material id="K21001" name="1.15Ni-0.65Cu-Mo-Cb" sourceMaterial="1.15Ni-0.65Cu-Mo-Cb" sourcePdfPage="224" requiresReview="true" applicability="Section I; specified seamless pipe, tube, plate, forgings and fittings; source class and PWHT requirements apply." uns="K21001" nominalChemicalComposition="1.15Ni-0.65Cu-Mo-Cb" />
+      </Materials>
+      <Points>
+        <Point value="7750" temperature="21" />
+        <Point value="7750" temperature="93" />
+        <Point value="7750" temperature="149" />
+        <Point value="7750" temperature="204" />
+        <Point value="7750" temperature="260" />
+        <Point value="7750" temperature="316" />
+        <Point value="7750" temperature="371" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <UnavailableProperties>
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="k" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

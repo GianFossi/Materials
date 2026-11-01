@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2780-1 - 24Cr-4Ni-3Mn-1.6Mo-0.27N" sourceTable="Code Case 2780-1" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="732" sourcePageEnd="732" status="normalized-code-case-review-required" codeCase="2780-1" curveCount="4" sourceOnlyCurveCount="1" materialCount="4" pointCount="7">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2780-1; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 1; specified duplex product forms; E only at 20 degC; source heat-treatment requirements apply.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2780-1-k-01" property="k" unit="W/(m*K)" temperatureUnit="degC" sourcePdfPage="732" sourceTable="Table 2M" pointCount="4">
+      <Materials>
+        <Material id="S82441" name="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourceMaterial="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourcePdfPage="732" requiresReview="true" applicability="Section VIII Division 1; specified duplex product forms; E only at 20 degC; source heat-treatment requirements apply." uns="S82441" nominalChemicalComposition="24Cr-4Ni-3Mn-1.6Mo-0.27N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="14.5" temperature="20" />
+        <Point value="16" temperature="100" />
+        <Point value="18" temperature="200" />
+        <Point value="21" temperature="300" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2780-1-e-02" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="732" sourceTable="Table physical-property clause" pointCount="1">
+      <Materials>
+        <Material id="S82441" name="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourceMaterial="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourcePdfPage="732" requiresReview="true" applicability="Section VIII Division 1; specified duplex product forms; E only at 20 degC; source heat-treatment requirements apply." uns="S82441" nominalChemicalComposition="24Cr-4Ni-3Mn-1.6Mo-0.27N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="205000" temperature="20" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2780-1-density-03" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="732" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="S82441" name="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourceMaterial="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourcePdfPage="732" requiresReview="true" applicability="Section VIII Division 1; specified duplex product forms; E only at 20 degC; source heat-treatment requirements apply." uns="S82441" nominalChemicalComposition="24Cr-4Ni-3Mn-1.6Mo-0.27N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="7700" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2780-1-nu-04" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="732" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="S82441" name="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourceMaterial="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourcePdfPage="732" requiresReview="true" applicability="Section VIII Division 1; specified duplex product forms; E only at 20 degC; source heat-treatment requirements apply." uns="S82441" nominalChemicalComposition="24Cr-4Ni-3Mn-1.6Mo-0.27N" maxTemperature="316" />
+      </Materials>
+      <Points>
+        <Point value="0.3" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported">
+    <Curve id="cc-source-2780-1-alpha-01" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="732" sourceTable="Table 1M" pointCount="3" notes="Source temperature or reference is RT/Room without a numeric definition; not imported.">
+      <Materials>
+        <Material id="S82441" name="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourceMaterial="24Cr-4Ni-3Mn-1.6Mo-0.27N" sourcePdfPage="732" requiresReview="true" applicability="Section VIII Division 1; specified duplex product forms; E only at 20 degC; source heat-treatment requirements apply." uns="S82441" nominalChemicalComposition="24Cr-4Ni-3Mn-1.6Mo-0.27N" maxTemperature="316" />
+      </Materials>
+      <Values>
+        <Value value="1.3e-05" temperatureLabel="RT–100" />
+        <Value value="1.35e-05" temperatureLabel="RT–200" />
+        <Value value="1.4e-05" temperatureLabel="RT–300" />
+      </Values>
+    </Curve>
+  </SourceCurves>
+  <UnavailableProperties>
+    <Property name="Alpha" reason="Source-only values; undefined expansion reference/temperature or nonordinary modulus." />
+    <Property name="AlphaInstantaneous" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>

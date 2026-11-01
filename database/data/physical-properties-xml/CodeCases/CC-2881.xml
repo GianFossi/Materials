@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Source-verified Code Case physical properties, explicit SI points and reviewable material associations. -->
+<PhysicalPropertyTableImport name="Code Case 2881 - ASTM B16 C36000 H02 brass" sourceTable="Code Case 2881" schema="material-curves-v1" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" sourcePdfSha256="53ec18b9700c0ae02acfd30e8b4a863b15a2965b2b33ffdab6c56c2680a895ac" sourcePageStart="990" sourcePageEnd="990" status="normalized-code-case-review-required" codeCase="2881" curveCount="5" sourceOnlyCurveCount="0" materialCount="5" pointCount="43">
+  <ReferenceData>ASME BPVC Code Cases 2025, Case 2881; PDF pages are one-based.</ReferenceData>
+  <Notes>Source-explicit material keys only. Review Code Case acceptance, product specifications, heat treatment, construction section and temperature limits before import. No database writes. Missing cells are omitted, never zero or extrapolated.</Notes>
+  <SourceNotes>Section VIII Division 1; ASTM B16-10(R2015) C36000 H02; TE-3 brass and TM-3 C36500 are explicitly directed. The printed metric density unit kg/mm3 is inconsistent with 0.307 lb/in3; use the explicitly stated US density converted to SI, subject to review.</SourceNotes>
+  <Curves>
+    <Curve id="cc-2881-alphainstantaneous-01" property="AlphaInstantaneous" unit="1/degC" temperatureUnit="degC" sourcePdfPage="990" sourceTable="Table explicit II-D mapping" pointCount="17" referenceTemperature="20" notes="Code Case explicitly directs use of TE-3 curve te-3-03-A. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-3.xml" mappedSourceCurve="te-3-03-A" mappedSourceSha256="2ae1db0b72788abe4c9cebf9efa5a9bc974197f2b6dab41129509a708f62bb4c" mappedSourcePdfPages="1212-1212">
+      <Materials>
+        <Material id="C36000" name="ASTM B16 C36000 H02 brass" sourceMaterial="ASTM B16 C36000 H02 brass" sourcePdfPage="990" requiresReview="true" applicability="Section VIII Division 1; ASTM B16-10(R2015) C36000 H02; TE-3 brass and TM-3 C36500 are explicitly directed. The printed metric density unit kg/mm3 is inconsistent with 0.307 lb/in3; use the explicitly stated US density converted to SI, subject to review." uns="C36000" maxTemperature="191" />
+      </Materials>
+      <Points>
+        <Point value="1.67e-05" temperature="20" />
+        <Point value="1.75e-05" temperature="50" />
+        <Point value="1.79e-05" temperature="75" />
+        <Point value="1.83e-05" temperature="100" />
+        <Point value="1.86e-05" temperature="125" />
+        <Point value="1.9e-05" temperature="150" />
+        <Point value="1.94e-05" temperature="175" />
+        <Point value="1.99e-05" temperature="200" />
+        <Point value="2.03e-05" temperature="225" />
+        <Point value="2.06e-05" temperature="250" />
+        <Point value="2.09e-05" temperature="275" />
+        <Point value="2.1e-05" temperature="300" />
+        <Point value="2.12e-05" temperature="325" />
+        <Point value="2.15e-05" temperature="350" />
+        <Point value="2.21e-05" temperature="375" />
+        <Point value="2.34e-05" temperature="400" />
+        <Point value="2.59e-05" temperature="425" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2881-alpha-02" property="Alpha" unit="1/degC" temperatureUnit="degC" sourcePdfPage="990" sourceTable="Table explicit II-D mapping" pointCount="17" referenceTemperature="20" notes="Code Case explicitly directs use of TE-3 curve te-3-03-B. II-D source notes: Material identities follow explicit source compositions/UNS. Copper UNS family patterns require manual association; no individual UNS is invented. Precipitation-hardened steel Conditions 1075/1150 require manual condition review. Titanium UNS keys use explicit Table TM-5 grade/UNS pairs (PDF 1244)." mappedSourceFile="ThermalExpansion/TE-3.xml" mappedSourceCurve="te-3-03-B" mappedSourceSha256="2ae1db0b72788abe4c9cebf9efa5a9bc974197f2b6dab41129509a708f62bb4c" mappedSourcePdfPages="1212-1212">
+      <Materials>
+        <Material id="C36000" name="ASTM B16 C36000 H02 brass" sourceMaterial="ASTM B16 C36000 H02 brass" sourcePdfPage="990" requiresReview="true" applicability="Section VIII Division 1; ASTM B16-10(R2015) C36000 H02; TE-3 brass and TM-3 C36500 are explicitly directed. The printed metric density unit kg/mm3 is inconsistent with 0.307 lb/in3; use the explicitly stated US density converted to SI, subject to review." uns="C36000" maxTemperature="191" />
+      </Materials>
+      <Points>
+        <Point value="1.67e-05" temperature="20" />
+        <Point value="1.71e-05" temperature="50" />
+        <Point value="1.74e-05" temperature="75" />
+        <Point value="1.76e-05" temperature="100" />
+        <Point value="1.78e-05" temperature="125" />
+        <Point value="1.8e-05" temperature="150" />
+        <Point value="1.82e-05" temperature="175" />
+        <Point value="1.84e-05" temperature="200" />
+        <Point value="1.86e-05" temperature="225" />
+        <Point value="1.88e-05" temperature="250" />
+        <Point value="1.9e-05" temperature="275" />
+        <Point value="1.92e-05" temperature="300" />
+        <Point value="1.93e-05" temperature="325" />
+        <Point value="1.95e-05" temperature="350" />
+        <Point value="1.96e-05" temperature="375" />
+        <Point value="1.98e-05" temperature="400" />
+        <Point value="2.01e-05" temperature="425" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2881-e-03" property="E" unit="MPa" temperatureUnit="degC" sourcePdfPage="990" sourceTable="Table explicit II-D mapping" pointCount="7" notes="Code Case explicitly directs use of TM-3 curve tm-3-03. II-D source notes: " mappedSourceFile="ElasticModulus/TM-3.xml" mappedSourceCurve="tm-3-03" mappedSourceSha256="8a7b2fdc1d987008b47cd8e782deac7230664f61d72f1d15d106a2ea8d5a892c" mappedSourcePdfPages="1242-1242">
+      <Materials>
+        <Material id="C36000" name="ASTM B16 C36000 H02 brass" sourceMaterial="ASTM B16 C36000 H02 brass" sourcePdfPage="990" requiresReview="true" applicability="Section VIII Division 1; ASTM B16-10(R2015) C36000 H02; TE-3 brass and TM-3 C36500 are explicitly directed. The printed metric density unit kg/mm3 is inconsistent with 0.307 lb/in3; use the explicitly stated US density converted to SI, subject to review." uns="C36000" maxTemperature="191" />
+      </Materials>
+      <Points>
+        <Point value="110000" temperature="-200" />
+        <Point value="108000" temperature="-125" />
+        <Point value="106000" temperature="-75" />
+        <Point value="103000" temperature="25" />
+        <Point value="101000" temperature="100" />
+        <Point value="99000" temperature="150" />
+        <Point value="97000" temperature="200" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2881-nu-04" property="Nu" unit="dimensionless" temperatureUnit="degC" sourcePdfPage="990" sourceTable="Table physical-property clause" pointCount="1" constant="true">
+      <Materials>
+        <Material id="C36000" name="ASTM B16 C36000 H02 brass" sourceMaterial="ASTM B16 C36000 H02 brass" sourcePdfPage="990" requiresReview="true" applicability="Section VIII Division 1; ASTM B16-10(R2015) C36000 H02; TE-3 brass and TM-3 C36500 are explicitly directed. The printed metric density unit kg/mm3 is inconsistent with 0.307 lb/in3; use the explicitly stated US density converted to SI, subject to review." uns="C36000" maxTemperature="191" />
+      </Materials>
+      <Points>
+        <Point value="0.31" />
+      </Points>
+    </Curve>
+    <Curve id="cc-2881-density-05" property="density" unit="kg/m3" temperatureUnit="degC" sourcePdfPage="990" sourceTable="Table physical-property clause" pointCount="1" constant="true" notes="Converted from 0.307 lb/in3 using exact lb/kg and inch/m factors; printed 8.50 kg/mm3 is not accepted as an SI density.">
+      <Materials>
+        <Material id="C36000" name="ASTM B16 C36000 H02 brass" sourceMaterial="ASTM B16 C36000 H02 brass" sourcePdfPage="990" requiresReview="true" applicability="Section VIII Division 1; ASTM B16-10(R2015) C36000 H02; TE-3 brass and TM-3 C36500 are explicitly directed. The printed metric density unit kg/mm3 is inconsistent with 0.307 lb/in3; use the explicitly stated US density converted to SI, subject to review." uns="C36000" maxTemperature="191" />
+      </Materials>
+      <Points>
+        <Point value="8497.73074603" />
+      </Points>
+    </Curve>
+  </Curves>
+  <SourceCurves status="source-only-not-imported" />
+  <SourceAnomaly sourcePdfPage="990" property="density" printedMetricValue="8.50" printedMetricUnit="kg/mm3" acceptedSourceValue="0.307" acceptedSourceUnit="lb/in3" handling="exact-US-to-SI-conversion-requires-review" />
+  <UnavailableProperties>
+    <Property name="a" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+    <Property name="k" reason="No value or explicit equivalent-material direction in the extracted Code Case property clauses." />
+  </UnavailableProperties>
+</PhysicalPropertyTableImport>
