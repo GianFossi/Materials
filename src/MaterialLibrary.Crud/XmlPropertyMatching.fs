@@ -1,6 +1,10 @@
+// Author: Copilot
+// Last revision: 2026-11-01
+// Purpose: Propose explicit XML material associations without inferring alloy equivalence.
 namespace MaterialLibrary.Crud
 
 open System
+open System.Globalization
 open System.Text.RegularExpressions
 open Microsoft.Data.Sqlite
 open MaterialLibrary.Domain.Database.Lookup
@@ -11,7 +15,22 @@ module XmlPropertyMatching =
     let compositionKey text =
         let normalized = XmlPropertyReader.normalize text
         let tokens = normalized.Split('-')
-        if tokens.Length>1 && (tokens |> Array.forall (fun t -> Regex.IsMatch(t,@"^(?:[0-9¼½¾.]+)?[A-Z]{1,2}$"))) then tokens |> Array.sort |> String.concat "-"
+        let canonicalToken token =
+            let matchValue = Regex.Match(token,@"^(?<amount>[0-9¼½¾⅓⅕.]+)?(?<element>[A-Z]{1,2})$")
+            let amount = matchValue.Groups["amount"].Value
+            let fraction = Regex.Match(amount,@"^(?<whole>\d*)(?<fraction>[¼½¾⅕])$")
+            let numeric =
+                if fraction.Success then
+                    let whole = if fraction.Groups["whole"].Value="" then 0M else Decimal.Parse(fraction.Groups["whole"].Value,CultureInfo.InvariantCulture)
+                    let part = match fraction.Groups["fraction"].Value with "¼" -> 0.25M | "½" -> 0.5M | "¾" -> 0.75M | _ -> 0.2M
+                    Some (whole+part)
+                else
+                    match Decimal.TryParse(amount,NumberStyles.AllowDecimalPoint,CultureInfo.InvariantCulture) with
+                    | true,n -> Some n
+                    | _ -> None
+            (numeric |> Option.map (fun n -> n.ToString("0.############################",CultureInfo.InvariantCulture)) |> Option.defaultValue amount)
+            + matchValue.Groups["element"].Value
+        if tokens.Length>1 && (tokens |> Array.forall (fun t -> Regex.IsMatch(t,@"^(?:[0-9¼½¾⅓⅕.]+)?[A-Z]{1,2}$"))) then tokens |> Array.map canonicalToken |> Array.sort |> String.concat "-"
         else normalized
     /// <summary>List candidates with exact identity, UNS, composition or existing chart-reference evidence.</summary>
     let propose (db: SqliteConnection) (records: XmlPropertyRecord array) =

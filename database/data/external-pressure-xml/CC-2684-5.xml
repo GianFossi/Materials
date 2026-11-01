@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Typed Code Case external-pressure chart coordinates with explicit source units. -->
+<ExternalPressureCodeCaseChart name="2684-5" figure="1M" codeCase="2684-5" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" tablePdfPages="533" material="N06674" ordinate="B" units="A=dimensionless; B=MPa; Temperature=degC; Time=hr" status="normalized-points-review-required" psiToMPa="0.006894757293168361" figurePdfPages="534,535" pointCount="41">
+  <ReferenceData>ASME BPVC Code Cases, Boilers and Pressure Vessels, 2025; Case 2684-5; 1M</ReferenceData>
+  <Notes>Numeric coordinates transcribed from the cited tabular chart data, not digitized from plot images. Source continuation exponents are explicit; original ordinates and units are retained per point. Source order is preserved. No extrapolation or engineering approval is implied. Check all Code Case restrictions, current acceptance, and source values before engineering use.</Notes>
+  <Curves count="5">
+    <Curve sourceLabel="RT" pointCount="9" temperatureQualifier="roomTemperature">
+      <Point A="1E-05" B="1E+00" sourceOrdinate="1E+00" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.04E-04" B="1E+01" sourceOrdinate="1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="7.29E-04" B="7E+01" sourceOrdinate="7E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.26E-03" B="8E+01" sourceOrdinate="8E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="2.34E-03" B="8.8E+01" sourceOrdinate="8.8E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="3.85E-03" B="9.6E+01" sourceOrdinate="9.6E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.02E-02" B="1.1E+02" sourceOrdinate="1.1E+02" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="2E-02" B="1.175E+02" sourceOrdinate="1.175E+02" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1E-01" B="1.175E+02" sourceOrdinate="1.175E+02" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+    </Curve>
+    <Curve sourceLabel="100" pointCount="9" temperatureC="100" sourceTemperatureC="100">
+      <Point A="1E-05" B="9E-01" sourceOrdinate="9E-01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.06E-04" B="1E+01" sourceOrdinate="1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="6.65E-04" B="6.25E+01" sourceOrdinate="6.25E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.31E-03" B="7.1E+01" sourceOrdinate="7.1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="2.97E-03" B="8.1E+01" sourceOrdinate="8.1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="6E-03" B="9E+01" sourceOrdinate="9E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.12E-02" B="9.8E+01" sourceOrdinate="9.8E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="2E-02" B="1.045E+02" sourceOrdinate="1.045E+02" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1E-01" B="1.045E+02" sourceOrdinate="1.045E+02" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+    </Curve>
+    <Curve sourceLabel="300" pointCount="8" temperatureC="300" sourceTemperatureC="300">
+      <Point A="1E-05" B="9E-01" sourceOrdinate="9E-01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.14E-04" B="1E+01" sourceOrdinate="1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="6.17E-04" B="5.4E+01" sourceOrdinate="5.4E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.42E-03" B="6.3E+01" sourceOrdinate="6.3E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="2.52E-03" B="7E+01" sourceOrdinate="7E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="5.84E-03" B="7.8E+01" sourceOrdinate="7.8E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="2.06E-02" B="9.05E+01" sourceOrdinate="9.05E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1E-01" B="9.05E+01" sourceOrdinate="9.05E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+    </Curve>
+    <Curve sourceLabel="500" pointCount="8" temperatureC="500" sourceTemperatureC="500">
+      <Point A="1E-05" B="8E-01" sourceOrdinate="8E-01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.22E-04" B="1E+01" sourceOrdinate="1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="5.82E-04" B="4.8E+01" sourceOrdinate="4.8E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="8.05E-04" B="5.2E+01" sourceOrdinate="5.2E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.92E-03" B="5.9E+01" sourceOrdinate="5.9E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="5.22E-03" B="6.8E+01" sourceOrdinate="6.8E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="2.45E-02" B="7.95E+01" sourceOrdinate="7.95E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1E-01" B="7.95E+01" sourceOrdinate="7.95E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+    </Curve>
+    <Curve sourceLabel="800" pointCount="7" temperatureC="800" sourceTemperatureC="800">
+      <Point A="1E-05" B="7E-01" sourceOrdinate="7E-01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.4E-04" B="1E+01" sourceOrdinate="1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="6.29E-04" B="4.5E+01" sourceOrdinate="4.5E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1.32E-03" B="5E+01" sourceOrdinate="5E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="3.04E-03" B="5.6E+01" sourceOrdinate="5.6E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="3.16E-02" B="7.1E+01" sourceOrdinate="7.1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+      <Point A="1E-01" B="7.1E+01" sourceOrdinate="7.1E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="533" />
+    </Curve>
+  </Curves>
+</ExternalPressureCodeCaseChart>

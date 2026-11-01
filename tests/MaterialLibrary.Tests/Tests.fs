@@ -1,3 +1,6 @@
+// Author: Copilot
+// Last revision: 2026-11-01
+// Purpose: Test material properties, database integration and XML data helpers.
 module MaterialLibrary.Tests
 
 open Xunit
@@ -1459,8 +1462,33 @@ let ``XML data helpers read repository physical-property staging folder`` () =
 
         Assert.Contains(
             files,
+            fun file -> file.RelativePath = "physical-properties-xml/Density/PRD-Density.xml"
+        )
+
+        Assert.DoesNotContain(
+            files,
             fun file -> file.RelativePath = "physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml"
         )
+
+        let path = Path.Combine(dataRoot, "physical-properties-xml", "Density", "PRD-Density.xml")
+        let materials = XDocument.Load(path).Descendants(XName.Get "Material") |> Seq.toArray
+        let records = XmlPropertyReader.readFile path |> List.toArray
+        Assert.Equal(158, materials.Length)
+        Assert.Equal(316, records.Length)
+        Assert.Equal(records.Length, records |> Array.map (fun r -> r.Key) |> Array.distinct |> Array.length)
+        for material in materials do
+            for attributeName, suffix, propertyCode, unit in [ "density", "density", "density", "kg/m3"; "poissonRatio", "poisson", "Nu", "dimensionless" ] do
+                let id = "prd-" + suffix + "-" + material.Attribute(XName.Get "id").Value
+                let record = records |> Array.find (fun r -> r.Key.EndsWith("/" + id))
+                let expected = XmlPropertyReader.number (material.Attribute(XName.Get attributeName).Value) |> Option.get
+                Assert.Equal(propertyCode, record.PropertyCode)
+                Assert.Equal(unit, record.Unit)
+                Assert.Equal(material.Attribute(XName.Get "name").Value, record.Description)
+                Assert.Equal(XmlPropertyReader.value "uns" material, record.UNS)
+                Assert.True(record.IsConstant)
+                Assert.Equal(material.Attribute(XName.Get "association").Value="manual", record.RequiresReview)
+                Assert.Single(record.Points) |> ignore
+                Assert.Equal(expected, record.Points[0].Y)
 
 [<Fact>]
 let ``CRUD repository creates reads updates deletes and persists materials`` () =

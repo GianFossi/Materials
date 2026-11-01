@@ -1,3 +1,6 @@
+// Author: Copilot
+// Last revision: 2026-11-01
+// Purpose: Read physical-property XML with explicit units, provenance and review diagnostics.
 namespace MaterialLibrary.Crud
 
 open System
@@ -56,9 +59,102 @@ module XmlPropertyReader =
             | _ -> invalid <- true; None)
         {baseRecord with Key=baseRecord.Key+"/"+value "id" node;Description=value "description" node;PropertyCode=c;Unit=(if c="EP" then "MPa" else Asme2025Data.families |> Array.tryFind (fun (code,_) -> code=c) |> Option.map snd |> Option.defaultValue unit);
                          ChartName=value "chart" node;Specification=value "specification" node;Grade=value "grade" node;Condition=value "condition" node;
-                         UNS=value "uns" node;Composition=value "composition" node;Notes=value "notes" node;IsConstant=value "constant" node="true";
+                         UNS=value "uns" node;Composition=(if value "nominalChemicalComposition" node<>"" then value "nominalChemicalComposition" node else value "composition" node);Notes=value "notes" node;IsConstant=value "constant" node="true";
                          Points=(if invalid then [||] else parsed);RequiresReview=false;
                          Diagnostic=(if scale.IsNone then "Unità non riconosciuta: scegliere famiglia/unità e verificare i valori." elif invalid then "Uno o più punti non validi: nessuna riga è stata scartata silenziosamente; correggere il record." else "XML strutturato; verificare associazione e unità.")}
+    /// <summary>Expand compact material constants into density (kg/m3) and Nu (dimensionless) records with shared identity.</summary>
+    let private materialConstants (baseRecord: XmlPropertyRecord) (root: XElement) =
+        let materials = root.Elements() |> Seq.filter (fun n -> n.Name.LocalName="Materials") |> Seq.collect (fun n -> n.Elements()) |> Seq.toList
+        if materials.IsEmpty then raise (FormatException("XML material-constants-v1: nessun materiale presente."))
+        materials |> List.collect (fun material ->
+            let id, name = value "id" material, value "name" material
+            if material.Name.LocalName<>"Material" || String.IsNullOrWhiteSpace id || String.IsNullOrWhiteSpace name then
+                raise (FormatException("XML material-constants-v1: ogni voce richiede Material, id e name."))
+            let uns, composition = value "uns" material, value "nominalChemicalComposition" material
+            let manual = String.IsNullOrWhiteSpace uns && String.IsNullOrWhiteSpace composition
+            let sourceMaterial, sourcePage = value "sourceMaterial" material, value "sourcePdfPage" material
+            let notes = String.concat " " [baseRecord.Notes; $"ASME Table PRD: {sourceMaterial}; source PDF page {sourcePage}."]
+            [ "density", "density", "densityUnit"; "poisson", "Nu", "poissonRatioUnit" ]
+            |> List.map (fun (suffix, propertyCode, unitAttribute) ->
+                let scalarAttribute = if propertyCode="Nu" then "poissonRatio" else "density"
+                let scalar, unit = value scalarAttribute material, value unitAttribute root
+                match number scalar, unitScale propertyCode unit with
+                | Some n, Some 1. when n>0. && (propertyCode<>"Nu" || n<0.5) -> ()
+                | _ -> raise (FormatException($"PRD {name}: {scalarAttribute} o unità non validi."))
+                let node = XElement(XName.Get "Record",
+                    XAttribute(XName.Get "id", $"prd-{suffix}-{id}"),
+                    XAttribute(XName.Get "property", propertyCode),
+                    XAttribute(XName.Get "unit", unit),
+                    XAttribute(XName.Get "constant", "true"),
+                    XAttribute(XName.Get "description", name),
+                    XAttribute(XName.Get "uns", uns),
+                    XAttribute(XName.Get "nominalChemicalComposition", composition),
+                    XElement(XName.Get "notes", notes),
+                    XElement(XName.Get "Point", XAttribute(XName.Get "value", scalar)))
+                let record = structured baseRecord node
+                {record with RequiresReview=manual;
+                             Diagnostic=(if manual then "PRD: famiglia senza UNS/composizione esatta; associazione manuale e verifica richieste." else "PRD: chiave UNS/composizione esplicita; verificare applicabilità e associazione.")}))
+    /// <summary>Expand shared physical curves (E in MPa, k in W/(m*K), expansion in 1/degC) into material records with declared limits.</summary>
+    let private materialCurves (baseRecord: XmlPropertyRecord) (root: XElement) =
+        let curves = root.Elements(XName.Get "Curves") |> Seq.collect (fun n -> n.Elements(XName.Get "Curve")) |> Seq.toList
+        if curves.IsEmpty then raise (FormatException("XML material-curves-v1: nessuna curva presente."))
+        let curveIds = curves |> List.map (value "id")
+        if curveIds |> List.exists String.IsNullOrWhiteSpace || (curveIds |> List.distinct |> List.length)<>curves.Length then
+            raise (FormatException("XML material-curves-v1: ID curva mancanti o duplicati."))
+        curves |> List.collect (fun curve ->
+            let id = value "id" curve
+            let propertyCode = value "property" curve
+            let expectedUnit = if propertyCode="E" then "MPa" elif propertyCode="k" then "W/(m*K)" else "1/degC"
+            if not (["E"; "k"; "Alpha"; "AlphaInstantaneous"] |> List.contains propertyCode) || value "unit" curve<>expectedUnit || value "temperatureUnit" curve<>"degC" then
+                raise (FormatException($"Curva {id}: proprietà/unità non supportate; temperatura richiesta in degC."))
+            let expansion = propertyCode="Alpha" || propertyCode="AlphaInstantaneous"
+            let referenceText = value "referenceTemperature" curve
+            if expansion && (number referenceText |> Option.exists (fun t -> t>= -273.15) |> not) then
+                raise (FormatException($"Curva {id}: temperatura di riferimento mancante o non valida."))
+            let points = curve.Elements(XName.Get "Points") |> Seq.collect (fun n -> n.Elements()) |> Seq.toArray
+            if points.Length=0 then raise (FormatException($"Curva {id}: nessun punto presente."))
+            let temperatures = points |> Array.map (fun point ->
+                match number (value "temperature" point), number (value "value" point) with
+                | Some t, Some e when point.Name.LocalName="Point" && t>= -273.15 && e>0. -> t
+                | _ -> raise (FormatException($"Curva {id}: temperatura o valore della proprietà non validi.")))
+            if temperatures |> Array.pairwise |> Array.exists (fun (a,b) -> b<=a) then
+                raise (FormatException($"Curva {id}: temperature duplicate o non crescenti."))
+            let materials = curve.Elements(XName.Get "Materials") |> Seq.collect (fun n -> n.Elements()) |> Seq.toList
+            if materials.IsEmpty then raise (FormatException($"Curva {id}: nessuna identità materiale presente."))
+            materials |> List.map (fun material ->
+                let materialId, name = value "id" material, value "name" material
+                if material.Name.LocalName<>"Material" || String.IsNullOrWhiteSpace materialId || String.IsNullOrWhiteSpace name then
+                    raise (FormatException($"Curva {id}: ogni materiale richiede id e name."))
+                let sourceMaterial, sourcePage = value "sourceMaterial" material, value "sourcePdfPage" material
+                let applicability, grade = value "applicability" material, value "sourceGrade" material
+                let maximumText = value "maxTemperature" material
+                let maximum =
+                    if maximumText="" then None
+                    else
+                        match number maximumText with
+                        | Some t when t>= -273.15 -> Some t
+                        | _ -> raise (FormatException($"Curva {id}, materiale {name}: limite di temperatura non valido."))
+                let applicablePoints = points |> Array.filter (fun point ->
+                    maximum |> Option.forall (fun limit -> (number (value "temperature" point) |> Option.get)<=limit))
+                if applicablePoints.Length=0 then raise (FormatException($"Curva {id}, materiale {name}: nessun punto entro il limite dichiarato."))
+                let notes = String.concat " " [baseRecord.Notes; value "SourceNotes" root; value "notes" curve; value "notes" material;
+                                               $"Source material: {sourceMaterial}; PDF page {sourcePage}; grade label: {grade}; applicability: {applicability}; maxTemperature (degC): {maximumText}; referenceTemperature (degC): {referenceText}."]
+                let node = XElement(XName.Get "Record",
+                    XAttribute(XName.Get "id", id+"/"+materialId),
+                    XAttribute(XName.Get "property", propertyCode),
+                    XAttribute(XName.Get "unit", expectedUnit),
+                    XAttribute(XName.Get "description", name),
+                    XElement(XName.Get "notes", notes))
+                for field in ["uns"; "nominalChemicalComposition"; "specification"; "grade"; "condition"] do
+                    node.SetAttributeValue(XName.Get field, value field material)
+                for point in applicablePoints do node.Add(XElement(point))
+                let record = structured baseRecord node
+                let manual = String.IsNullOrWhiteSpace record.UNS && String.IsNullOrWhiteSpace record.Composition
+                let review = manual || value "requiresReview" material="true"
+                {record with RequiresReview=review;
+                             Diagnostic=(if manual then $"Curva {propertyCode}: famiglia senza UNS/composizione esatta; associazione manuale richiesta."
+                                         elif review then $"Curva {propertyCode}: chiavi esplicite, ma verificare la condizione di applicabilità dichiarata."
+                                         else $"Curva {propertyCode}: identità UNS/composizione esplicita; verificare applicabilità e associazione.")}))
     /// <summary>Split PDF text into source pages; numeric blocks never cross page or prose boundaries.</summary>
     let private pages (raw: string) = Regex.Split(raw,@"--- SourcePage \d+ ---") |> Array.filter (String.IsNullOrWhiteSpace >> not)
     /// <summary>Extract fully rectangular A/B/C or TC/TD blocks; retain source descriptions and force review.</summary>
@@ -144,8 +240,11 @@ module XmlPropertyReader =
         let c = if root.Name.LocalName="ExternalPressureTableImport" then "EP" elif source.StartsWith("TE-") then "Alpha" elif source.StartsWith("TM-") then "E" elif quantity="Density" then "density" elif quantity.Contains("Poisson") then "Nu" elif quantity.Contains("Diffusivity") then "a" elif quantity.Contains("Conductivity") then "k" else code quantity
         let baseRecord = {Key=Path.GetFullPath path;File=Path.GetFullPath path;SHA256=Convert.ToHexString(SHA256.HashData bytes);Xml=document.ToString();Description=value "name" root;PropertyCode=c;Unit="";ChartName=value "figure" root;Specification="";Grade="";Condition="";UNS="";Composition="";Notes=value "Notes" root;RawText=raw;RequiresReview=true;Diagnostic="Testo XML grezzo: selezionare/ricostruire una riga numerica verificata.";IsConstant=false;Points=[||]}
         let structuredRows = root.DescendantsAndSelf() |> Seq.filter (fun n -> value "property" n<>"" && (n.Elements() |> Seq.exists (fun p -> p.Name.LocalName.Equals("Point",StringComparison.OrdinalIgnoreCase)))) |> Seq.toList
-        if not structuredRows.IsEmpty then
-            let records = structuredRows |> List.mapi (fun i node -> let record=structured baseRecord node in if value "id" node="" then {record with Key=baseRecord.Key+ $"/record-{i}"} else record)
+        if (["material-constants-v1"; "material-curves-v1"] |> List.contains (value "schema" root)) || not structuredRows.IsEmpty then
+            let records =
+                if value "schema" root="material-constants-v1" then materialConstants baseRecord root
+                elif value "schema" root="material-curves-v1" then materialCurves baseRecord root
+                else structuredRows |> List.mapi (fun i node -> let record=structured baseRecord node in if value "id" node="" then {record with Key=baseRecord.Key+ $"/record-{i}"} else record)
             if records |> List.countBy (fun r -> r.Key) |> List.exists (fun (_,n) -> n>1) then failwith "ID record XML duplicato."
             records
         elif raw<>"" then

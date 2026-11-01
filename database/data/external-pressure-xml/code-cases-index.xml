@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Typed Code Case external-pressure chart coordinates with explicit source units. -->
+<ExternalPressureCodeCasesIndex sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" scannedPages="1584" edition="2025" count="17">
+  <Notes>Inventory of dedicated external-pressure figures with numerical tables in the full 2025 Code Cases volume. Metric tables are preferred; equivalent customary/metric plot editions share one chart record. Code Cases referring only to existing Section II-D charts are not duplicated. Cases 2245-1 and 2497-2 were not found as dedicated chart cases in this volume; their existing PVElite records remain separate.</Notes>
+  <Chart name="2146" codeCase="2146" figure="1" file="CC-2146.xml" ordinate="B" />
+  <Chart name="2244-2" codeCase="2244-2" figure="1" file="2244-2.xml" ordinate="B" />
+  <Chart name="2430" codeCase="2430" figure="1M" file="CC-2430.xml" ordinate="B" />
+  <Chart name="2458-3" codeCase="2458-3" figure="1M" file="CC-2458-3.xml" ordinate="B" />
+  <Chart name="2671-2" codeCase="2671-2" figure="1M" file="CC-2671-2.xml" ordinate="B" />
+  <Chart name="2676" codeCase="2676" figure="1M" file="CC-2676.xml" ordinate="B" />
+  <Chart name="2682" codeCase="2682" figure="1M" file="CC-2682.xml" ordinate="B" />
+  <Chart name="2684-5" codeCase="2684-5" figure="1M" file="CC-2684-5.xml" ordinate="B" />
+  <Chart name="2794" codeCase="2794" figure="1M" file="CC-2794.xml" ordinate="B" />
+  <Chart name="2831-1" codeCase="2831-1" figure="1M" file="CC-2831-1.xml" ordinate="B" />
+  <Chart name="2964-II-1" codeCase="2964" figure="II-1" file="CC-2964-II-1.xml" ordinate="Sc" />
+  <Chart name="2964-II-2" codeCase="2964" figure="II-2" file="CC-2964-II-2.xml" ordinate="Sc" />
+  <Chart name="2964-II-3" codeCase="2964" figure="II-3" file="CC-2964-II-3.xml" ordinate="Sc" />
+  <Chart name="2964-II-4" codeCase="2964" figure="II-4" file="CC-2964-II-4.xml" ordinate="Sc" />
+  <Chart name="2964-II-5" codeCase="2964" figure="II-5" file="CC-2964-II-5.xml" ordinate="Sc" />
+  <Chart name="2964-II-6" codeCase="2964" figure="II-6" file="CC-2964-II-6.xml" ordinate="Sc" />
+  <Chart name="2964-II-7" codeCase="2964" figure="II-7" file="CC-2964-II-7.xml" ordinate="Sc" />
+</ExternalPressureCodeCasesIndex>

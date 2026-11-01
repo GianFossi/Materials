@@ -1,10 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ExternalPressureTableImport name="2244-2" figure="2244-2" sourceFile="ExtChartData.txt" units="Temperature=degF; remaining fields as reported by PVElite" status="source-transcribed-review-required">
-  <ReferenceData>2244-2</ReferenceData>
-  <Columns>Temp(F), DUMMY, EMod, Aknee, Bknee, AEND, BEND, c1, c2, c3</Columns>
-  <Notes>Transcribed verbatim from PVElite ExtChartData.txt. Verify field meanings and units before importing into the material database.</Notes>
-  <RawText>70.00   000.00     28.3       0.00143   20100.0       0.05    40000.0  20037.00   -27145.0   -9323.5
-200.00   000.00     27.6       0.00150   20000.0       0.05    32200.0  23544.00   -13347.0   -5177.7
-300.00   000.00     27.0       0.00153   18600.0       0.05    29600.0  23326.00   -10301.0   -4222.2
-700.00   000.00     24.8       0.00171   18800.0       0.05    28600.0  28355.00    -4692.8    -2903.0</RawText>
-</ExternalPressureTableImport>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Typed Code Case external-pressure chart coordinates with explicit source units. -->
+<ExternalPressureCodeCaseChart name="2244-2" figure="1" codeCase="2244-2" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" tablePdfPages="162" material="S32760; J93380" ordinate="B" units="A=dimensionless; B=MPa; Temperature=degC; Time=hr" status="source-anomalies-review-required" psiToMPa="0.006894757293168361" figurePdfPages="161" pointCount="60">
+  <ReferenceData>ASME BPVC Code Cases, Boilers and Pressure Vessels, 2025; Case 2244-2; 1</ReferenceData>
+  <Notes>Numeric coordinates transcribed from the cited tabular chart data, not digitized from plot images. Source continuation exponents are explicit; original ordinates and units are retained per point. Source order is preserved. No extrapolation or engineering approval is implied. Check all Code Case restrictions, current acceptance, and source values before engineering use.</Notes>
+  <Curves count="4">
+    <Curve sourceLabel="70" pointCount="15" temperatureC="21.11111111111111111111111111" sourceTemperatureF="70">
+      <Point A="7.07E-05" B="6.894757293168361E+00" sourceOrdinate="1E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-04" B="4.881488163563199588E+01" sourceOrdinate="7.08E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="7.5E-04" B="7.30844273075846266E+01" sourceOrdinate="1.06E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="9.92E-04" B="9.6526602104357054E+01" sourceOrdinate="1.4E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.21E-03" B="1.179003497131789731E+02" sourceOrdinate="1.71E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.43E-03" B="1.385846215926840561E+02" sourceOrdinate="2.01E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.66E-03" B="1.592688934721891391E+02" sourceOrdinate="2.31E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.97E-03" B="1.806426410810110582E+02" sourceOrdinate="2.62E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="2.84E-03" B="2.075321945243676661E+02" sourceOrdinate="3.01E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="4.91E-03" B="2.295954178625064213E+02" sourceOrdinate="3.33E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="6.97E-03" B="2.378691266143084545E+02" sourceOrdinate="3.45E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="8.49E-03" B="2.461428353661104877E+02" sourceOrdinate="3.57E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.92E-02" B="2.668271072456155707E+02" sourceOrdinate="3.87E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-02" B="2.7579029172673444E+02" sourceOrdinate="4E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1E-02" B="2.7579029172673444E+02" sourceOrdinate="4E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+    </Curve>
+    <Curve sourceLabel="200" pointCount="15" temperatureC="93.33333333333333333333333333" sourceTemperatureF="200">
+      <Point A="7.25E-05" B="6.894757293168361E+00" sourceOrdinate="1E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-04" B="4.75738253228616909E+01" sourceOrdinate="6.9E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="7.5E-04" B="7.10160001196341183E+01" sourceOrdinate="1.03E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="9.39E-04" B="8.89423690818718569E+01" sourceOrdinate="1.29E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.12E-03" B="1.061792623147927594E+02" sourceOrdinate="1.54E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.33E-03" B="1.227266798183968258E+02" sourceOrdinate="1.78E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.63E-03" B="1.392740973220008922E+02" sourceOrdinate="2.02E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.94E-03" B="1.482372818031197615E+02" sourceOrdinate="2.15E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="2.72E-03" B="1.668531264946743362E+02" sourceOrdinate="2.42E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="4.31E-03" B="1.834005439982784026E+02" sourceOrdinate="2.66E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="6.83E-03" B="1.916742527500804358E+02" sourceOrdinate="2.78E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="8.72E-03" B="1.985690100432487968E+02" sourceOrdinate="2.88E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.87E-02" B="2.151164275468528632E+02" sourceOrdinate="3.12E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-02" B="2.220111848400212242E+02" sourceOrdinate="3.22E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1E-02" B="2.220111848400212242E+02" sourceOrdinate="3.22E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+    </Curve>
+    <Curve sourceLabel="300" pointCount="15" temperatureC="148.8888888888888888888888889" sourceTemperatureF="300">
+      <Point A="7.41E-05" B="6.894757293168361E+00" sourceOrdinate="1E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-04" B="4.653961172888643675E+01" sourceOrdinate="6.75E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="7.5E-04" B="6.96370486610004461E+01" sourceOrdinate="1.01E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="9.23E-04" B="8.54949904352876764E+01" sourceOrdinate="1.24E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.09E-03" B="9.92845050216243984E+01" sourceOrdinate="1.44E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.28E-03" B="1.137634953372779565E+02" sourceOrdinate="1.65E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.53E-03" B="1.282424856529315146E+02" sourceOrdinate="1.86E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.98E-03" B="1.406530487806345644E+02" sourceOrdinate="2.04E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="2.69E-03" B="1.51684660449703942E+02" sourceOrdinate="2.2E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="3.92E-03" B="1.627162721187733196E+02" sourceOrdinate="2.36E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="7.21E-03" B="1.771952624344268777E+02" sourceOrdinate="2.57E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="8.93E-03" B="1.820215925396447304E+02" sourceOrdinate="2.64E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.9E-02" B="1.978795343139319607E+02" sourceOrdinate="2.87E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-02" B="2.040848158777834856E+02" sourceOrdinate="2.96E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1E-01" B="2.040848158777834856E+02" sourceOrdinate="2.96E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+    </Curve>
+    <Curve sourceLabel="700" pointCount="15" temperatureC="371.1111111111111111111111111" sourceTemperatureF="700">
+      <Point A="8.06E-05" B="6.894757293168361E+00" sourceOrdinate="1E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-04" B="4.27474952176438382E+01" sourceOrdinate="6.2E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="7.5E-04" B="6.41212428264657573E+01" sourceOrdinate="9.3E+03" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="9.33E-04" B="7.99791846007529876E+01" sourceOrdinate="1.16E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.08E-03" B="9.23897477284560374E+01" sourceOrdinate="1.34E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.24E-03" B="1.048003108561590872E+02" sourceOrdinate="1.52E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.43E-03" B="1.17210873983862137E+02" sourceOrdinate="1.7E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.71E-03" B="1.296214371115651868E+02" sourceOrdinate="1.88E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="2.77E-03" B="1.496162332617534337E+02" sourceOrdinate="2.17E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="3.75E-03" B="1.578899420135554669E+02" sourceOrdinate="2.29E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="7.01E-03" B="1.716794565998921889E+02" sourceOrdinate="2.49E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="9.34E-03" B="1.778847381637437138E+02" sourceOrdinate="2.58E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1.92E-02" B="1.909847770207635997E+02" sourceOrdinate="2.77E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="5E-02" B="1.971900585846151246E+02" sourceOrdinate="2.86E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+      <Point A="1E-01" B="1.971900585846151246E+02" sourceOrdinate="2.86E+04" sourceOrdinateUnit="psi" sourceHeaderOrdinateUnit="psi" sourcePdfPage="162" />
+    </Curve>
+  </Curves>
+  <Diagnostics>
+    <Warning>70: source points are not monotonic; verify original table</Warning>
+    <Warning>200: source points are not monotonic; verify original table</Warning>
+  </Diagnostics>
+</ExternalPressureCodeCaseChart>

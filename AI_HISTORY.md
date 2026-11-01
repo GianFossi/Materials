@@ -19,6 +19,62 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 ## History
 
 - Date: 2026-11-01
+- Area: ASME thermal expansion XML
+- Change: Normalized TE-1 through TE-5 into 108 distinct instantaneous/mean curves and 374 material/property records, retaining source linear expansion separately.
+- Why: Provide numerical expansion points and explicit shared material associations without confusing A/B/C quantities.
+- Impact: A/B are explicit 1/degC curves; reference temperature 20 degC is required and retained in import notes. C remains mm/m source data. Copper UNS patterns and steel heat-treatment conditions require manual review.
+- Files: database/data/physical-properties-xml/ThermalExpansion/TE-1.xml through TE-5.xml, src/MaterialLibrary.Crud/XmlPropertyReader.fs, tests/MaterialLibrary.Tests/XmlPhysicalImportTests.fs, docs/xml-physical-import.md
+- Testing: All 4140 nonmissing source A/B/C values independently checked using Poppler and PyMuPDF column coordinates; serialized values and identities revalidated. Fifteen focused physical-property tests passed, including separate mean/instantaneous imports into multiple materials. All five build-output XMLs match source data.
+
+- Date: 2026-11-01
+- Area: ASME 2025 thermal conductivity XML
+- Change: Normalized all 65 TCD conductivity columns into 63 shared curves, 1361 unique points and 178 material identities; retained explicit compositions, UNS, notes and titanium grade/UNS source references.
+- Why: Provide ready-to-use conductivity curves and material associations without mixing TC with TD.
+- Impact: Extended material-curves-v1 to k in W/(m*K) versus degC. Four source-declared 425 degC material limits are enforced during reading. One generic family stays manual; diffusivity XML is unchanged.
+- Files: database/data/physical-properties-xml/ThermalConductivity/TCD-ThermalConductivity.xml, src/MaterialLibrary.Crud/XmlPropertyReader.fs, tests/MaterialLibrary.Tests/XmlPhysicalImportTests.fs, docs/xml-physical-import.md
+- Testing: All 1390 conductivity source coordinates matched independent Poppler extraction and physical PDF cells, including serialized XML mappings. Fifteen focused XML/import/matching tests passed; indexed build output matches the normalized source file.
+
+- Date: 2026-11-01
+- Area: ASME 2025 Young modulus XML
+- Change: Normalized all five TM tables into 60 shared modulus curves and 220 material identities, expanding source-declared compositions/UNS without duplicating curve points.
+- Why: Provide ready-to-use E-temperature points and explicit material association for the full Part 2 modulus dataset.
+- Impact: E is numerical MPa, temperature is degC; missing cells remain absent. Added material-curves-v1 reader support, exact fraction normalization, manual-family/applicability diagnostics, and multi-target import tests. Source conditions and anomalies are retained.
+- Files: database/data/physical-properties-xml/ElasticModulus/TM-1.xml through TM-5.xml, src/MaterialLibrary.Crud/XmlPropertyReader.fs, src/MaterialLibrary.Crud/XmlPropertyMatching.fs, tests/MaterialLibrary.Tests/XmlPhysicalImportTests.fs, docs/xml-physical-import.md
+- Testing: All 1491 source coordinates matched independent Poppler extraction and physical PDF columns; all source rows map to their generated material curves. Twelve focused XML/matching/import regression tests passed, including one curve imported into multiple materials.
+
+- Date: 2026-11-01
+- Area: Compact PRD material association
+- Change: Simplified PRD to one Material element per density/Poisson pair with shared units and explicit UNS keys; added compact-format reader support and nominalChemicalComposition mapping.
+- Why: Remove repeated identity, units, notes and point containers while keeping material association explicit.
+- Impact: Preserves 158 material entries, 316 import records and existing record keys. The 16 entries without explicit UNS remain manual-review families; no inferred chemistry or UNS mappings are introduced.
+- Files: database/data/physical-properties-xml/Density/PRD-Density.xml, src/MaterialLibrary.Crud/XmlPropertyReader.fs, tests/MaterialLibrary.Tests/Tests.fs, tests/MaterialLibrary.Tests/XmlPhysicalImportTests.fs, docs/xml-physical-import.md
+- Testing: Ten focused XML/import/matching tests passed; conversion verified all original values, source identities and property IDs. Compact XML has 167 lines.
+
+- Date: 2026-11-01
+- Area: PRD duplicate removal
+- Change: Removed the raw Poisson XML after comparing all 115 density/Poisson pairs with the consolidated PRD dataset; redirected its index entry to the retained file.
+- Why: Keep one authoritative PRD source without losing Poisson import support.
+- Impact: The existing reader now exposes 158 density and 158 Nu constant records from one XML, with explicit identities and unique IDs. Existing Poisson imports may require explicit provenance replacement.
+- Files: database/data/physical-properties-xml/Density/PRD-Density.xml, database/data/physical-properties-xml/PoissonRatio/PRD-PoissonRatio.xml (removed), database/data/physical-properties-xml/index.xml, tests/MaterialLibrary.Tests/Tests.fs, tests/MaterialLibrary.Tests/XmlPhysicalImportTests.fs, docs/xml-physical-import.md
+- Testing: Six focused XML/PRD tests passed; all index paths resolve. A broader import-test run also encountered an unrelated pressure-chart fixture cleanup failure because its SQLite file was locked.
+
+- Date: 2026-11-01
+- Area: PRD density and Poisson XML
+- Change: Normalized PRD-Density.xml into 158 material entries from 115 ASME Table PRD rows, expanding explicit UNS lists and retaining paired numeric density/Poisson values, source labels, and provenance.
+- Why: Replace mixed TM-5/PRD raw tokens with readable material-specific properties while preserving density-import compatibility.
+- Impact: Density remains a structured constant record in kg/m3; Poisson is dimensionless metadata in the same entry. The separate Poisson source file is unchanged and no duplicate Poisson import records are added.
+- Files: database/data/physical-properties-xml/Density/PRD-Density.xml, docs/xml-physical-import.md
+- Testing: All PRD rows matched physical PDF material/value columns; all 158 entries validated through the existing CRUD XML reader.
+
+- Date: 2026-11-01
+- Area: Code Cases 2025 external-pressure charts
+- Change: Added a separate Code Cases index and 17 tabular chart datasets (95 curves, 1955 points), including seven distinct A/Sc charts from Case 2964; replaced the 2244-2 PVElite record with ASME source points.
+- Why: Include dedicated external-pressure charts from the complete 1584-page Code Cases volume without duplicating Section II-D references or conflating Sc with B.
+- Impact: Explicit temperature/time qualifiers, unit conversion, original ordinates, source pages, and anomaly diagnostics are retained. XML data only; no calculation or automatic material-import behavior was added.
+- Files: database/data/external-pressure-xml/CC-*.xml, database/data/external-pressure-xml/2244-2.xml, database/data/external-pressure-xml/code-cases-index.xml, docs/xml-physical-import.md
+- Testing: Every source A/ordinate pair matched an independent Poppler extraction; output coordinates, conversion, index, and XML structure validated.
+
+- Date: 2026-11-01
 - Area: Figure G external-pressure geometry
 - Change: Added G.xml with 24 Do/t curves and 393 dimensionless L/Do-A points from ASME II-D Metric 2025 Table G, preserving source references and explicit exponents.
 - Why: Complete the missing geometric chart without confusing it with temperature-dependent material A/B curves.

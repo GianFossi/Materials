@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Copilot; Last revision: 2026-11-01; Purpose: Typed Code Case external-pressure chart coordinates with explicit source units. -->
+<ExternalPressureCodeCaseChart name="2671-2" figure="1M" codeCase="2671-2" sourcePdf="C:\Users\ganfossi\Documents\PV Repository\Codes &amp; Regulations\ASME-ANSI\ASME BPVC 2025 Edition\ASME BPVC CODE CASES.pdf" tablePdfPages="490" material="N06230" ordinate="B" units="A=dimensionless; B=MPa; Temperature=degC; Time=hr" status="normalized-points-review-required" psiToMPa="0.006894757293168361" figurePdfPages="489,490" pointCount="5">
+  <ReferenceData>ASME BPVC Code Cases, Boilers and Pressure Vessels, 2025; Case 2671-2; 1M</ReferenceData>
+  <Notes>Numeric coordinates transcribed from the cited tabular chart data, not digitized from plot images. Source continuation exponents are explicit; original ordinates and units are retained per point. Source order is preserved. No extrapolation or engineering approval is implied. Check all Code Case restrictions, current acceptance, and source values before engineering use.</Notes>
+  <Curves count="1">
+    <Curve sourceLabel="982" pointCount="5" temperatureC="982" sourceTemperatureC="982">
+      <Point A="1E-05" B="5E-01" sourceOrdinate="5E-01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="490" />
+      <Point A="1.87E-05" B="1E+00" sourceOrdinate="1E+00" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="490" />
+      <Point A="1.29E-04" B="6.9E+00" sourceOrdinate="6.9E+00" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="490" />
+      <Point A="7.87E-04" B="4.21E+01" sourceOrdinate="4.21E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="490" />
+      <Point A="1E-01" B="4.21E+01" sourceOrdinate="4.21E+01" sourceOrdinateUnit="MPa" sourceHeaderOrdinateUnit="MPa" sourcePdfPage="490" />
+    </Curve>
+  </Curves>
+</ExternalPressureCodeCaseChart>
