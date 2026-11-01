@@ -1,47 +1,50 @@
 # MaterialLibrary
 
-Type-safe F# library for engineering material properties and creep analysis on .NET 8.
-
-## Highlights
-
-- Material domain model with fixed a-priori standard units
-- Interpolation for temperature-dependent properties
-- Creep models: Norton, Garofalo, Kachanov Omega
-- Unified time-independent and isochronous stress-strain workflows
-- Unified external-pressure material tables from database data or Code Case 2964 generation
-- Time-independent and time-dependent tables represented by an optional reference duration
-- One stress-strain table type with optional isochronous duration
-- Explicit Engineering/True basis metadata for stress/strain datasets
-- Dedicated builders for stress-strain, creep, and external-pressure data
-- Explicit `Result` errors for checked creep calculations and library construction
-- Versioned full-material JSON serialization
-- Packaged `asme_materials_2025.db` SQLite database as a NuGet content file
-- Adaptive Kachanov integration with convergence and rupture metadata
-- Explicit creep-table provenance and model-applicability warnings
-
-## Creep Model Warning
-
-The user must explicitly select the applicable creep model. Norton and Garofalo
-do not represent a complete primary-secondary-tertiary curve. The current
-Kachanov-Omega implementation neglects primary creep and represents secondary
-and damage-driven tertiary behavior. Every generated `CreepTable` carries an
-`ApplicabilityWarning`.
+F# engineering-material library targeting **.NET 10** (`net10.0`).
+Provides native ASME 2025 database reads, typed material models, interpolation,
+checked calculations and versioned document serialization.
 
 ## Install
 
-```bash
+```powershell
 dotnet add package MaterialLibrary --version 1.0.2
 ```
 
-## Packaged Data
+The consuming project must target .NET 10 or a compatible later framework.
+The WPF editor and Excel add-in are separate applications, not part of this core package.
 
-The package includes `contentFiles/any/any/data/asme_materials_2025.db`, plus the XML data files used by the library. The default configuration resolves the ASME SQLite database as `asme_materials_2025.db`.
+## 1. Database and data model
 
-## Quick Example (F#)
+- The package includes `data/asme_materials_2025.db` as a NuGet content file, plus
+  physical-property and external-pressure XML datasets and configuration.
+- The active database uses native `Main`, mechanical curves, physical-property and
+  provenance tables. A material can have multiple independent curve variants.
+- XML datasets are **candidates for explicit review and import**, not properties
+  automatically populated for every material.
+- The archived 2023 database is not a fallback and is not packaged.
+- Complete `Material` JSON documents are a separate model/persistence workflow.
+  They are not a lossless backup of the native SQLite database.
 
-> **Warning:** API 579-1/ASME FFS-1 Annex 10B.5 generation is not implemented.
-> `Api579Annex10B5.ensureImplemented()` returns an error and the method must not be
-> used for engineering calculations until its licensed source equations are validated.
+Read the [database structure guide](https://github.com/GianFossi/Materials/blob/main/docs/asme-materials-db.md)
+before selecting material IDs, curves or associations.
+
+## 2. Using the library and maintaining data
+
+Native reads are exposed by `Asme2025Data`: material identities, curve variants and
+explicit lookups with fixed units and no extrapolation. Use `MaterialLibrary.Crud`
+for native working-copy edits and reviewed XML imports.
+
+The domain API also provides:
+
+- temperature/size property tables and interpolation;
+- stress-strain basis and optional isochronous duration;
+- creep, fatigue, cyclic, rupture and external-pressure models;
+- explicit `Result` errors for checked operations;
+- complete JSON schema 17 serialization, with schema 15/16 readable.
+
+### F# example
+
+This synthetic table illustrates interpolation only; it is not an ASME material assignment.
 
 ```fsharp
 open MaterialLibrary.Domain
@@ -54,17 +57,26 @@ let cpTable =
 
 match SpecificHeatInterpolation.interpolate Linear 150.0 cpTable with
 | Ok cp -> printfn "Cp @ 150degC = %.1f J/(kg*K)" (float cp)
-| Error e -> printfn "Interpolation error: %A" e
+| Error error -> printfn "Interpolation error: %A" error
 ```
 
-## Repository
+## Engineering limitations
 
-- Source: https://github.com/GianFossi/Materials
-- Documentation index: https://github.com/GianFossi/Materials#documentation
-- Requirements and installation: https://github.com/GianFossi/Materials/blob/main/docs/installation.md
-- asme_materials_2025.db schema: https://github.com/GianFossi/Materials/blob/main/docs/asme-materials-db.md
-- Library API: https://github.com/GianFossi/Materials/blob/main/docs/library-api.md
-- Material models and tables: https://github.com/GianFossi/Materials/blob/main/docs/material-models.md
-- Excel add-in: https://github.com/GianFossi/Materials/blob/main/docs/excel-addin.md
-- Desktop app: https://github.com/GianFossi/Materials/blob/main/docs/desktop-app.md
+Select and validate the applicable creep model explicitly. Norton/Garofalo do not
+represent a complete primary-secondary-tertiary curve; the implemented Kachanov-Omega
+model neglects primary creep. Generated creep tables carry applicability warnings.
 
+API 579-1/ASME FFS-1 Annex 10B.5 generation is **not implemented**;
+`Api579Annex10B5.ensureImplemented()` reports an error.
+Source data and generated curves do not replace verification against the applicable code.
+
+## Documentation
+
+- [Project and documentation map](https://github.com/GianFossi/Materials/blob/main/docs/overview.md)
+- [Database structure](https://github.com/GianFossi/Materials/blob/main/docs/asme-materials-db.md)
+- [API and persistence](https://github.com/GianFossi/Materials/blob/main/docs/library-api.md)
+- [Models and units](https://github.com/GianFossi/Materials/blob/main/docs/material-models.md)
+- [App operation and maintenance](https://github.com/GianFossi/Materials/blob/main/docs/desktop-app.md)
+- [XML import](https://github.com/GianFossi/Materials/blob/main/docs/xml-physical-import.md)
+- [Requirements](https://github.com/GianFossi/Materials/blob/main/docs/requirements.md)
+- [License](https://github.com/GianFossi/Materials/blob/main/LICENSE)

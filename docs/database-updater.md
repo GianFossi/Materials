@@ -1,4 +1,23 @@
-# Database ASME 2025 e tool di aggiornamento
+# DatabaseUpdater: creare e confrontare un'edizione
+
+Questa guida riguarda il **tool console**, non l'editor delle curve.
+Per capire le tabelle vedere [struttura del database](asme-materials-db.md);
+per modifiche locali e backup vedere [app desktop](desktop-app.md).
+
+## Quale operazione scegliere
+
+| Obiettivo | Strumento |
+|---|---|
+| Nuovo database da export ASME CSV/ZIP | Questo DatabaseUpdater, con `--newdatabasefile` |
+| Confrontare export con un database precedente senza modificarlo | Questo DatabaseUpdater, con `--compare` e percorso esplicito |
+| Correggere una singola curva locale | [Editor ASME 2025](asme-2025-editor.md) |
+| Aggiungere densità, Poisson o curve fisiche dai dataset XML | [Importatore XML](xml-physical-import.md) |
+
+**Non è un aggiornamento in-place:** il tool crea un nuovo file o produce un confronto.
+Non importa gli XML fisici, non trasferisce modifiche della copia di lavoro e non
+completa i dati dal 2023. Gli export ASME devono essere forniti separatamente.
+
+## Dati importati
 
 Il progetto console F# `tools/MaterialLibrary.DatabaseUpdater` crea un database SQLite per edizione oppure confronta gli export ASME metrici con un database esistente. Legge una directory con sottocartelle denominate come le tabelle ASME, oppure un archivio ZIP. **MAIN è sempre l'unione univoca delle identità presenti in tutte le tabelle sorgenti**, comprese quelle di cui non si importano ancora le curve. Le famiglie meccaniche importate sono:
 
@@ -15,19 +34,21 @@ Le cartelle 2A/2B contribuiscono a MAIN e alla provenienza completa, senza esser
 
 ## Esecuzione
 
-Sono sufficienti il .NET SDK 8 previsto da `global.json` e NuGet. Non servono Excel, Windows o servizi esterni.
+Dal repository usare il SDK .NET 10 previsto da [global.json](../global.json).
+Il progetto console resta `net8.0`: per eseguirlo framework-dependent occorre anche
+il runtime .NET 8. Non servono Excel, WPF o servizi esterni.
 
-Nel pacchetto distribuibile la console già compilata è in `console/`. Per usarla basta il runtime .NET 8, senza SDK:
+Per distribuire una console compilata senza richiedere il SDK sul destinatario:
 
-```bash
-dotnet console/MaterialLibrary.DatabaseUpdater.dll --help
-dotnet console/MaterialLibrary.DatabaseUpdater.dll --sourcedir './ASME Database' --compare --report differenze.txt
+```powershell
+dotnet publish .\tools\MaterialLibrary.DatabaseUpdater\MaterialLibrary.DatabaseUpdater.fsproj -c Release --self-contained false -o .\publish\console
+dotnet .\publish\console\MaterialLibrary.DatabaseUpdater.dll --help
 ```
 
 Dal repository, con SDK:
 
-```bash
-dotnet run --project tools/MaterialLibrary.DatabaseUpdater -- --help
+```powershell
+dotnet run --project .\tools\MaterialLibrary.DatabaseUpdater\MaterialLibrary.DatabaseUpdater.fsproj -- --help
 ```
 
 | Argomento | Comportamento |
@@ -40,30 +61,27 @@ dotnet run --project tools/MaterialLibrary.DatabaseUpdater -- --help
 | `--edition <anno>` | Facoltativo: anno a quattro cifre; per default è rilevato dall'intestazione degli export, non dalla data corrente |
 | `--report-dir <directory>` | Facoltativo: conserva anche CSV, JSON e README dettagliati |
 
-Creazione con nome predefinito e report a video:
+Creazione con nome predefinito e report a video, dalla radice del repository:
 
-```bash
-dotnet run --project tools/MaterialLibrary.DatabaseUpdater -- \
-  --sourcedir './ASME Database' --newdatabasefile
+```powershell
+dotnet run --project .\tools\MaterialLibrary.DatabaseUpdater\MaterialLibrary.DatabaseUpdater.fsproj -- --sourcedir '.\ASME Database' --newdatabasefile
 ```
 
-Confronto con `asme_materials.db` nella directory corrente e salvataggio su file:
+Confronto con il riferimento attivo e salvataggio del report, senza modificare il database:
 
-```bash
-dotnet run --project tools/MaterialLibrary.DatabaseUpdater -- \
-  --sourcedir './ASME Database' --compare --report differenze.txt
+```powershell
+dotnet run --project .\tools\MaterialLibrary.DatabaseUpdater\MaterialLibrary.DatabaseUpdater.fsproj -- --sourcedir '.\ASME Database' --compare .\database\data\asme_materials_2025.db --report .\differenze.txt
 ```
 
 Creazione e confronto combinati, con nomi espliciti:
 
-```bash
-dotnet run --project tools/MaterialLibrary.DatabaseUpdater -- \
-  --sourcedir './ASME Database' \
-  --compare precedente.db \
-  --newdatabasefile nuovo_2025.db \
-  --report differenze_2025.txt \
-  --report-dir dettagli_2025
+```powershell
+dotnet run --project .\tools\MaterialLibrary.DatabaseUpdater\MaterialLibrary.DatabaseUpdater.fsproj -- --sourcedir '.\ASME Database' --compare .\database\data\asme_materials_2025.db --newdatabasefile .\nuovo_2025.db --report .\differenze_2025.txt --report-dir .\dettagli_2025
 ```
+
+Specificare sempre il file dopo `--compare`: il default storico `asme_materials.db`
+non coincide con il nome del riferimento attuale. Negli esempi la cartella
+`ASME Database` è un segnaposto per gli export forniti dall'utente.
 
 Senza `--compare`, la modalità predefinita crea il database. Con il solo `--compare` non viene conservato alcun nuovo database: il confronto usa file temporanei che vengono eliminati al termine. Con `--compare` e `--newdatabasefile` insieme vengono prodotti sia il confronto sia il nuovo database, mantenendo gli ID dei materiali abbinati univocamente.
 
@@ -73,11 +91,21 @@ File e directory di output già esistenti non vengono sovrascritti. Scegliere **
 
 Restano disponibili gli argomenti precedenti: `--input <archivio.zip>` al posto di `--sourcedir`, `--output <file.db>` come alias di `--newdatabasefile` e `--baseline <file.db>` come alias di `--compare`. `--updatedatabasefile` è sostituito da `--compare` e non è accettato. Non combinare due alias della stessa opzione.
 
-```bash
-dotnet test tests/MaterialLibrary.DatabaseUpdater.Tests
+```powershell
+dotnet test .\tests\MaterialLibrary.DatabaseUpdater.Tests\MaterialLibrary.DatabaseUpdater.Tests.fsproj
 ```
 
 I file sotto `artifacts/` sono ignorati da Git. Conservare separatamente gli artefatti e l'archivio sorgente quando si desidera distribuirli o riprodurre l'importazione.
+
+## Dopo la creazione
+
+1. Controllare i report di conflitti, assenze, note e copertura.
+2. Verificare il nuovo file contro le fonti e conservare hash/report.
+3. Aprirlo solo tramite una copia di lavoro dedicata; non sovrascrivere quella locale esistente.
+4. Reimportare eventuali proprietà XML solo dopo revisione delle associazioni per la nuova edizione.
+5. Sostituire un riferimento distribuito soltanto dopo i [controlli di rilascio](release-safety.md).
+
+Le sezioni seguenti sono il riferimento tecnico per interpretare dati e report.
 
 ## Identità e dati mancanti
 
@@ -169,7 +197,7 @@ Ogni esecuzione, compreso `--newdatabasefile` senza altre opzioni, verifica e st
 
 Sy/Su sono controllate per entrambi i contesti. Sb1/Sb2 sono controllate solo per BOLTING, S1/S2 solo per gli altri product form. L’assenza delle famiglie estranee al contesto non viene segnalata.
 
-Nel prospetto fisico `c` indica il calore specifico (alias `Cp`), `k` la conducibilità (`TC`) e `a` la diffusività (`TD`). Sono considerate presenti soltanto proprietà con valori in `Physical_Property_Values`. Per density e Nu valgono anche le costanti non NULL di `Extension`; lo zero è un valore presente. Una definizione di proprietà senza valori non basta. L'archivio attuale non contiene queste curve fisiche: nel nuovo database sono quindi tutte NO. Questo stato descrive dati non ancora importati, non un'assenza nella norma ASME.
+Nel prospetto fisico `c` indica il calore specifico (alias `Cp`), `k` la conducibilità (`TC`) e `a` la diffusività (`TD`). Sono considerate presenti soltanto proprietà con valori in `Physical_Property_Values`. Per density e Nu valgono anche le costanti non NULL di `Extension`; lo zero è un valore presente nel conteggio tecnico, non una prova di validità fisica. Una definizione di proprietà senza valori non basta. Gli export CSV importati dal tool non forniscono queste curve fisiche: nel nuovo database sono quindi tutte NO fino a un'importazione separata. Questo stato descrive dati non ancora importati, non un'assenza nella norma ASME.
 
 `summary.json.MainCoverage` riporta il numero di righe MAIN controllate, le assenze per ciascuna delle sei proprietà e i materiali con ciascuna proprietà fisica. `IdentitySourceRowCount` conta tutte le righe valide usate nell'unione; `SourceRowCount` conta soltanto le curve meccaniche importate. Gli input non meccanici sono indicati `IdentityOnly` in `source-counts.csv`.
 

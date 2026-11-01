@@ -1,47 +1,73 @@
-# Installation, Build, and Removal
+# Installazione, compilazione e rimozione
 
-## Quick Start | Avvio Rapido
+Prima leggere i [requisiti](requirements.md). I comandi seguenti sono per PowerShell,
+eseguiti dalla radice del repository.
 
-Build:
+## App desktop dai sorgenti
 
-```bash
+```powershell
+dotnet run --project .\src\MaterialLibrary.CrudApp\MaterialLibrary.CrudApp.csproj
+```
+
+Per distribuire l'app framework-dependent su Windows x64:
+
+```powershell
+dotnet publish .\src\MaterialLibrary.CrudApp\MaterialLibrary.CrudApp.csproj -c Release -r win-x64 --self-contained false -o .\publish\crud-app
+```
+
+Distribuire **tutta la cartella**, inclusi configurazione e `data/`, non solo l'EXE.
+Sul computer destinatario occorre .NET 10 Desktop Runtime x64.
+Per l'uso vedere [app desktop](desktop-app.md).
+
+## Librerie NuGet
+
+In un progetto consumatore compatibile con .NET 10:
+
+```powershell
+dotnet add package MaterialLibrary --version 1.0.2
+dotnet add package MaterialLibrary.Crud --version 1.0.2
+```
+
+CRUD serve solo se occorrono servizi di persistenza/modifica/importazione.
+I pacchetti non installano l'app desktop o Excel. Vedere i README
+[core](../src/MaterialLibrary/README-NUGET.md) e [CRUD](../src/MaterialLibrary.Crud/README-NUGET.md).
+
+Per creare i pacchetti dai sorgenti:
+
+```powershell
+dotnet pack .\src\MaterialLibrary\MaterialLibrary.fsproj -c Release -o .\publish\nuget
+dotnet pack .\src\MaterialLibrary.Crud\MaterialLibrary.Crud.fsproj -c Release -o .\publish\nuget
+```
+
+Il core include il riferimento come
+`contentFiles/any/any/data/asme_materials_2025.db` e gli XML previsti dal progetto.
+Controllare che il consumatore conservi i dati nel proprio output.
+
+## Excel e DatabaseUpdater
+
+- [Excel](excel-addin.md): compilazione x86/x64, caricamento XLL e funzioni.
+- [DatabaseUpdater](database-updater.md): comandi per creare/confrontare un'edizione;
+  è separato dall'app desktop e dall'importatore XML.
+
+## Verifica per sviluppatori
+
+```powershell
 dotnet build .\src\MaterialLibrary\MaterialLibrary.fsproj
-```
-
-Run tests:
-
-```bash
 dotnet test .\tests\MaterialLibrary.Tests\MaterialLibrary.Tests.fsproj
-```
-
-Compile examples:
-
-```bash
 dotnet build .\tests\MaterialLibrary.Examples\MaterialLibrary.Examples.fsproj
 ```
 
-Pack NuGet:
+`dotnet build/run/test/pack` ripristinano normalmente le dipendenze del progetto.
+Non usare `dotnet restore` senza progetto alla radice: non c'è una soluzione root.
+Per la verifica di una distribuzione vedere [rilascio e backup](release-safety.md).
 
-```bash
-dotnet pack .\src\MaterialLibrary\MaterialLibrary.fsproj -c Release -o .\publish\nuget
-```
+## Rimozione senza perdere i dati
 
-Generated package:
+- NuGet: rimuovere il PackageReference dal progetto consumatore.
+- Excel: disabilitare l'add-in nell'elenco di Excel e chiudere Excel prima di rimuoverne i file.
+- Desktop: rimuovere cartella distribuita e collegamenti, dopo aver chiuso l'app.
+- **Dati locali:** prima conservare copia `.working.db`, librerie JSON/XML e opzioni.
+  La copia di lavoro sotto LocalAppData non coincide con la cartella dell'eseguibile.
 
-- `publish/nuget/MaterialLibrary.1.0.2.nupkg`
-
-The `MaterialLibrary` package includes `asme_materials_2025.db` as `contentFiles/any/any/data/asme_materials_2025.db`.
-
-Publish to NuGet:
-
-```bash
-dotnet nuget push .\publish\nuget\MaterialLibrary.1.0.2.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
-```
-
-## Removal | Rimozione
-
-- NuGet package: remove the PackageReference from the consuming project, or run dotnet remove package MaterialLibrary / dotnet remove package MaterialLibrary.Crud.
-- Excel add-in: remove the loaded .xll from Excel's add-in list, close Excel, then delete the published publish/excel folder if it is no longer needed.
-- Desktop app: delete the published publish/crud-app folder, or remove any shortcut that points to MaterialLibrary.CrudApp.exe.
-- Database working copies: delete *.working.db files only after saving any changes that must be kept.
-
+Rimuovere il programma non deve comportare automaticamente la cancellazione dei materiali
+modificati dall'utente.

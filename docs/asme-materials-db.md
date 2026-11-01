@@ -1,142 +1,139 @@
-# ASME_Materials.db Schema
+# Struttura del database ASME
 
-`ASME_Materials.db` is the SQLite database shipped with the repository and the `MaterialLibrary` NuGet package. It contains the ASME reference material tables plus the application-owned extension tables used by `MaterialLibrary.Crud` and `MaterialLibrary.CrudApp`.
+**Percorso 1: dati.** Per operare sui dati vedere [app desktop](desktop-app.md).
 
-The packaged file is located at:
+## 1. Quale file contiene cosa
 
-- Repository: `database/data/ASME_Materials.db`
-- NuGet content file: `contentFiles/any/any/data/ASME_Materials.db`
+| File/dataset | Ruolo |
+|---|---|
+| [asme_materials_2025.db](../database/data/asme_materials_2025.db) | Riferimento attivo, con schema nativo normalizzato |
+| `%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db` | Copia locale predefinita modificabile dall'app e dall'editor Excel |
+| [XML fisici](../database/data/physical-properties-xml/) | Dati candidati con fonte e chiavi di associazione; non automaticamente presenti in SQLite |
+| [XML pressione esterna](../database/data/external-pressure-xml/) | Dataset di tipi diversi, non tutti importabili come proprietà materiale |
+| Libreria JSON/XML | Documenti del modello `Material`, per scambio e materiali personalizzati; non un backup completo del database nativo |
+| [ASME_Materials_2023.db](../database/data/archive/2023/ASME_Materials_2023.db) | Archivio legacy, aperto solo esplicitamente |
 
-The default configuration now points to `ASME_Materials.db`. The desktop app still works on a copied `*.working.db` file before saving/exporting changes.
+Il progetto copia e impacchetta il riferimento e gli XML sotto `data/`. L'archivio 2023
+non è distribuito come fallback.
 
-## Main Relationship
+**Stato del riferimento attuale:** 2.532 righe `Main`; nessun punto in
+`Physical_Property_Values`. I dataset fisici XML sono disponibili separatamente:
+le associazioni candidate non equivalgono a proprietà già importate o approvate.
+Per una copia modificata, verificare sempre il suo contenuto effettivo.
 
-`Materials.ID` is the central primary key. Most reference tables and all application extension tables link to it through `MaterialID`.
+## 2. Identità del materiale
+
+La chiave naturale di `Main` è composta da:
+
+1. `Specification`
+2. `Grade`
+3. `ClassConditionTemper`
+4. `AlloyDesignation` (UNS)
+
+`Main.id` è la chiave tecnica SQLite. `Material_Identity.NaturalKey` impone l'unicità
+della combinazione; `Material_Source` collega l'identità alle righe sorgenti.
+`NominalComposition` è utile per ricerca e associazioni, ma non sostituisce la chiave naturale.
+
+Forma di prodotto, dimensione e variante della curva **non creano nuove identità Main**.
+Ad esempio, una stessa identità può avere più curve S1 per forma e intervallo dimensionale.
+Un UNS comune non autorizza a fondere specifiche, condizioni o trattamenti diversi.
+
+`SMYS` e `SMUS` sono minimi scalari separati dalle curve Sy/Su. Restano `NULL` quando
+non è possibile rappresentare un unico valore senza perdere le distinzioni della fonte;
+i minimi delle singole righe restano in `Property_Source`.
+
+## 3. Come leggere le relazioni
 
 ```text
-Materials
-  |-- YieldStrengthTable
-  |-- UltimateStrengthTable
-  |-- AllowableStress1Table
-  |-- AllowableStress2Table
-  |-- AllowableStress3Table
-  |-- SpecificHeatTable
-  |-- ExternalPressureTable
-  |-- DataTableASME
-  |-- MaterialGroupMap
-  |     |-- ElasticModulusTable
-  |     |-- ThermalExpansionTable
-  |     |-- ThermalConductivityTable
-  |     |-- ThermalDiffusivityTable
-  |
-  |-- MaterialLibraryExtension
-  |-- MaterialDocumentStore
-  |-- MaterialThermalExpansionRows
-  |-- MaterialElasticModulusRows
-  |-- MaterialDensityRows
-  |-- MaterialSpecificHeatRows
-  |-- MaterialThermalConductivityRows
-  |-- MaterialTensileRows
-  |-- MaterialAllowableStressRows
-  |-- MaterialAllowableStressDatasetRows
-  |-- MaterialCompressionRows
-  |-- MaterialAsmeCodeRows
+Main
+ +-- Material_Identity / Material_Source
+ +-- Material_Properties -- Sizes
+ |       +-- Property_Values
+ |       +-- Property_Source / Property_Note_Links
+ +-- Physical_Properties -- Physical_Property_Values
+ +-- Extension (costanti densità/Poisson)
+ +-- Material_EP_Charts -- External_Pressure_Charts
+ |       +-- EP_Chart_Curves -- EP_Chart_Points
+ +-- ASME_Data
 ```
 
-## Reference Tables
+| Gruppo | Tabelle/viste principali | Significato |
+|---|---|---|
+| Curve meccaniche | `Material_Properties`, `Property_Values`, `Sizes` | Una curva per famiglia e variante, con punti temperatura/valore |
+| Bolting | `Sb1`, `Sb2` | Dati dedicati delle Table 3 e 4, distinti |
+| Viste di tensione ammissibile | `S1`, `S2` | Accesso alle famiglie Division 1 e Division 2 |
+| Proprietà fisiche | `Physical_Properties`, `Physical_Property_Values`, `Extension` | Curve fisiche e costanti; tabella esistente non significa dati presenti |
+| Pressione esterna | `External_Pressure_Charts`, `Material_EP_Charts`, `EP_Chart_Curves`, `EP_Chart_Points` | Diagrammi condivisi, collegamenti ai materiali e punti A/B |
+| Applicabilità normativa | `ASME_Data`, `ASME_Data_Source`, `Property_Source` | P-No., Group No., chart e limiti per Section, con provenienza |
+| Note | `Property_Notes`, `Source_Notes`, `Property_Note_Links`, `VW_Property_Notes_All` | Testo e collegamenti delle note originali |
+| Audit dell'importazione ASME | `Source_Documents`, `Import_Files`, `Import_Omitted_Rows`, `Database_Metadata` | Fonti, file importati, righe escluse e metadati |
 
-These tables are the ASME/reference side of the database.
+Lo schema comprende anche tabelle per altri modelli (stress-strain, creep, ciclico e
+Larson–Miller). Non presumere che siano popolate per ogni materiale.
+La definizione per i nuovi database è in [Schema.sql](../tools/MaterialLibrary.DatabaseUpdater/Schema.sql).
 
-| Table | Purpose | Key columns |
-| --- | --- | --- |
-| `Materials` | Base material identity and scalar properties. | `ID`, `Revision`, `NominalComposition`, `ProductForm`, `Specification`, `TypeGrade`, `ClassConditionTemper`, `AlloyDesignationNumber`, `SMTS`, `SMYS`, `Density`, `PoissonFactor`, `Notes` |
-| `YieldStrengthTable` | Yield strength values by temperature and size range. | `MaterialID`, `SizeThkMIN`, `SizeThkMAX`, `T_40` ... `T_900` |
-| `UltimateStrengthTable` | Ultimate tensile strength values by temperature and size range. | `MaterialID`, `SizeThkMIN`, `SizeThkMAX`, `T_40` ... `T_900` |
-| `AllowableStress1Table` | ASME Section I / VIII-1 standard allowable stress data. | `MaterialID`, size limits, maximum-temperature fields, `T_40` ... `T_900` |
-| `AllowableStress2Table` | ASME VIII-2 allowable stress data. | `MaterialID`, size limits, maximum temperature, `T_40` ... `T_900` |
-| `AllowableStress3Table` | Bolting / S3 allowable stress data. | `MaterialID`, size limits, maximum-temperature fields, `T_40` ... `T_900` |
-| `SpecificHeatTable` | Specific heat by material and temperature. | `MaterialID`, `T_20` ... `T_900` |
-| `ExternalPressureTable` | External-pressure factor data by material and temperature. | `MaterialID`, `T_40` ... `T_900` |
-| `DataTableASME` | Welding numbers and ASME metadata. | `MaterialID`, `Pnum`, `PnumSizeThk`, `Gnum` |
-| `MaterialGroupMap` | Maps a material to shared physical-property groups. | `MaterialID`, `ElasticModulusGroupID`, `ThermalExpansionGroupID`, `ThermalConductivityGroupID`, `ThermalDiffusivityGroupID` |
-| `ElasticModulusTable` | Shared elastic modulus group values. | `ID`, `T_-200` ... `T_900` |
-| `ThermalExpansionTable` | Shared thermal expansion group values. | `ID`, `T_20` ... `T_900` |
-| `ThermalConductivityTable` | Shared thermal conductivity group values. | `ID`, `T_20` ... `T_900` |
-| `ThermalDiffusivityTable` | Shared thermal diffusivity group values. | `ID`, `T_20` ... `T_900` |
-| `NotesDatabase` | Reusable notes keyed by source table and note code. | `ID`, `SourceTable`, `NoteCode`, `NoteText` |
-| `AssociationRules` | Optional rule table for property-table association logic. | `ID`, `PropertyTable`, `MatchField`, `MatchValue`, `GroupID`, `RuleName` |
-| `sqlite_sequence` | SQLite autoincrement bookkeeping. | `name`, `seq` |
+## 4. Famiglie e unità native
 
-Temperature columns named `T_40`, `T_100`, and similar are pivoted temperature columns. Temperatures are in degC and stress values are in MPa unless a table-specific source note says otherwise.
+| Codice API/editor | Quantità | Unità | Codice fisico SQLite, se diverso |
+|---|---|---|---|
+| Sy / Su | Snervamento / resistenza a trazione dipendenti dalla temperatura | MPa | — |
+| S1 / S2 | Tensione ammissibile Division 1 / Division 2 | MPa | — |
+| Sb1 / Sb2 | Tensione ammissibile bolting Table 3 / Table 4 | MPa | — |
+| E | Modulo elastico | MPa | — |
+| Alpha | Coefficiente medio di dilatazione | 1/degC | — |
+| AlphaInstantaneous | Coefficiente istantaneo di dilatazione | 1/degC | — |
+| c | Calore specifico | J/(kg*K) | Cp |
+| k | Conduttività termica | W/(m*K) | TC |
+| a | Diffusività termica | m2/s | TD |
+| density | Densità | kg/m3 | Density |
+| Nu | Coefficiente di Poisson | adimensionale | — |
 
-## Application Extension Tables
+Temperature in °C; dimensioni in mm. Nei diagrammi materiali EP, A è adimensionale
+e B è in MPa. Alpha medio richiede la temperatura di riferimento della fonte.
+La dilatazione lineare C delle tabelle TE non è il calore specifico `c`.
 
-The application creates these tables with `CREATE TABLE IF NOT EXISTS`. They are normalized, one row per temperature or item, and every table references `Materials(ID)` with cascade delete.
+Una curva meccanica può avere limiti dimensionali aperti/chiusi. `ProductForm` si applica
+solo a S1/S2 nel modello nativo. La selezione deve considerare curva, dimensione, forma,
+temperatura e restrizioni delle note. Una famiglia assente non vale zero; curve multiple
+non autorizzano a scegliere la prima. Il lookup nativo non estrapola.
 
-| Table | Purpose | Columns |
-| --- | --- | --- |
-| `MaterialLibraryExtension` | One scalar extension row per material. | `MaterialID`, `MaterialKey`, `Name`, `Family`, `AllowableStressLevel`, maximum allowable temperatures, welding numbers, reduction of area, thermal-expansion reference temperature, timestamps |
-| `MaterialDocumentStore` | Lossless full-material JSON payload. | `MaterialID`, `Format`, `SchemaVersion`, `Payload`, `LastModified` |
-| `MaterialThermalExpansionRows` | Normalized thermal expansion rows. | `MaterialID`, `Temperature`, `ExpansionCoefficient` |
-| `MaterialElasticModulusRows` | Normalized elastic modulus rows. | `MaterialID`, `Temperature`, `ElasticModulus`, `PoissonRatio` |
-| `MaterialDensityRows` | Normalized density rows. | `MaterialID`, `Temperature`, `Density` |
-| `MaterialSpecificHeatRows` | Normalized specific heat rows. | `MaterialID`, `Temperature`, `SpecificHeat` |
-| `MaterialThermalConductivityRows` | Normalized thermal conductivity rows. | `MaterialID`, `Temperature`, `Conductivity` |
-| `MaterialTensileRows` | Legacy projection of the old flat tensile list. Defined for compatibility; **no longer written**, because Sy and Su are now 2D tables held in the material document. | `MaterialID`, `Temperature`, `YieldStrength`, `TensileStrength` |
-| `MaterialAllowableStressRows` | Legacy projection of the old service-level list. Defined for compatibility; **no longer written**. | `MaterialID`, `Temperature`, `SectionIServiceLevelA`, `SectionIServiceLevelB`, `SectionIServiceLevelC`, `SectionIServiceLevelD`, `SectionIIWeld` |
-| `MaterialAllowableStressDatasetRows` | ASME allowable stresses, one row per (division, case, size band, temperature). | `MaterialID`, `Division` (`VIII-1`/`VIII-2`/`Bolting`), `StressCase` (`Normal`/`High`), `SizeMinimum`, `SizeMaximum`, `MaximumTemperature`, `CreepTemperature`, `Temperature`, `AllowableStress` |
-| `MaterialCompressionRows` | Normalized compression-property rows. | `MaterialID`, `Temperature`, `CompressiveStrength`, `CompressiveYield` |
-| `MaterialAsmeCodeRows` | ASME code designations linked to a material. | `MaterialID`, `AsmeCode` |
+## 5. Fonte ufficiale e modifiche locali
 
-`MaterialDocumentStore` is the canonical full-fidelity read-back source for application-written materials. The scalar and row tables keep common fields queryable from ordinary SQL.
+I limiti applicabili a una curva vengono dalla sua riga `Property_Source`, non da un
+valore appiattito per materiale in `ASME_Data`. `NP`, campo vuoto e limite qualificato
+non sono equivalenti a un limite numerico generale.
 
-For reference-material hydration, the physical-property loader now follows this order:
+Nella copia di lavoro l'editor aggiunge:
 
-1. Use `MaterialGroupMap` group IDs when present (compiled/shared group rows).
-2. If the grouped row is missing or empty, fall back to a material-linked row (`MaterialID`) when the table supports it.
-3. If needed, fall back to `ID = MaterialID` for legacy variants.
+- `Property_Curve_Metadata`: note utente, copia modificata delle note originali, asse
+  dimensionale, livello S1 Normal/High e override dei limiti della curva;
+- `Property_Edit_History`: snapshot delle modifiche native.
 
-Room-temperature values are preserved explicitly: density and Poisson ratio at `20 degC` are carried forward when available (from grouped room-temperature tables when present, otherwise from scalar reference fields).
+Le note e i documenti sorgenti restano immutati. Una copia locale modificata delle note
+non diventa una nuova nota ufficiale ASME.
 
-`MaterialAllowableStressDatasetRows` repeats its division, case, and size bounds on every row on purpose: one row then answers "which allowable stress applies to this size at this temperature" without a join. Size bounds are in millimetres. Elongation and reduction of area are room-temperature scalars and live on the `Materials` row (`RuptureElongationLong`, `RuptureElongationTransv`) and in `MaterialLibraryExtension` (`ReductionOfAreaPercent`); Sy and Su are 2D tables and live only in the material document.
+L'importazione XML aggiunge `Xml_Import_Documents`, `Xml_Property_Associations` e
+`Xml_Import_History`, conservando documento, hash SHA-256, associazioni e prima/dopo.
+Vedere [importazione XML](xml-physical-import.md).
 
-Schema provisioning also repairs older working copies: a reference column this build writes but the file lacks is added with `ALTER TABLE`, and an application-owned row table left in a superseded shape is dropped so the current definition recreates it. Only application-owned tables are ever dropped, and they are a projection of `MaterialDocumentStore`, which is never touched.
+## 6. Cosa resta legacy
 
-## View
+Il database 2023 usa `Materials` e tabelle pivotate `T_*`. Il percorso CRUD legacy
+può aggiungere `MaterialDocumentStore` e proiezioni SQL del documento `Material`.
+**Questo non è lo schema centrale del riferimento 2025.**
 
-`MaterialSummary` is a read-only summary view. It joins/counts the reference data so callers can inspect which materials have yield strength, ultimate strength, allowable stress, physical-property, external-pressure, and ASME metadata rows.
+La serializzazione completa JSON usa attualmente schema 17 e legge anche 15/16.
+Il numero dello schema JSON non è l'edizione ASME né la versione dello schema SQLite.
+Scrivere un documento legacy nel database nativo tramite **Write Library to DB** è
+rifiutato: perderebbe l'identità delle curve e le varianti della fonte.
 
-Important fields include:
+## 7. Verifica e aggiornamento
 
-- Identity: `ID`, `NominalComposition`, `ProductForm`, `Specification`, `TypeGrade`, `ClassConditionTemper`, `AlloyDesignationNumber`
-- Strength counts: `n_Sy`, `n_Su`, `n_S1`, `n_S2`, `n_S3`
-- Physical-property counts: `n_E`, `n_TE`, `n_TC`, `n_TD`, `n_Cp`
-- Other counts: `n_EP`, `n_ASME`
+- [DatabaseUpdater](database-updater.md) crea/confronta database da export ASME.
+- [Editor](asme-2025-editor.md) modifica singole curve nella copia di lavoro.
+- [Importatore XML](xml-physical-import.md) associa esplicitamente dati aggiuntivi.
+- [Backup e rilascio](release-safety.md) descrive i controlli prima di sostituire un riferimento.
 
-## Row Counts in the Shipped File
-
-The current packaged database contains:
-
-| Object | Rows |
-| --- | ---: |
-| `Materials` | 2129 |
-| `MaterialGroupMap` | 2129 |
-| `YieldStrengthTable` | 2370 |
-| `UltimateStrengthTable` | 2339 |
-| `AllowableStress1Table` | 2903 |
-| `AllowableStress2Table` | 781 |
-| `AllowableStress3Table` | 211 |
-| `SpecificHeatTable` | 1770 |
-| `DataTableASME` | 1213 |
-| `NotesDatabase` | 279 |
-| Shared physical-property group tables | 19 to 62 rows each |
-
-Application extension tables may be empty in a freshly packaged file. They are populated when materials are written through `MaterialLibrary.Crud` or the desktop app.
-
-## Safety Rules
-
-- Do not edit the packaged database in place.
-- The desktop app creates and edits a working copy.
-- `MaterialDatabaseSchema.ensureSchema` is idempotent and can be run whenever a connection opens.
-- Foreign keys must be enabled per SQLite connection with `PRAGMA foreign_keys = ON`.
-- Deleting a `Materials` row cascades to linked reference and extension rows when foreign keys are enabled.
+[asme-2025-import-verification.json](asme-2025-import-verification.json) è una registrazione
+della verifica di un'importazione specifica: hash, conteggi e test lì riportati non sono
+una certificazione permanente di qualunque copia di lavoro.

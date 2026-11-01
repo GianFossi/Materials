@@ -1,192 +1,135 @@
-# Desktop App
+# App desktop: uso e manutenzione
 
-Il database attivo è l’edizione 2025. Per la nuova schermata comune di modifica proprietà, i percorsi e le funzioni native, vedere [Editor ASME 2025](asme-2025-editor.md). Le sezioni sul database `Materials` descrivono il percorso legacy, ancora disponibile per accesso esplicito al 2023 archiviato.
+**Percorso 2: operazioni.** Prima di modificare dati, leggere la
+[distinzione fra riferimento, copia di lavoro e XML](asme-materials-db.md).
 
-## Desktop CRUD App | Applicazione Desktop CRUD
+## 1. Avviare e scegliere il percorso
 
-EN: `src/MaterialLibrary.CrudApp` is a Windows-only WPF desktop application (`net10.0-windows`) that wraps
-`src/MaterialLibrary.Crud`'s `MaterialCrudRepository` in a UI. It is written in **C# with XAML and MVVM**,
-because WPF's data binding, commands, and code-behind model are designed around C# and around mutable,
-change-notifying view models that F# records cannot provide. It supports:
-
-- Creating a new, empty in-memory library, or opening/saving a material library JSON file (the same
-  format produced by `MaterialLibrary.saveToFile`/`loadFromFileComplete`).
-- Listing every material's identification in the library: Id, Specification, Grade, Class/Condition/Tempering,
-  UNS, Form, Product analysis (the domain's `NominalComposition`), Family (ASME code), and the composed Full name.
-- Creating, editing (identity fields, ASME `Family`, `BasicProperties`, and notes), and deleting a material.
-- Editing the property tables of a material ("Edit Tables..."). The **Flat Tables** tab holds the ten
-  one-row-per-temperature tables: thermal expansion, elastic modulus, density, specific heat, thermal
-  conductivity, thermal diffusivity, compression properties, Norton power-law creep, Garofalo creep,
-  Kachanov omega creep, and Code Case 2964 Appendix III. Five further tabs - **Sy**, **Su**,
-  **S Div.1**, **S Div.1H**, **S Div.2** - are temperature x size-range grids, one column per
-  Size/Diameter/Thickness band with the bounds editable in the column header.
-  Column headers carry the fixed unit of measure; optional columns are marked `*` and a blank cell is stored
-  as the F# `None`. Writes go through `MaterialLibrary.Crud`'s own helpers, so domain rules (sort by
-  temperature, refresh `LastModified`) are applied by the library, not reimplemented in the UI.
-- Reading and writing both a single material and a whole library as **XML**, alongside the JSON format.
-- Importing a staged XML data file into the selected material ("Import XML data file...").
-- A **database manager** ("Database...") over an ASME `ASME_Materials.db`: see below.
-
-IT: `src/MaterialLibrary.CrudApp` e un'applicazione desktop WPF solo Windows (`net10.0-windows`) che
-espone `MaterialCrudRepository` di `src/MaterialLibrary.Crud` tramite un'interfaccia utente. E scritta
-in **C# con XAML e MVVM**, perche il data binding, i comandi e il modello code-behind di WPF sono
-progettati attorno a C# e a view model mutabili con notifica di modifica, che i record F# non possono
-fornire. Supporta:
-
-- Creazione di una nuova libreria vuota in memoria, oppure apertura/salvataggio di un file JSON di
-  libreria materiali (lo stesso formato prodotto da `MaterialLibrary.saveToFile`/`loadFromFileComplete`).
-- Elenco dell'identificazione di ogni materiale nella libreria: Id, Specification, Grade, Class/Condition/Tempering,
-  UNS, Form, Product analysis (il campo `NominalComposition` del dominio), Family (codice ASME) e Full name composto.
-- Creazione, modifica (campi identita, `Family` ASME, `BasicProperties` e note) ed eliminazione di un materiale.
-- Modifica delle tabelle numeriche di un materiale ("Edit Tables..."): dilatazione termica, modulo elastico,
-  densita, calore specifico, conducibilita termica, proprieta a trazione, tensioni ammissibili e proprieta a
-  compressione. Le intestazioni riportano l'unita di misura fissa; le colonne opzionali sono marcate `*` e una
-  cella vuota viene salvata come `None` di F#.
-
-Build and run | Compilazione ed esecuzione:
+L'app è WPF per Windows. Per avviarla dai sorgenti:
 
 ```powershell
-dotnet build src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj
-dotnet publish src/MaterialLibrary.CrudApp/MaterialLibrary.CrudApp.csproj -c Release -r win-x64 --self-contained false -o publish/crud-app
-# then run publish/crud-app/MaterialLibrary.CrudApp.exe
+dotnet run --project .\src\MaterialLibrary.CrudApp\MaterialLibrary.CrudApp.csproj
 ```
 
-### CRUD app examples | Esempi nell'app CRUD
+La finestra principale contiene due percorsi diversi:
 
-Example 1 - modify material data:
+| Operazione | Comando | Dove si lavora |
+|---|---|---|
+| Consultare/modificare ASME 2025 | **ASME 2025 Properties** | Database nativo `.working.db` |
+| Backup, tabelle, SQL e controlli | **Database → Manage database...** | Gestore della copia SQLite |
+| Creare/scambiare una libreria personalizzata | Menu **Library** e **Material** | Oggetti in memoria, salvabili come documenti JSON/XML |
 
-1. Open the app and load an existing library with **Open Library...**, or use **Database...** to import
-   materials from an ASME database into the current library.
-2. Select the material row to revise.
-3. Use **Edit Material...** to change identity and scalar fields such as specification, grade, product
-   form, family, basic properties, maximum allowable temperatures, welding numbers, and notes.
-4. Use **Edit Tables...** for tabular data:
-   - To revise the complete elastic modulus table, open the **Elastic modulus** page, edit the
-     temperature/modulus/Poisson-ratio rows, use **Add row** or **Delete row** where needed, then confirm
-     with **OK**.
-   - To modify one external pressure row, open the **External pressure** page, select the table and point,
-     change the selected Factor A / Factor B values, then confirm with **OK**.
-   - To add, delete, or modify allowable stress data, open the tab for the division you are designing
-     to - **S Div.1**, **S Div.1H** (the higher alternative stress, not for gasketed-joint flanges), or
-     **S Div.2**. Each column is one Size/Diameter/Thickness band, with its bounds in the header;
-     each row is a temperature. Add a column for a new band, or a row for a new temperature.
-   - In **Sy**, **Su**, and all **S Div.*** tabs, the top of each value column now exposes an explicit
-     **Applicable size range (mm)** header with editable **Min (>)** and **Max (<=)** bounds.
-   - If a bound is invalid or `Min >= Max`, the column header shows an inline red warning immediately,
-     so size-range issues are visible before confirming the dialog.
-   - **Sy** and **Su** work the same way, and are separate from the room-temperature elongation and
-     reduction of area, which are edited as scalars in **Edit Material...**.
-5. Save the result with **Save** or **Save JSON As...**. If the data came from a database working copy,
-   use the database manager's save/export command for the working database.
+Per la manutenzione dei dati ASME partire dall'editor nativo, non da **New Material...**
+nel percorso della libreria personalizzata.
 
-Example 2 - create a new material:
+## 2. Aprire il database corretto
 
-1. Click **New Material...**.
-2. Fill the material identity fields first: Id, name/specification, grade, product form, UNS, family,
-   and any basic properties that are known.
-3. Confirm the editor with **OK**. The new material appears in the main **Materials** grid.
-4. Select the new material and use **Edit Tables...** to populate physical, strength, external pressure,
-   creep, fatigue, or Code Case 2964 data.
-5. Save the library.
+Nel gestore scegliere **Open ASME 2025**, poi **Edit 2025 Properties**.
+**Open Database...** permette invece di selezionare un file esplicito.
 
-Example 3 - delete an existing material:
+La prima apertura del riferimento crea una copia SQLite tramite backup:
 
-1. Select the material in the **Materials** grid.
-2. Click **Delete Material**.
-3. Confirm the delete prompt.
-4. Save the library after checking that the row was removed.
-
-### Database manager | Gestione database
-
-EN: The manager opens an ASME SQLite database and provisions it. A stock `ASME_Materials.db` has no home for
-most of the `Material` object - no density rows, tensile rows, compression properties, ASME family, welding
-numbers, maximum allowable temperatures, creep models, or Code Case 2964 data - so the application **creates
-the missing tables** and links them to the existing `Materials` table:
-
-- 11 tables are created on demand (`CREATE TABLE IF NOT EXISTS`, so provisioning is idempotent), each with
-  `MaterialID INTEGER NOT NULL REFERENCES Materials(ID) ON DELETE CASCADE` and a covering index.
-- Rows are stored in normalized long form, one row per temperature, rather than the legacy pivoted
-  `T_40 ... T_900` layout, because the domain models these tables as `(temperature, value)` lists and the
-  legacy temperature grids differ per table.
-- Each material is persisted twice on purpose: the scalar identity into the ASME `Materials` row and the
-  tabular data into the extension tables, so the values stay queryable with ordinary SQL; and the complete
-  material into `MaterialDocumentStore` as its canonical JSON, which is the source of truth on read. That
-  document is what guarantees tables with no dedicated schema - creep models, stress-strain curves, fatigue
-  curves - survive a round trip without loss.
-- The **Raw Tables** workspace now lists every SQLite table/view exposed by `sqlite_master`, including
-  SQLite-managed internal tables (for example `sqlite_sequence`) so maintenance queries and direct CRUD
-  operations can be performed from the same workflow.
-- In **Raw Tables**, data rows are prioritized in the main grid. Schema columns and foreign keys are shown
-  in a dedicated collapsible panel, so row browsing remains visible even on smaller windows or high-DPI
-  displays.
-- **The file you pick is never written to.** Opening a database copies it to a `.working.db` beside the
-  original and every operation targets the copy; "Save Working Copy As..." is the only route back to a
-  permanent file.
-- If a previously generated `.working.db` is selected by mistake and the base source exists beside it,
-  the manager reattaches to the base source automatically and reuses the canonical `.working.db` path
-  instead of creating nested names such as `.working.working.db`.
-- Materials that exist only in the shipped ASME rows show as `ASME reference`; ones written by the
-  application show as `Application` and can be read back in full.
-
-IT: Il gestore apre un database SQLite ASME e lo predispone. Un `ASME_Materials.db` originale non ha tabelle
-per gran parte dell'oggetto `Material`, quindi l'applicazione **crea le tabelle mancanti** e le collega alla
-tabella `Materials` esistente tramite chiavi esterne con `ON DELETE CASCADE`. Il file selezionato non viene
-mai modificato: si lavora sempre su una copia `.working.db`.
-
-### F#/C# interop notes | Note di interoperabilita F#/C\#
-
-EN: The app consumes an F# domain from C#, so all F#-specific representations are confined to
-`src/MaterialLibrary.CrudApp/Interop/`. The constraints that shaped the design:
-
-| F# construct | How C# sees it | How the app handles it |
-| --- | --- | --- |
-| `Material` record (immutable, get-only) | Class with a 23-argument positional constructor, no setters | `MaterialFactory` emulates `{ record with ... }` via that constructor, in one file so a new field breaks the build instead of silently mis-assigning |
-| `'T option` | `FSharpOption<T>`, where **`None` is a null reference** | `FSharpInterop` maps `None` <-> `null`; option-typed values are nullable-annotated so the compiler flags unchecked access. Never use `?? fallback` on an option: `None` is null, so the fallback fires when clearing a field |
-| `Result<'T, 'TError>` | `FSharpResult<T, TError>`; reading the wrong branch throws | `FSharpInterop.TryUnwrap` exposes it as a try-pattern |
-| `'T list` | `FSharpList<T>`: `IEnumerable<T>`, but O(n) indexing and no change notification | Projected into `ObservableCollection<MaterialRowViewModel>` for binding |
-| Discriminated unions (`MaterialError`) | Nested subclasses; payloads named `Item`, `Item1`, `Item2`; nullary cases only via `IsX` | `MaterialErrorFormat` uses a C# type-pattern `switch` with explicit default arms (C# cannot check exhaustiveness) |
-| Module `Material` beside type `Material` | Compiled class is renamed **`MaterialModule`** | Called as `MaterialModule.create(...)`; the record argument comes **last**, mirroring F# pipeline order |
-| Type `MaterialLibrary.MaterialLibrary` | Shadows the `MaterialLibrary` namespace in nested namespaces | App CLR namespace is `MaterialLibraryCrudApp`, not `MaterialLibrary.CrudApp`, otherwise WPF-generated code fails with CS0426 (assembly name is unchanged) |
-
-IT: L'applicazione consuma un dominio F# da C#, quindi tutte le rappresentazioni specifiche di F# sono
-confinate in `src/MaterialLibrary.CrudApp/Interop/`. I vincoli principali: i record F# sono immutabili e
-senza setter (nessun equivalente di `{ record with ... }` in C#), `None` e un riferimento null, i moduli
-F# omonimi di un tipo vengono rinominati con il suffisso `Module`, e il tipo `MaterialLibrary.MaterialLibrary`
-oscura il namespace `MaterialLibrary`: per questo il namespace CLR dell'app e `MaterialLibraryCrudApp`.
-
-EN: The CRUD app includes master/detail editors for stress-strain, creep, stress-rupture, fatigue,
-cyclic strain, external pressure, and Larson-Miller curves. The remaining physical/strength/special
-tables continue to use the typed `MaterialLibrary.Crud` API.
-
-IT: L'app CRUD include editor master/detail per curve stress-strain, creep, stress-rupture, fatica,
-deformazione ciclica, pressione esterna e Larson-Miller. Le restanti tabelle fisiche/di resistenza/
-speciali continuano a usare l'API tipizzata di `MaterialLibrary.Crud`.
-
-
-## Logging and diagnostics | Log e diagnostica
-
-EN: The app writes a rolling log to `%LOCALAPPDATA%\MaterialLibrary.CrudApp\logs\crudapp-<date>.log`,
-one file per day. Each session starts with a header naming the build configuration, app version, and
-OS, so a file sent by a user is self-describing.
-
-- Logging works in **Release**, which is the point of it. The earlier implementation used
-  `System.Diagnostics.Debug.WriteLine`, which the compiler removes from Release builds, so an
-  exception inside an async command left no trace at all in the configuration users actually run.
-- `Information`, `Warning`, and `Error` entries are always recorded. `Error` entries expand the whole
-  exception chain, including inner exceptions and stack traces.
-- Verbose `Debug`-level tracing is on by default in Debug builds only. To capture it from a stock
-  Release build, start the app with `--diagnostic`:
-
-```powershell
-.\MaterialLibrary.CrudApp.exe --diagnostic
+```text
+%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db
 ```
 
-- Three global handlers guarantee nothing escapes unrecorded: UI-thread exceptions (reported to the
-  user and survivable), background-thread exceptions, and faulted tasks nobody awaited.
-- The logger never throws. If the log file cannot be written the entry still goes to the trace
-  listener, and the application continues.
+Le aperture successive riutilizzano quella copia, senza cancellare modifiche e importazioni.
+Se si apre esplicitamente un file esistente `.working.db`, viene usato quel file.
+Per un database legacy, il gestore prepara invece una copia sorella del file sorgente.
 
-IT: L'app scrive un log giornaliero in `%LOCALAPPDATA%\MaterialLibrary.CrudApp\logs\`. Il logging
-funziona anche in **Release**; la tracciatura dettagliata si attiva avviando l'app con
-`--diagnostic`. Tre gestori globali registrano le eccezioni del thread UI, dei thread in background e
-dei task non attesi. Il logger non solleva mai eccezioni.
+**Controllare sempre il percorso Working copy mostrato nella finestra.**
+Aprire un nuovo riferimento nativo non sostituisce automaticamente la copia locale
+predefinita già esistente. Per lavorare su un'altra edizione/copia seguire la
+[procedura di manutenzione](#6-aggiornamento-e-ripristino).
+
+## 3. Consultare e modificare un materiale
+
+1. Nell'editor selezionare l'identità: specifica, grado, condizione e UNS.
+2. Scegliere la famiglia (Sy, Su, S1, E, Alpha, ecc.).
+3. Scegliere la **variante**: forma, banda dimensionale, fonte, livello S1 e note.
+4. Verificare unità, punti e limiti normativi prima di usare il grafico o il valore.
+5. Modificare la curva richiesta e usare **Save curve**. Per modificare l'identità usare
+   il relativo comando separato.
+
+I salvataggi nativi scrivono direttamente nella copia SQLite, in transazione.
+Il pulsante **Save** della finestra principale salva invece la libreria JSON:
+non è il comando di salvataggio delle curve native.
+Un conflitto con una modifica esterna richiede ricaricamento, non un salvataggio forzato.
+
+Le note utente e la copia locale delle note originali sono editabili; la fonte ufficiale
+rimane intatta. Non scegliere arbitrariamente fra curve ambigue e non interpretare una
+proprietà assente come zero. Dettagli: [editor ASME 2025](asme-2025-editor.md).
+
+## 4. Aggiungere proprietà fisiche o diagrammi
+
+Nell'editor usare **Import properties / charts from XML...**:
+
+1. Scegliere la cartella XML.
+2. Leggere record, fonte, unità e grafico.
+3. Verificare le associazioni proposte per UNS/composizione e le condizioni.
+4. Selezionare esplicitamente i materiali destinatari.
+5. Confermare la revisione quando richiesta e autorizzare separatamente una sostituzione.
+6. Importare e verificare le curve risultanti.
+
+Gli XML non vengono importati all'avvio. I Code Cases richiedono sempre revisione;
+alcuni dataset sono solo documentazione della fonte e non sono importabili.
+Vedere [formati, limiti e provenienza XML](xml-physical-import.md).
+
+## 5. Gestore database: strumenti di manutenzione
+
+| Strumento | Uso e cautela |
+|---|---|
+| **Refresh / Reopen Last** | Ricarica dati / riapre la copia esistente |
+| **Backup Working Copy** | Crea una copia di sicurezza completa |
+| **Save Working Copy As...** | Salva l'intero database in un altro file; non solo il materiale selezionato |
+| **Integrity Check** | Verifica strutturale SQLite, non validazione ingegneristica |
+| **Raw Tables / Show Raw Rows** | Ispeziona/modifica righe SQL; preferire l'editor per le curve native |
+| Scheda SQL e schema | Strumenti avanzati; scritture solo dopo backup e revisione |
+| **Undo/Redo Last Transaction** | Opera sulle transazioni registrate dal gestore, non su qualunque scrittura esterna |
+| Esportazione risultati CSV/JSON/XLSX | Esporta risultati visibili, non un backup completo del database |
+| **Delete from DB** | Cancella il materiale e dati collegati dopo conferma; fare prima un backup |
+
+Il gestore crea backup automatici prima delle operazioni SQL/schema che lo prevedono,
+conservando gli ultimi dieci `*.pre-sql-*.db`. Non presumere che ogni salvataggio
+dell'editor abbia un backup automatico o sia annullabile dal gestore.
+Le modifiche native e le importazioni XML hanno propri registri nella copia SQLite.
+
+**Import to Library** trasferisce un materiale al percorso in memoria.
+**Write Library to DB** non è una modalità di aggiornamento nativo 2025: il backend
+rifiuta l'esportazione legacy per non perdere varianti e provenienza.
+
+## 6. Aggiornamento e ripristino
+
+### Nuova edizione dagli export ASME
+
+Usare il [DatabaseUpdater](database-updater.md) per creare un **nuovo file** e confrontarlo
+con il precedente. Non aggiorna in-place il riferimento o la copia di lavoro, e non
+trasferisce automaticamente proprietà fisiche, importazioni XML o modifiche locali.
+
+### Nuova copia di lavoro o ripristino
+
+1. Chiudere editor, gestore ed Excel che usano la copia.
+2. Fare un backup completo della copia esistente.
+3. Per una copia alternativa, usare un file verificato con nome `.working.db` e aprirlo
+   esplicitamente tramite **Open Database...**.
+4. Per rigenerare la copia predefinita, spostare al sicuro la vecchia copia e aprire
+   il riferimento configurato. Non eliminare dati locali senza backup.
+5. Verificare identità, curve, note e importazioni prima di riprendere il lavoro.
+
+La riapertura del riferimento **non** azzera da sola la copia locale.
+Vedere [backup e verifiche di rilascio](release-safety.md).
+
+## 7. Librerie personalizzate, opzioni ed errori
+
+I menu **Library → Open/Save JSON** e **Open XML/Save XML As...** gestiscono documenti
+del modello `Material`. **Material → Edit Tables...** modifica le tabelle di quegli
+oggetti, non le curve native per identità Main. Non usare questi documenti come backup
+lossless del database 2025.
+
+[Opzioni dell'app](crud-app-options.md) spiega forme di prodotto, efficienza del giunto
+e cartelle predefinite. Le opzioni dell'app e `MaterialLibrary.config.xml` sono
+configurazioni distinte.
+
+Se il salvataggio/importazione fallisce, leggere il messaggio e ricaricare dopo un
+conflitto esterno. I log dell'app sono descritti nelle [verifiche di manutenzione](release-safety.md).
+Per l'accesso dallo stesso ambiente Excel vedere [add-in](excel-addin.md).

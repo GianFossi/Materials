@@ -1,63 +1,67 @@
 # MaterialLibrary.Crud
 
-CRUD helpers for `MaterialLibrary` on .NET 8.
-
-## Highlights
-
-- Create, read, update, and delete complete `Material` records
-- In-memory `MaterialCrudRepository` with fast ID lookup
-- Save and load complete material libraries through the core JSON serialization API
-- Read, save, create-default, and delete `MaterialLibrary.config.xml`
-- Update stored physical-property, strength-property, and special-property tables
-- Import/export staged XML files from `MaterialLibrary/data` into a specific material reference
-- Uses the core `MaterialLibrary` domain model and validation types
-- XML data writes use temp-file replacement and path checks to reduce side effects
-- Works with the packaged `ASME_Materials.db` content file from the core package
+Persistence and maintenance helpers for `MaterialLibrary`, targeting **.NET 10**
+(`net10.0`). This package contains the service layer, **not the WPF desktop UI**.
 
 ## Install
 
-```bash
+```powershell
 dotnet add package MaterialLibrary.Crud --version 1.0.2
 ```
 
-## Quick Example (F#)
+The core `MaterialLibrary` dependency supplies the domain model and packaged
+`data/asme_materials_2025.db` / XML content.
+
+## 1. Database structure
+
+There are two distinct persistence workflows:
+
+| Workflow | Helpers | Source of truth |
+|---|---|---|
+| Native ASME 2025 | `Asme2025Crud`, `XmlPropertyReader`, `XmlPropertyMatching`, `XmlPropertyImport` | Normalized SQLite identities, curve variants, source links and local metadata |
+| Custom/legacy material documents | `MaterialCrudRepository`, `MaterialDatabaseCrud`, core serialization | Complete `Material` documents and, for legacy databases, SQL projections |
+
+Do not use a legacy document export to overwrite native ASME curves:
+the backend rejects this to preserve curve identity and provenance.
+The [database guide](https://github.com/GianFossi/Materials/blob/main/docs/asme-materials-db.md)
+explains the active schema and the explicitly archived 2023 format.
+
+## 2. Editing, importing and maintaining data
+
+- Native writes require an existing **`.working.db`** copy.
+- `prepareWorkingCopy` creates the default local copy on first use and subsequently
+  preserves existing edits; it does not refresh it automatically from a new reference.
+- Native curve edits are validated, transactional and recorded with before/after snapshots.
+- Physical-property/pressure XML imports require explicit assignments, review where
+  required, and separate replacement consent. Matching is not engineering approval.
+- Configuration helpers manage `MaterialLibrary.config.xml`; staged XML helpers and
+  in-memory material CRUD remain separate from native database import.
+
+### F# example: prepare a native working copy
+
+The reference path below is relative to an application output containing packaged data.
+Handle errors before continuing; creating a working copy does not import XML datasets.
 
 ```fsharp
 open MaterialLibrary.Crud
-open MaterialLibrary.Domain
 
-let repo = MaterialCrudRepository()
-
-// Create/update/delete complete materials.
-// let material: Material = ...
-// repo.Create(material)
-// repo.Read(material.Id)
-// repo.Upsert(updatedMaterial)
-// repo.Delete(material.Id)
-
-// Read or create the XML configuration file.
-let config =
-    ConfigurationCrud.readOrCreateDefault "MaterialLibrary.config.xml"
-
-// Import staged XML data into a specific material reference.
-// repo.ImportXmlDataIntoMaterial(
-//     "./data",
-//     material.Id,
-//     "physical-properties-xml/Density/PRD-Density.xml")
+match Asme2025Crud.prepareWorkingCopy @"data\asme_materials_2025.db" with
+| Ok path -> printfn "Working database: %s" path
+| Error error -> eprintfn "Cannot open working database: %s" error
 ```
 
-## Notes
+The default copy is
+`%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db`.
+An explicit existing `.working.db` path is used directly.
+Back up local changes before resetting or replacing a copy.
 
-`MaterialLibrary.Crud` does not duplicate the engineering domain model. It wraps
-the core `MaterialLibrary` types and serialization APIs so CRUD workflows remain
-consistent with the main library.
+## Documentation
 
-## Repository Documentation
-
-- Source: https://github.com/GianFossi/Materials
-- Documentation index: https://github.com/GianFossi/Materials#documentation
-- CRUD app and database manager: https://github.com/GianFossi/Materials/blob/main/docs/desktop-app.md
-- ASME_Materials.db schema: https://github.com/GianFossi/Materials/blob/main/docs/asme-materials-db.md
-- Library API and persistence: https://github.com/GianFossi/Materials/blob/main/docs/library-api.md
-- Installation, build, and removal: https://github.com/GianFossi/Materials/blob/main/docs/installation.md
-
+- [Project map](https://github.com/GianFossi/Materials/blob/main/docs/overview.md)
+- [Database structure](https://github.com/GianFossi/Materials/blob/main/docs/asme-materials-db.md)
+- [App operation and maintenance](https://github.com/GianFossi/Materials/blob/main/docs/desktop-app.md)
+- [Native editor](https://github.com/GianFossi/Materials/blob/main/docs/asme-2025-editor.md)
+- [XML import and review](https://github.com/GianFossi/Materials/blob/main/docs/xml-physical-import.md)
+- [Edition creation/comparison](https://github.com/GianFossi/Materials/blob/main/docs/database-updater.md)
+- [Installation](https://github.com/GianFossi/Materials/blob/main/docs/installation.md)
+- [License](https://github.com/GianFossi/Materials/blob/main/LICENSE)

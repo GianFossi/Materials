@@ -19,6 +19,13 @@ Add one entry for each meaningful change (architecture, API, behavior, bugfix, p
 ## History
 
 - Date: 2026-11-01
+- Area: Documentation onboarding and maintenance
+- Change: Reorganized the root and both NuGet READMEs around database structure and application operation; corrected topic guides for native versus legacy data, XML candidates, working-copy persistence, runtime requirements, commands and model table axes.
+- Why: Make the current workflow understandable to newcomers and returning contributors without mixing reference data, local edits, source-only datasets and historical verification results.
+- Impact: Documentation only; no database, XML dataset, API or application behavior changed. Checked 177 documentation links/anchors and command project paths; compiled F# examples with repository dependencies and verified interpolation (510 J/(kg*K)) and read-only MAIN access (2532 identities).
+- Files: README.md, src/MaterialLibrary/README-NUGET.md, src/MaterialLibrary.Crud/README-NUGET.md, docs/*.md, CONTRIBUTING.md, AI_HISTORY.md
+
+- Date: 2026-11-01
 - Area: Code Case physical-property extensions
 - Change: Added 34 dedicated Code Case XML datasets/index, 177 ordinary shared curves with 2147 XML points and 29 source-only curves with 350 values.
 - Why: Extend source-explicit UNS/composition associations with new metric physical-property tables and explicitly authorized II-D mappings, without inferred alloy equivalence or database writes.

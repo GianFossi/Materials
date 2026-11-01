@@ -43,7 +43,8 @@ This checklist keeps contributions consistent, robust, and easy to maintain.
 
 ## 7) Mandatory Updates
 
-- Update README.md whenever behavior, architecture, or public APIs change.
+- Update the relevant topic under `docs/` when behavior, architecture, or public APIs change.
+- Update the root README only when the project summary or documentation index changes.
 - Update examples/tests for new public capabilities.
 - Update AI_HISTORY.md with one structured entry for each meaningful change.
 

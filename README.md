@@ -1,108 +1,73 @@
 # MaterialLibrary
 
-Type-safe F#/.NET material-property library for ASME Section II Part D workflows, with a CRUD layer, Excel add-in, and Windows desktop app.
+Libreria F# per dati e calcoli sui materiali, con database SQLite ASME 2025,
+applicazione desktop Windows per la manutenzione e componente aggiuntivo Excel.
 
-## Documentation
+## Da dove iniziare
 
-- [Overview](docs/overview.md) - features and repository layout.
-- [Requirements and dependencies](docs/requirements.md) - SDK, platforms, packages, units, and project notes.
-- [Installation, build, and removal](docs/installation.md) - restore/build/test, NuGet package commands, Excel/app publishing, and cleanup.
-- [Physical properties and external-pressure XML import](docs/xml-physical-import.md) - folder scan, editable curve previews, explainable manual/automatic associations, separate mean/instantaneous expansion and audited updates.
-- [ASME 2025 editor for CRUD and Excel](docs/asme-2025-editor.md) - active 2025 database, complete property editor, native worksheet functions and archived 2023 edition.
-- [Archived 2023 database schema](docs/asme-materials-db.md) - previous SQLite layout retained for explicit legacy access.
-- [2025 database and F# console updater](docs/database-updater.md) - unique four-field MAIN identities (excluding 6A–6D), import Sy/Su/S1/S2 and separate bolting Sb1/Sb2, import regulatory ASME fields with source evidence and complete note texts, print separate bolting/other mechanical matrices and end with physical coverage, create with `--newdatabasefile` or compare with `--compare`.
-- [Library API](docs/library-api.md) - F# examples, checked APIs, persistence, and database lookup.
-- [Material models and tables](docs/material-models.md) - fixed units, external pressure, stress-strain, unified tables, and creep model selection.
-- [Excel add-in](docs/excel-addin.md) - build/load steps and worksheet functions.
-- [Desktop app](docs/desktop-app.md) - WPF CRUD app, examples, database manager, and F#/C# interop notes.
-- [Release and safety notes](docs/release-safety.md) - database working-copy safety, backups, undo/redo, and publishing notes.Excel installation is 32-bit.
-- [AI instructions](AI_Instructiions/ai-instructions.md) - project-specific assistant workflow notes.
-- [License](docs/license.md).
+La documentazione segue due percorsi distinti:
 
-## Quick Start
+| Percorso | Prima lettura | Approfondimenti |
+|---|---|---|
+| **1. Come è strutturato il database** | [Database: file, identità, curve e provenienza](docs/asme-materials-db.md) | [Modelli della libreria](docs/material-models.md), [API](docs/library-api.md) |
+| **2. Come usare e mantenere l'app** | [App: consultazione, modifiche e manutenzione](docs/desktop-app.md) | [Editor ASME 2025](docs/asme-2025-editor.md), [importazione XML](docs/xml-physical-import.md), [aggiornamento da export ASME](docs/database-updater.md) |
+
+Se riprendi il progetto dopo una pausa, parti dalla [mappa del progetto](docs/overview.md).
+Per installare: [requisiti](docs/requirements.md), [installazione](docs/installation.md)
+e [Excel](docs/excel-addin.md).
+
+## Tre cose da non confondere
+
+- **Database di riferimento:** [database/data/asme_materials_2025.db](database/data/asme_materials_2025.db).
+  Contiene identità, dati meccanici importati e provenienza.
+- **Copia di lavoro:** l'app modifica un file `.working.db`, non il riferimento.
+  La copia predefinita è `%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db`.
+- **XML fisici e diagrammi:** [database/data](database/data/) contiene anche dati da
+  verificare e associare prima dell'importazione. La presenza di un XML non implica che
+  ogni materiale del database abbia già quella proprietà.
+
+I documenti di libreria JSON/XML sono un percorso separato per materiali e modelli
+personalizzati. Il database 2023 è un [archivio esplicito](database/data/archive/2023/README.md),
+mai un'integrazione automatica dei dati 2025.
+
+## Avvio dai sorgenti
+
+Con il .NET SDK previsto da [global.json](global.json), dalla radice del repository:
 
 ```powershell
-dotnet restore
-dotnet build src/MaterialLibrary/MaterialLibrary.fsproj
-dotnet run --project tests/MaterialLibrary.Tests/MaterialLibrary.Tests.fsproj
+dotnet run --project .\src\MaterialLibrary.CrudApp\MaterialLibrary.CrudApp.csproj
 ```
 
-## Main Projects
+Nella finestra principale scegliere **ASME 2025 Properties**; per backup, tabelle e SQL:
+**Database → Manage database...**. La [guida dell'app](docs/desktop-app.md) spiega cosa
+viene salvato e dove.
 
-- `src/MaterialLibrary` - core F# domain library and NuGet package.
-- `src/MaterialLibrary.Crud` - CRUD helpers and database persistence support.
-- `src/MaterialLibrary.Excel` - Excel-DNA worksheet add-in.
-- `src/MaterialLibrary.CrudApp` - Windows WPF desktop CRUD app.
-- `tests/MaterialLibrary.Tests` - compiled tests.
-- `tests/MaterialLibrary.Examples` - compiled examples.
-- `tools/MaterialLibrary.DatabaseUpdater` - standalone F# edition importer and database comparison tool.
+Per sviluppatori:
 
-## NuGet
-
-The package readmes are intentionally short and point back to these repository docs:
-
-- `src/MaterialLibrary/README-NUGET.md`
-- `src/MaterialLibrary.Crud/README-NUGET.md`
-
-## GitHub
-
-GitHub renders this root README as the repository landing page. Detailed topics live under `docs/` so direct links remain stable and easier to maintain.
-
----
-
-## Manual CRUD Operations on the Database
-
-### 1. The linking key
-
-`Materials.ID` (integer, ASME table) is the **central hub**. Every application extension table declares:
-
-```sql
-MaterialID INTEGER NOT NULL REFERENCES Materials(ID) ON DELETE CASCADE
+```powershell
+dotnet build .\src\MaterialLibrary\MaterialLibrary.fsproj
+dotnet test .\tests\MaterialLibrary.Tests\MaterialLibrary.Tests.fsproj
 ```
 
-The ownership chain is:
+Non c'è una soluzione alla radice: specificare sempre il progetto.
 
-```
-Materials  (ASME, integer ID)
-  ├── MaterialLibraryExtension        ← also holds MaterialKey (string, e.g. "SA-516-70")
-  ├── MaterialDocumentStore           ← full JSON document, source of truth
-  ├── MaterialAllowableStressDatasetRows
-  ├── MaterialElasticModulusRows
-  ├── MaterialThermalExpansionRows
-  ├── MaterialAsmeCodeRows
-  └── ... all other *Rows tables
-```
+## Componenti
 
-`MaterialLibraryExtension` is the **secondary** bridge: it maps the string domain key (`MaterialKey`) back to the integer `MaterialID`, and the unique index `IX_MaterialLibraryExtension_MaterialKey` enforces that mapping.
-
----
-
-### 2. Which tables are safe to edit manually?
-
-**Projection tables** (`MaterialElasticModulusRows`, `MaterialAllowableStressDatasetRows`, `MaterialThermalExpansionRows`, etc.) are **rebuilt from scratch by "Write Library to DB"**. Editing them directly in the Raw Tables tab will be overwritten the next time a write is triggered. They are read-only from a data-authoring perspective.
-
-**The only two tables you should author manually are:**
-
-- `MaterialDocumentStore` — the JSON payload is the canonical source of truth for all property curves (Sy, Su, allowable stresses, creep, fatigue, stress-strain, external-pressure charts).
-- `MaterialLibraryExtension` — scalar metadata per material: family, welding P/G numbers, maximum allowable temperatures, reduction of area, thermal-expansion reference temperature.
-
-**Safe-edit checklist for the Raw Tables tab:**
-
-1. Always work on the **working copy** — the app enforces this and never writes to the reference database.
-2. Run **Integrity Check** after any manual SQL or raw-grid edit.
-3. Use **Save Working Copy As…** to export the result to a permanent file.
-
----
-
-### 3. Where to perform each CRUD operation
-
-| Goal | Where to act |
+| Componente | Funzione |
 |---|---|
-| Add / edit a material | **Materials tab → edit fields → Write Library to DB** |
-| Edit allowable stress data | **Materials tab → select material → Allowable Stress editor** |
-| Manual SQL on extension tables | **SQL tab** (auto-creates a timestamped backup before each run) |
-| Inspect raw row data | **Raw Tables tab** (read-only intent; Save Changes commits to working copy) |
-| Persist the result permanently | **Save Working Copy As…** → overwrite or save to a new file |
+| [MaterialLibrary](src/MaterialLibrary/) | Modelli, interpolazioni, lettura nativa e serializzazione; [README NuGet](src/MaterialLibrary/README-NUGET.md) |
+| [MaterialLibrary.Crud](src/MaterialLibrary.Crud/) | Persistenza, editor nativo e importazione XML; [README NuGet](src/MaterialLibrary.Crud/README-NUGET.md) |
+| [MaterialLibrary.CrudApp](src/MaterialLibrary.CrudApp/) | Interfaccia WPF Windows |
+| [MaterialLibrary.Excel](src/MaterialLibrary.Excel/) | Funzioni Excel e accesso all'editor condiviso |
+| [DatabaseUpdater](tools/MaterialLibrary.DatabaseUpdater/) | Crea/confronta edizioni da export ASME; non importa gli XML fisici |
 
-> **Never edit `asme_materials.db` directly.** The app opens it read-only; all writes target `asme_materials.working.db`. Only **Save Working Copy As…** exports that back to a permanent file.
+## Altre guide
 
+- [Opzioni e percorsi](docs/crud-app-options.md)
+- [Backup e verifiche prima del rilascio](docs/release-safety.md)
+- [Contribuire](CONTRIBUTING.md)
+- [Cronologia tecnica](AI_HISTORY.md)
+- [Licenza](docs/license.md)
+
+I dati non sostituiscono il codice normativo: verificare fonte, variante, condizioni,
+limiti di temperatura e accettazione degli eventuali Code Cases prima dell'uso ingegneristico.

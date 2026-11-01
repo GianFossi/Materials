@@ -1,10 +1,34 @@
 # Importazione XML di proprietà fisiche e diagrammi
 
-Il CRUD e l'add-in Excel possono importare E, Alpha medio, Alpha istantaneo, c, k, a, densità, Nu e diagrammi External Pressure dal database ASME 2025. Si lavora sulla copia `.working.db` condivisa; il riferimento 2025 e l'archivio 2023 restano separati.
+Il CRUD e l'add-in Excel possono importare E, Alpha medio, Alpha istantaneo, c, k, a,
+densità, Nu e diagrammi materiali External Pressure **dagli XML nella copia SQLite
+ASME 2025**. Non è un'estrazione dal database né un'importazione automatica all'avvio.
+Per file e tabelle vedere [database](asme-materials-db.md); per backup e salvataggi
+vedere [app desktop](desktop-app.md).
+
+## Lettura rapida
+
+| Esigenza | Sezione |
+|---|---|
+| Importare dalla schermata | [Procedura grafica](#procedura-grafica) |
+| Preparare un XML associabile a più materiali | [XML strutturati](#xml-strutturati) e [curve condivise TM](#tm-1tm-5-curve-del-modulo-elastico-per-materiale) |
+| Densità e Poisson | [PRD](#prd-densità-e-coefficiente-di-poisson-per-materiale) |
+| Modulo elastico | [TM-1–TM-5](#tm-1tm-5-curve-del-modulo-elastico-per-materiale) |
+| Conduttività | [TCD conduttività](#tcd-conduttività-termica-per-materiale) |
+| Diffusività | [TCD diffusività](#tcd-diffusività-termica-per-materiale) |
+| Dilatazione | [TE-1–TE-5](#te-1te-5-dilatazione-termica-per-materiale) |
+| Proprietà fisiche aggiunte dai Code Cases | [Estensioni e dati fonte-only](#estensioni-delle-proprietà-fisiche-dai-code-cases-2025) |
+| Diagrammi geometrici / Code Cases non importabili | [Figura G](#figura-g-diagramma-geometrico), [diagrammi Code Cases](#diagrammi-dei-code-cases-2025) |
+| Capire cosa viene conservato dopo l'importazione | [Provenienza](#provenienza-e-aggiornamenti) |
+
+**Associazione candidata non significa applicabilità approvata.** Più materiali possono
+condividere una curva, ma forme, condizioni e limiti vanno verificati per ogni destinazione.
+L'UNS esatto non autorizza automaticamente un Code Case. I conteggi dei dataset sotto
+descritti non sono conteggi di materiali già completi nella copia SQLite.
 
 ## Procedura grafica
 
-1. Nel CRUD aprire **Proprietà ASME 2025 → Importa proprietà / diagrammi da XML…**. In Excel usare **Materiali ASME 2025 → Importa XML proprietà / chart**.
+1. Nel CRUD aprire **ASME 2025 Properties → Import properties / charts from XML...**. In Excel usare **Materiali ASME 2025 → Importa XML proprietà / chart**.
 2. Scegliere una cartella: vengono letti anche gli XML nelle sottocartelle. Lo stato riporta i file non leggibili.
 3. Selezionare un record nell'elenco. Controllare testo/XML originale, note, famiglia, unità e punti numerici. Le due espansioni termiche sono famiglie indipendenti: `Alpha` è il coefficiente medio, `AlphaInstantaneous` quello istantaneo.
 4. La tabella numerica è modificabile e usa sempre le unità di destinazione indicate. Ogni riga contiene `temperatura valore`, oppure `temperatura A B` per EP; usare il punto decimale. Premere **Aggiorna anteprima** dopo la modifica. Il grafico mostra XML in blu e dati del materiale selezionato in grigio. Per EP usa log10(A), con una curva per temperatura.
