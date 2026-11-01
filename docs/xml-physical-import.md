@@ -140,7 +140,7 @@ open System
 open Microsoft.Data.Sqlite
 open MaterialLibrary.Crud
 
-let work = @"C:\Dati\asme_materials_2025.working.db"   // solo copia di lavoro
+let work = @"C:\Dati\materials_2025.working.db"   // solo copia di lavoro
 let cs = SqliteConnectionStringBuilder(DataSource = work, Mode = SqliteOpenMode.ReadWrite, Pooling = false).ConnectionString
 
 // 1. Leggere tutti gli XML della cartella (errori per file, nessuna scrittura)

@@ -130,7 +130,7 @@ Questo documento descrive il secondo e come tornare, quando serve, alla vista de
 | File/dataset | Ruolo |
 |---|---|
 | [materials_2025.db](../database/data/materials_2025.db) | Riferimento attivo, con schema nativo normalizzato: dati meccanici da `database/sources` e proprietà fisiche dagli XML (senza revisione manuale richiesta) |
-| `%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db` | Copia locale predefinita modificabile dall'app e dall'editor Excel |
+| `%LOCALAPPDATA%\MaterialLibrary\ASME2025\materials_2025.working.db` | Copia locale predefinita modificabile dall'app e dall'editor Excel |
 | [XML fisici](../database/data/physical-properties-xml/) | Dati candidati con fonte e chiavi di associazione; non automaticamente presenti in SQLite |
 | [XML pressione esterna](../database/data/external-pressure-xml/) | Dataset di tipi diversi, non tutti importabili come proprietà materiale |
 | Libreria JSON/XML | Documenti del modello `Material`, per scambio e materiali personalizzati; non un backup completo del database nativo |

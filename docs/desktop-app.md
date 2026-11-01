@@ -30,7 +30,7 @@ Nel gestore scegliere **Open ASME 2025**, poi **Edit 2025 Properties**.
 La prima apertura del riferimento crea una copia SQLite tramite backup:
 
 ```text
-%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db
+%LOCALAPPDATA%\MaterialLibrary\ASME2025\materials_2025.working.db
 ```
 
 Le aperture successive riutilizzano quella copia, senza cancellare modifiche e importazioni.

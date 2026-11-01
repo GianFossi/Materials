@@ -18,7 +18,7 @@ let private reference = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__,"../.
 let private working action =
     let folder = Path.Combine(Path.GetTempPath(),"materials-native-"+Guid.NewGuid().ToString("N"))
     Directory.CreateDirectory folder |> ignore
-    let path = Path.Combine(folder,"asme_materials_2025.working.db")
+    let path = Path.Combine(folder,"materials_2025.working.db")
     File.Copy(reference,path)
     try action path
     finally

@@ -51,7 +51,7 @@ match Asme2025Crud.prepareWorkingCopy @"data\materials_2025.db" with
 ```
 
 The default copy is
-`%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db`.
+`%LOCALAPPDATA%\MaterialLibrary\ASME2025\materials_2025.working.db`.
 An explicit existing `.working.db` path is used directly.
 Back up local changes before resetting or replacing a copy.
 

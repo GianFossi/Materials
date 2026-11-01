@@ -1207,3 +1207,8 @@ Clarified in asme-materials-db.md section 5.1 that SizeMin and SizeMax both NULL
 ## 2026-11-01 - Reference database regenerated as materials_2025.db
 
 Replaced database/data/asme_materials_2025.db (removed from the repository) with database/data/materials_2025.db, rebuilt from database/sources via MaterialLibrary.DatabaseUpdater plus the physical-property XML of database/data that need no manual review and have a single candidate per material and family (10,967 associations, 213,999 points, 1,087 density/Poisson constants; 2,400 review-required proposals and the raw external-pressure XML not imported; no review declared). Main ids are now assigned in identity order (curve ids unchanged). Added tools/Build-Reference.ps1 + tools/ReferenceBuild/Build-Reference.fsx (reproducible build, checks, summary). Fixed provenance bloat: XmlPropertyImport now stores a compact record (no full XML, raw text or points) in Xml_Property_Associations and its history. All file references renamed (config, fsproj, tasks, tests, docs); the working-copy file name asme_materials_2025.working.db is unchanged on purpose so existing user copies keep working. Catalog, verification JSON and docs updated; tests adjusted for the populated physical tables and new ids.
+
+
+## 2026-11-01 - Working copy renamed to materials_2025.working.db
+
+Asme2025Crud.prepareWorkingCopy now creates %LOCALAPPDATA%\MaterialLibrary\ASME2025\materials_2025.working.db (was asme_materials_2025.working.db); tests and docs updated. On request the previous working copy (unmodified: no edit history, no metadata, no physical data) was deleted and replaced by a byte-identical copy of database/data/materials_2025.db. The hardening is applied to the new copy the first time the app or the editor opens it.

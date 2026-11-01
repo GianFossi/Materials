@@ -37,7 +37,7 @@ Il default deriva da `MaterialLibrary.config.xml` accanto all'add-in o da
 `data/materials_2025.db` nella directory runtime.
 
 ```text
-=MatOpenDatabase("C:\percorso\asme_materials_2025.working.db")
+=MatOpenDatabase("C:\percorso\materials_2025.working.db")
 =MatLibraryStatus()
 =MatSearch("SA-516";"70")
 ```
@@ -91,7 +91,7 @@ Nella scheda **Materiali ASME 2025**:
 - **Ricarica database:** rilegge il database corrente e ricalcola dopo modifiche esterne.
 
 La copia locale predefinita è
-`%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db`.
+`%LOCALAPPDATA%\MaterialLibrary\ASME2025\materials_2025.working.db`.
 Il riferimento non viene modificato. Le copie esistenti non si aggiornano automaticamente:
 prima di sostituirle seguire [backup e ripristino](desktop-app.md#6-aggiornamento-e-ripristino).
 

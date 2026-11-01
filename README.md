@@ -21,7 +21,7 @@ e [Excel](docs/excel-addin.md).
 - **Database di riferimento:** [database/data/materials_2025.db](database/data/materials_2025.db).
   Contiene identità, dati meccanici importati e provenienza.
 - **Copia di lavoro:** l'app modifica un file `.working.db`, non il riferimento.
-  La copia predefinita è `%LOCALAPPDATA%\MaterialLibrary\ASME2025\asme_materials_2025.working.db`.
+  La copia predefinita è `%LOCALAPPDATA%\MaterialLibrary\ASME2025\materials_2025.working.db`.
 - **XML fisici e diagrammi:** [database/data](database/data/) contiene anche dati da
   verificare e associare prima dell'importazione. La presenza di un XML non implica che
   ogni materiale del database abbia già quella proprietà.

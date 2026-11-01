@@ -188,7 +188,7 @@ module Asme2025Crud =
             else
                 let folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"MaterialLibrary","ASME2025")
                 Directory.CreateDirectory folder |> ignore
-                let target = Path.Combine(folder,"asme_materials_2025.working.db")
+                let target = Path.Combine(folder,"materials_2025.working.db")
                 if not (File.Exists target) then
                     use original = Asme2025Data.openRead source
                     if not (Asme2025Data.isNormalized original) then failwith "Select a native ASME 2025 database."
