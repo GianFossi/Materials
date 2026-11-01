@@ -1,6 +1,10 @@
 # AI Instructions
 
-Project instruction files:
+Shared rules (single source of truth):
+
+- [Shared AI rules](ai-rules.md)
+
+Tool-specific pointer files (they only link to the shared rules):
 
 - [Claude instructions](../.claude/CLAUDE.md)
 - [Codex instructions](../.codex/INSTRUCTIONS.md)

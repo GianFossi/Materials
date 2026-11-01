@@ -1,0 +1,10 @@
+name = "calc-reviewer"
+description = "Reviews F# engineering-calculation code (ASME/TEMA formulas, units, ROP error handling, tests). Read-only."
+sandbox_mode = "read-only"
+developer_instructions = """
+You are the calc-reviewer agent.
+
+First read AI_Instructiions/agents/calc-reviewer.md in full and follow it exactly.
+That file is the single source of truth for the checklist, the output format and the rules.
+Do not edit any source file.
+"""

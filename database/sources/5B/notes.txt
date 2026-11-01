@@ -1,0 +1,46 @@
+GENERAL NOTES
+(a)	The following abbreviations are used: ann., annealed; extr., extruded; fin., finished; rel., relieved; Smls., Seamless; and Wld., Welded.
+(b)	An alternative typeface is used for stress values obtained from time–dependent properties (see Notes T1 through T15).
+(c)	Where specifications, grades, classes, and types are listed in this Table, and where the material specification in Section II, Part A or Part B is a dual–unit specification (e.g., SB–407/SB–407M), the values listed in this Table shall be applicable to either the customary U.S. version of the material specification or the SI units version of the material specification. For example, the values listed for SB–407 Grade N08800 shall be used when SB–407M Grade N08800 is used in construction.
+(d)	The values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained.
+(e)	The properties of steels are influenced by the processing history, heat treatment, melting practice, and level of residual elements. See Nonmandatory Appendix A for more information.
+(f)	Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings.
+NOTES – GENERAL REQUIREMENTS
+G1	Due to the relatively low yield strength of these materials, these higher stress values were established at temperatures where the short–time tensile properties govern to permit the use of these alloys where slightly greater deformation is acceptable. The stress values in this range exceed 66⅔% but do not exceed 90% of the yield strength at temperature. Use of these stresses may result in dimensional changes due to permanent strain. These stress values are not recommended for the flanges of gasketed joints or other applications where slight amounts of distortion can cause leakage or malfunction. Table Y–2 lists multiplying factors that, when applied to the yield strength values shown in Table Y–1, will give allowable stress values that will result in lower levels of permanent strain.
+G2	Use of external pressure charts for material in the form of bar stock is permitted for stiffening rings only.
+G3	Maximum allowable stress values for 40°C may be used at temperatures down to –200°C without additional specification requirements.
+G4	Maximum allowable stress values for 40°C may be used at temperatures down to –270°C without additional specification requirements.
+G5	Maximum temperature for external pressure design not to exceed 175°C.
+G6	These alloys are occasionally subject to the hazard of stress corrosion cracking. Even though they are suitable for engineering use under a wide variety of corrosive conditions, with no particular hazard with respect to stress corrosion, the supplier of the material should be consulted before applying them.
+G7	A joint efficiency factor of 0.85 has been applied in arriving at the maximum allowable stress values for this material.
+G8	For stress relieved tempers (T451, T4510, T4511, T651, T6510, T6511), stress values for materials in the basic temper shall be used.
+G9	Copper–silicon alloys are not always suitable when exposed to certain media and high temperature, particularly steam above 100°C. The user should satisfy him/herself that the alloy selected is satisfactory for the service for which it is to be used.
+G10	At temperatures over 550°C, these stress values apply only when the carbon is 0.04% or higher.
+G11	This alloy is subject to severe loss of impact strength at room temperatures after exposure in the range of 550°C to 750°C.
+G12	Alloy N06022 in the solution annealed condition is subject to severe loss of impact strength at room temperatures after exposure in the range of 550°C to 675°C.
+G13	Creep–fatigue, thermal ratcheting, and environmental effects are increasingly significant failure modes at temperatures in excess of 825°C and shall be considered in the design.
+G14	The allowable stress value at 65°C shall be used at 66°C.
+NOTES – HEAT TREATMENT REQUIREMENTS
+H1	For temperatures above 550°C, these stress values may be used only if the material is annealed at a minimum temperature of 1040°C and has a carbon content of 0.04% or higher.
+H2	For temperatures above 550°C, these stress values may be used only if the material is heat treated by heating it to a minimum temperature of 1040°C and quenching in water or rapidly cooling by other means.
+NOTES – TIME–DEPENDENT PROPERTIES
+T1	Allowable stresses for temperatures of 125°C and above are values obtained from time–dependent properties.
+T2	Allowable stresses for temperatures of 150°C and above are values obtained from time–dependent properties.
+T3	Allowable stresses for temperatures of 175°C and above are values obtained from time–dependent properties.
+T4	Allowable stresses for temperatures of 200°C and above are values obtained from time–dependent properties.
+T5	Allowable stresses for temperatures of 275°C and above are values obtained from time–dependent properties.
+T6	Allowable stresses for temperatures of 325°C and above are values obtained from time–dependent properties.
+T7	Allowable stresses for temperatures of 375°C and above are values obtained from time–dependent properties.
+T8	Allowable stresses for temperatures of 400°C and above are values obtained from time–dependent properties.
+T9	Allowable stresses for temperatures of 425°C and above are values obtained from time–dependent properties.
+T10	Allowable stresses for temperatures of 450°C and above are values obtained from time–dependent properties.
+T11	Allowable stresses for temperatures of 500°C and above are values obtained from time–dependent properties.
+T12	Allowable stresses for temperatures of 525°C and above are values obtained from time–dependent properties.
+T13	Allowable stresses for temperatures of 550°C and above are values obtained from time–dependent properties.
+T14	Allowable stresses for temperatures of 575°C and above are values obtained from time–dependent properties.
+T15	Allowable stresses for temperatures of 250°C and above are values obtained from time–dependent properties.
+NOTES – WELDING REQUIREMENTS
+W1	Welding except for seal welds is not permitted.
+W2	For welded construction, stress values for material at O temper shall be used.
+W3	The stress values given for this material are not applicable when either welding or thermal cutting is employed.
+W4	Use NFA–12 when welded with 5356 or 5556 filler metal, all thicknesses, or 4043 or 5554 filler metal, thickness ≤ 10 mm. Use NFA–13 when welded with 4043 or 5554 filler metal, thickness > 10 mm.

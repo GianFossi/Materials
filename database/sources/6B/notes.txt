@@ -1,0 +1,19 @@
+GENERAL NOTES
+(a)	The stress values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained.
+(b)	Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings.
+(c)	The following abbreviations are used: cond., condenser; Smls., Seamless; and Wld., Welded.
+NOTES – GENERAL REQUIREMENTS
+G1	When material is to be welded, the phosphorous deoxidized types should be specified.
+G2	When nonferrous materials conforming to Section II specifications are used in welded or brazed construction, the maximum allowable working stresses shall not exceed the values given herein for the material in the annealed condition.
+G3	For use in ASME BPVC, Section IV, eq. HG–307.2(b)(2), the maximum allowable stress at room temperature (40°C max.) shall be 68.9 MPa (through 38 mm thickness) and 63.4 MPa over 38 mm thickness.
+G4	Copper–silicon alloys are not always suitable when exposed to certain median and high temperatures, particularly steam above 100°C. Therefore, this material is limited to the construction of hot water boilers to be operated at a temperature not to exceed 93°C.
+G5	To be used for HLW connections only.
+G6	The stress value includes a casting quality factor of 0.8. Increased casting quality factors as a result of material examination beyond the requirement of the material specification shall not be permitted. This is not intended to apply to valves and fittings made to recognized standards.
+G7	The maximum water temperature shall not exceed 96°C.
+G8	The castings shall not be repaired.
+G9	When proof testing is required to establish design pressure, that testing shall comply with ASME BPVC, Section IV, HG–501 and HG–502.3, except that in the equation in HG–502.3, the design factor shall be 10 in lieu of 5.
+G10	The maximum allowable use temperature is 260°C. The values for 275°C are provided for interpolation only.
+G11	The maximum allowable use temperature is 204°C. The values for 225°C are provided for interpolation only.
+G12	The maximum allowable use temperature is 232°C. The values for 250°C are provided for interpolation only.
+NOTES – WELDING REQUIREMENTS
+W1	Welding or brazing is not permitted.

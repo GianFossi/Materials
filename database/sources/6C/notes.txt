@@ -1,0 +1,8 @@
+GENERAL NOTES
+(a)	The stress values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained.
+(b)	Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings.
+NOTES – GENERAL REQUIREMENTS
+G1	The stress value includes a joint factor of 0.85.
+G2	Tensile value is expected minimum.
+NOTES – WELDING REQUIREMENTS
+W1	Welding or brazing is not permitted.

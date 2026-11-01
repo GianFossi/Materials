@@ -1,0 +1,58 @@
+GENERAL NOTES
+(25)	(a)	The following abbreviations are used: N, Normalized; NT, Normalized and tempered; QT, Quenched and tempered; Smls., Seamless; Temp., Temperature; and Wld., Welded.
+(b)	An alternative typeface is used for stress values obtained from time–dependent properties (see Notes T1 through T11).
+(c)	Where specifications, grades, classes, and types are listed in this Table, and where the material specification in Section II, Part A or Part B is a dual–unit specification (e.g., SA–516/SA–516M), the values listed in this Table shall be applicable to either the customary U.S. version of the material specification or the SI units version of the material specification. For example, the values listed for SA–516 Grade 70 shall be used when SA–516M Grade 485 is used in construction.
+(d)	The values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained.
+(e)	The properties of steels are influenced by the processing history, heat treatment, melting practice, and level of residual elements. See Nonmandatory Appendix A for more information.
+(f)	Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings.
+NOTES – GENERAL REQUIREMENTS
+G1	For temperatures above 550°C, these stress values may be used only if the material is heat treated by heating to a minimum temperature of 1095°C, and quenching in water or rapidly cooling by other means.
+G2	Due to the relatively low yield strength of these materials, these higher stress values were established at temperatures where the short–time tensile properties govern to permit the use of these alloys where slightly greater deformation is acceptable. The stress values in this range exceed 66⅔% but do not exceed 90% of the yield strength at temperature. Use of these stresses may result in dimensional changes due to permanent strain. These stress values are not recommended for the flanges of gasketed joints or other applications where slight amounts of distortion can cause leakage or malfunction. Table Y–2 lists multiplying factors that, when applied to the yield strength values shown in Table Y–1, will give allowable stress values that will result in lower levels of permanent strain.
+G3	At temperatures over 550°C, these stress values apply only when the carbon is 0.04% or higher. This note is applicable only when stresses above 550°C are published.
+G4	For temperatures above 550°C, these stress values may be used only if the material has been heat treated by heating to a minimum temperature of 1040°C and quenching in water or rapidly cooling by other means. This note is applicable only when stresses above 550°C are published.
+G5	These stress values at temperatures of 575°C and above should be used only when assurance is provided that the steel has a predominant grain size not finer than ASTM No. 6. This note is applicable only when stresses above 550°C are published.
+G6	A quality factor of 0.85 has been applied in arriving at the maximum allowable stress values for this material.
+G7	These stress values shall be considered basic values to be used when no effort is made to control or check the grain size of the steel.
+G8	This steel may be expected to develop embrittlement after service at moderately elevated temperature; see Nonmandatory Appendix A, A–207 and A–208.
+G9	The tensile strength shall not be in excess of 140 MPa above the specified minimum.
+G10	All forgings shall have a maximum tensile strength not in excess of 175 MPa above the specified minimum.
+G11	SA–723 is exempt from the requirement in Section VIII, Division 2, 6.7.6.3(b) that the average of the individual Brinell hardness numbers shall not be more than 10% below or 25% above the number corresponding to the tensile strength.
+G12	See Section VIII, Division 2, 3.4.
+G13	Upon prolonged exposure to temperatures above 425°C, the carbide phase of carbon steel may be converted to graphite. See Nonmandatory Appendix A, A–201 and A–202.
+G14	Upon prolonged exposure to temperatures above 475°C, the carbide phase of carbon–molybdenum steel may be converted to graphite. See Nonmandatory Appendix A, A–201 and A–202.
+G15	This material may be susceptible to temper embrittlement. See Nonmandatory Appendix A, A–203.
+G16	These stresses apply to all product forms (C, H, and P) as defined in SA/EN 10028–7.
+G17	The allowable stress value at 65°C shall be used at 66°C.
+(25)	G18	Use of external pressure charts for material in the form of bar stock is permitted for stiffening rings only.
+(25)	G19	Maximum allowable stress values for 40°C may be used at temperatures down to –200°C without additional specification requirements.
+(25)	G20	Creep–fatigue, thermal ratcheting, and environmental effects are increasingly significant failure modes at temperatures in excess of 825°C and shall be considered in the design.
+NOTES – HEAT TREATMENT REQUIREMENTS
+H1	Annealed.
+H2	Normalized, normalized and tempered, or quenched and tempered.
+H3	For applications involving consideration of heat treatment after forming or welding, see Section VIII, Division 2, Table 6.15 for P–No. 10K, Group No. 1 materials.
+H4	Liquid quenched and tempered.
+NOTES – SIZE REQUIREMENTS
+S1	The maximum thickness of forgings shall not exceed 95 mm (100 mm as heat treated).
+S2	The maximum section thickness shall not exceed 75 mm for double–normalized–and–tempered forgings, or 125 mm for quenched–and–tempered forgings.
+S3	Both DN 200 and larger, and schedule 140 and heavier.
+S4	Either DN 200 and larger and less than schedule 140 wall, or less than DN 200 and all wall thicknesses.
+NOTES – TIME–DEPENDENT PROPERTIES
+T1	Allowable stresses for temperatures of 350°C and above are values obtained from time–dependent properties.
+T2	Allowable stresses for temperatures of 375°C and above are values obtained from time–dependent properties.
+T3	Allowable stresses for temperatures of 400°C and above are values obtained from time–dependent properties.
+T4	Allowable stresses for temperatures of 425°C and above are values obtained from time–dependent properties.
+T5	Allowable stresses for temperatures of 450°C and above are values obtained from time–dependent properties.
+T6	Allowable stresses for temperatures of 475°C and above are values obtained from time–dependent properties.
+T7	Allowable stresses for temperatures of 500°C and above are values obtained from time–dependent properties.
+T8	Allowable stresses for temperatures of 525°C and above are values obtained from time–dependent properties.
+T9	Allowable stresses for temperatures of 550°C and above are values obtained from time–dependent properties.
+T10	Allowable stresses for temperatures of 575°C and above are values obtained from time–dependent properties.
+T11	Allowable stresses for temperatures of 600°C and above are values obtained from time–dependent properties.
+NOTES – WELDING REQUIREMENTS
+W1	Not for welded construction.
+W2	Welding is not permitted when carbon content exceeds 0.35% by ladle analysis except for limited types of welding, as allowed in Section VIII, Division 2, Part 6.
+W3	Nonwelded, or welded if the tensile strength of the Section IX reduced section tension test is not less than 690 MPa.
+W4	Welded, with the tensile strength of the Section IX reduced section tension test less than 690 MPa but not less than 655 MPa.
+W5	In welded construction, for temperatures above 450°C, the weld metal shall have a carbon content of greater than 0.05%.
+W6	Section IX, QW–250 Variables QW–404.12, QW–406.3, QW–407.2, and QW–409.1 shall also apply to this material. These variables shall be applied in accordance with the rules for welding of Section VIII, Division 2, Part 6.
+W7	The following, in addition to the variables in Section IX, QW–250, shall be considered as essential variables requiring requalification of the welding procedure: (a) An increase in the maximum or a decrease in the minimum specified preheat or interpass temperatures. The specified range of preheat temperatures shall not exceed 85°C. (b) A change in the thickness T of the welding procedure qualification test plate as follows: (1) For welded joints that are quenched and tempered after welding, any increase in thickness (the minimum thickness qualified in all cases is 6 mm). (2) For welded joints that are not quenched and tempered after welding, any change as follows: (–a) for T less than 16 mm, any decrease in thickness (the maximum thickness qualified is 2T); (–b) for T equal to 16 mm and over, any departure from the range of 16 mm to 2T.

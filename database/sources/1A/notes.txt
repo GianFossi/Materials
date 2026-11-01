@@ -1,0 +1,90 @@
+GENERAL NOTES
+(25)	(a)	The following abbreviations are used: N, Normalized; Norm. rld., Normalized rolled; NT, Normalized and tempered; QT, Quenched and tempered; Smls., Seamless; and Wld., Welded.
+(b)	The stress values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained.
+(c)	The properties of steels are influenced by the processing history, heat treatment, melting practice, and level of residual elements. See Nonmandatory Appendix A for more information.
+(d)	Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings.
+(e)	Stress values for 40°C are applicable for colder temperatures when the toughness requirements of Section III, VIII, or XII are met.
+(f)	An alternative typeface is used for stress values obtained from time–dependent properties (see Notes T1 through T12).
+(g)	Where specifications, grades, classes, and types are listed in this Table, and where the material specification in Section II, Part A or Part B is a dual–unit specification (e.g., SA–516/SA–516M), the values listed in this Table shall be applicable to either the customary U.S. version of the material specification or the SI units version of the material specification. For example, the values listed for SA–516 Grade 70 shall be used when SA–516M Grade 485 is used in construction.
+NOTES – GENERAL REQUIREMENTS
+G1	To these stress values a casting quality factor as specified in PG–25 of Section I; UG–24 of Section VIII, Division 1; or TM–190 of Section XII shall be applied.
+G2	These stress values include a joint efficiency factor of 0.60.
+G3	These stress values include a joint efficiency factor of 0.85.
+G4	For Section I applications, these stresses apply when used for boiler, water wall, superheater, and economizer tubes that are enclosed within a setting. A joint efficiency factor of 0.85 is included in values above 450°C.
+G5	Due to the relatively low yield strength of these materials, these higher stress values were established at temperatures where the short–time tensile properties govern to permit the use of these alloys where slightly greater deformation is acceptable. The stress values in this range exceed 66⅔% but do not exceed 90% of the yield strength at temperature. Use of these stresses may result in dimensional changes due to permanent strain. These stress values are not recommended for the flanges of gasketed joints or other applications where slight amounts of distortion can cause leakage or malfunction. For Section III applications, Table Y–2 lists multiplying factors that, when applied to the yield strength values shown in Table Y–1, will give allowable stress values that will result in lower levels of permanent strain.
+G6	Creep–fatigue, thermal ratcheting, and environmental effects are increasingly significant failure modes at temperatures in excess of 825°C and shall be considered in the design.
+G7	For Section VIII applications, these stress values are based on expected minimum values of 310 MPa tensile strength and yield strength of 140 MPa resulting from loss of strength due to thermal treatment required for the glass coating operation. UG–85 does not apply.
+G8	These stress values are established from a consideration of strength only and will be satisfactory for average service. For bolted joints where freedom from leakage over a long period of time without retightening is required, lower stress values may be necessary as determined from the flexibility of the flange and bolts and corresponding relaxation properties.
+G9	For Section III applications, the use of these materials shall be limited to materials for tanks covered in Subsections NC and ND, component supports, and for nonpressure–retaining attachments (NC/ND–2190).
+G10	Upon prolonged exposure to temperatures above 425°C, the carbide phase of carbon steel may be converted to graphite. See Nonmandatory Appendix A, A–201 and A–202.
+G11	Upon prolonged exposure to temperatures above 475°C, the carbide phase of carbon–molybdenum steel may be converted to graphite. See Nonmandatory Appendix A, A–201 and A–202.
+G12	At temperatures above 550°C, these stress values apply only when the carbon is 0.04% or higher on heat analysis.
+G13	These stress values at 575°C and above shall be used only when the grain size is ASTM No. 6 or coarser.
+G14	These stress values shall be used when the grain size is not determined or is determined to be finer than ASTM No. 6.
+G15	For Section I applications, use is limited to stays as defined in PG–13 except as permitted by PG–11.
+G16	For Section III Class 3 applications, these S values do not include a casting quality factor. Statically and centrifugally cast products meeting the requirements of NC–2570 shall receive a casting quality factor of 1.00.
+G17	For Section III Class 3 applications, statically and centrifugally cast products meeting the requirements of NC–2571(a) and (b), and cast pipe fittings, pumps, and valves with inlet piping connections of DN 50 and less, shall receive a casting quality factor of 1.00. Other casting quality factors shall be in accordance with the following: (a) for visual examination, 0.80 (b) for magnetic particle examination, 0.85 (c) for liquid penetrant examination, 0.85 (d) for radiography, 1.00 (e) for ultrasonic examination, 1.00 (f) for magnetic particle or liquid penetrant plus ultrasonic examination or radiography, 1.00
+G18	See Table Y–1 for yield strength values as a function of thickness over this range. Allowable stresses are independent of yield strength in this thickness range.
+G19	This steel may be expected to develop embrittlement after service at moderately elevated temperature. See Nonmandatory Appendix A, A–207 and A–208.
+G20	These stresses are based on weld metal properties.
+G21	For Section I, use is limited to PEB–5.3. See PG–5.5 for cautionary note.
+G22	For Section I applications, use of external pressure charts for material in the form of bar stock is permitted for stiffening rings only.
+G23	For temperatures above the maximum temperature shown on the external pressure chart for this material, Figure CS–2 may be used for the design using this material.
+G24	A factor of 0.85 has been applied in arriving at the maximum allowable stress values in tension for this material. Divide tabulated values by 0.85 for maximum allowable longitudinal tensile stress.
+G25	For Section III applications, for both Class 2 and Class 3, the completed vessel after final heat treatment shall be examined by the ultrasonic method in accordance with NB–2542 except that angle beam examination in both the circumferential and the axial directions may be performed in lieu of the straight beam examination in the axial direction. The tensile strength shall not exceed 860 MPa.
+G26	Material that conforms to Class 10, 11, or 12 is not permitted.
+G27	Material that conforms to Class 11 or 12 is not permitted.
+G28	Supplementary Requirement S15 of SA–781, Alternate Mechanical Test Coupons and Specimen Locations for Castings, is mandatory.
+G29	For Section III applications, impact testing in accordance with the requirements of NC–2300 is required for Class 2 components and in accordance with ND–2300 for Class 3 components.
+G30	These stresses apply to all product forms (C, H, and P) as defined in SA/EN 10028–7.
+G31	The allowable stress value given for 250°C can be used up to the temperature of 260°C.
+G32	The allowable stress value given for 200°C can be used up to the temperature of 204°C.
+G33	The allowable stress value at 65°C shall be used at 66°C.
+NOTES – HEAT TREATMENT REQUIREMENTS
+H1	For temperatures above 550°C, these stress values may be used only if the material is heat treated by heating to the minimum temperature specified in the material specification, but not lower than 1040°C, and quenching in water or rapidly cooling by other means.
+H2	For temperatures above 550°C, these stress values may be used only if the material is heat treated by heating to a minimum temperature of 1095°C, and quenching in water or rapidly cooling by other means.
+(25)	H3	DELETED
+(25)	H4	DELETED
+H5	For Section III applications, if heat treatment is performed after forming or fabrication, it shall be performed at 825°C to 1000°C for a period of time not to exceed 10 min at temperature, followed by rapid cooling.
+H6	Material shall be solution annealed at 1100°C to 1170°C, followed by a rapid cooling in water or air.
+NOTES – SIZE REQUIREMENTS
+S1	For Section I applications, stress values at temperatures of 450°C and above are permissible but, except for tubular products 75 mm O.D. or less enclosed within the boiler setting, use of these materials at these temperatures is not current practice.
+S2	For Section I applications, stress values at temperatures of 475°C and above are permissible but, except for tubular products 75 mm O.D. or less enclosed within the boiler setting, use of these materials at these temperatures is not current practice.
+S3	For Section I applications, stress values at temperatures of 550°C and above are permissible but, except for tubular products 75 mm O.D. or less enclosed within the boiler setting, use of these materials at these temperatures is not current practice.
+S4	For Section I applications, stress values at temperatures of 625°C and above are permissible but, except for tubular products 75 mm O.D. or less enclosed within the boiler setting, use of these materials at these temperatures is not current practice.
+S5	Material that conforms to Class 10, 11, or 12 is not permitted when the nominal thickness of the material exceeds 19 mm.
+S6	Material that conforms to Class 10, 11, or 12 is not permitted when the nominal thickness of the material exceeds 32 mm.
+S7	The maximum thickness of unheat–treated forgings shall not exceed 95 mm. The maximum thickness as–heat–treated may be 100 mm.
+S8	The maximum section thickness shall not exceed 75 mm for double–normalized–and–tempered forgings, or 125 mm for quenched–and–tempered forgings.
+S9	Both DN 200 and larger, and schedule 140 and heavier.
+S10	The maximum pipe size shall be DN 100 and the maximum thickness in any pipe size shall be Schedule 80.
+S11	Either DN 200 and larger and less than schedule 140 wall, or less than DN 200 and all wall thicknesses.
+NOTES – TIME–DEPENDENT PROPERTIES [See General Note (f)]
+T1	Allowable stresses for temperatures of 370°C and above are values obtained from time–dependent properties.
+T2	Allowable stresses for temperatures of 400°C and above are values obtained from time–dependent properties.
+T3	Allowable stresses for temperatures of 455°C and above are values obtained from time–dependent properties.
+T4	Allowable stresses for temperatures of 480°C and above are values obtained from time–dependent properties.
+T5	Allowable stresses for temperatures of 510°C and above are values obtained from time–dependent properties.
+T6	Allowable stresses for temperatures of 540°C and above are values obtained from time–dependent properties.
+T7	Allowable stresses for temperatures of 565°C and above are values obtained from time–dependent properties.
+T8	Allowable stresses for temperatures of 595°C and above are values obtained from time–dependent properties.
+T9	Allowable stresses for temperatures of 620°C and above are values obtained from time–dependent properties.
+T10	Allowable stresses for temperatures of 425°C and above are values obtained from time–dependent properties.
+T11	Allowable stresses for temperatures of 350°C and above are values obtained from time–dependent properties.
+T12	Allowable stresses for temperatures of 650°C and above are values obtained from time–dependent properties.
+NOTES – WELDING REQUIREMENTS
+W1	Not for welded construction.
+W2	Not for welded construction in Section III.
+W3	Welded.
+W4	Nonwelded, or welded if the tensile strength of the Section IX reduced section tension test is not less than 690 MPa.
+W5	Welded, with the tensile strength of the Section IX reduced tension test less than 690 MPa but not less than 655 MPa.
+W6	This material may be welded by the resistance technique.
+W7	In welded construction for temperatures above 450°C, the weld metal shall have a carbon content of greater than 0.05%.
+W8	Welding and oxygen or other thermal cutting processes are not permitted when carbon content exceeds 0.35% by heat analysis.
+W9	For Section I applications, for pressure retaining welds in 2¼Cr–1Mo materials, other than circumferential butt welds less than or equal to 89 mm in outside diameter, when the design metal temperatures exceed 450°C, the weld metal shall have a carbon content greater than 0.05%.
+W10	For Section III applications, material that conforms to Class 10, 13, 20, 23, 30, 33, 40, 43, 50, or 53 is not permitted for Class 2 and Class 3 construction when a weld efficiency factor of 1.00 is used in accordance with Note W12.
+W11	For Section VIII applications, Section IX, QW–250 Variables QW–404.12, QW–406.3, QW–407.2, and QW–409.1 shall also apply to this material. These variables shall be applied in accordance with the rules for welding of Part UF.
+W12	These S values do not include a longitudinal weld efficiency factor. For Section III applications, for materials welded without filler metal, ultrasonic examination, radiographic examination, or eddy current examination, in accordance with NC–2550, shall provide a longitudinal weld efficiency factor of 1.00. Materials welded with filler metal meeting the requirements of NC–2560 shall receive a longitudinal weld efficiency factor of 1.00. Other longitudinal weld efficiency factors shall be in accordance with the following: (a) for single butt weld, with filler metal, 0.80 (b) for single or double butt weld, without filler metal, 0.85 (c) for double butt weld, with filler metal, 0.90 (d) for single or double butt weld, with radiography, 1.00
+W13	For Section I applications, electric resistance and autogenous welded tubing may be used with these stresses, provided the following additional restrictions and requirements are met: (a) The tubing shall be used for boiler, waterwall, superheater, and economizer tubes that are enclosed within the setting. (b) The maximum outside diameter shall be 89 mm. (c) The weld seam of each tube shall be subjected to an angle beam ultrasonic inspection per SA–450/SA–1016M. (d) A complete volumetric inspection of the entire length of each tube shall be performed in accordance with SA–450/SA–1016M. (e) Material test reports shall be supplied.
+W14	These S values do not include a weld factor. For Section VIII, Division 1, and Section XII applications using welds made without filler metal, the tabulated tensile stress values shall be multiplied by 0.85. For welds made with filler metal, consult UW–12 for Section VIII, Division 1, or TW–130.4 for Section XII, as applicable.
+W15	The Nondestructive Electric Test requirements of SA–53 Type E pipe are required for all sizes. The pipe shall be additionally marked "NDE" and so noted on the material specification.

@@ -1,0 +1,96 @@
+GENERAL NOTES
+(a)	The following abbreviations are used: ann., annealed; cond., condenser; CW, cold worked; exch., exchanger; extr., extruded; fin., finished; fr., from; HW, Hot worked; rel., relieved; rld., rolled; Smls., Seamless; Sol., Solution; treat., treated; and Wld., Welded.
+(b)	The stress values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained.
+(c)	The properties of steels are influenced by the processing history, heat treatment, melting practice, and level of residual elements. See Nonmandatory Appendix A for more information.
+(d)	Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings.
+(e)	An alternative typeface is used for stress values obtained from time–dependent properties (see Notes T1 through T20).
+(f)	Where specifications, grades, classes, and types are listed in this Table, and where the material specification in Section II, Part A or Part B is a dual–unit specification (e.g., SB–407/SB–407M), the values listed in this Table shall be applicable to either the customary U.S. version of the material specification or the SI units version of the material specification. For example, the values listed for SB–407 Grade N08800 shall be used when SB–407M Grade N08800 is used in construction.
+NOTES – GENERAL REQUIREMENTS
+G1	For steam at 1700 kPa (208°C), the values given for 200°C may be used.
+G2	At temperatures over 550°C, these stress values apply only when the carbon is 0.04% or higher.
+G3	In the absence of evidence that the casting is of high quality throughout, values not in excess of 80% of those given in the Table shall be used. This is not intended to apply to valves and fittings made to recognized standards.
+G4	Creep–fatigue, thermal ratcheting, and environmental effects are increasingly significant failure modes at temperatures in excess of 825°C and shall be considered in the design.
+G5	Due to the relatively low yield strength of these materials, these higher stress values were established at temperatures where the short–time tensile properties govern to permit the use of these alloys where slightly greater deformation is acceptable. The stress values in this range exceed 66⅔% but do not exceed 90% of the yield strength at temperature. Use of these stresses may result in dimensional changes due to permanent strain. These stress values are not recommended for the flanges of gasketed joints or other applications where slight amounts of distortion can cause leakage or malfunction. For Section III applications, Table Y–2 lists multiplying factors that, when applied to the yield strength values shown in Table Y–1, will give allowable stress values that will result in lower levels of permanent strain.
+G6	Maximum temperature for external pressure not to exceed 175°C.
+G7	Use 175°C curve for all temperature values below 175°C.
+G8	The stresses for this material are based on 828 MPa minimum tensile strength because of weld metal strength limitations.
+G9	Use Figure NFC–6 up to and including 150°C. Use the 315°C curve of Figure NFC–3 above 150°C up to and including 200°C. Maximum temperature for external pressure not to exceed 200°C.
+G10	Maximum temperature for external pressure not to exceed 225°C.
+G11	Referenced external pressure chart is applicable up to 375°C.
+G12	Referenced external pressure chart is applicable up to 425°C.
+G13	For Section VIII and XII applications, use of external pressure charts for material in the form of bar stock is permitted for stiffener rings only.
+G14	For Section VIII applications, a factor of 0.85 has been applied in arriving at the maximum allowable stress values in tension for this material. Divide tabulated values by 0.85 for maximum allowable longitudinal tensile stress.
+G15	To these stress values a quality factor as specified in ND–3115 of Section III; UG–24 of Section VIII, Division 1; or TM–190 of Section XII shall be applied for castings. This is not intended to apply to valves and fittings made to recognized standards.
+G16	Allowable stress values shown are 90% of those for the corresponding core material.
+G17	C37700 and copper–silicon alloys are not always suitable when exposed to certain media and high temperatures, particularly steam above 100°C. The user should ensure that the alloy selected is satisfactory for the service for which it is to be used.
+G18	Because of the occasionally contingent danger from the failure of pressure vessels by stress corrosion cracking, the following is pertinent. These materials are suitable for engineering use under a wide variety of ordinary corrosive conditions with no particular hazard in respect to stress corrosion.
+G19	Few alloys are completely immune to stress corrosion cracking in all combinations of stress and corrosive environments, and the supplier of the material should be consulted. Reference may also be made to the following sources: (1) Stress Corrosion Cracking Control Measures, B. F. Brown, U.S. National Bureau of Standards (1977), available from NACE, Texas; (2) The Stress Corrosion of Metals, H. L. Logan, John Wiley & Sons, New York, 1966.
+G20	For plate only.
+G21	The maximum operating temperature is arbitrarily set at 250°C because harder temper adversely affects design stress in the creep rupture temperature range.
+G22	The minimum tensile strength of reduced section tension specimens in accordance with QW–462.1 of Section IX shall not be less than 760 MPa.
+G23	This alloy is subject to severe loss of impact strength at room temperatures after exposure in the range of 550°C to 750°C.
+G24	For stress relieved tempers (T351, T3510, T3511, T451, T4510, T4511, T651, T6510, T6511), stress values for materials in the basic temper shall be used.
+G25	The tension test specimen from plate 13 mm and thicker is machined from the core and does not include the cladding alloy; therefore, the allowable stress values for thickness less than 13 mm shall be used.
+G26	The tension test specimen from plate 13 mm and thicker is machined from the core and does not include the cladding alloy; therefore, the allowable stress values shown are 90% of those for the core material of the same thickness.
+G27	Alloy N06022 in the solution annealed condition is subject to severe loss of impact strength at room temperatures after exposure in the range of 550°C to 675°C.
+G28	For external pressure design, the maximum design temperature is limited to 550°C.
+G29	The maximum allowable stress values for greater than 900°C are 9.7 MPa (927°C), 7.6 MPa (954°C), and 5.0 MPa (982°C).
+G30	The maximum allowable stress values for greater than 900°C are 5.0 MPa (925°C), 4.0 MPa (950°C), 3.2 MPa (975°C), and 2.6 MPa (1000°C). The maximum use temperature is 982°C; the value listed at 1000°C is provided for interpolation purposes only.
+G31	The maximum allowable stress values for greater than 900°C are 7.8 MPa (925°C), 5.2 MPa (950°C), 3.5 MPa (975°C), and 2.4 MPa (1000°C). The maximum use temperature is 982°C; the value listed at 1000°C is provided for interpolation purposes only.
+G32	The maximum allowable stress values for greater than 900°C are 6.6 MPa (925°C), 4.4 MPa (950°C), 2.9 MPa (975°C), and 2.0 MPa (1000°C). The maximum use temperature is 982°C; the value listed at 1000°C is provided for interpolation purposes only.
+G33	External pressure chart NFN–2 may be used for temperatures between 205°C and 315°C.
+G34	Alloy N06025 in the solution annealed condition is subject to severe loss of rupture ductility in the approximate temperature range of 650°C to 760°C.
+G35	For external pressure design, the maximum design temperature is limited to 650°C.
+G36	For Section I use, the y values (see Section I, PG–27.4.6) shall be as follows: for 566°C and below, 0.4; for 593°C, 0.5; and for 621°C and above, 0.7.
+(25)	G37	The maximum allowable stress values for greater than 900°C are 4.0 MPa (925°C), 3.3 MPa (950°C), 2.7 MPa (975°C), and 2.2 MPa (1000°C). The maximum use temperature is 982°C; the value listed at 1000°C is provided for interpolation purposes only.
+(25)	G38	The maximum allowable stress values for greater than 900°C are 3.4 MPa (925°C), 2.8 MPa (950°C), 2.3 MPa (975°C), and 1.9 MPa (1000°C). The maximum use temperature is 982°C; the value listed at 1000°C is provided for interpolation purposes only.
+G39	The maximum allowable stress value at 204°C is 29.6 MPa.
+G40	The maximum allowable stress value at 204°C is 17.9 MPa.
+G41	Allowable stress values listed are set equal to those of an annealed temper, as data were not provided to justify higher values.
+G42	Time–dependent values are based on creep testing of as–welded product.
+G43	The allowable stress value at 65°C shall be used at 66°C.
+G44	The maximum allowable stress values for greater than 900°C are 8.2 MPa (927°C), 6.5 MPa (954°C), and 4.3 MPa (982°C).
+NOTES – HEAT TREATMENT REQUIREMENTS
+H1	For temperatures above 550°C, these stress values may be used only if the material is annealed at a minimum temperature of 1040°C and has a carbon content of 0.04% or higher.
+H2	For temperatures above 550°C, these stress values may be used only if the material is heat treated by heating it to a minimum temperature of 1040°C and quenching in water or rapidly cooling by other means.
+H3	For Section I applications, cold drawn pipe and tube shall be annealed at 1038°C minimum.
+H4	The material shall be given a 940°C to 995°C stabilizing heat treatment.
+NOTES – TIME–DEPENDENT PROPERTIES [See General Note (e)]
+T1	Allowable stresses for temperatures of 125°C and above are values obtained from time–dependent properties.
+T2	Allowable stresses for temperatures of 150°C and above are values obtained from time–dependent properties.
+T3	Allowable stresses for temperatures of 175°C and above are values obtained from time–dependent properties.
+T4	Allowable stresses for temperatures of 205°C and above are values obtained from time–dependent properties.
+T5	Allowable stresses for temperatures of 260°C and above are values obtained from time–dependent properties.
+T6	Allowable stresses for temperatures of 290°C and above are values obtained from time–dependent properties.
+T7	Allowable stresses for temperatures of 315°C and above are values obtained from time–dependent properties.
+T8	Allowable stresses for temperatures of 400°C and above are values obtained from time–dependent properties.
+T9	Allowable stresses for temperatures of 425°C and above are values obtained from time–dependent properties.
+T10	Allowable stresses for temperatures of 455°C and above are values obtained from time–dependent properties.
+T11	Allowable stresses for temperatures of 480°C and above are values obtained from time–dependent properties.
+T12	Allowable stresses for temperatures of 510°C and above are values obtained from time–dependent properties.
+T13	Allowable stresses for temperatures of 540°C and above are values obtained from time–dependent properties.
+T14	Allowable stresses for temperatures of 565°C and above are values obtained from time–dependent properties.
+T15	Allowable stresses for temperatures of 595°C and above are values obtained from time–dependent properties.
+T16	Allowable stresses for temperatures of 620°C and above are values obtained from time–dependent properties.
+T17	Allowable stresses for temperatures of 650°C and above are values obtained from time–dependent properties.
+T18	Allowable stresses for temperatures of 675°C and above are values obtained from time–dependent properties.
+T19	Allowable stresses for temperatures of 450°C and above are values obtained from time–dependent properties.
+T20	Allowable stresses for temperatures of 200°C and above are values obtained from time–dependent properties.
+T21	Allowable stresses for temperatures of 225°C and above are values obtained from time–dependent properties.
+T22	Allowable stresses for temperatures of 250°C and above are values obtained from time–dependent properties.
+T23	Allowable stresses for temperatures of 230°C and above are values obtained from time–dependent properties.
+NOTES – WELDING REQUIREMENTS
+W1	No welding or brazing permitted.
+W2	For Section VIII applications, UNF–56(d) shall apply for welded constructions.
+W3	For welded and brazed constructions, stress values for O (annealed) temper material shall be used.
+W4	The stress values given for this material are not applicable when either welding or thermal cutting is employed.
+W5	These S values do not include a longitudinal weld efficiency factor. For Section III applications, for materials welded without filler metal, ultrasonic examination, radiographic examination, or eddy current examination, in accordance with NC–2550, shall provide a longitudinal weld efficiency factor of 1.00. Materials welded with filler metal meeting the requirements of NC–2560 shall receive a longitudinal weld efficiency factor of 1.00. Other longitudinal weld efficiency factors shall be in accordance with the following: (a) for single butt weld, with filler metal, 0.80 (b) for single or double butt weld, without filler metal, 0.85 (c) for double butt weld, with filler metal, 0.90 (d) for single or double butt weld, with radiography or ultrasonic, 1.00
+W6	Filler metal shall not be used in the manufacture of welded pipe or tubing.
+W7	Strength of reduced–section tensile specimen required to qualify welding procedures. See QW–150, Section IX.
+W8	For Section VIII and XII applications, no welding is permitted.
+W9	Use NFA–12 when welded with 5356 or 5556 filler metal, all thicknesses, or 4043 or 5554 filler metal, thickness ≤ 10 mm. Use NFA–13 when welded with 4043 or 5554 filler metal, thickness > 10 mm.
+W10	For welded and brazed constructions, stress values for the welded and annealed (WO61) temper material shall be used.
+W11	These maximum allowable stress values are to be used in welded or brazed constructions.
+W12	These S values do not include a weld factor. For Section VIII, Division 1 and Section XII applications using welds made without filler metal, the tabulated tensile stress values shall be multiplied by 0.85. For welds made with filler metal, consult UW–12 of Section VIII, Division 1, or TW–130.4 of Section XII, as applicable.
+W13	For service at 650°C or higher, the deposited weld metal shall be of the same nominal chemistry as the base metal.
+W14	No welding permitted.

@@ -1,0 +1,24 @@
+GENERAL NOTES
+(a)	The stress values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained.
+(b)	Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings.
+(c)	The following abbreviations are used: Smls., Seamless; and Wld., Welded.
+(d)	The maximum allowable use temperature is 260°C. The values for 275°C are provided for interpolation only.
+NOTES – GENERAL REQUIREMENTS
+G1	These allowable stress values apply also to structural shapes.
+G2	SA/CSA–G40.21 as specified in ASME BPVC, Section II, Part A, grade 38W may be used in lieu of SA–36 for plates and bars not exceeding 19 mm.
+G3	Tensile value is expected minimum.
+G4	The stress value includes a joint factor of 0.85.
+G5	The stress value includes a joint factor of 0.60.
+G6	The stress value includes a casting quality factor of 0.80. Increased casting quality factors as a result of material examination beyond the requirements of the material specifications shall not be permitted.
+G7	The stress value is established from a consideration of strength only and will be satisfactory for average service. For bolted joints, where freedom from leakage over a long period of time without retightening is required, lower stress values may be necessary as determined from the relative flexibility of the flange and bolts, and corresponding relaxation properties.
+G8	For tie–rods and draw bolts on cast–iron sectional boilers subject to system pressure.
+G9	The water temperature shall not exceed 99°C.
+G10	Tubing material shall be fully annealed.
+G11	The limitations of ASME BPVC, Section IV, HF–204.2 and HF–204.3 apply.
+G12	Heat treatment after forming or fabrication is neither required nor prohibited.
+G13	For arc or resistance welded studs only.
+G14	For cold–rolled strips only.
+NOTES – WELDING REQUIREMENTS
+W1	Welding or brazing is not permitted.
+W2	For tie–rods and draw bolts up to 22 mm diameter subject to system pressure, welding is not permitted.
+W3	For tie–rods and draw bolts over 22 mm diameter and up to 32 mm diameter subject to system pressure, welding is not permitted.
