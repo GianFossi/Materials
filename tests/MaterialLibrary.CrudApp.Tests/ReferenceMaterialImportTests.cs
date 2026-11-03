@@ -76,7 +76,8 @@ public sealed class ReferenceMaterialImportTests : IDisposable
         viewModel.OpenDatabaseCommand.Execute(null);
 
         var deadline = DateTime.UtcNow.AddSeconds(60);
-        while ((!viewModel.IsOpen || viewModel.Materials.Count == 0) && DateTime.UtcNow < deadline)
+        // Open means fully loaded: materials and tables published and no background work left that still mutates the collections.
+        while ((!viewModel.IsOpen || viewModel.Materials.Count == 0 || viewModel.Tables.Count == 0 || viewModel.IsBusy) && DateTime.UtcNow < deadline)
         {
             System.Threading.Thread.Sleep(25);
         }

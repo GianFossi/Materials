@@ -70,7 +70,8 @@ public sealed class WpfSmokeTests
             var frame = new DispatcherFrame();
             var timer = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Background, (_, _) =>
             {
-                if (viewModel.IsOpen || !viewModel.IsBusy) frame.Continue = false;
+                // Stop when loading finished: either the database is fully open (tables published) or the open failed.
+                if (!viewModel.IsBusy && (!viewModel.IsOpen || viewModel.Tables.Count > 0)) frame.Continue = false;
             }, Dispatcher.CurrentDispatcher);
             timer.Start();
             Dispatcher.PushFrame(frame);

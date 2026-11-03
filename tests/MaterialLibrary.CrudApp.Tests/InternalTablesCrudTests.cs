@@ -55,14 +55,27 @@ public sealed class InternalTablesCrudTests : IDisposable
         row["seq"] = 7L;
 
         viewModel.SaveTableChangesCommand.Execute(null);
-        WaitUntil(() => !viewModel.IsBusy && !viewModel.HasUnsavedTableChanges, "raw-table save did not complete");
+        // The save starts asynchronously, so "not busy and no pending changes" can already be true before it begins:
+        // wait for the observable outcome (the stored value) instead of the view-model flags.
+        WaitUntil(() => !viewModel.IsBusy && !viewModel.HasUnsavedTableChanges && ReadAppAuditSequence() == 7L, "raw-table save did not complete");
+        Assert.Equal(7L, ReadAppAuditSequence());
+    }
 
-        using var connection = new SqliteConnection($"Data Source={WorkingCopyPath(_sourceDatabase)}");
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = "SELECT seq FROM sqlite_sequence WHERE name = 'AppAudit'";
-        var seq = Convert.ToInt64(command.ExecuteScalar());
-        Assert.Equal(7L, seq);
+    /// <summary>Current sqlite_sequence value of AppAudit in the working copy, or -1 while the file is locked by the writer.</summary>
+    private long ReadAppAuditSequence()
+    {
+        try
+        {
+            using var connection = new SqliteConnection($"Data Source={WorkingCopyPath(_sourceDatabase)}");
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT seq FROM sqlite_sequence WHERE name = 'AppAudit'";
+            return Convert.ToInt64(command.ExecuteScalar());
+        }
+        catch (SqliteException)
+        {
+            return -1;
+        }
     }
 
     private static void CreateDatabase(string path)
