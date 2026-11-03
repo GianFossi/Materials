@@ -104,7 +104,7 @@ Il pacchetto [MaterialLibrary.Crud](../src/MaterialLibrary.Crud/README-NUGET.md)
 - `XmlPropertyImport.apply`: lotto di associazioni approvate in transazione;
 - `WorkingCopyHardening`: rafforzamento idempotente delle copie di lavoro (applicato da `Asme2025Crud.ensureSchema`), `integrityReport` (rapporto delle incoerenze), `removeEmptyCurves` (cancella le curve senza punti);
 - `SqlAudit`: registro opzionale delle modifiche fatte con SQL diretto (`enable`, `read`, `disable`, `purgeOlderThan`);
-- `ProductSheet.build`: scheda prodotto Markdown di un materiale (`Result<string,string>`), con colonne Room, Design (max 3) e Operating (max 3), tutte le dimensioni e tutte le note;
+- `ProductSheet.build`: scheda prodotto Markdown di un materiale (`Result<string,string>`), con colonne Room, Design (max 3) e Operating (max 3), tutte le dimensioni e tutte le note; le tabelle sono allineate nel sorgente Markdown (padding delle colonne, resa invariata); colonne di temperatura con codice colore, unità sotto la tabella, note elencate sotto ogni tabella;
 - `SourceRowComparison`: affianca una curva alla riga ASME stampata (`compare`, `findInconsistent`);
 - dettagli, esempi e limiti in [database §13](asme-materials-db.md#13-rendere-larchitettura-più-robusta);
 - `MaterialCrudRepository`: CRUD di oggetti Material in memoria;

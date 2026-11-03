@@ -1217,3 +1217,13 @@ Asme2025Crud.prepareWorkingCopy now creates %LOCALAPPDATA%\MaterialLibrary\ASME2
 ## 2026-11-01 - Spot-check script
 
 Added tools/SpotCheck/Spot-Check.fsx: prints the product data sheet for materials chosen by identity, id or random sample (--random N --seed S) and, for each, the ASME source-row comparison of every imported curve and the XML provenance of physical data with an identity-match verdict. Uses the libraries built into tools/ProductSheet/bin. No code change.
+
+
+## 2026-11-03 - Aligned Markdown tables in the product sheet; Spot-Check documentation
+
+ProductSheet.build now post-processes the Markdown with a private pure function (alignTables) that pads every table so its columns line up in the source (right-aligned numeric columns keep their ':' marker); the rendered output is unchanged. Spot-Check.fsx got a header with description, usage and examples (including SA-387 11 Cl. 2, whose Class is stored as Condition "2") and comments on every function and step; no behaviour change.
+
+
+## 2026-11-03 - Product sheet layout: compact tables, colour code, notes per table
+
+ProductSheet.build: the properties table no longer has a Unità column (units are listed under each table), the column title is split on two lines (name<br>temperature) and carries a colour marker (Room blue, Design red, Operating green); the Curva column title is shortened. Curve notes are now numbered from 1 in each size-range table and printed right under it ("Note della tabella 3.n"); section 7 only holds the general reading notes. Tests in Native2025Tests.fs adjusted to the new layout (108/108 pass). docs/examples and docs/asme-materials-db.md still show the previous layout and have not been regenerated.

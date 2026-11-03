@@ -1,23 +1,73 @@
-// Author: Claude
-// Last revision: 2026-11-01
-// Purpose: Print the product data sheet of one or more materials, plus spot-check evidence (ASME source rows vs stored curves, XML provenance vs material identity).
-//
-// Usage (from the repository root; the libraries must be built once into tools/ProductSheet/bin):
-//   dotnet build src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj -c Release -f net10.0 -o tools/ProductSheet/bin
-//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --spec SA-516 --grade 70
-//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --id 985 --design 350,400,475 --operating 100,200,250
-//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --random 5 --seed 42 --out ./spot
-// Options:
-//   --db <file>                 database (default: database/data/materials_2025.db), opened read-only
-//   --id <n[,n...]>             Main.id values            | --spec/--grade/--condition/--uns  exact identity (case-insensitive)
-//   --random <N> [--seed <s>]   N random materials that have both mechanical curves and imported physical data (reproducible with --seed)
-//   --room <degC> --design <a,b,c> --operating <a,b,c>   sheet temperatures (defaults 20 / 100,200,300 / 50,100,150; max 3 each)
-//   --out <folder>              write one Markdown file per material instead of printing the sheet
-//   --no-sheet                  print only the checks
-// Checks printed for every material:
-//   1. each mechanical curve compared with the ASME row it was imported from (SourceRowComparison);
-//   2. each physical curve / constant with its XML record and a flag when the record's UNS or composition differs from the material.
+// Author:        Claude
+// Last revision: 2026-11-03
+// Purpose:       Print the product data sheet of one or more materials, plus spot-check evidence (ASME source rows vs stored curves, XML provenance vs material identity).
+
+// =================================================================================================================
+// DESCRIPTION
+// =================================================================================================================
+// Spot-Check.fsx is a read-only F# script for manually verifying the material database.
+// For each selected material it:
+//   1. builds and prints the product data sheet (Markdown), or writes it to a file;
+//   2. prints the "CONTROLLI" (checks) section, which gives the evidence a reviewer needs:
+//        a. each mechanical curve compared with the ASME table row it was imported from (SourceRowComparison);
+//        b. each physical curve / constant with its XML record, flagging records whose UNS or composition
+//           differs from the material (or that carry no identity key at all).
 // The script never writes to the database. Units: temperatures degC, stresses MPa, sizes mm.
+//
+// =================================================================================================================
+// HOW TO USE
+// =================================================================================================================
+// Step 1 - build the libraries once (from the repository root) into tools/ProductSheet/bin:
+//   dotnet build src/MaterialLibrary.Crud/MaterialLibrary.Crud.fsproj -c Release -f net10.0 -o tools/ProductSheet/bin
+// Step 2 - run the script (from the repository root), choosing the materials with ONE of the selectors:
+//   dotnet fsi tools/SpotCheck/Spot-Check.fsx <selector> [options]
+//
+// Selectors (priority order: --id, then --spec, then --random):
+//   --id <n[,n...]>             Main.id values (comma separated).
+//   --spec <text>               Specification (required for identity filtering); narrow with the optional
+//   --grade <text> --condition <text> --uns <text>   exact, case-insensitive match; at most 5 materials are printed.
+//   --random <N> [--seed <s>]   N random materials having both mechanical curves and imported physical data;
+//                               --seed (default 2025) makes the sample reproducible.
+//
+// Options:
+//   --db <file>                 database file (default: database/data/materials_2025.db), opened read-only.
+//   --room <degC>               room-temperature column of the sheet (default 20).
+//   --design <a,b,c>            design temperatures, degC (default 100,200,300; max 3).
+//   --operating <a,b,c>         operating temperatures, degC (default 50,100,150; max 3).
+//   --out <folder>              write one Markdown file per material instead of printing the sheet.
+//   --no-sheet                  print only the checks, not the sheet.
+//
+// =================================================================================================================
+// EXAMPLES
+// =================================================================================================================
+//   // One material by identity (SA-516 grade 70):
+//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --spec SA-516 --grade 70
+//
+//   // SA-387 grade 11 Cl. 2: the Class is stored in the Condition field as "2" (not "Cl. 2"); checks only:
+//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --spec SA-387 --grade 11 --condition 2 --no-sheet
+//   // Without --condition both classes (id 710 = Cl. 1, id 711 = Cl. 2) are printed.
+//
+//   // One material by id, with custom design/operating temperatures:
+//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --id 985 --design 350,400,475 --operating 100,200,250
+//
+//   // Five reproducible random materials, sheets saved as Markdown files in ./spot:
+//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --random 5 --seed 42 --out ./spot
+//
+//   // Checks only (no sheet) for two ids:
+//   dotnet fsi tools/SpotCheck/Spot-Check.fsx --id 985,1020 --no-sheet
+//
+// Example of the checks output (labels are in Italian):
+//   ====================================================================================================
+//   MATERIALE id=1702  SB-171 · O20, O25 · C71520
+//   ====================================================================================================
+//   CONTROLLI
+//     Curve ASME confrontate con la riga stampata: 4; incoerenti: 0
+//     Dati fisici da XML: 3 associazioni (materiale: UNS=C71520, composizione=—)
+//       E                  TM-3.xml / C71520              record: UNS=C71520   comp=—   → UNS uguale
+//       Nu                 PRD-Density.xml / prd-poisson-C71520 record: UNS=C71520   comp=—   → UNS uguale
+//       density            PRD-Density.xml / prd-density-C71520 record: UNS=C71520   comp=—   → UNS uguale
+//   Controllati 1 materiali (database: C:\...\database\data\materials_2025.db).
+// (Real output of: --random 1 --seed 42 --no-sheet. It depends on the database content.)
 
 // The project libraries are referenced from the folder where Generate-ProductSheet.ps1 (or the build command above) puts them.
 #r "../ProductSheet/bin/MaterialLibrary.dll"
@@ -37,6 +87,8 @@ open MaterialLibrary.Domain.Database.Lookup
 // Command line
 // ---------------------------------------------------------------------------------------------------------------
 
+// Section "Command line": tiny argument parser (no external library; the script has a handful of options only).
+
 /// <summary>Arguments after the script name (fsi puts the script path first).</summary>
 let args = fsi.CommandLineArgs |> Array.skip 1
 
@@ -52,8 +104,9 @@ let inv = CultureInfo.InvariantCulture
 /// <summary>Parse a comma/semicolon separated list of temperatures in degC; use the fallback when the option is missing.</summary>
 let temperatures (text: string option) (fallback: float list) =
     match text with
-    | None -> fallback
-    | Some t -> t.Split([| ','; ';' |], StringSplitOptions.RemoveEmptyEntries) |> Array.map (fun v -> Double.Parse(v.Trim(), inv)) |> Array.toList
+    | None -> fallback   // option absent: keep the default list
+    | Some t ->          // split on ',' or ';', ignore empty items, parse each with the invariant culture (decimal point)
+        t.Split([| ','; ';' |], StringSplitOptions.RemoveEmptyEntries) |> Array.map (fun v -> Double.Parse(v.Trim(), inv)) |> Array.toList
 
 // ---------------------------------------------------------------------------------------------------------------
 // Database and sheet conditions
@@ -61,6 +114,7 @@ let temperatures (text: string option) (fallback: float list) =
 
 /// <summary>Database file; the default is the shipped reference.</summary>
 let dbPath = option "--db" |> Option.defaultValue "database/data/materials_2025.db" |> Path.GetFullPath
+// Fail early with a clear message instead of letting SQLite report a generic error.
 if not (File.Exists dbPath) then failwithf "Database not found: %s" dbPath
 
 /// <summary>Read-only connection: a spot check must never modify the database it inspects.</summary>
@@ -68,6 +122,7 @@ let db = Asme2025Data.openRead dbPath
 
 /// <summary>Temperature columns of the sheet (room, up to 3 design, up to 3 operating), all in degC.</summary>
 let conditions =
+    // Each value falls back to its default when the option is missing.
     { RoomTemperature = option "--room" |> Option.map (fun v -> Double.Parse(v, inv)) |> Option.defaultValue 20.
       DesignTemperatures = temperatures (option "--design") [ 100.; 200.; 300. ]
       OperatingTemperatures = temperatures (option "--operating") [ 50.; 100.; 150. ] }
@@ -84,6 +139,7 @@ let same (expected: string option) (actual: string) = expected |> Option.forall 
 
 /// <summary>The materials to inspect: explicit ids, an identity filter, or a reproducible random sample.</summary>
 let chosen : Asme2025Material list =
+    // Selector priority: --id, then --spec (+ filters), then --random.
     match option "--id", option "--spec", option "--random" with
     | Some ids, _, _ ->
         // Explicit ids win over every other selector.
@@ -111,7 +167,8 @@ let chosen : Asme2025Material list =
             pool[i] <- pool[j]
             pool[j] <- tmp
         pool |> Array.take count |> Array.toList
-    | _ -> failwith "Choose materials with --id, --spec [--grade ...] or --random N."
+    | _ -> failwith "Choose materials with --id, --spec [--grade ...] or --random N."   // no selector given
+// Nothing selected (unknown id / identity): stop, there is nothing to check.
 if chosen.IsEmpty then failwith "No material matches."
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -130,15 +187,18 @@ let norm (s: string) = (if isNull s then "" else s).Trim().Replace('–', '-').T
 /// Prints the number of curves compared and, for each inconsistent curve, the columns that differ.
 /// </summary>
 let sourceRowCheck (material: Asme2025Material) =
+    // Ids of the imported curves of this material (hand-made 'User' curves have no source row).
     let ids =
         Asme2025Data.query db "SELECT p.id FROM Material_Properties p JOIN Property_Source s ON s.id_property=p.id WHERE p.id_main=$m AND s.Fingerprint<>'User' ORDER BY p.id" [ "$m", box material.Id ]
         |> List.map (fun r -> Convert.ToInt64 r[0])
+    // Keep only the curves that differ from the printed row, with the cells that differ.
     let problems =
         ids |> List.choose (fun id ->
             match SourceRowComparison.compare db id with
             | Ok view when view.IsConsistent -> None   // every column equals the printed value (or both are empty)
             | Ok view -> Some(id, view.Cells |> List.filter (fun c -> c.Status <> SourceCellStatus.Match && c.Status <> SourceCellStatus.Empty))
             | Error _ -> Some(id, []))                  // no readable source row: reported without cell details
+    // Summary line, then the detail of each inconsistent curve (the loop ends when all problems are printed).
     printfn "  Curve ASME confrontate con la riga stampata: %d; incoerenti: %d" ids.Length problems.Length
     for (id, cells) in problems do
         printfn "    curva #%d:" id
@@ -151,6 +211,7 @@ let sourceRowCheck (material: Asme2025Material) =
 /// The association is made by UNS or exact nominal composition, so this is the evidence to eyeball.
 /// </summary>
 let xmlCheck (material: Asme2025Material) =
+    // One row per XML record associated with the material (property code, record key, target id, stored JSON, source file).
     let rows =
         Asme2025Data.query db "SELECT a.PropertyCode,a.RecordKey,a.TargetId,a.RecordJson,d.File FROM Xml_Property_Associations a JOIN Xml_Import_Documents d ON d.SHA256=a.DocumentSHA256 WHERE a.id_main=$m ORDER BY a.PropertyCode" [ "$m", box material.Id ]
     if rows.IsEmpty then printfn "  Dati fisici da XML: nessuno"
@@ -159,8 +220,10 @@ let xmlCheck (material: Asme2025Material) =
         for r in rows do
             // RecordJson is the compact stored record: identity fields and notes, no points.
             use json = JsonDocument.Parse(text r[3])
+            // String field of the record, or "" when the field is missing.
             let get (name: string) = match json.RootElement.TryGetProperty name with | true, v -> v.GetString() | _ -> ""
             let uns, composition = get "UNS", get "Composition"
+            // Compare with the material identity after normalisation; an empty record field never matches.
             let unsMatch = uns <> "" && norm uns = norm material.UNS
             let compositionMatch = composition <> "" && norm composition = norm material.NominalComposition
             // Verdict in decreasing strength: same UNS, same composition, no key at all, different key.
@@ -172,6 +235,7 @@ let xmlCheck (material: Asme2025Material) =
             // Short label: XML file name plus the record id (the part of the key after the last '/').
             let key = text r[1]
             let label = Path.GetFileName(text r[4]) + " / " + key.Substring(key.LastIndexOf('/') + 1)
+            // One output line per record: property, source label, record identity and verdict.
             printfn "    %-18s %-30s record: UNS=%-8s comp=%-22s  → %s" (text r[0]) label (if uns = "" then "—" else uns) (if composition = "" then "—" else composition) verdict
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -180,12 +244,15 @@ let xmlCheck (material: Asme2025Material) =
 
 /// <summary>Output folder for per-material Markdown files; None prints the sheets to the console.</summary>
 let outFolder = option "--out"
+// Create the folder up front (no-op if it exists) so the loop below can write files directly.
 outFolder |> Option.iter (fun f -> Directory.CreateDirectory f |> ignore)
 
 /// <summary>File-name-safe text: keeps letters, digits, dash and underscore.</summary>
 let safe (s: string) = String(s |> Seq.map (fun c -> if Char.IsLetterOrDigit c || c = '-' || c = '_' then c else '_') |> Seq.toArray)
 
+// Main loop: one block per selected material; ends after the last one.
 for material in chosen do
+    // Banner title: non-empty identity fields joined by " · ".
     let title = [ material.Specification; material.Grade; material.Condition; material.UNS ] |> List.filter ((<>) "") |> String.concat " · "
     printfn "%s" (String('=', 100))
     printfn "MATERIALE id=%d  %s" material.Id title
@@ -196,10 +263,11 @@ for material in chosen do
     | Ok markdown ->
         match outFolder with
         | Some folder ->
+            // Write mode: scheda-<id>-<spec>_<grade>.md in the output folder.
             let file = Path.Combine(folder, sprintf "scheda-%d-%s.md" material.Id (safe (String.Join("_", [ material.Specification; material.Grade ] |> List.filter ((<>) "")))))
             File.WriteAllText(file, markdown)
             printfn "  Scheda scritta: %s" file
-        | None -> if not (flag "--no-sheet") then printfn "%s" markdown
+        | None -> if not (flag "--no-sheet") then printfn "%s" markdown   // console mode, unless --no-sheet
     // The evidence for the spot check.
     printfn "CONTROLLI"
     sourceRowCheck material

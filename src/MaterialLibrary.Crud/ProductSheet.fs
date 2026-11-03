@@ -1,5 +1,5 @@
 // Author: Claude
-// Last revision: 2026-11-01
+// Last revision: 2026-11-03
 // Purpose: Build a complete product data sheet (Markdown) of one native 2025 material: every property, every size range, room/design/operating temperatures, all notes.
 namespace MaterialLibrary.Crud
 
@@ -33,6 +33,14 @@ module ProductSheet =
     let private fmt (decimals: int) (value: float) =
         let pattern = if decimals = 0 then "0" else "0." + String('#', decimals)
         value.ToString(pattern, it)
+
+    /// <summary>Colour marker of a temperature column (emoji, so it survives every Markdown renderer): Room = blue, Design = red, Operating = green.</summary>
+    let private marker (column: string) =
+        match column with
+        | "Room" -> "🔵"
+        | "Design" -> "🔴"
+        | "Operating" -> "🟢"
+        | _ -> ""
 
     /// <summary>Em dash for an empty text.</summary>
     let private orDash (s: string) = if s = "" then "—" else s
@@ -97,6 +105,43 @@ module ProductSheet =
     /// <summary>One printed table row.</summary>
     type private Row = { Property: string; Unit: string; Curve: string; Cells: string list }
 
+    /// <summary>
+    /// Pad every Markdown table of the text so that its columns line up in the source (rendering is unchanged).
+    /// Columns whose separator ends with ':' are right-aligned. Pure function: text in, text out.
+    /// </summary>
+    let private alignTables (markdown: string) =
+        let isRow (l: string) = l.StartsWith "|"
+        // Cells of a row, without the outer pipes and with surrounding blanks removed.
+        let cellsOf (l: string) = l.Trim().Trim('|').Split('|') |> Array.map (fun c -> c.Trim())
+        let isSeparator (cells: string[]) = cells |> Array.forall (fun c -> c.Length >= 3 && c.TrimEnd(':') |> Seq.forall ((=) '-'))
+        let formatBlock (block: string list) =
+            let rows = block |> List.map cellsOf
+            let columns = rows |> List.map Array.length |> List.max
+            // Column width: widest cell, at least 3 so that the separator stays valid.
+            let width i = rows |> List.filter (fun r -> not (isSeparator r) && i < r.Length) |> List.fold (fun w r -> max w r[i].Length) 3
+            let widths = Array.init columns width
+            rows |> List.map (fun r ->
+                let cells =
+                    Array.init columns (fun i ->
+                        let c = if i < r.Length then r[i] else ""
+                        let right = isSeparator r && c.EndsWith ":"
+                        if isSeparator r then (if right then String('-', widths[i] - 1) + ":" else String('-', widths[i]))
+                        else
+                            // Right-align when the separator row of this table marks the column with ':'.
+                            let rightAligned = rows |> List.exists (fun s -> isSeparator s && i < s.Length && s[i].EndsWith ":")
+                            if rightAligned then c.PadLeft widths[i] else c.PadRight widths[i])
+                "| " + String.Join(" | ", cells) + " |")
+        // Group consecutive table lines into blocks; every other line is copied unchanged.
+        let output = ResizeArray<string>()
+        let mutable block = []
+        let flush () =
+            if not block.IsEmpty then output.AddRange(formatBlock (List.rev block)); block <- []
+        for l in markdown.Split('\n') do
+            if isRow l then block <- l :: block
+            else flush (); output.Add l
+        flush ()
+        String.Join("\n", output)
+
     /// <summary>Build the sheet for a material.</summary>
     /// <param name="db">Open connection to a native 2025 database (reference or working copy).</param>
     /// <param name="materialId">Main.id of the material.</param>
@@ -116,6 +161,7 @@ module ProductSheet =
                 let mechanical = mechanicalFamilies |> List.collect (fun f -> Asme2025Data.curves db materialId f)
                 let symbol = if mechanical |> List.exists (fun c -> c.SizeAxis = "diameter" || c.SizeAxis = "OD" || c.SizeAxis = "DN") && not (mechanical |> List.exists (fun c -> c.SizeAxis = "thickness-or-unspecified" && (c.SizeMinimum.HasValue || c.SizeMaximum.HasValue))) then "d" else "t"
                 let columns = [ ("Room", conditions.RoomTemperature) ] @ (conditions.DesignTemperatures |> List.map (fun t -> "Design", t)) @ (conditions.OperatingTemperatures |> List.map (fun t -> "Operating", t))
+                // Notes of the table being printed: numbered from 1 in every size-range table and cleared at its start.
                 let notes = ResizeArray<string>()
                 let noteRef (note: string) =
                     let i = notes.IndexOf note
@@ -169,7 +215,8 @@ module ProductSheet =
                     match Asme2025Data.query db $"SELECT {column} FROM Extension WHERE id_main=$id" [ "$id", box materialId ] with
                     | [ row ] when not (isNull row[0]) -> Some(Convert.ToDouble row[0])
                     | _ -> None
-                let physicalRows =
+                // Built per table (not once) because the note numbers of a row depend on the table it is printed in.
+                let physicalRowsOf () =
                     physical |> List.collect (fun (family, unit, scale, decimals) ->
                         let curves = Asme2025Data.curves db materialId family
                         if not curves.IsEmpty then
@@ -202,13 +249,14 @@ module ProductSheet =
                 line ("| Resistenza minima specificata (SMUS) | " + scalar main[1] "MPa" + " |")
                 line ("| Allungamento a rottura (long. / trasv.) | " + scalar main[2] "%" + " / " + scalar main[3] "%" + " |")
                 line ""
+                let roomMark, designMark, operatingMark = marker "Room", marker "Design", marker "Operating"
                 line "## 2. Condizioni di riferimento"
                 line ""
                 line "| Colonna | Temperatura |"
                 line "|---|---|"
-                line $"| Room | {fmt 1 conditions.RoomTemperature} °C |"
-                conditions.DesignTemperatures |> List.iteri (fun i t -> line $"| Design {i + 1} | {fmt 1 t} °C |")
-                conditions.OperatingTemperatures |> List.iteri (fun i t -> line $"| Operating {i + 1} | {fmt 1 t} °C |")
+                line $"| {roomMark} Room | {fmt 1 conditions.RoomTemperature} °C |"
+                conditions.DesignTemperatures |> List.iteri (fun i t -> line $"| {designMark} Design {i + 1} | {fmt 1 t} °C |")
+                conditions.OperatingTemperatures |> List.iteri (fun i t -> line $"| {operatingMark} Operating {i + 1} | {fmt 1 t} °C |")
                 line ""
                 line "A temperatura ambiente Sy e Su riportano il **minimo specificato** della riga ASME (marcato `(min.)`); le altre proprietà sono interpolate sulla curva. Le tabelle ASME delle tensioni ammissibili iniziano a 40 °C: sotto il primo punto il valore non è inventato (`n.d.`); vedere le note generali di tabella sul loro uso a temperature più basse."
                 line ""
@@ -217,17 +265,33 @@ module ProductSheet =
                 line "## 3. Proprietà per dimensione"
                 for s in secs do
                     sectionNumber.Value <- sectionNumber.Value + 1
+                    notes.Clear()
                     line ""
                     line $"### 3.{sectionNumber.Value} {title symbol s}"
                     line ""
-                    let header = columns |> List.mapi (fun i (name, t) -> $"{name} {fmt 1 t} °C")
-                    line ("| Proprietà | Unità | Curva (forma, livello, id) [note] | " + String.Join(" | ", header) + " |")
-                    line ("|---|---|---|" + String.Join("", columns |> List.map (fun _ -> "---:|")))
+                    // Two-line column title (name <br> temperature) keeps the numeric columns narrow.
+                    let header = columns |> List.map (fun (name, t) -> $"{marker name} {name}<br>{fmt 1 t} °C")
+                    line ("| Proprietà | Curva [note] | " + String.Join(" | ", header) + " |")
+                    line ("|---|---|" + String.Join("", columns |> List.map (fun _ -> "---:|")))
                     let applicable family = mechanical |> List.filter (fun c -> c.Code = family && applies c s.Probe)
-                    let mechanicalRows = mechanicalFamilies |> List.collect (fun f -> match applicable f with [] -> [ { Property = f; Unit = "MPa"; Curve = "nessuna curva per questa dimensione"; Cells = columns |> List.map (fun _ -> "—") } ] | cs -> cs |> List.map mechanicalRow)
-                    for r in mechanicalRows @ physicalRows do
+                    let mechanicalRows = mechanicalFamilies |> List.collect (fun f -> match applicable f with [] -> [ { Property = f; Unit = "MPa"; Curve = "nessuna curva"; Cells = columns |> List.map (fun _ -> "—") } ] | cs -> cs |> List.map mechanicalRow)
+                    let allRows = mechanicalRows @ physicalRowsOf ()
+                    for r in allRows do
                         let cells = String.Join(" | ", r.Cells)
-                        line ($"| {r.Property} | {r.Unit} | {r.Curve} | {cells} |")
+                        line ($"| {r.Property} | {r.Curve} | {cells} |")
+                    // Units are printed once under the table instead of in a column: one entry per unit, properties in table order.
+                    let unitText (unit: string) = if unit = "—" then "adimensionale" else unit
+                    let units =
+                        allRows |> List.groupBy (fun r -> r.Unit)
+                        |> List.map (fun (unit, rs) -> String.Join(", ", rs |> List.map (fun r -> r.Property)) + ": " + unitText unit)
+                    line ""
+                    line ("Unità: " + String.Join("; ", units) + ".")
+                    // Notes referenced by this table only, under the table, numbered as in the [..] references of its rows.
+                    if notes.Count > 0 then
+                        line ""
+                        line $"**Note della tabella 3.{sectionNumber.Value}**"
+                        line ""
+                        notes |> Seq.iteri (fun i n -> line $"{i + 1}. {n.Replace('\n', ' ')}")
                 // External pressure
                 line ""
                 line "## 4. Pressione esterna"
@@ -277,18 +341,14 @@ module ProductSheet =
                     let range = if c.Points.Length = 0 then "—" else $"{fmt 1 c.Points[0].Temperature}…{fmt 1 c.Points[c.Points.Length - 1].Temperature} °C"
                     let sizeText = if c.SizeMinimum.HasValue || c.SizeMaximum.HasValue then size else "qualsiasi"
                     line ($"| {c.Id} | {c.Code} | {dash c.ProductForm} | {sizeText} | {src} | {c.Points.Length} | {range} |")
-                // Notes
+                // General reading notes (the notes of each curve are printed under its own table in section 3)
                 line ""
-                line "## 7. Note"
+                line "## 7. Note generali di lettura"
                 line ""
-                if notes.Count = 0 then line "Nessuna nota associata alle curve utilizzate."
-                else
-                    notes |> Seq.iteri (fun i n -> line $"{i + 1}. {n.Replace('\n', ' ')}")
-                line ""
-                line "**Note generali di lettura**"
-                line ""
+                line "- Codice colore delle colonne di temperatura: 🔵 Room, 🔴 Design, 🟢 Operating."
+                line "- La colonna Curva riporta forma di prodotto, livello di tensione (S1), id della curva e, tra parentesi quadre, i numeri delle note, elencate sotto la tabella stessa (numerazione ripartita in ogni tabella); `nessuna curva` = nessuna curva valida per quella dimensione."
                 line "- Interpolazione lineare tra i due punti adiacenti della curva; nessuna estrapolazione."
                 line "- Alpha medio è riferito alla temperatura di riferimento della fonte (convenzionalmente 20 °C); `a` è mostrata in mm²/s (1 mm²/s = 10⁻⁶ m²/s)."
                 line "- Più curve nella stessa riga di proprietà indicano varianti (forma di prodotto, livello di tensione S1): non si sceglie «la prima»."
                 line "- Una proprietà assente (`dato assente`) non viene calcolata né copiata da altri materiali."
-                Ok(sb.ToString())
+                Ok(alignTables (sb.ToString()))
