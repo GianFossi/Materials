@@ -1227,3 +1227,9 @@ ProductSheet.build now post-processes the Markdown with a private pure function 
 ## 2026-11-03 - Product sheet layout: compact tables, colour code, notes per table
 
 ProductSheet.build: the properties table no longer has a Unità column (units are listed under each table), the column title is split on two lines (name<br>temperature) and carries a colour marker (Room blue, Design red, Operating green); the Curva column title is shortened. Curve notes are now numbered from 1 in each size-range table and printed right under it ("Note della tabella 3.n"); section 7 only holds the general reading notes. Tests in Native2025Tests.fs adjusted to the new layout (108/108 pass). docs/examples and docs/asme-materials-db.md still show the previous layout and have not been regenerated.
+
+
+## 2026-11-03 - Product sheet in English; limits fallback; external pressure charts section
+
+ProductSheet.build: all sheet text is now English with English number format (decimal point); column titles use T.Des / T.Ope (two lines: name<br>temperature); section 4 is "Maximum application temperatures and code limits" with the VIII-2 / VIII-1 (and other) limits completed from the material-level ASME_Data row when the curve's own ASME row leaves them blank (marked †); the "Diagramma EP" column was removed from that table and external pressure charts have their own section 5 (one sub-section per chart). Spot-Check.fsx output labels translated to English. Example sheets renamed docs/examples/product-sheet-SA-DEMO2.md and -SA-DEMO3.md and regenerated; docs/asme-materials-db.md section 10.8 updated; tests adjusted.
+

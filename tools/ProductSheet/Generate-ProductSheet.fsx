@@ -1,5 +1,5 @@
 // Author: Claude
-// Last revision: 2026-11-01
+// Last revision: 2026-11-03
 // Purpose: Command-line front end of MaterialLibrary.Crud.ProductSheet: write the Markdown product data sheet of one material.
 //
 // Options:

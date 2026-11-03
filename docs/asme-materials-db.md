@@ -2116,8 +2116,8 @@ La **scheda prodotto** raccoglie in un documento Markdown tutte le proprietà di
 con le temperature scelte e tutte le note. Il modulo `ProductSheet` (libreria Crud) la costruisce; lo script
 [Generate-ProductSheet.ps1](../tools/Generate-ProductSheet.ps1) la scrive su file.
 
-**Colonne.** *Room* (temperatura ambiente, default 20 °C), *Design* (fino a **3** temperature di progetto) e *Operating*
-(fino a **3** temperature di esercizio); il titolo di colonna è su due righe (nome e temperatura) con un marcatore di colore: 🔵 Room, 🔴 Design, 🟢 Operating. Esempio: Room 20 °C; Design 350 / 400 / 475 °C; Operating 100 / 200 / 250 °C.
+**Colonne.** *Room* (room temperature, default 20 °C), *T.Des* (up to **3** design temperatures) and *T.Ope*
+(up to **3** operating temperatures); the column title is on two lines (short name, temperature) with a colour marker: 🔵 Room, 🔴 T.Des, 🟢 T.Ope. Example: Room 20 °C; T.Des 350 / 400 / 475 °C; T.Ope 100 / 200 / 250 °C. All sheet text and numbers use English (decimal point).
 
 **Righe.** Sy, Su, S1, S2, Sb1, Sb2 (una riga per curva valida in quella dimensione: forma di prodotto e livello S1 compaiono
 nell'etichetta), poi E, Alpha, AlphaInstantaneous, c, k, a, densità e Nu. Le proprietà fisiche non dipendono dalla dimensione e
@@ -2132,9 +2132,9 @@ si ripetono in ogni tabella. Le **unità** non hanno una colonna: sono elencate 
 - A temperatura ambiente Sy e Su mostrano il **minimo specificato** della riga ASME (`(min.)`); le tensioni ammissibili iniziano a 40 °C,
   quindi a 20 °C sono `n.d.` (vedere le note generali di tabella).
 - `⚠` = temperatura oltre il limite numerico della Sezione della curva (VIII-1 per S1/Sb1, VIII-2 per S2/Sb2); `NP` = non permesso.
-- Le **note** sono richiamate nella colonna «Curva» ed elencate **sotto la tabella a cui si riferiscono** («Note della tabella 3.n», numerazione da 1 in ogni tabella): note ASME specifiche e generali, copie modificate dall'utente,
+- Le **note** sono richiamate nella colonna «Curva» ed elencate **sotto la tabella a cui si riferiscono** («Notes of table 3.n», numerazione da 1 in ogni tabella): note ASME specifiche e generali, copie modificate dall'utente,
   note utente e provenienza XML; i numeri consecutivi sono raccolti in intervalli (`[14–23]`). La sezione 7 contiene solo le note generali di lettura.
-- Segue la pressione esterna (coppie A → B), i limiti per curva (P-No., Group, Sezioni) e l'elenco delle curve utilizzate.
+- Section order: 4 maximum application temperatures and code limits per curve (P-No., Group, Sections I, III, VIII-1, VIII-2, XII; a limit blank in the curve's own ASME row is completed from the material-level `ASME_Data` value and marked `†`, so VIII-2 is also shown on S1 curves and VIII-1 on S2 curves); 5 **external pressure charts** (own section, one sub-section per chart with the A → B pairs per temperature); 6 curves used; 7 reading notes.
 
 **Uso.**
 
@@ -2197,105 +2197,66 @@ DROP TABLE temp.demo_phys; DROP TABLE temp.demo_family;
 COMMIT;
 ```
 
-**Esito per SA-DEMO2** (scheda completa: [scheda-prodotto-SA-DEMO2.md](examples/scheda-prodotto-SA-DEMO2.md), 4 dimensioni).
-Estratto delle tabelle (senza le note, riportate sotto ogni tabella nel file completo) per la prima, la terza e la quarta dimensione:
+**Result for SA-DEMO2** (full sheet: [product-sheet-SA-DEMO2.md](examples/product-sheet-SA-DEMO2.md), 4 size ranges) and
+**for SA-DEMO3** (bolting, diameters: [product-sheet-SA-DEMO3.md](examples/product-sheet-SA-DEMO3.md)). The sheets are written in English.
+Excerpt of the last size range of SA-DEMO2 (notes omitted; they are printed under every table in the full file):
 
-**Sezione 1 della scheda — t ≤ 40 mm**
+### 3.4 t > 200 mm
 
-| Proprietà          | Curva [note]                       | 🔵 Room<br>20 °C | 🔴 Design<br>350 °C | 🔴 Design<br>400 °C | 🔴 Design<br>475 °C | 🟢 Operating<br>100 °C | 🟢 Operating<br>200 °C | 🟢 Operating<br>250 °C |
-| ------------------ | ---------------------------------- | ---------------: | ------------------: | ------------------: | ------------------: | ---------------------: | ---------------------: | ---------------------: |
-| Sy                 | #9391 [1–7]                        |       260 (min.) |                 165 |                 150 |               127,5 |                    240 |                    210 |                    195 |
-| Su                 | #9394 [8–13]                       |       485 (min.) |                 440 |                 410 |                 345 |                    485 |                    475 |                    470 |
-| S1                 | PLATE, Normal #9397 [14–23]        |             n.d. |                 128 |                 101 |              50,5 ⚠ |                    138 |                    138 |                    138 |
-| S1                 | PLATE, High #9398 [14–24]          |             n.d. |                 140 |                 110 |              52,5 ⚠ |                    160 |                    160 |                    158 |
-| S1                 | FORGINGS, Normal #9400 [14–23, 25] |             n.d. |                 126 |                 100 |              49,5 ⚠ |                    138 |                    138 |                    138 |
-| S2                 | PLATE #9402 [26–31]                |             n.d. |                 170 |                 134 |                67 ⚠ |                    184 |                    184 |                    184 |
-| S2                 | FORGINGS #9404 [25–31]             |             n.d. |                 152 |                 120 |                60 ⚠ |                    164 |                    164 |                    164 |
-| S2                 | BAR #9405 [26–31]                  |             n.d. |                 140 |                 110 |                55 ⚠ |                    150 |                    150 |                    150 |
-| Sb1                | nessuna curva                      |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| Sb2                | nessuna curva                      |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| E                  | #8794                              |           202000 |              182500 |              179000 |              172250 |                 198000 |                 193000 |                 189500 |
-| Alpha              | #8795                              |             n.d. |                13,3 |                13,5 |                13,8 |                     12 |                   12,6 |                  12,85 |
-| AlphaInstantaneous | #8796                              |             n.d. |                13,7 |                13,9 |                14,2 |                   12,4 |                     13 |                  13,25 |
-| c                  | #8797                              |              470 |                 551 |                 565 |                 591 |                    487 |                    512 |                    525 |
-| k                  | #8798                              |             51,9 |                44,6 |                  43 |                40,5 |                   51,1 |                     49 |                   47,6 |
-| a                  | #8799                              |               14 |               10,85 |                10,3 |                9,33 |                   13,4 |                   12,4 |                   11,9 |
-| density            | costante                           |             7850 |                7850 |                7850 |                7850 |                   7850 |                   7850 |                   7850 |
-| Nu                 | costante                           |              0,3 |                 0,3 |                 0,3 |                 0,3 |                    0,3 |                    0,3 |                    0,3 |
+| Property           | Curve [notes]   | 🔵 Room<br>20 °C | 🔴 T.Des<br>350 °C | 🔴 T.Des<br>400 °C | 🔴 T.Des<br>475 °C | 🟢 T.Ope<br>100 °C | 🟢 T.Ope<br>200 °C | 🟢 T.Ope<br>250 °C |
+| ------------------ | --------------- | ---------------: | -----------------: | -----------------: | -----------------: | -----------------: | -----------------: | -----------------: |
+| Sy                 | no curve        |                — |                  — |                  — |                  — |                  — |                  — |                  — |
+| Su                 | no curve        |                — |                  — |                  — |                  — |                  — |                  — |                  — |
+| S1                 | no curve        |                — |                  — |                  — |                  — |                  — |                  — |                  — |
+| S2                 | BAR #9405 [1–6] |             n.d. |                140 |                110 |               55 ⚠ |                150 |                150 |                150 |
+| Sb1                | no curve        |                — |                  — |                  — |                  — |                  — |                  — |                  — |
+| Sb2                | no curve        |                — |                  — |                  — |                  — |                  — |                  — |                  — |
+| E                  | #8794           |           202000 |             182500 |             179000 |             172250 |             198000 |             193000 |             189500 |
+| Alpha              | #8795           |             n.d. |               13.3 |               13.5 |               13.8 |                 12 |               12.6 |              12.85 |
+| AlphaInstantaneous | #8796           |             n.d. |               13.7 |               13.9 |               14.2 |               12.4 |                 13 |              13.25 |
+| c                  | #8797           |              470 |                551 |                565 |                591 |                487 |                512 |                525 |
+| k                  | #8798           |             51.9 |               44.6 |                 43 |               40.5 |               51.1 |                 49 |               47.6 |
+| a                  | #8799           |               14 |              10.85 |               10.3 |               9.33 |               13.4 |               12.4 |               11.9 |
+| density            | constant        |             7850 |               7850 |               7850 |               7850 |               7850 |               7850 |               7850 |
+| Nu                 | constant        |              0.3 |                0.3 |                0.3 |                0.3 |                0.3 |                0.3 |                0.3 |
 
-Unità: Sy, Su, S1, S1, S1, S2, S2, S2, Sb1, Sb2, E: MPa; Alpha, AlphaInstantaneous: 10⁻⁶/°C; c: J/(kg·K); k: W/(m·K); a: mm²/s; density: kg/m³; Nu: adimensionale.
+Units: Sy, Su, S1, S2, Sb1, Sb2, E: MPa; Alpha, AlphaInstantaneous: 10⁻⁶/°C; c: J/(kg·K); k: W/(m·K); a: mm²/s; density: kg/m³; Nu: dimensionless.
 
-**Sezione 3 della scheda — 100 < t ≤ 200 mm**
+Followed by sections 4 to 7 of the sheet (limits, external pressure charts, curves used, reading notes), e.g.:
 
-| Proprietà          | Curva [note]                   | 🔵 Room<br>20 °C | 🔴 Design<br>350 °C | 🔴 Design<br>400 °C | 🔴 Design<br>475 °C | 🟢 Operating<br>100 °C | 🟢 Operating<br>200 °C | 🟢 Operating<br>250 °C |
-| ------------------ | ------------------------------ | ---------------: | ------------------: | ------------------: | ------------------: | ---------------------: | ---------------------: | ---------------------: |
-| Sy                 | #9393 [1–7]                    |       260 (min.) |                 145 |                 130 |               107,5 |                    220 |                    190 |                    175 |
-| Su                 | #9396 [8–13]                   |       485 (min.) |                 385 |                 360 |                 295 |                    430 |                    420 |                    415 |
-| S1                 | FORGINGS, Normal #9401 [14–24] |             n.d. |                 114 |                  90 |                45 ⚠ |                    123 |                    123 |                    123 |
-| S2                 | FORGINGS #9404 [24–30]         |             n.d. |                 152 |                 120 |                60 ⚠ |                    164 |                    164 |                    164 |
-| S2                 | BAR #9405 [25–30]              |             n.d. |                 140 |                 110 |                55 ⚠ |                    150 |                    150 |                    150 |
-| Sb1                | nessuna curva                  |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| Sb2                | nessuna curva                  |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| E                  | #8794                          |           202000 |              182500 |              179000 |              172250 |                 198000 |                 193000 |                 189500 |
-| Alpha              | #8795                          |             n.d. |                13,3 |                13,5 |                13,8 |                     12 |                   12,6 |                  12,85 |
-| AlphaInstantaneous | #8796                          |             n.d. |                13,7 |                13,9 |                14,2 |                   12,4 |                     13 |                  13,25 |
-| c                  | #8797                          |              470 |                 551 |                 565 |                 591 |                    487 |                    512 |                    525 |
-| k                  | #8798                          |             51,9 |                44,6 |                  43 |                40,5 |                   51,1 |                     49 |                   47,6 |
-| a                  | #8799                          |               14 |               10,85 |                10,3 |                9,33 |                   13,4 |                   12,4 |                   11,9 |
-| density            | costante                       |             7850 |                7850 |                7850 |                7850 |                   7850 |                   7850 |                   7850 |
-| Nu                 | costante                       |              0,3 |                 0,3 |                 0,3 |                 0,3 |                    0,3 |                    0,3 |                    0,3 |
+## 4. Maximum application temperatures and code limits
 
-Unità: Sy, Su, S1, S2, S2, Sb1, Sb2, E: MPa; Alpha, AlphaInstantaneous: 10⁻⁶/°C; c: J/(kg·K); k: W/(m·K); a: mm²/s; density: kg/m³; Nu: adimensionale.
+| Curve    | P-No. | Group | Sect. I | Sect. III | VIII-1 | VIII-2 | XII |
+| -------- | ----- | ----- | ------- | --------- | ------ | ------ | --- |
+| S1 #9397 | 1     | 1     | 454     | 371       | 450    | 371    | 343 |
+| S1 #9398 | 1     | 1     | 454     | 371       | 450    | 371    | 343 |
+| S1 #9400 | 1     | 1     | 454     | 371       | 450    | 371    | 343 |
+| S2 #9402 | 1     | 1     | —       | 371       | —      | 400    | 343 |
+| S2 #9404 | 1     | 1     | —       | 371       | —      | 400    | 343 |
+| S2 #9405 | 1     | 1     | —       | 371       | —      | 400    | 343 |
+| S1 #9399 | 1     | 1     | 454     | 371       | 450    | 371    | 343 |
+| S2 #9403 | 1     | 1     | —       | 371       | —      | 400    | 343 |
+| S1 #9401 | 1     | 1     | 454     | 371       | 450    | 371    | 343 |
 
-**Sezione 4 della scheda — t > 200 mm**
+Limits in °C. `NP` = not permitted; a qualified value (e.g. `204 (Cl. 3 only)`) is not applied as a general limit. † = not printed in the ASME table row of the curve: taken from the material-level data (same material, other ASME table). The ⚠ symbol in the tables marks a temperature above the numeric limit of the curve's Section (VIII-1 for S1/Sb1, VIII-2 for S2/Sb2).
 
-| Proprietà          | Curva [note]    | 🔵 Room<br>20 °C | 🔴 Design<br>350 °C | 🔴 Design<br>400 °C | 🔴 Design<br>475 °C | 🟢 Operating<br>100 °C | 🟢 Operating<br>200 °C | 🟢 Operating<br>250 °C |
-| ------------------ | --------------- | ---------------: | ------------------: | ------------------: | ------------------: | ---------------------: | ---------------------: | ---------------------: |
-| Sy                 | nessuna curva   |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| Su                 | nessuna curva   |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| S1                 | nessuna curva   |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| S2                 | BAR #9405 [1–6] |             n.d. |                 140 |                 110 |                55 ⚠ |                    150 |                    150 |                    150 |
-| Sb1                | nessuna curva   |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| Sb2                | nessuna curva   |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| E                  | #8794           |           202000 |              182500 |              179000 |              172250 |                 198000 |                 193000 |                 189500 |
-| Alpha              | #8795           |             n.d. |                13,3 |                13,5 |                13,8 |                     12 |                   12,6 |                  12,85 |
-| AlphaInstantaneous | #8796           |             n.d. |                13,7 |                13,9 |                14,2 |                   12,4 |                     13 |                  13,25 |
-| c                  | #8797           |              470 |                 551 |                 565 |                 591 |                    487 |                    512 |                    525 |
-| k                  | #8798           |             51,9 |                44,6 |                  43 |                40,5 |                   51,1 |                     49 |                   47,6 |
-| a                  | #8799           |               14 |               10,85 |                10,3 |                9,33 |                   13,4 |                   12,4 |                   11,9 |
-| density            | costante        |             7850 |                7850 |                7850 |                7850 |                   7850 |                   7850 |                   7850 |
-| Nu                 | costante        |              0,3 |                 0,3 |                 0,3 |                 0,3 |                    0,3 |                    0,3 |                    0,3 |
+## 5. External pressure charts
 
-Unità: Sy, Su, S1, S2, Sb1, Sb2, E: MPa; Alpha, AlphaInstantaneous: 10⁻⁶/°C; c: J/(kg·K); k: W/(m·K); a: mm²/s; density: kg/m³; Nu: adimensionale.
+Chart reference in the ASME tables: **CS-2**.
 
-Come si legge: a 475 °C le S1 sono marcate `⚠` perché il limite VIII-1 della curva è 450 °C, le S2 perché il limite VIII-2 è 400 °C;
-a 20 °C le tensioni ammissibili sono `n.d.` (la tabella parte da 40 °C), mentre Sy e Su danno il minimo specificato (260 e 485 MPa).
-La riga S2 `BAR` (nessun limite dimensionale) compare identica in tutte le sezioni. La sezione 4 (t > 200 mm) esiste **solo per
-lei**: oltre il limite più alto di tutte le altre curve resta valida soltanto la curva illimitata (Sy, Su e S1 non hanno nessuna curva per
-quelle dimensioni).
+For each temperature: pairs (A, dimensionless → B, MPa).
 
-**Esito per SA-DEMO3** (scheda completa: [scheda-prodotto-SA-DEMO3.md](examples/scheda-prodotto-SA-DEMO3.md), diametri):
+### 5.1 Chart DEMO-CS-1
 
-**Sezione 2 della scheda — 65 < d ≤ 100 mm**
+| Temperature | A → B points                                    |
+| ----------- | ----------------------------------------------- |
+| 100 °C      | 1E-5 → 1.32; 1E-4 → 13.2; 1E-3 → 90; 2E-3 → 105 |
+| 300 °C      | 1E-5 → 1.24; 1E-4 → 12.4; 1E-3 → 70; 2E-3 → 85  |
 
-| Proprietà          | Curva [note]  | 🔵 Room<br>20 °C | 🔴 Design<br>350 °C | 🔴 Design<br>400 °C | 🔴 Design<br>475 °C | 🟢 Operating<br>100 °C | 🟢 Operating<br>200 °C | 🟢 Operating<br>250 °C |
-| ------------------ | ------------- | ---------------: | ------------------: | ------------------: | ------------------: | ---------------------: | ---------------------: | ---------------------: |
-| Sy                 | #9407 [1–7]   |       720 (min.) |                 575 |                 540 |               457,5 |                    668 |                    640 |                    620 |
-| Su                 | #9410 [8–13]  |       860 (min.) |                 750 |                 700 |               591,5 |                    825 |                    805 |                    795 |
-| S1                 | nessuna curva |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| S2                 | nessuna curva |                — |                   — |                   — |                   — |                      — |                      — |                      — |
-| Sb1                | #9413 [14–23] |             n.d. |                 161 |                 160 |              96,5 ⚠ |                    161 |                    161 |                    161 |
-| Sb2                | #9416 [24–31] |             n.d. |                 191 |                 176 |             111,5 ⚠ |                    193 |                    193 |                    193 |
-| E                  | #8800         |           202000 |              182500 |              179000 |              172250 |                 198000 |                 193000 |                 189500 |
-| Alpha              | #8801         |             n.d. |                13,3 |                13,5 |                13,8 |                     12 |                   12,6 |                  12,85 |
-| AlphaInstantaneous | #8802         |             n.d. |                13,7 |                13,9 |                14,2 |                   12,4 |                     13 |                  13,25 |
-| c                  | #8803         |              470 |                 551 |                 565 |                 591 |                    487 |                    512 |                    525 |
-| k                  | #8804         |             51,9 |                44,6 |                  43 |                40,5 |                   51,1 |                     49 |                   47,6 |
-| a                  | #8805         |               14 |               10,85 |                10,3 |                9,33 |                   13,4 |                   12,4 |                   11,9 |
-| density            | costante      |             7850 |                7850 |                7850 |                7850 |                   7850 |                   7850 |                   7850 |
-| Nu                 | costante      |              0,3 |                 0,3 |                 0,3 |                 0,3 |                    0,3 |                    0,3 |                    0,3 |
-
-Unità: Sy, Su, S1, S2, Sb1, Sb2, E: MPa; Alpha, AlphaInstantaneous: 10⁻⁶/°C; c: J/(kg·K); k: W/(m·K); a: mm²/s; density: kg/m³; Nu: adimensionale.
+How to read it: at 475 °C the S1 rows are marked `⚠` because the VIII-1 limit of the curve is 450 °C, the S2 rows because the VIII-2 limit is 400 °C;
+at 20 °C the allowable stresses are `n.d.` (the table starts at 40 °C) while Sy and Su give the specified minimum (260 and 485 MPa).
+The S2 `BAR` row (no size limit) appears unchanged in every size range; the t > 200 mm range exists **only for it**: above the highest
+limit of all other curves only the unbounded curve stays valid.
 
 Le schede sono **generate**: dopo aver cambiato dati o formato si rigenerano con lo stesso comando (opzioni `-Database`, `-Specification`,
 `-Grade`, `-Condition`, `-Uns` o `-MaterialId`). I due file di esempio sono stati prodotti dalle copie di lavoro costruite con gli

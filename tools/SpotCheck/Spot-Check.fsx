@@ -8,7 +8,7 @@
 // Spot-Check.fsx is a read-only F# script for manually verifying the material database.
 // For each selected material it:
 //   1. builds and prints the product data sheet (Markdown), or writes it to a file;
-//   2. prints the "CONTROLLI" (checks) section, which gives the evidence a reviewer needs:
+//   2. prints the "CHECKS" section, which gives the evidence a reviewer needs:
 //        a. each mechanical curve compared with the ASME table row it was imported from (SourceRowComparison);
 //        b. each physical curve / constant with its XML record, flagging records whose UNS or composition
 //           differs from the material (or that carry no identity key at all).
@@ -56,17 +56,17 @@
 //   // Checks only (no sheet) for two ids:
 //   dotnet fsi tools/SpotCheck/Spot-Check.fsx --id 985,1020 --no-sheet
 //
-// Example of the checks output (labels are in Italian):
+// Example of the checks output (labels are in English):
 //   ====================================================================================================
-//   MATERIALE id=1702  SB-171 · O20, O25 · C71520
+//   MATERIAL id=1702  SB-171 · O20, O25 · C71520
 //   ====================================================================================================
-//   CONTROLLI
-//     Curve ASME confrontate con la riga stampata: 4; incoerenti: 0
-//     Dati fisici da XML: 3 associazioni (materiale: UNS=C71520, composizione=—)
-//       E                  TM-3.xml / C71520              record: UNS=C71520   comp=—   → UNS uguale
-//       Nu                 PRD-Density.xml / prd-poisson-C71520 record: UNS=C71520   comp=—   → UNS uguale
-//       density            PRD-Density.xml / prd-density-C71520 record: UNS=C71520   comp=—   → UNS uguale
-//   Controllati 1 materiali (database: C:\...\database\data\materials_2025.db).
+//   CHECKS
+//     ASME curves compared with the printed row: 4; inconsistent: 0
+//     Physical data from XML: 3 associations (material: UNS=C71520, composition=—)
+//       E                  TM-3.xml / C71520              record: UNS=C71520   comp=—   → same UNS
+//       Nu                 PRD-Density.xml / prd-poisson-C71520 record: UNS=C71520   comp=—   → same UNS
+//       density            PRD-Density.xml / prd-density-C71520 record: UNS=C71520   comp=—   → same UNS
+//   Checked 1 materials (database: C:\...\database\data\materials_2025.db).
 // (Real output of: --random 1 --seed 42 --no-sheet. It depends on the database content.)
 
 // The project libraries are referenced from the folder where Generate-ProductSheet.ps1 (or the build command above) puts them.
@@ -199,11 +199,11 @@ let sourceRowCheck (material: Asme2025Material) =
             | Ok view -> Some(id, view.Cells |> List.filter (fun c -> c.Status <> SourceCellStatus.Match && c.Status <> SourceCellStatus.Empty))
             | Error _ -> Some(id, []))                  // no readable source row: reported without cell details
     // Summary line, then the detail of each inconsistent curve (the loop ends when all problems are printed).
-    printfn "  Curve ASME confrontate con la riga stampata: %d; incoerenti: %d" ids.Length problems.Length
+    printfn "  ASME curves compared with the printed row: %d; inconsistent: %d" ids.Length problems.Length
     for (id, cells) in problems do
-        printfn "    curva #%d:" id
+        printfn "    curve #%d:" id
         for c in cells do
-            printfn "      T=%g °C  fonte=%s  db=%s  %A" c.Temperature c.SourceText (if c.DatabaseValue.HasValue then string c.DatabaseValue.Value else "—") c.Status
+            printfn "      T=%g °C  source=%s  db=%s  %A" c.Temperature c.SourceText (if c.DatabaseValue.HasValue then string c.DatabaseValue.Value else "—") c.Status
 
 /// <summary>
 /// Check 2: list the XML records behind the physical data of a material (E, Alpha, k, a, density, Nu...)
@@ -214,9 +214,9 @@ let xmlCheck (material: Asme2025Material) =
     // One row per XML record associated with the material (property code, record key, target id, stored JSON, source file).
     let rows =
         Asme2025Data.query db "SELECT a.PropertyCode,a.RecordKey,a.TargetId,a.RecordJson,d.File FROM Xml_Property_Associations a JOIN Xml_Import_Documents d ON d.SHA256=a.DocumentSHA256 WHERE a.id_main=$m ORDER BY a.PropertyCode" [ "$m", box material.Id ]
-    if rows.IsEmpty then printfn "  Dati fisici da XML: nessuno"
+    if rows.IsEmpty then printfn "  Physical data from XML: none"
     else
-        printfn "  Dati fisici da XML: %d associazioni (materiale: UNS=%s, composizione=%s)" rows.Length (if material.UNS = "" then "—" else material.UNS) (if material.NominalComposition = "" then "—" else material.NominalComposition)
+        printfn "  Physical data from XML: %d associations (material: UNS=%s, composition=%s)" rows.Length (if material.UNS = "" then "—" else material.UNS) (if material.NominalComposition = "" then "—" else material.NominalComposition)
         for r in rows do
             // RecordJson is the compact stored record: identity fields and notes, no points.
             use json = JsonDocument.Parse(text r[3])
@@ -228,10 +228,10 @@ let xmlCheck (material: Asme2025Material) =
             let compositionMatch = composition <> "" && norm composition = norm material.NominalComposition
             // Verdict in decreasing strength: same UNS, same composition, no key at all, different key.
             let verdict =
-                if unsMatch then "UNS uguale"
-                elif compositionMatch then "composizione uguale"
-                elif uns = "" && composition = "" then "nessuna chiave nel record: VERIFICARE"
-                else "DIFFERENTE: VERIFICARE"
+                if unsMatch then "same UNS"
+                elif compositionMatch then "same composition"
+                elif uns = "" && composition = "" then "no key in the record: CHECK"
+                else "DIFFERENT: CHECK"
             // Short label: XML file name plus the record id (the part of the key after the last '/').
             let key = text r[1]
             let label = Path.GetFileName(text r[4]) + " / " + key.Substring(key.LastIndexOf('/') + 1)
@@ -255,22 +255,22 @@ for material in chosen do
     // Banner title: non-empty identity fields joined by " · ".
     let title = [ material.Specification; material.Grade; material.Condition; material.UNS ] |> List.filter ((<>) "") |> String.concat " · "
     printfn "%s" (String('=', 100))
-    printfn "MATERIALE id=%d  %s" material.Id title
+    printfn "MATERIAL id=%d  %s" material.Id title
     printfn "%s" (String('=', 100))
     // The sheet itself: all size ranges, room/design/operating columns, limits, notes.
     match ProductSheet.build db material.Id conditions with
-    | Error e -> printfn "  Scheda non generata: %s" e
+    | Error e -> printfn "  Sheet not generated: %s" e
     | Ok markdown ->
         match outFolder with
         | Some folder ->
-            // Write mode: scheda-<id>-<spec>_<grade>.md in the output folder.
-            let file = Path.Combine(folder, sprintf "scheda-%d-%s.md" material.Id (safe (String.Join("_", [ material.Specification; material.Grade ] |> List.filter ((<>) "")))))
+            // Write mode: sheet-<id>-<spec>_<grade>.md in the output folder.
+            let file = Path.Combine(folder, sprintf "sheet-%d-%s.md" material.Id (safe (String.Join("_", [ material.Specification; material.Grade ] |> List.filter ((<>) "")))))
             File.WriteAllText(file, markdown)
-            printfn "  Scheda scritta: %s" file
+            printfn "  Sheet written: %s" file
         | None -> if not (flag "--no-sheet") then printfn "%s" markdown   // console mode, unless --no-sheet
     // The evidence for the spot check.
-    printfn "CONTROLLI"
+    printfn "CHECKS"
     sourceRowCheck material
     xmlCheck material
     printfn ""
-printfn "Controllati %d materiali (database: %s)." chosen.Length dbPath
+printfn "Checked %d materials (database: %s)." chosen.Length dbPath

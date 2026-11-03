@@ -478,9 +478,9 @@ let ``documented bolting example links Sb1 and Sb2 to three diameter ranges with
 let ``product sheet lists every size range with room design and operating columns, limits and all notes`` () = withExamples (fun path ->
     use db = openWritable path
     let sheet = ProductSheet.build db (exampleId db "SA-DEMO2") sheetConditions |> ok
-    for expected in [ "# Scheda prodotto — SA-DEMO2 · GR1 · N · K88888"; "### 3.1 t ≤ 40 mm"; "### 3.2 40 < t ≤ 100 mm"; "### 3.3 100 < t ≤ 200 mm"; "### 3.4 t > 200 mm"
-                      "Room<br>20 °C"; "Design<br>350 °C"; "Design<br>475 °C"; "Operating<br>250 °C"; "**Note della tabella 3.1**"; "260 (min.)"; "PLATE, High"; "FORGINGS"; "Diagramma: **DEMO-CS-1**"
-                      "50,5 ⚠"; "**Nota utente:** Forgiati"; "**ASME 1A / G10** (Specific)"; "**ASME 1A / G5** (Specific)"; "## 7. Note" ] do
+    for expected in [ "# Product data sheet — SA-DEMO2 · GR1 · N · K88888"; "### 3.1 t ≤ 40 mm"; "### 3.2 40 < t ≤ 100 mm"; "### 3.3 100 < t ≤ 200 mm"; "### 3.4 t > 200 mm"
+                      "Room<br>20 °C"; "T.Des<br>350 °C"; "T.Des<br>475 °C"; "T.Ope<br>250 °C"; "**Notes of table 3.1**"; "260 (min.)"; "PLATE, High"; "FORGINGS"; "## 5. External pressure charts"; "### 5.1 Chart DEMO-CS-1"
+                      "50.5 ⚠"; "**User note:** Forgiati"; "**ASME 1A / G10** (Specific)"; "**ASME 1A / G5** (Specific)"; "## 7. General reading notes" ] do
         Assert.Contains(expected,sheet)
     // 3.1 has three S1 curves (PLATE Normal, PLATE High, FORGINGS) and three S2 curves (PLATE, FORGINGS, BAR); 3.3 only the 100-200 mm forging S1.
     let section n =
@@ -489,7 +489,7 @@ let ``product sheet lists every size range with room design and operating column
     Assert.Equal(6,section 1 |> fun s -> s.Split('\n') |> Array.filter (fun l -> l.StartsWith "| S1 " || l.StartsWith "| S2 ") |> Array.length)
     Assert.Equal(1,section 3 |> fun s -> s.Split('\n') |> Array.filter (fun l -> l.StartsWith "| S1 ") |> Array.length)
     // Physical rows: no source note exists for hand-entered curves and nothing is invented for missing data.
-    Assert.Matches(@"\| density\s+\| costante\s+\|\s+7850",sheet)
+    Assert.Matches(@"\| density\s+\| constant\s+\|\s+7850",sheet)
     Assert.Contains("n.d.",sheet)
     // Design temperature above the VIII-1 limit (450) is flagged, below it is not.
     // The unbounded BAR curve is valid for every size range, so it appears in every section, including the one above 200 mm where no other curve is valid.
